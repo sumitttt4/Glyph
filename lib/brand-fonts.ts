@@ -1,6 +1,6 @@
 import { Manrope, Instrument_Serif } from 'next/font/google';
 
-// MarkZero Brand Typography
+// Glyph Brand Typography
 export const manrope = Manrope({
     subsets: ['latin'],
     variable: '--font-manrope',

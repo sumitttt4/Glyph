@@ -3,8 +3,11 @@ import "./globals.css";
 import { manrope, instrumentSerif } from "@/lib/brand-fonts";
 
 export const metadata: Metadata = {
-  title: "MarkZero | AI Design Engineer",
+  title: "Glyph | AI Design Engineer",
   description: "Generate premium brand identity systems in seconds. The starting point for your mark.",
+  icons: {
+    icon: '/icon.svg',
+  },
 };
 
 export default function RootLayout({

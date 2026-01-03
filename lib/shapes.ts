@@ -1,5 +1,5 @@
 /**
- * MarkZero Shape Intelligence Engine
+ * Glyph Shape Intelligence Engine
  * 
  * 50 Geometric Primitives as SVG paths, tagged by vibe.
  * These are designed to work as single-color logo marks.

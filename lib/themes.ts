@@ -1,5 +1,5 @@
 /**
- * MarkZero Theme Intelligence Engine
+ * Glyph Theme Intelligence Engine
  * 
  * 10 "God-Tier" palettes with strict dual-mode token systems.
  * Each palette is designed for real-world brand applications.

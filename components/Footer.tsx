@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Github, Twitter, Linkedin } from 'lucide-react';
+import { LogoFull } from '@/components/brand/Logo';
 
 const FOOTER_LINKS = {
     product: [
@@ -26,13 +27,13 @@ const SOCIAL_LINKS = [
 
 export function Footer() {
     return (
-        <footer className="bg-stone-900 text-stone-300">
+        <footer className="bg-stone-950 text-stone-300">
             <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
                     {/* Brand Column */}
                     <div className="col-span-2">
-                        <Link href="/" className="font-bold text-2xl tracking-tighter text-white">
-                            MarkZero.
+                        <Link href="/" className="inline-block group hover:opacity-90 transition-opacity">
+                            <LogoFull textColor="text-white" />
                         </Link>
                         <p className="mt-4 text-sm text-stone-400 max-w-xs leading-relaxed">
                             The AI Design Engineer for startups. Generate premium brand identity systems in seconds.
@@ -97,7 +98,7 @@ export function Footer() {
                 {/* Bottom Bar */}
                 <div className="mt-16 pt-8 border-t border-stone-800 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-sm text-stone-500">
-                        © 2024 MarkZero Systems. All rights reserved.
+                        © 2024 Glyph Systems. All rights reserved.
                     </p>
                     <p className="text-sm text-stone-500">
                         Built with <span className="text-red-400">♥</span> for founders and developers.

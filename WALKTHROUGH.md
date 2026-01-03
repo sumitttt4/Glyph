@@ -1,7 +1,7 @@
-# MarkZero Implementation Walkthrough
+# Glyph Implementation Walkthrough
 
 ## Overview
-MarkZero is a "Design Engineer" platform built with Next.js 14/16 strict ecosystem. It generates brand identities using a "Curated Logic" engine rather than generative AI, ensuring consistent, premium quality results.
+Glyph is a "Design Engineer" platform built with Next.js 14/16 strict ecosystem. It generates brand identities using a "Curated Logic" engine rather than generative AI, ensuring consistent, premium quality results.
 
 ## Key Features
 1.  **"Parametric" Brand Engine**: Located in `hooks/use-brand-generator.ts`, this engine combines curated Shapes, Themes, and Fonts based on a user-selected "Vibe".

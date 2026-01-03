@@ -1,5 +1,5 @@
 /**
- * MarkZero Core Data Types
+ * Glyph Core Data Types
  * 
  * Re-exports types from intelligence engine modules
  * and defines the central BrandIdentity interface.
@@ -41,5 +41,12 @@ export interface BrandIdentity {
     tags: string[];
   };
   font: FontPair;
+  strategy?: {
+    mission: string;
+    vision: string;
+    values: string[];
+    audience: string;
+    tone: string;
+  };
   createdAt: Date;
 }

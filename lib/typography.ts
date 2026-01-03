@@ -1,5 +1,5 @@
 /**
- * MarkZero Typography Intelligence Engine
+ * Glyph Typography Intelligence Engine
  * 
  * This module contains strict, non-random typographic rules
  * that enforce agency-grade consistency across all generated brands.
