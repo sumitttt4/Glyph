@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  /* MarkZero Brand Typography */
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+
+  /* MarkZero Architectural Light Palette */
+  --color-canvas: #FAFAF9;
+  --color-ink: #0C0A09;
+  --color-structure: #E7E5E4;
+  --color-accent: #FF4500;
+
+  /* Sharp corners for engineering feel */
+  --radius: 0px;
+}
+
+:root {
+  /* Light Mode (Default) */
+  --background: #FAFAF9;
+  --foreground: #0C0A09;
+  --border: #E7E5E4;
+  --muted: #78716C;
+  --accent: #FF4500;
+}
+
+.dark {
+  /* Dark Mode */
+  --background: #0C0A09;
+  --foreground: #FAFAF9;
+  --border: #292524;
+  --muted: #A8A29E;
+  --accent: #FF6332;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "ss01", "ss02";
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility for editorial italic styling (Instrument Serif) */
+.font-editorial {
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+/* Tight tracking for headlines (Manrope) */
+.tracking-headline {
+  letter-spacing: -0.02em;
+}
+
+/* Button tracking */
+.tracking-button {
+  letter-spacing: 0.02em;
+}
+
+/* Label tracking (uppercase) */
+.tracking-label {
+  letter-spacing: 0.05em;
+}
+
+/* 1px border utility for Bento Grids */
+.border-architectural {
+  border-width: 1px;
+  border-color: var(--border);
+}
+
+/* Sharp corners (no radius) */
+.rounded-none-important {
+  border-radius: 0 !important;
+}
