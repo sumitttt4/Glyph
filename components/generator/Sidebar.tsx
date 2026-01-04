@@ -1,21 +1,26 @@
 "use client";
 
 import { useState } from 'react';
-import { Sparkles, Check } from 'lucide-react';
+import { Check, Shuffle } from 'lucide-react';
+import { VibeSelector } from './VibeSelector';
+import { expandBriefWithAI, suggestVibeWithAI, expandVibeWithAI } from '@/lib/brand-generator';
+
+export interface GenerationOptions {
+    prompt: string;
+    vibe: string;
+    name: string;
+    color?: string;
+    shape?: string;
+    gradient?: { colors: string[]; angle: number } | null;
+    surpriseMe?: boolean;
+}
 
 interface SidebarProps {
-    onGenerate: (prompt: string, vibe: string, name: string) => void;
+    onGenerate: (options: GenerationOptions) => void;
     isGenerating: boolean;
     selectedVibe: string;
     setSelectedVibe: (vibe: string) => void;
 }
-
-const VIBES = [
-    { id: 'minimalist', label: 'Minimalist', desc: 'Clean, essential, swiss.' },
-    { id: 'tech', label: 'Tech', desc: 'Bold, futuristic, digital.' },
-    { id: 'nature', label: 'Nature', desc: 'Organic, calm, grounded.' },
-    { id: 'bold', label: 'Bold', desc: 'High contrast, loud, punchy.' },
-];
 
 // Tailwind color palettes (shadcn style)
 const COLOR_PALETTES = {
@@ -40,214 +45,369 @@ const COLOR_PALETTES = {
     rose: ['#fff1f2', '#ffe4e6', '#fecdd3', '#fda4af', '#fb7185', '#f43f5e', '#e11d48', '#be123c', '#9f1239', '#881337', '#4c0519'],
 };
 
+// Logo shape presets
+const SHAPE_PRESETS = [
+    { id: 'geo-hexagon', path: 'M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9z' },
+    { id: 'geo-diamond', path: 'M12 2L2 12l10 10 10-10L12 2z' },
+    { id: 'geo-circle', path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z' },
+    { id: 'geo-triangle', path: 'M12 2L2 22h20L12 2z' },
+    { id: 'geo-square', path: 'M3 3h18v18H3z' },
+    { id: 'tech-bolt', path: 'M7 2v11h3v9l7-12h-4l4-8z' },
+    { id: 'org-star', path: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z' },
+    { id: 'org-heart', path: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' },
+    { id: 'abs-plus', path: 'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z' },
+    { id: 'tech-layers', path: 'M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.62-1.26-7.39 5.73zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z' },
+    { id: 'org-leaf', path: 'M17 8C8 10 5.9 16.17 3.82 21.34 5.71 18.06 8.4 15 12 13c-3 3-5 7-5 11 5-1 9-3 13-9 1-1.5 1-4-3-7z' },
+    { id: 'mark-arrow-ne', path: 'M9 5v2h6.59L4 18.59 5.41 20 17 8.41V15h2V5H9z' },
+];
+
+// Gradient presets
+const GRADIENT_PRESETS = [
+    { id: 'sunset', name: 'Sunset', colors: ['#f97316', '#ec4899'], angle: 135 },
+    { id: 'ocean', name: 'Ocean', colors: ['#06b6d4', '#3b82f6'], angle: 135 },
+    { id: 'forest', name: 'Forest', colors: ['#22c55e', '#14b8a6'], angle: 135 },
+    { id: 'lavender', name: 'Lavender', colors: ['#a855f7', '#ec4899'], angle: 135 },
+    { id: 'midnight', name: 'Midnight', colors: ['#1e3a8a', '#7c3aed'], angle: 135 },
+    { id: 'ember', name: 'Ember', colors: ['#ef4444', '#f97316'], angle: 135 },
+    { id: 'mint', name: 'Mint', colors: ['#10b981', '#06b6d4'], angle: 135 },
+    { id: 'peach', name: 'Peach', colors: ['#fb923c', '#fbbf24'], angle: 135 },
+];
+
 export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVibe }: SidebarProps) {
     const [prompt, setPrompt] = useState('');
     const [brandName, setBrandName] = useState('');
     const [selectedColor, setSelectedColor] = useState('#f97316');
     const [activeColorFamily, setActiveColorFamily] = useState<string | null>(null);
     const [customVibe, setCustomVibe] = useState('');
+    const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
+    const [selectedShape, setSelectedShape] = useState<string | null>(null);
+    const [isShapesOpen, setIsShapesOpen] = useState(false);
+    const [isAiLoading, setIsAiLoading] = useState(false);
+
+    const isValid = brandName.trim().length > 0 && prompt.trim().length > 0 && (selectedVibe || customVibe.trim().length > 0);
 
     const handleGenerate = () => {
-        // Use custom vibe if it's selected and has content
+        if (!isValid) return;
         const vibeToUse = selectedVibe === 'custom' && customVibe ? customVibe : selectedVibe;
-        onGenerate(prompt, vibeToUse, brandName);
+
+        // Find full gradient object if selected
+        const gradientObj = selectedGradient
+            ? GRADIENT_PRESETS.find(g => g.id === selectedGradient)
+            : null;
+
+        onGenerate({
+            prompt,
+            vibe: vibeToUse,
+            name: brandName,
+            color: selectedColor,
+            shape: selectedShape || undefined,
+            gradient: gradientObj ? { colors: gradientObj.colors, angle: gradientObj.angle } : null,
+        });
+    };
+
+    const handleSurpriseMe = () => {
+        // Pick random color family and shade
+        const families = Object.keys(COLOR_PALETTES);
+        const randomFamily = families[Math.floor(Math.random() * families.length)];
+        setActiveColorFamily(randomFamily);
+        const familyColors = COLOR_PALETTES[randomFamily as keyof typeof COLOR_PALETTES];
+        const randomColor = familyColors[Math.floor(Math.random() * familyColors.length)];
+        setSelectedColor(randomColor);
+
+        // Pick random shape
+        const randomShape = SHAPE_PRESETS[Math.floor(Math.random() * SHAPE_PRESETS.length)];
+        setSelectedShape(randomShape.id);
+
+        // Pick random gradient
+        const randomGradient = GRADIENT_PRESETS[Math.floor(Math.random() * GRADIENT_PRESETS.length)];
+        setSelectedGradient(randomGradient.id);
+
+        // Pick random vibe if none selected
+        if (!selectedVibe) {
+            const vibes = ['minimalist', 'tech', 'bold', 'nature', 'luxury', 'playful'];
+            const randomVibe = vibes[Math.floor(Math.random() * vibes.length)];
+            setSelectedVibe(randomVibe);
+        }
+
+        // For surprise me, we fill in defaults if missing so it's always valid
+        const finalName = brandName || "Surprise Brand";
+        const finalPrompt = prompt || "A surprise startup concept";
+
+        if (!brandName) setBrandName(finalName);
+        if (!prompt) setPrompt(finalPrompt);
+
+        // Trigger generation with surprise flag
+        onGenerate({
+            prompt: finalPrompt,
+            vibe: selectedVibe || "bold",
+            name: finalName,
+            color: randomColor,
+            shape: randomShape.id,
+            gradient: { colors: randomGradient.colors, angle: randomGradient.angle },
+            surpriseMe: true
+        });
+    };
+
+    // AI Assist: Expand Brief
+    const handleExpandBrief = async () => {
+        if (!prompt.trim() || isAiLoading) return;
+        setIsAiLoading(true);
+        console.log('[Reframe] Starting brief reframe for:', prompt);
+        try {
+            const expanded = await expandBriefWithAI(prompt);
+            console.log('[Reframe] Result:', expanded);
+            setPrompt(expanded);
+            // Also suggest a vibe based on the brief
+            const suggestedVibe = await suggestVibeWithAI(expanded);
+            console.log('[Reframe] Suggested vibe:', suggestedVibe);
+            setSelectedVibe(suggestedVibe);
+        } catch (error) {
+            console.error('[Reframe] Error:', error);
+        } finally {
+            setIsAiLoading(false);
+        }
+    };
+
+    // AI Assist: Expand Custom Vibe
+    const handleExpandVibe = async () => {
+        if (!customVibe.trim() || isAiLoading) return;
+        setIsAiLoading(true);
+        try {
+            const expanded = await expandVibeWithAI(customVibe);
+            setCustomVibe(expanded);
+        } finally {
+            setIsAiLoading(false);
+        }
     };
 
     return (
-        <aside className="w-full md:w-[400px] h-full bg-white border-r border-stone-200 p-8 flex flex-col z-20 shadow-xl overflow-y-auto scrollbar-hide">
-            {/* Logo */}
-            <div className="mb-8">
-                <h1 className="text-2xl font-bold tracking-tight text-stone-900">
-                    Glyph <span className="font-editorial text-stone-400">Station</span>
-                </h1>
-                <p className="text-xs text-stone-400 mt-1">Design Engineering Console</p>
-            </div>
+        <aside className="w-full md:w-[420px] h-full bg-white border-r border-stone-200 flex flex-col z-20 overflow-hidden" style={{ boxShadow: 'var(--shadow-lg)' }}>
 
-            {/* Brand Name Input */}
-            <div className="space-y-3 mb-6">
-                <label className="text-xs font-mono uppercase text-stone-400 tracking-widest">
-                    Brand Name
-                </label>
-                <input
-                    type="text"
-                    value={brandName}
-                    onChange={(e) => setBrandName(e.target.value)}
-                    className="w-full p-4 bg-white border border-stone-200 rounded-lg text-sm font-bold text-stone-900 focus:ring-2 focus:ring-[#FF4500] focus:border-transparent outline-none placeholder:text-stone-400 transition-all"
-                    placeholder="e.g. SafeAgree"
-                />
-            </div>
-
-            {/* Brief Input */}
-            <div className="space-y-3 mb-6">
-                <label className="text-xs font-mono uppercase text-stone-400 tracking-widest">
-                    The Brief
-                </label>
-                <textarea
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    className="w-full h-28 p-4 bg-white border border-stone-200 rounded-lg text-sm focus:ring-2 focus:ring-[#FF4500] focus:border-transparent outline-none resize-none placeholder:text-stone-400 transition-all"
-                    placeholder="e.g. A Terms and conditions reader startup for safety and security called 'SafeAgree'..."
-                />
-                <button
-                    onClick={handleGenerate}
-                    disabled={isGenerating}
-                    className="w-full py-4 bg-[#FF4500] hover:bg-orange-600 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60 shadow-lg hover:shadow-orange-200"
-                >
-                    <Sparkles className="w-4 h-4" />
-                    {isGenerating ? 'Generating...' : 'Generate System'}
-                </button>
-            </div>
-
-            {/* Vibe Selector */}
-            <div className="space-y-3 mb-6">
-                <label className="text-xs font-mono uppercase text-stone-400 tracking-widest">
-                    Select Your Vibe
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                    {VIBES.map((vibe) => (
-                        <button
-                            key={vibe.id}
-                            onClick={() => setSelectedVibe(vibe.id)}
-                            className={`p-3 rounded-lg border-2 text-left transition-all ${selectedVibe === vibe.id
-                                ? 'border-stone-950 bg-stone-950 text-white'
-                                : 'border-stone-200 bg-white hover:border-stone-400'
-                                }`}
-                        >
-                            <div className={`font-semibold text-sm ${selectedVibe === vibe.id ? 'text-white' : 'text-stone-950'}`}>
-                                {vibe.label}
-                            </div>
-                            <div className={`text-[10px] ${selectedVibe === vibe.id ? 'text-stone-300' : 'text-stone-400'}`}>
-                                {vibe.desc}
-                            </div>
-                        </button>
-                    ))}
+            {/* Console Header - Enhanced */}
+            <div className="p-5 border-b border-stone-100 flex items-center justify-between sticky top-0 bg-gradient-to-b from-white to-stone-50/50 backdrop-blur-sm z-10" style={{ boxShadow: 'var(--shadow-xs)' }}>
+                <div className="flex items-center gap-2.5 text-sm font-mono text-stone-600">
+                    <div className="w-6 h-6 rounded-md bg-gradient-to-br from-stone-900 to-stone-700 flex items-center justify-center shadow-sm ring-1 ring-stone-200/50">
+                        <span className="text-[10px] text-white font-bold">G</span>
+                    </div>
+                    <span className="tracking-tight font-semibold">GLYPH_CONSOLE</span>
+                    <span className="text-stone-300">/</span>
+                    <span className="text-stone-400 font-normal">NEW_PROJECT</span>
                 </div>
+                <div className="flex items-center gap-2.5">
+                    <span className="text-[10px] font-mono text-stone-500 px-2 py-0.5 bg-stone-100 rounded">v1.0</span>
+                    <div className="h-2 w-2 rounded-full bg-green-500" style={{ animation: 'pulse-glow 2s ease-in-out infinite' }} />
+                </div>
+            </div>
 
-                {/* Custom Vibe Input */}
-                <div className="mt-3">
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto scrollbar-hide p-6 space-y-10">
+
+                {/* SECTION 01: PROJECT IDENTITY */}
+                <section className="space-y-5" style={{ animation: 'fade-in 0.4s ease-out' }}>
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-bold tracking-wide text-stone-500 uppercase block">
+                            01 // Project Identity
+                        </label>
+                        <div className="h-px bg-gradient-to-r from-stone-200 via-stone-300 to-transparent" />
+                    </div>
+                    <div className="space-y-3">
+                        <input
+                            type="text"
+                            value={brandName}
+                            onChange={(e) => setBrandName(e.target.value)}
+                            className="w-full h-12 px-4 rounded-xl bg-stone-50 border border-stone-200 focus:border-stone-900 focus:ring-2 focus:ring-stone-900/10 outline-none font-semibold text-lg transition-all placeholder:text-stone-400 placeholder:font-normal hover:border-stone-300 hover:shadow-sm"
+                            placeholder="Brand Name (e.g. SafeAgree)"
+                            style={{ boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.03)' }}
+                        />
+                        <div className="relative group">
+                            <textarea
+                                value={prompt}
+                                onChange={(e) => setPrompt(e.target.value)}
+                                className="w-full h-24 p-4 rounded-xl bg-stone-50 border border-stone-200 focus:border-stone-900 focus:ring-2 focus:ring-stone-900/10 outline-none resize-none text-sm leading-relaxed placeholder:text-stone-400 transition-all hover:border-stone-300 hover:shadow-sm"
+                                placeholder="Describe the mission..."
+                                style={{ boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.03)' }}
+                            />
+                            <button
+                                onClick={handleExpandBrief}
+                                disabled={!prompt.trim() || isAiLoading}
+                                className="absolute bottom-3 right-3 px-3 py-1.5 text-[10px] font-semibold text-orange-600 bg-orange-50 rounded-md hover:bg-orange-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:shadow-sm active:scale-95"
+                            >
+                                {isAiLoading ? 'Reframing...' : 'Reframe'}
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                {/* SECTION 02: AESTHETIC ENGINE */}
+                <section className="space-y-5" style={{ animation: 'fade-in 0.5s ease-out' }}>
+                    <div className="flex justify-between items-end">
+                        <div className="space-y-2 flex-1">
+                            <label className="text-[10px] font-bold tracking-wide text-stone-500 uppercase block">
+                                02 // Aesthetic Engine
+                            </label>
+                            <div className="h-px bg-gradient-to-r from-stone-200 via-stone-300 to-transparent" />
+                        </div>
+                        <span className="text-[9px] text-stone-600 font-mono bg-gradient-to-br from-stone-100 to-stone-50 px-2.5 py-1 rounded-md border border-stone-200 shadow-xs">AI_TUNED</span>
+                    </div>
+                    <VibeSelector
+                        selectedVibe={selectedVibe}
+                        onVibeChange={setSelectedVibe}
+                    />
+
+                    {/* Custom Vibe Input */}
                     <div className="relative">
                         <input
                             type="text"
                             value={customVibe}
                             onChange={(e) => {
                                 setCustomVibe(e.target.value);
-                                if (e.target.value) {
-                                    setSelectedVibe('custom');
-                                }
+                                if (e.target.value) setSelectedVibe('custom');
                             }}
                             onFocus={() => setSelectedVibe('custom')}
-                            placeholder="Or describe your own vibe..."
-                            className={`w-full p-3 text-sm border-2 rounded-lg transition-all outline-none ${selectedVibe === 'custom'
-                                ? 'border-stone-950 bg-stone-50'
-                                : 'border-stone-200 bg-white hover:border-stone-300'
+                            placeholder="Or type your own vibe..."
+                            className={`w-full h-11 px-4 text-sm border rounded-xl transition-all outline-none ${selectedVibe === 'custom'
+                                ? 'ring-2 ring-stone-900 bg-stone-50 border-transparent shadow-sm'
+                                : 'border-stone-200 bg-stone-50 hover:border-stone-300 hover:shadow-sm'
                                 }`}
+                            style={{ boxShadow: selectedVibe === 'custom' ? 'var(--shadow-sm)' : 'inset 0 1px 2px rgba(0, 0, 0, 0.03)' }}
                         />
                         {selectedVibe === 'custom' && (
                             <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                <span className="text-[10px] font-mono text-stone-400 bg-stone-100 px-2 py-1 rounded">CUSTOM</span>
+                                <span className="text-[9px] font-mono text-stone-600 bg-stone-200 px-2 py-1 rounded-md shadow-xs">CUSTOM</span>
                             </div>
                         )}
                     </div>
-                    <p className="text-[10px] text-stone-400 mt-1.5">
-                        e.g. "Playful & colorful like Figma" or "Dark & techy like Linear"
-                    </p>
-                </div>
-            </div>
+                </section>
 
-            {/* Logo Shape Selector */}
-            <div className="space-y-3 pt-6 border-t border-stone-100">
-                <label className="text-xs font-mono uppercase text-stone-400 tracking-widest">
-                    Logo Shape
-                </label>
-                <div className="grid grid-cols-6 gap-2">
-                    {[
-                        { id: 'geo-hexagon', path: 'M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9z' },
-                        { id: 'geo-diamond', path: 'M12 2L2 12l10 10 10-10L12 2z' },
-                        { id: 'geo-circle', path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z' },
-                        { id: 'geo-triangle', path: 'M12 2L2 22h20L12 2z' },
-                        { id: 'geo-square', path: 'M3 3h18v18H3z' },
-                        { id: 'tech-bolt', path: 'M7 2v11h3v9l7-12h-4l4-8z' },
-                        { id: 'org-star', path: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z' },
-                        { id: 'org-heart', path: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' },
-                        { id: 'abs-plus', path: 'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z' },
-                        { id: 'tech-layers', path: 'M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.62-1.26-7.39 5.73zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z' },
-                        { id: 'org-leaf', path: 'M17 8C8 10 5.9 16.17 3.82 21.34 5.71 18.06 8.4 15 12 13c-3 3-5 7-5 11 5-1 9-3 13-9 1-1.5 1-4-3-7z' },
-                        { id: 'mark-arrow-ne', path: 'M9 5v2h6.59L4 18.59 5.41 20 17 8.41V15h2V5H9z' },
-                    ].map((shape) => (
+                {/* SECTION 03: VISUAL PRIMITIVES */}
+                <section className="space-y-6" style={{ animation: 'fade-in 0.6s ease-out' }}>
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-bold tracking-wide text-stone-500 uppercase block">
+                            03 // Visual Primitives
+                        </label>
+                        <div className="h-px bg-gradient-to-r from-stone-200 via-stone-300 to-transparent" />
+                    </div>
+
+                    {/* SHAPE GRID - Collapsible */}
+                    <div className="space-y-3">
                         <button
-                            key={shape.id}
-                            className="aspect-square bg-white border border-stone-200 rounded-lg p-2 hover:border-stone-400 hover:bg-stone-50 transition-all group"
-                            title={shape.id}
+                            onClick={() => setIsShapesOpen(!isShapesOpen)}
+                            className="w-full flex items-center justify-between group"
                         >
-                            <svg viewBox="0 0 24 24" className="w-full h-full fill-stone-400 group-hover:fill-stone-900 transition-colors">
-                                <path d={shape.path} />
-                            </svg>
+                            <span className="text-[10px] font-mono text-stone-500 font-semibold group-hover:text-stone-800 transition-colors">SHAPE_LIBRARY</span>
+                            <div className={`transition-transform duration-200 ${isShapesOpen ? 'rotate-180' : ''}`}>
+                                <svg width="10" height="6" viewBox="0 0 10 6" fill="none" className="opacity-40 group-hover:opacity-100 transition-opacity">
+                                    <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </div>
                         </button>
-                    ))}
-                </div>
-                <p className="text-[10px] text-stone-400">Click to lock a shape for generation</p>
-            </div>
 
-            {/* Color Palette Picker (shadcn style) */}
-            <div className="space-y-3 pt-6 border-t border-stone-100">
-                <div className="flex items-center justify-between">
-                    <label className="text-xs font-mono uppercase text-stone-400 tracking-widest">
-                        Primary Color
-                    </label>
-                    <span className="text-xs font-mono text-stone-500">{selectedColor}</span>
-                </div>
+                        {isShapesOpen && (
+                            <div className="grid grid-cols-6 gap-2 pt-2 animate-in slide-in-from-top-2 duration-200">
+                                {SHAPE_PRESETS.map((shape) => (
+                                    <button
+                                        key={shape.id}
+                                        onClick={() => setSelectedShape(selectedShape === shape.id ? null : shape.id)}
+                                        className={`aspect-square rounded-lg border transition-all duration-200 flex items-center justify-center group ${selectedShape === shape.id
+                                            ? 'ring-2 ring-stone-900 border-transparent bg-stone-100 shadow-md'
+                                            : 'border-stone-200 bg-white hover:border-stone-400 hover:bg-stone-50 hover:shadow-sm hover:-translate-y-0.5'
+                                            }`}
+                                    >
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            className={`w-5 h-5 transition-colors ${selectedShape === shape.id ? 'text-stone-900' : 'text-stone-400 group-hover:text-stone-600'}`}
+                                        >
+                                            <path d={shape.path} fill="currentColor" />
+                                        </svg>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                        {!isShapesOpen && selectedShape && (
+                            <div className="pt-1">
+                                <div className="text-[10px] font-mono text-stone-400 flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                                    <span>Shape Selected: {selectedShape.replace('geo-', '').replace('org-', '').replace('tech-', '').replace('abs-', '')}</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
 
-                {/* Color Family Selector */}
-                <div className="flex flex-wrap gap-1.5">
-                    {Object.entries(COLOR_PALETTES).map(([name, colors]) => (
-                        <button
-                            key={name}
-                            onClick={() => setActiveColorFamily(activeColorFamily === name ? null : name)}
-                            className={`w-5 h-5 rounded-md transition-all hover:scale-110 ${activeColorFamily === name ? 'ring-2 ring-stone-950 ring-offset-1' : ''}`}
-                            style={{ backgroundColor: colors[5] }}
-                            title={name}
-                        />
-                    ))}
-                </div>
+                    {/* COLOR SWATCHES - Enhanced */}
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-mono text-stone-500 font-semibold">COLOR_PALETTE</span>
+                            <span className="text-[10px] font-mono text-stone-600 bg-stone-100 px-2 py-1 rounded-md">{selectedColor}</span>
+                        </div>
 
-                {/* Active Palette Shades */}
-                {activeColorFamily && (
-                    <div className="bg-stone-50 rounded-lg p-3 space-y-2">
-                        <div className="text-xs font-semibold text-stone-600 capitalize">{activeColorFamily}</div>
-                        <div className="flex gap-0.5">
-                            {COLOR_PALETTES[activeColorFamily as keyof typeof COLOR_PALETTES].map((color, i) => (
+                        {/* Color Circles - 8 per row */}
+                        <div className="grid grid-cols-8 gap-2.5">
+                            {Object.entries(COLOR_PALETTES).map(([name, colors]) => (
                                 <button
-                                    key={i}
-                                    onClick={() => setSelectedColor(color)}
-                                    className={`flex-1 h-8 first:rounded-l-md last:rounded-r-md transition-all hover:scale-y-110 relative ${selectedColor === color ? 'ring-2 ring-stone-950 ring-offset-1 z-10' : ''}`}
-                                    style={{ backgroundColor: color }}
-                                    title={color}
+                                    key={name}
+                                    onClick={() => {
+                                        setActiveColorFamily(activeColorFamily === name ? null : name);
+                                        setSelectedColor(colors[5]);
+                                    }}
+                                    className={`group relative w-full aspect-square rounded-full border transition-all duration-200 focus:ring-2 ring-offset-2 ring-stone-900 outline-none ${activeColorFamily === name
+                                        ? 'ring-2 ring-offset-2 ring-stone-900 shadow-md scale-110'
+                                        : 'border-stone-200 hover:scale-110 hover:shadow-sm'
+                                        }`}
+                                    title={name}
                                 >
-                                    {selectedColor === color && (
-                                        <Check className={`w-3 h-3 absolute inset-0 m-auto ${i < 5 ? 'text-stone-900' : 'text-white'}`} />
-                                    )}
+                                    <div className="absolute inset-1 rounded-full shadow-inner" style={{ backgroundColor: colors[5] }} />
                                 </button>
                             ))}
                         </div>
-                        <div className="flex justify-between text-[8px] font-mono text-stone-400 px-1">
-                            <span>50</span>
-                            <span>500</span>
-                            <span>950</span>
-                        </div>
-                    </div>
-                )}
 
-                {/* Selected Color Preview */}
-                <div className="flex items-center gap-3 p-3 bg-stone-50 rounded-lg">
-                    <div
-                        className="w-10 h-10 rounded-lg shadow-inner border border-stone-200"
-                        style={{ backgroundColor: selectedColor }}
-                    />
-                    <div>
-                        <div className="text-xs font-semibold text-stone-900">Selected Primary</div>
-                        <div className="text-[10px] font-mono text-stone-500">{selectedColor}</div>
+                        {/* Active Palette Shades */}
+                        {activeColorFamily && (
+                            <div className="bg-gradient-to-br from-stone-50 to-stone-100 rounded-xl p-3 space-y-2 border border-stone-200 shadow-sm" style={{ animation: 'fade-in 0.3s ease-out' }}>
+                                <div className="text-[9px] font-mono text-stone-600 uppercase font-semibold tracking-wider">{activeColorFamily}</div>
+                                <div className="flex gap-1">
+                                    {COLOR_PALETTES[activeColorFamily as keyof typeof COLOR_PALETTES].map((color, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={() => setSelectedColor(color)}
+                                            className={`flex-1 h-6 first:rounded-l-md last:rounded-r-md transition-all duration-200 hover:scale-y-110 hover:shadow-sm relative ${selectedColor === color ? 'ring-2 ring-stone-900 ring-offset-2 z-10 shadow-md' : ''
+                                                }`}
+                                            style={{ backgroundColor: color }}
+                                        >
+                                            {selectedColor === color && (
+                                                <Check className={`w-3 h-3 absolute inset-0 m-auto drop-shadow-sm ${i < 5 ? 'text-stone-900' : 'text-white'}`} />
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
-                </div>
+
+
+                </section>
+
+            </div>
+
+            {/* Sticky Generate Button Footer - Enhanced */}
+            <div className="p-5 border-t border-stone-200 bg-gradient-to-t from-stone-50 to-white flex gap-3" style={{ boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.03)' }}>
+                <button
+                    onClick={handleSurpriseMe}
+                    disabled={isGenerating}
+                    className="p-4 bg-gradient-to-br from-stone-100 to-stone-50 hover:from-stone-200 hover:to-stone-100 text-stone-700 rounded-xl transition-all duration-200 flex items-center justify-center disabled:opacity-60 active:scale-95 border border-stone-200 hover:border-stone-300 hover:shadow-md group"
+                    title="Surprise Me"
+                    style={{ boxShadow: 'var(--shadow-sm)' }}
+                >
+                    <Shuffle className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
+                </button>
+                <button
+                    onClick={handleGenerate}
+                    disabled={isGenerating || !isValid}
+                    className="flex-1 py-4 bg-gradient-to-r from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:shadow-lg"
+                    title={!isValid ? "Please enter a brand name and description" : "Generate System"}
+                    style={{ boxShadow: 'var(--shadow-md)' }}
+                >
+                    <span className="tracking-button">{isGenerating ? 'Generating...' : 'Generate System'}</span>
+                </button>
             </div>
         </aside>
     );

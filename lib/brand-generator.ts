@@ -182,3 +182,283 @@ function generateFallbackBrand(description: string): BrandData {
         logoPath: LOGO_PATHS[logoStyle],
     };
 }
+
+// ============================================
+// GOD-TIER GENERATION (with Art Director prompt)
+// ============================================
+
+import {
+    CURATED_PALETTES,
+    CURATED_ICONS,
+    getPaletteById,
+    type BrandDNA,
+    type BrandVibe
+} from './design-dna';
+import { ART_DIRECTOR_PROMPT, generateUserPrompt, validateAIResponse } from './prompts';
+
+export async function generateGodTierBrand(
+    brandName: string,
+    description: string,
+    vibe: string
+): Promise<BrandDNA | null> {
+    const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY;
+
+    if (!apiKey) {
+        console.warn("GROQ_API_KEY not set, using fallback");
+        return generateFallbackDNA(brandName, description, vibe as BrandVibe);
+    }
+
+    try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                    { role: 'system', content: ART_DIRECTOR_PROMPT },
+                    { role: 'user', content: generateUserPrompt(brandName, description, vibe as BrandVibe) }
+                ],
+                temperature: 0.6, // Lower for more consistent results
+                max_tokens: 600,
+                response_format: { type: "json_object" }
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Groq API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const content = data.choices[0]?.message?.content;
+
+        if (!content) {
+            throw new Error("No content in Groq response");
+        }
+
+        console.log('[God-Tier] Raw AI response:', content);
+
+        const parsed = JSON.parse(content);
+        const validated = validateAIResponse(parsed);
+
+        if (!validated) {
+            console.warn('[God-Tier] Validation failed, using fallback');
+            return generateFallbackDNA(brandName, description, vibe as BrandVibe);
+        }
+
+        // Resolve palette to actual colors
+        const palette = getPaletteById(validated.colors.paletteId);
+        if (!palette) {
+            console.warn('[God-Tier] Palette not found:', validated.colors.paletteId);
+            return generateFallbackDNA(brandName, description, vibe as BrandVibe);
+        }
+
+        console.log('[God-Tier] Selected palette:', palette.name);
+        console.log('[God-Tier] Selected icon:', validated.logo.iconName);
+
+        return {
+            name: validated.name,
+            tagline: validated.tagline,
+            vibe: validated.vibe,
+            logo: {
+                iconName: validated.logo.iconName,
+                shape: validated.logo.shape,
+                layout: validated.logo.layout,
+            },
+            colors: {
+                primary: palette.colors.primary,
+                accent: palette.colors.accent,
+                surface: palette.colors.surface,
+                text: palette.colors.text,
+                paletteId: palette.id,
+            },
+            typography: {
+                headingFont: validated.typography.headingFont as BrandDNA['typography']['headingFont'],
+                bodyFont: "Inter",
+            },
+        };
+
+    } catch (error) {
+        console.error('[God-Tier] Generation failed:', error);
+        return generateFallbackDNA(brandName, description, vibe as BrandVibe);
+    }
+}
+
+// Fallback when AI unavailable
+function generateFallbackDNA(name: string, description: string, vibe: BrandVibe): BrandDNA {
+    const lowerDesc = description.toLowerCase();
+
+    // Select palette based on keywords
+    let paletteId = "slate_trust";
+    let iconName = "Zap";
+
+    if (lowerDesc.includes("finance") || lowerDesc.includes("legal")) {
+        paletteId = "deep_ocean";
+        iconName = "Shield";
+    } else if (lowerDesc.includes("tech") || lowerDesc.includes("ai")) {
+        paletteId = "cyber_blue";
+        iconName = "Cpu";
+    } else if (lowerDesc.includes("nature") || lowerDesc.includes("eco")) {
+        paletteId = "sage_garden";
+        iconName = "Leaf";
+    } else if (lowerDesc.includes("luxury") || lowerDesc.includes("premium")) {
+        paletteId = "noir_elegance";
+        iconName = "Gem";
+    } else if (vibe === "bold" || vibe === "playful") {
+        paletteId = "neon_orange";
+        iconName = "Sparkles";
+    }
+
+    const palette = getPaletteById(paletteId) || CURATED_PALETTES[0];
+
+    return {
+        name: name || "Brand",
+        tagline: "Built with Glyph.",
+        vibe,
+        logo: {
+            iconName,
+            shape: "squircle",
+            layout: "stacked",
+        },
+        colors: {
+            primary: palette.colors.primary,
+            accent: palette.colors.accent,
+            surface: palette.colors.surface,
+            text: palette.colors.text,
+            paletteId: palette.id,
+        },
+        typography: {
+            headingFont: "Manrope",
+            bodyFont: "Inter",
+        },
+    };
+}
+
+// ============================================
+// AI ASSIST FUNCTIONS
+// ============================================
+
+// AI-powered brief expansion
+export async function expandBriefWithAI(shortBrief: string): Promise<string> {
+    const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY;
+
+    if (!apiKey || shortBrief.length < 3) {
+        return shortBrief;
+    }
+
+    try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a brand copywriter. Take the user's rough brand idea and reframe it into a clearer, more compelling 1-2 sentence description. Fix grammar, sharpen the positioning, and make it sound professional. Keep the core meaning. No quotes or markdown.`
+                    },
+                    { role: 'user', content: shortBrief }
+                ],
+                temperature: 0.6,
+                max_tokens: 80,
+            }),
+        });
+
+        if (!response.ok) throw new Error('API error');
+
+        const data = await response.json();
+        return data.choices[0]?.message?.content?.trim() || shortBrief;
+
+    } catch {
+        return shortBrief;
+    }
+}
+
+// AI-powered vibe suggestion
+export async function suggestVibeWithAI(brief: string): Promise<string> {
+    const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY;
+
+    if (!apiKey || brief.length < 3) {
+        return "minimalist";
+    }
+
+    try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                    {
+                        role: 'system',
+                        content: `Based on the brand description, suggest the BEST vibe. Respond with ONLY one word from this list: minimalist, tech, nature, bold. Nothing else.`
+                    },
+                    { role: 'user', content: brief }
+                ],
+                temperature: 0.3,
+                max_tokens: 10,
+            }),
+        });
+
+        if (!response.ok) throw new Error('API error');
+
+        const data = await response.json();
+        const suggestion = data.choices[0]?.message?.content?.trim()?.toLowerCase();
+
+        // Validate it's one of our vibes
+        if (['minimalist', 'tech', 'nature', 'bold'].includes(suggestion)) {
+            return suggestion;
+        }
+        return "minimalist";
+
+    } catch {
+        return "minimalist";
+    }
+}
+
+// AI-powered custom vibe description
+export async function expandVibeWithAI(vibeKeywords: string): Promise<string> {
+    const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY;
+
+    if (!apiKey || vibeKeywords.length < 2) {
+        return vibeKeywords;
+    }
+
+    try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                    {
+                        role: 'system',
+                        content: `Reframe the user's vibe keywords into a cleaner, more specific vibe phrase (under 10 words). Make it punchy and clear. Just the phrase, no quotes or explanation.`
+                    },
+                    { role: 'user', content: vibeKeywords }
+                ],
+                temperature: 0.6,
+                max_tokens: 30,
+            }),
+        });
+
+        if (!response.ok) throw new Error('API error');
+
+        const data = await response.json();
+        return data.choices[0]?.message?.content?.trim() || vibeKeywords;
+
+    } catch {
+        return vibeKeywords;
+    }
+}

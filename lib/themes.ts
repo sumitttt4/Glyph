@@ -12,6 +12,8 @@ export interface ThemeTokens {
     surface: string;     // Card/Panel backgrounds
     muted: string;       // Muted text
     border: string;      // Borders
+    accent?: string;     // Secondary accent
+    gradient?: [string, string]; // Gradient pair [start, end]
 }
 
 export interface Theme {
@@ -42,6 +44,8 @@ export const THEMES: Theme[] = [
                 surface: '#FFFFFF',
                 muted: '#78716C',    // Stone-500
                 border: '#E7E5E4',   // Stone-200
+                accent: '#EA580C',
+                gradient: ['#FF4500', '#FB923C'],
             },
             dark: {
                 bg: '#0C0A09',
@@ -50,6 +54,8 @@ export const THEMES: Theme[] = [
                 surface: '#1C1917',
                 muted: '#A8A29E',
                 border: '#292524',
+                accent: '#F97316',
+                gradient: ['#FF6332', '#0C0A09'],
             },
         },
     },
@@ -70,6 +76,8 @@ export const THEMES: Theme[] = [
                 surface: '#FFFFFF',
                 muted: '#64748B',
                 border: '#E2E8F0',
+                accent: '#818CF8',
+                gradient: ['#38BDF8', '#818CF8'],
             },
             dark: {
                 bg: '#0F172A',       // Slate-900
@@ -78,6 +86,8 @@ export const THEMES: Theme[] = [
                 surface: '#1E293B',
                 muted: '#94A3B8',
                 border: '#334155',
+                accent: '#A78BFA',
+                gradient: ['#0F172A', '#1E293B'],
             },
         },
     },
@@ -98,6 +108,8 @@ export const THEMES: Theme[] = [
                 surface: '#FFFFFF',
                 muted: '#4D7C0F',
                 border: '#D9F99D',
+                accent: '#22C55E',
+                gradient: ['#65A30D', '#22C55E'],
             },
             dark: {
                 bg: '#14202A',
@@ -106,6 +118,8 @@ export const THEMES: Theme[] = [
                 surface: '#1F2D20',
                 muted: '#A3E635',
                 border: '#365314',
+                accent: '#10B981',
+                gradient: ['#14202A', '#1F2D20'],
             },
         },
     },
@@ -126,6 +140,8 @@ export const THEMES: Theme[] = [
                 surface: '#FFFFFF',
                 muted: '#6B7280',
                 border: '#E0E7FF',
+                accent: '#A855F7',
+                gradient: ['#6366F1', '#A855F7'],
             },
             dark: {
                 bg: '#0C0A1D',
@@ -134,6 +150,8 @@ export const THEMES: Theme[] = [
                 surface: '#1E1B4B',
                 muted: '#A5B4FC',
                 border: '#312E81',
+                accent: '#C084FC',
+                gradient: ['#4F46E5', '#7C3AED'],
             },
         },
     },
@@ -154,6 +172,8 @@ export const THEMES: Theme[] = [
                 surface: '#FFFFFF',
                 muted: '#9A3412',
                 border: '#FED7AA',
+                accent: '#EC4899',
+                gradient: ['#F97316', '#EC4899'],
             },
             dark: {
                 bg: '#1C1210',
@@ -162,6 +182,8 @@ export const THEMES: Theme[] = [
                 surface: '#292018',
                 muted: '#FDBA74',
                 border: '#7C2D12',
+                accent: '#F472B6',
+                gradient: ['#EA580C', '#DB2777'],
             },
         },
     },
@@ -182,6 +204,8 @@ export const THEMES: Theme[] = [
                 surface: '#FAFAFA',
                 muted: '#525252',
                 border: '#E5E5E5',
+                accent: '#404040',
+                gradient: ['#1A1A1A', '#404040'],
             },
             dark: {
                 bg: '#000000',
@@ -190,6 +214,8 @@ export const THEMES: Theme[] = [
                 surface: '#171717',
                 muted: '#A3A3A3',
                 border: '#262626',
+                accent: '#D4D4D4',
+                gradient: ['#171717', '#3F3F3F'],
             },
         },
     },
@@ -210,6 +236,8 @@ export const THEMES: Theme[] = [
                 surface: '#FFFFFF',
                 muted: '#9F1239',
                 border: '#FECDD3',
+                accent: '#FB7185',
+                gradient: ['#E11D48', '#F97316'],
             },
             dark: {
                 bg: '#1C0A10',
@@ -218,6 +246,8 @@ export const THEMES: Theme[] = [
                 surface: '#2D0F18',
                 muted: '#FDA4AF',
                 border: '#9F1239',
+                accent: '#FBBF24',
+                gradient: ['#BE123C', '#9A3412'],
             },
         },
     },
@@ -238,6 +268,8 @@ export const THEMES: Theme[] = [
                 surface: '#FFFFFF',
                 muted: '#0369A1',
                 border: '#BAE6FD',
+                accent: '#06B6D4',
+                gradient: ['#0284C7', '#06B6D4'],
             },
             dark: {
                 bg: '#0C1929',
@@ -246,6 +278,8 @@ export const THEMES: Theme[] = [
                 surface: '#0C2744',
                 muted: '#7DD3FC',
                 border: '#075985',
+                accent: '#22D3EE',
+                gradient: ['#0369A1', '#0891B2'],
             },
         },
     },
@@ -266,6 +300,8 @@ export const THEMES: Theme[] = [
                 surface: '#FFFFFF',
                 muted: '#92400E',
                 border: '#FDE68A',
+                accent: '#F59E0B',
+                gradient: ['#D97706', '#F59E0B'],
             },
             dark: {
                 bg: '#1C1608',
@@ -274,6 +310,8 @@ export const THEMES: Theme[] = [
                 surface: '#2C2210',
                 muted: '#FCD34D',
                 border: '#78350F',
+                accent: '#FDE047',
+                gradient: ['#B45309', '#CA8A04'],
             },
         },
     },
@@ -294,6 +332,8 @@ export const THEMES: Theme[] = [
                 surface: '#FFFFFF',
                 muted: '#A21CAF',
                 border: '#F5D0FE',
+                accent: '#06B6D4',
+                gradient: ['#D946EF', '#06B6D4'],
             },
             dark: {
                 bg: '#120F14',
@@ -302,6 +342,8 @@ export const THEMES: Theme[] = [
                 surface: '#1E1623',
                 muted: '#F0ABFC',
                 border: '#701A75',
+                accent: '#22D3EE',
+                gradient: ['#A855F7', '#06B6D4'],
             },
         },
     },

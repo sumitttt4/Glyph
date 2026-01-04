@@ -29,8 +29,8 @@ export interface BrandIdentity {
     name: string;
     tags: string[];
     tokens: {
-      light: { bg: string; text: string; primary: string; surface: string; muted: string; border: string };
-      dark: { bg: string; text: string; primary: string; surface: string; muted: string; border: string };
+      light: { bg: string; text: string; primary: string; surface: string; muted: string; border: string; accent?: string; gradient?: [string, string] };
+      dark: { bg: string; text: string; primary: string; surface: string; muted: string; border: string; accent?: string; gradient?: [string, string] };
     };
   };
   shape: {
@@ -40,6 +40,7 @@ export interface BrandIdentity {
     viewBox: string;
     tags: string[];
   };
+  canvasStyle?: 'solid' | 'gradient' | 'mesh';  // Background style
   font: FontPair;
   strategy?: {
     mission: string;

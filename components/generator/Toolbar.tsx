@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Sun, Moon, Download, ChevronDown, FileCode, Image, Package, Code2, Share2, Link, Copy, Check } from 'lucide-react';
+import { Sun, Moon, Download, ChevronDown, FileCode, Image, Package, Code2, Share2, Link, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ToolbarProps {
     isDark: boolean;
@@ -9,9 +9,16 @@ interface ToolbarProps {
     onExport?: (type: string) => void;
     viewMode: 'overview' | 'presentation';
     setViewMode: (mode: 'overview' | 'presentation') => void;
+    // History Props
+    canUndo?: boolean;
+    canRedo?: boolean;
+    onUndo?: () => void;
+    onRedo?: () => void;
+    currentHistoryIndex?: number;
+    totalHistory?: number;
 }
 
-export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode }: ToolbarProps) {
+export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, canUndo, canRedo, onUndo, onRedo, currentHistoryIndex, totalHistory }: ToolbarProps) {
     const [showExport, setShowExport] = useState(false);
     const [showShare, setShowShare] = useState(false);
     const [copied, setCopied] = useState(false);
@@ -33,6 +40,31 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode }:
 
     return (
         <div className="flex items-center gap-3">
+            {/* History Controls - Undo/Redo */}
+            {(onUndo && onRedo) && (
+                <div className="flex border border-stone-200 rounded-lg p-0.5 bg-white shadow-sm h-10 mr-2 items-center">
+                    <button
+                        onClick={onUndo}
+                        disabled={!canUndo}
+                        className="w-9 h-full flex items-center justify-center text-stone-500 hover:text-stone-900 disabled:opacity-30 disabled:hover:text-stone-500 transition-colors border-r border-stone-100"
+                        title="Previous Brand"
+                    >
+                        <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <div className="px-3 text-[10px] font-mono font-medium text-stone-400 select-none">
+                        {currentHistoryIndex} / {totalHistory}
+                    </div>
+                    <button
+                        onClick={onRedo}
+                        disabled={!canRedo}
+                        className="w-9 h-full flex items-center justify-center text-stone-500 hover:text-stone-900 disabled:opacity-30 disabled:hover:text-stone-500 transition-colors border-l border-stone-100"
+                        title="Next Brand"
+                    >
+                        <ChevronRight className="w-4 h-4" />
+                    </button>
+                </div>
+            )}
+
             {/* View Mode Toggle */}
             <div className="flex border border-stone-200 rounded-lg p-0.5 bg-white shadow-sm mr-2 h-10">
                 <button
