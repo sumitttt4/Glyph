@@ -113,125 +113,33 @@ export default function LandingPage() {
             </div>
 
             {/* Right: Browser Mockup - Dense Composition */}
-            <div className="hidden lg:flex justify-center items-center">
+            <div className="hidden md:flex justify-center items-center mt-8 lg:mt-0">
               <BrowserMockup />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ==================== FEATURES SECTION - Clean Bento Grid ==================== */}
-      <section id="features" className="py-24 bg-white border-t border-stone-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Engineered for Excellence</h2>
-            <p className="text-lg text-stone-500 max-w-2xl mx-auto">
-              Glyph isn't a template library. It's a computational design system that obeys the rules of high-end branding.
-            </p>
-          </div>
 
-          {/* Clean Bento Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
 
-            {/* Feature 1: Parametric - Large */}
-            <div className="lg:col-span-2 bg-stone-50 border border-stone-200 rounded-2xl p-8 relative overflow-hidden group hover:border-stone-300 transition-all">
-              <div className="relative z-10">
-                <div className="w-10 h-10 rounded-lg bg-stone-900 flex items-center justify-center text-white mb-5">
-                  <Zap className="w-5 h-5" />
-                </div>
-                <h3 className="text-xl font-bold tracking-tight mb-2 text-stone-900">Parametric Generation</h3>
-                <p className="text-stone-500 text-sm leading-relaxed max-w-md">
-                  Algorithms define spacing, scale, and color harmony. Every output is mathematically balanced.
-                </p>
-              </div>
-              {/* Decorative Grid */}
-              <div className="absolute right-6 top-6 w-32 h-32 opacity-20">
-                <div className="grid grid-cols-4 grid-rows-4 gap-1.5 h-full">
-                  {[...Array(16)].map((_, i) => (
-                    <div key={i} className="rounded bg-stone-400" style={{ opacity: 0.3 + (i % 4) * 0.2 }} />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 2: Contextual - Tall */}
-            <div className="row-span-2 bg-stone-900 text-white rounded-2xl p-8 relative overflow-hidden group">
-              <div className="relative z-10">
-                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-white mb-5">
-                  <Palette className="w-5 h-5" />
-                </div>
-                <h3 className="text-xl font-bold tracking-tight mb-2">Contextual Mockups</h3>
-                <p className="text-stone-400 text-sm leading-relaxed">
-                  See your brand on phones, cards, and websites instantly.
-                </p>
-              </div>
-              {/* Mini Phone Visual */}
-              <div className="absolute bottom-6 right-6 w-28 opacity-80">
-                <div className="bg-stone-700 rounded-xl p-1 shadow-xl">
-                  <div className="bg-white rounded-lg aspect-[9/16] p-1.5">
-                    <div className="h-1.5 w-6 bg-stone-200 rounded mb-1.5 mx-auto"></div>
-                    <div className="h-8 bg-stone-100 rounded mb-1.5"></div>
-                    <div className="space-y-1">
-                      <div className="h-1 w-full bg-stone-100 rounded"></div>
-                      <div className="h-1 w-2/3 bg-stone-50 rounded"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 3: Production - Wide */}
-            <div className="lg:col-span-2 bg-stone-50 border border-stone-200 rounded-2xl p-8 relative overflow-hidden group hover:border-stone-300 transition-all">
-              <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6">
-                <div className="flex-1">
-                  <div className="w-10 h-10 rounded-lg bg-stone-900 flex items-center justify-center text-white mb-5">
-                    <Code className="w-5 h-5" />
-                  </div>
-                  <h3 className="text-xl font-bold tracking-tight mb-2 text-stone-900">Production Ready</h3>
-                  <p className="text-stone-500 text-sm leading-relaxed">
-                    Export as Tailwind CSS config, JSON tokens, or SVG assets.
-                  </p>
-                </div>
-                {/* Code Snippet Visual */}
-                <div className="flex-1 max-w-xs">
-                  <div className="bg-stone-900 rounded-lg p-3 font-mono text-[10px] text-stone-300 shadow-lg">
-                    <div className="flex items-center gap-1 mb-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-stone-600"></div>
-                      <div className="w-1.5 h-1.5 rounded-full bg-stone-600"></div>
-                      <div className="w-1.5 h-1.5 rounded-full bg-stone-600"></div>
-                    </div>
-                    <code className="text-stone-400">
-                      <span className="text-stone-500">export</span> theme = {'{'}<br />
-                      &nbsp;&nbsp;primary: <span className="text-[#FF4500]">"#EA580C"</span>,<br />
-                      &nbsp;&nbsp;surface: <span className="text-stone-300">"#FAFAF9"</span><br />
-                      {'}'};
-                    </code>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
 
       {/* ==================== SHOWCASE SECTION - The "Bridge" ==================== */}
       <section id="how-it-works" className="py-24 bg-stone-50 overflow-hidden">
         <div className="max-w-[95%] xl:max-w-7xl mx-auto">
           {/* Dark Container - The Bridge */}
-          <div className="bg-stone-950 text-white rounded-3xl p-8 lg:p-16 overflow-hidden relative">
+          <div className="bg-stone-950 text-white rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-16 overflow-hidden relative">
             {/* Subtle background pattern */}
             <div className="absolute inset-0 opacity-5"
               style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
             </div>
 
-            <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-stone-700 bg-stone-800/50 text-stone-300 text-xs font-mono mb-6 uppercase tracking-widest">
                   Generation Engine v1
                 </div>
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-                  Visualize your startup in <br /> <span className="text-[#FF4500]">High Fidelity</span>.
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6">
+                  Visualize your startup in <br className="hidden md:block" /> <span className="text-[#FF4500]">High Fidelity</span>.
                 </h2>
                 <p className="text-stone-400 text-lg mb-8 leading-relaxed">
                   Stop guessing how your color palette looks on a mobile device or a business card. Glyph renders real-time 3D mockups of your brand identity system.
@@ -258,7 +166,7 @@ export default function LandingPage() {
               </div>
 
               {/* Brand Identity Bento Grid */}
-              <div className="grid grid-cols-3 grid-rows-3 gap-3 h-[480px]">
+              <div className="hidden lg:grid grid-cols-3 grid-rows-3 gap-3 h-[480px]">
 
                 {/* Logo Block - Large */}
                 <div className="col-span-2 row-span-1 bg-white rounded-2xl p-6 flex items-center justify-between overflow-hidden group hover:shadow-lg transition-shadow">

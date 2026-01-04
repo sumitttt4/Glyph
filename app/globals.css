@@ -11,8 +11,23 @@
   --color-structure: #E7E5E4;
   --color-accent: #FF4500;
 
-  /* Sharp corners for engineering feel */
-  --radius: 0px;
+  /* ========================= */
+  /* PHASE 1: DESIGN DNA       */
+  /* ========================= */
+
+  /* "So Matcha" Organic Curves */
+  --radius-board: 2.5rem;
+  --radius-card: 1.5rem;
+  --radius-pill: 9999px;
+
+  /* "Studio" Shadows (Soft, Ambient, Expensive) */
+  --shadow-studio: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+  --shadow-float: 0 10px 30px -5px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 4px 20px -4px rgba(0, 0, 0, 0.1);
+
+  /* "Editorial" Spacing (Dense vs Airy) */
+  --spacing-18: 4.5rem;
+  --spacing-30: 7.5rem;
 }
 
 :root {

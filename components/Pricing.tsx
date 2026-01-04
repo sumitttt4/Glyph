@@ -3,16 +3,16 @@ import Link from "next/link";
 
 export default function Pricing() {
     return (
-        <section id="pricing" className="py-24 px-6 bg-stone-50 border-t border-stone-200">
+        <section id="pricing" className="py-16 md:py-24 px-4 md:px-6 bg-stone-50 border-t border-stone-200">
             <div className="max-w-4xl mx-auto">
 
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-stone-950 tracking-tight mb-2">Simple, Transparent Pricing.</h2>
-                    <p className="text-stone-500">Build for free. Pay only when you're ready to ship.</p>
+                <div className="text-center mb-8 md:mb-12">
+                    <h2 className="text-2xl md:text-3xl font-bold text-stone-950 tracking-tight mb-2">Simple, Transparent Pricing.</h2>
+                    <p className="text-stone-500 text-sm md:text-base">Build for free. Pay only when you're ready to ship.</p>
                 </div>
 
                 {/* PRICING GRID */}
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
                     {/* FREE TIER - The "Anchor" */}
                     <div className="relative group">
@@ -140,9 +140,12 @@ export default function Pricing() {
                                     ))}
                                 </ul>
 
-                                <button className="w-full bg-[#FF4500] hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition-all shadow-lg hover:shadow-orange-200 active:scale-[0.98] flex items-center justify-center gap-2">
+                                <a
+                                    href="https://checkout.dodopayments.com/buy/pdt_0NVXcrRSqLnWomnnrEIla?quantity=1&redirect_url=https://brand-identity-ivory.vercel.app%2F"
+                                    className="w-full bg-[#FF4500] hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition-all shadow-lg hover:shadow-orange-200 active:scale-[0.98] flex items-center justify-center gap-2"
+                                >
                                     Get Lifetime Access
-                                </button>
+                                </a>
 
                                 <div className="mt-4 flex items-center justify-center gap-2 text-xs text-stone-400">
                                     <ShieldCheck className="w-3 h-3" />
