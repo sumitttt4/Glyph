@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Sun, Moon, Download, ChevronDown, FileCode, Image, Package } from 'lucide-react';
+import { Sun, Moon, Download, ChevronDown, FileCode, Image, Package, Code2, Share2, Link, Copy, Check } from 'lucide-react';
 
 interface ToolbarProps {
     isDark: boolean;
@@ -13,12 +13,23 @@ interface ToolbarProps {
 
 export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode }: ToolbarProps) {
     const [showExport, setShowExport] = useState(false);
+    const [showShare, setShowShare] = useState(false);
+    const [copied, setCopied] = useState(false);
 
     const exportOptions = [
-        { id: 'tailwind', label: 'Tailwind Config', icon: FileCode },
-        { id: 'svg', label: 'SVG Logo', icon: Image },
-        { id: 'all', label: 'Full Package', icon: Package },
+        { id: 'tailwind', label: 'Tailwind Config', icon: FileCode, desc: 'CSS variables & tokens' },
+        { id: 'svg', label: 'SVG Logo', icon: Image, desc: 'Vector format' },
+        { id: 'react', label: 'React Component', icon: Code2, desc: 'Copy-paste ready' },
+        { id: 'all', label: 'Full Package', icon: Package, desc: 'ZIP with all assets' },
     ];
+
+    const handleShare = () => {
+        // Generate a share link (in production this would save to DB)
+        const shareUrl = `${window.location.origin}/share/${Date.now().toString(36)}`;
+        navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
 
     return (
         <div className="flex items-center gap-3">
@@ -58,6 +69,31 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode }:
                 </button>
             </div>
 
+            {/* Share Button */}
+            <div className="relative">
+                <button
+                    onClick={() => setShowShare(!showShare)}
+                    className="flex items-center gap-2 p-2.5 border border-stone-200 rounded-full bg-white shadow-sm text-stone-700 hover:border-stone-400 transition-all"
+                    title="Share"
+                >
+                    <Share2 className="w-4 h-4" />
+                </button>
+
+                {showShare && (
+                    <div className="absolute top-full right-0 mt-2 w-64 bg-white border border-stone-200 rounded-xl shadow-xl overflow-hidden z-50 p-4">
+                        <div className="text-sm font-semibold text-stone-900 mb-2">Share Preview</div>
+                        <p className="text-xs text-stone-500 mb-3">Generate a public link to share your brand with clients.</p>
+                        <button
+                            onClick={handleShare}
+                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-stone-900 text-white rounded-lg text-sm font-medium hover:bg-stone-800 transition-colors"
+                        >
+                            {copied ? <Check className="w-4 h-4" /> : <Link className="w-4 h-4" />}
+                            {copied ? 'Link Copied!' : 'Copy Share Link'}
+                        </button>
+                    </div>
+                )}
+            </div>
+
             {/* Export Dropdown */}
             <div className="relative">
                 <button
@@ -70,7 +106,7 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode }:
                 </button>
 
                 {showExport && (
-                    <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-stone-200 rounded-lg shadow-xl overflow-hidden z-50">
+                    <div className="absolute top-full right-0 mt-2 w-56 bg-white border border-stone-200 rounded-xl shadow-xl overflow-hidden z-50">
                         {exportOptions.map((option) => (
                             <button
                                 key={option.id}
@@ -78,10 +114,15 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode }:
                                     onExport?.(option.id);
                                     setShowExport(false);
                                 }}
-                                className="w-full px-4 py-3 text-left text-sm hover:bg-stone-50 flex items-center gap-3 transition-colors"
+                                className="w-full px-4 py-3 text-left hover:bg-stone-50 flex items-center gap-3 transition-colors group"
                             >
-                                <option.icon className="w-4 h-4 text-stone-400" />
-                                {option.label}
+                                <div className="w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center group-hover:bg-stone-200 transition-colors">
+                                    <option.icon className="w-4 h-4 text-stone-600" />
+                                </div>
+                                <div>
+                                    <div className="text-sm font-medium text-stone-900">{option.label}</div>
+                                    <div className="text-[10px] text-stone-400">{option.desc}</div>
+                                </div>
                             </button>
                         ))}
                     </div>

@@ -92,3 +92,31 @@ body {
 .rounded-none-important {
   border-radius: 0 !important;
 }
+
+/* Shadcn-style animated line dot */
+@keyframes moveDown {
+
+  0%,
+  100% {
+    top: 0;
+    opacity: 1;
+  }
+
+  50% {
+    top: calc(100% - 8px);
+    opacity: 0.5;
+  }
+}
+
+/* Hide scrollbar but keep functionality (opt-in) */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
+}

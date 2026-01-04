@@ -120,8 +120,29 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ==================== ANIMATED LINE (shadcn style) ==================== */}
+      <div className="relative py-16 bg-stone-50">
+        <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center">
+          {/* Top Arrow */}
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="none" className="text-stone-300 mb-2">
+            <path d="M6 0L12 8H0L6 0Z" fill="currentColor" />
+          </svg>
 
+          {/* The Line with dots */}
+          <div className="relative">
+            <div className="w-[2px] h-32 bg-gradient-to-b from-stone-300 via-stone-400 to-stone-300 rounded-full" />
 
+            {/* Animated dot */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-stone-500 animate-pulse"
+              style={{ animation: 'moveDown 2s ease-in-out infinite' }} />
+          </div>
+
+          {/* Bottom Arrow */}
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="none" className="text-stone-300 mt-2 rotate-180">
+            <path d="M6 0L12 8H0L6 0Z" fill="currentColor" />
+          </svg>
+        </div>
+      </div>
 
       {/* ==================== SHOWCASE SECTION - The "Bridge" ==================== */}
       <section id="how-it-works" className="py-24 bg-stone-50 overflow-hidden">
