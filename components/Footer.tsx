@@ -86,9 +86,14 @@ export function Footer() {
                     <p className="text-sm text-stone-500">
                         © 2026 Glyph Systems. All rights reserved.
                     </p>
-                    <p className="text-sm text-stone-500">
-                        Built with <span className="text-red-400">♥</span> for founders and developers.
-                    </p>
+                    <a
+                        href="https://sumitsharmaa.me"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-stone-500 hover:text-stone-300 transition-colors"
+                    >
+                        Made by <span className="text-white hover:underline">Sumit</span>
+                    </a>
                 </div>
             </div>
         </footer>
