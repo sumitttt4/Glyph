@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { BrandIdentity } from '@/lib/data';
 import { Copy, Check, Shuffle, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { SlideCover, SlideStrategy, SlideLogo, SlideColors } from '@/components/generator/BrandSlides';
+import { SlideCover, SlideStrategy, SlideLogo, SlideColors, SlideTypography } from '@/components/generator/BrandSlides';
 import { Mockup3DCard } from '@/components/mockups/Mockup3DCard';
 import { MockupDevice, MockupBrowser } from '@/components/mockups/MockupDevice';
 import { BrowserBrandPreview } from '@/components/mockups/BrowserBrandPreview';
@@ -198,6 +198,7 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, v
                 <SlideStrategy brand={brand} />
                 <SlideLogo brand={brand} />
                 <SlideColors brand={brand} />
+                <SlideTypography brand={brand} />
             </div>
         );
     }

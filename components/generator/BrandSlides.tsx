@@ -1,8 +1,12 @@
 "use client";
 
+import { useState } from 'react';
 import { BrandIdentity } from '@/lib/data';
-import { cn } from '@/lib/utils';
+import { cn, hexToRgb, hexToCmyk } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { Check, Copy, ExternalLink, ArrowRight } from 'lucide-react';
+
+// ... (SlideLayout remains same)
 
 // ==================== SHARED LAYOUT ====================
 const SlideLayout = ({
@@ -27,7 +31,7 @@ const SlideLayout = ({
 
         {/* Header */}
         {title && (
-            <div className="flex justify-between items-start mb-12 relative z-10 border-b border-white/10 pb-6">
+            <div className="flex justify-between items-start mb-8 relative z-10 border-b border-white/10 pb-6">
                 <div>
                     <h2 className="text-sm font-mono uppercase tracking-widest text-white/50 mb-1">Glyph Generator</h2>
                     <h3 className="text-2xl font-bold tracking-tight">{title}</h3>
@@ -107,54 +111,53 @@ export const SlideStrategy = ({ brand }: { brand: BrandIdentity }) => {
 // ==================== 3. LOGO CONSTRUCTION ====================
 export const SlideLogo = ({ brand }: { brand: BrandIdentity }) => (
     <SlideLayout brand={brand} title="Logo Marks">
-        <div className="grid grid-cols-4 gap-4 h-full">
-            {/* Primary */}
-            <div className="col-span-2 bg-white rounded-lg p-8 flex flex-col justify-between text-black">
-                <div className="w-32 h-32" style={{ color: brand.theme.tokens.light.primary }}>
-                    <svg viewBox="0 0 24 24" className="w-full h-full fill-current">
-                        <path d={brand.shape.path} />
-                    </svg>
+        <div className="grid grid-cols-4 grid-rows-2 gap-6 h-full">
+            {/* Primary Mark - Bigger */}
+            <div className="col-span-2 row-span-2 bg-white rounded-xl p-8 flex flex-col justify-between text-black relative group">
+                <div className="flex-1 flex items-center justify-center">
+                    <div className="w-48 h-48" style={{ color: brand.theme.tokens.light.primary }}>
+                        <svg viewBox="0 0 24 24" className="w-full h-full fill-current drop-shadow-2xl">
+                            <path d={brand.shape.path} />
+                        </svg>
+                    </div>
                 </div>
-                <div>
-                    <span className="text-xs uppercase font-bold tracking-widest">Primary Mark</span>
+                <div className="border-t border-black/10 pt-4 mt-4">
+                    <span className="text-xs uppercase font-bold tracking-widest opacity-60">Primary Mark</span>
                 </div>
             </div>
 
             {/* Monotone */}
-            <div className="col-span-1 bg-stone-900 rounded-lg p-6 flex flex-col justify-between text-white border border-white/10">
-                <div className="w-16 h-16 text-white">
+            <div className="col-span-1 row-span-1 bg-stone-900 rounded-xl p-6 flex flex-col justify-between text-white border border-white/10">
+                <div className="w-16 h-16 text-white self-center">
                     <svg viewBox="0 0 24 24" className="w-full h-full fill-current">
                         <path d={brand.shape.path} />
                     </svg>
                 </div>
-                <span className="text-[10px] uppercase font-bold tracking-widest opacity-50">Monotone</span>
+                <span className="text-[10px] uppercase font-bold tracking-widest opacity-50 text-center">Monotone</span>
             </div>
 
-            {/* Reversed / Accent */}
-            <div className="col-span-1 rounded-lg p-6 flex flex-col justify-between text-white" style={{ backgroundColor: brand.theme.tokens.dark.primary }}>
-                <div className="w-16 h-16 text-white">
+            {/* Accent */}
+            <div className="col-span-1 row-span-1 rounded-xl p-6 flex flex-col justify-between text-white" style={{ backgroundColor: brand.theme.tokens.dark.primary }}>
+                <div className="w-16 h-16 text-white self-center">
                     <svg viewBox="0 0 24 24" className="w-full h-full fill-current">
                         <path d={brand.shape.path} />
                     </svg>
                 </div>
-                <span className="text-[10px] uppercase font-bold tracking-widest opacity-50">Accent</span>
+                <span className="text-[10px] uppercase font-bold tracking-widest opacity-80 text-center">Accent</span>
             </div>
 
-            {/* Clear Space Diagram */}
-            <div className="col-span-4 mt-4 border border-white/10 rounded-lg p-8 relative flex items-center justify-center">
-                <div className="absolute top-4 left-4 text-xs font-mono text-white/40">CLEAR SPACE</div>
-
-                <div className="relative">
-                    {/* Guides */}
-                    <div className="absolute -inset-8 border border-dashed border-white/20"></div>
-                    <div className="absolute -inset-8 flex justify-center"><div className="h-full border-r border-dashed border-white/20"></div></div>
-                    <div className="absolute -inset-8 flex items-center"><div className="w-full border-t border-dashed border-white/20"></div></div>
-
-                    <div className="w-32 h-32 relative z-10" style={{ color: brand.theme.tokens.dark.text }}>
+            {/* Clear Space Diagram - Updated Layout */}
+            <div className="col-span-2 row-span-1 border border-white/10 rounded-xl p-6 relative flex items-center justify-center bg-white/5">
+                <div className="absolute top-4 left-4 text-[10px] font-mono text-white/40 uppercase tracking-widest">Clear Space</div>
+                <div className="relative p-6 border border-dashed border-white/20">
+                    <div className="w-16 h-16" style={{ color: brand.theme.tokens.dark.text }}>
                         <svg viewBox="0 0 24 24" className="w-full h-full fill-current">
                             <path d={brand.shape.path} />
                         </svg>
                     </div>
+                    {/* Measurement lines */}
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-mono text-white/40">x</div>
+                    <div className="absolute top-1/2 -right-3 -translate-y-1/2 text-[10px] font-mono text-white/40">x</div>
                 </div>
             </div>
         </div>
@@ -162,27 +165,126 @@ export const SlideLogo = ({ brand }: { brand: BrandIdentity }) => (
 );
 
 // ==================== 4. COLOR PALETTE ====================
+// Helper Card
+const ColorCard = ({ label, hex, dark = false }: { label: string, hex: string, dark?: boolean }) => {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(hex.toUpperCase());
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    return (
+        <div
+            onClick={handleCopy}
+            className={cn(
+                "rounded-xl p-6 flex flex-col justify-between relative group cursor-pointer transition-all hover:scale-[1.02]",
+                dark ? "text-white" : "text-black bg-white"
+            )}
+            style={{ backgroundColor: dark ? hex : 'white' }}
+        >
+            {/* Color Swatch if card is white */}
+            {!dark && (
+                <div className="w-12 h-12 rounded-full mb-4 border border-black/10" style={{ backgroundColor: hex }} />
+            )}
+
+            <div className="space-y-4">
+                <div>
+                    <div className={cn("font-mono text-xs mb-1 uppercase tracking-wider", dark ? "opacity-50" : "opacity-40")}>{label}</div>
+                    <div className="font-bold text-2xl tracking-tight">{hex.toUpperCase()}</div>
+                </div>
+
+                {/* Technical Values */}
+                <div className="space-y-1 pt-4 border-t border-current border-opacity-10">
+                    <div className="flex justify-between text-[10px] font-mono opacity-60">
+                        <span>RGB</span>
+                        <span>{hexToRgb(hex)}</span>
+                    </div>
+                    <div className="flex justify-between text-[10px] font-mono opacity-60">
+                        <span>CMYK</span>
+                        <span>{hexToCmyk(hex)}</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Hover Copy Indicator */}
+            <div className={cn(
+                "absolute top-4 right-4 p-2 rounded-full transition-all opacity-0 group-hover:opacity-100",
+                copied ? "bg-green-500 text-white" : "bg-black/10 text-current"
+            )}>
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+            </div>
+        </div>
+    );
+};
+
 export const SlideColors = ({ brand }: { brand: BrandIdentity }) => {
     const t = brand.theme.tokens;
 
     return (
         <SlideLayout brand={brand} title="Color Palette">
-            <div className="grid grid-cols-5 h-full gap-4">
-                <div className="col-span-2 bg-white rounded-xl p-6 text-black flex flex-col justify-end">
-                    <div className="font-mono text-xs mb-1 opacity-50">Background (Light)</div>
-                    <div className="font-bold">{t.light.bg}</div>
+            <div className="grid grid-cols-4 h-full gap-6">
+                <ColorCard label="Primary" hex={t.light.primary} dark />
+                <ColorCard label="Background (Dark)" hex={t.dark.bg} dark />
+                <ColorCard label="Surface" hex={t.dark.bg} dark />{/* Note: Surface usually matches bg in this simplified model, or slightly lighter */}
+                <ColorCard label="Neutral" hex={t.dark.border} dark />
+            </div>
+        </SlideLayout>
+    );
+};
+
+// ==================== 5. TYPOGRAPHY ====================
+export const SlideTypography = ({ brand }: { brand: BrandIdentity }) => {
+    return (
+        <SlideLayout brand={brand} title="Typography">
+            <div className="grid grid-cols-12 gap-8 h-full">
+                {/* Left: Font Info */}
+                <div className="col-span-5 flex flex-col justify-between">
+                    <div>
+                        <div className="text-sm font-mono text-[#CCFF00] uppercase tracking-widest mb-4">Primary Typeface</div>
+                        <h1 className="text-5xl font-bold mb-2">{brand.font.name}</h1>
+                        <p className="text-white/60 text-lg leading-relaxed">
+                            A modern, versatile typeface selected to communicate {brand.vibe} and clarity.
+                        </p>
+                    </div>
+
+                    <div>
+                        <a
+                            href={`https://fonts.google.com/specimen/${brand.font.name.replace(/\s+/g, '+')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-full font-semibold hover:bg-stone-200 transition-colors"
+                        >
+                            <span>Get Font</span>
+                            <ExternalLink size={16} />
+                        </a>
+                    </div>
                 </div>
-                <div className="col-span-1 rounded-xl p-6 text-white flex flex-col justify-end" style={{ backgroundColor: t.light.primary }}>
-                    <div className="font-mono text-xs mb-1 opacity-70">Primary</div>
-                    <div className="font-bold uppercase opacity-90">Brand</div>
-                </div>
-                <div className="col-span-1 rounded-xl p-6 text-white flex flex-col justify-end" style={{ backgroundColor: t.dark.bg }}>
-                    <div className="font-mono text-xs mb-1 opacity-50">Surface</div>
-                    <div className="font-bold">{t.dark.bg}</div>
-                </div>
-                <div className="col-span-1 rounded-xl p-6 text-white flex flex-col justify-end" style={{ backgroundColor: t.dark.border }}>
-                    <div className="font-mono text-xs mb-1 opacity-50">Neutral</div>
-                    <div className="font-bold">{t.dark.border}</div>
+
+                {/* Right: Specimen */}
+                <div className="col-span-7 bg-white/5 rounded-2xl p-8 border border-white/10 flex flex-col justify-center space-y-12">
+                    {/* Alphabet */}
+                    <div className="space-y-4">
+                        <p className="text-xs font-mono text-white/40 uppercase tracking-widest">Characters</p>
+                        <p className={cn("text-3xl leading-relaxed text-white/90 break-words", brand.font.heading)}>
+                            Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz
+                        </p>
+                        <p className={cn("text-3xl leading-relaxed text-white/60 tracking-widest", brand.font.heading)}>
+                            0123456789
+                        </p>
+                    </div>
+
+                    {/* Sample Paragraph */}
+                    <div className="space-y-4">
+                        <p className="text-xs font-mono text-white/40 uppercase tracking-widest">Usage</p>
+                        <div className="border-l-2 border-[#CCFF00] pl-6 space-y-4">
+                            <h3 className={cn("text-2xl font-bold", brand.font.heading)}>The quick brown fox jumps over the lazy dog.</h3>
+                            <p className="text-white/70 leading-relaxed">
+                                Efficiently unleash cross-media information without cross-media value. Quickly maximize timely deliverables for real-time schemas. Dramatically maintain clicks-and-mortar solutions without functional solutions.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </SlideLayout>
