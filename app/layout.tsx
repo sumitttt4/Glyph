@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { manrope, instrumentSerif } from "@/lib/brand-fonts";
 
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`${manrope.variable} ${instrumentSerif.variable}`}>
       <body className="antialiased min-h-screen bg-stone-50 font-sans">
         {children}
+        <Analytics />
       </body>
     </html>
   );
