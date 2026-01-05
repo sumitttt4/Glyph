@@ -238,51 +238,41 @@ export const SlideColors = ({ brand }: { brand: BrandIdentity }) => {
 export const SlideTypography = ({ brand }: { brand: BrandIdentity }) => {
     return (
         <SlideLayout brand={brand} title="Typography">
-            <div className="grid grid-cols-12 gap-8 h-full">
+            <div className="grid grid-cols-12 gap-12 h-full items-center">
                 {/* Left: Font Info */}
-                <div className="col-span-5 flex flex-col justify-between">
-                    <div>
-                        <div className="text-sm font-mono text-[#CCFF00] uppercase tracking-widest mb-4">Primary Typeface</div>
-                        <h1 className="text-5xl font-bold mb-2">{brand.font.name}</h1>
-                        <p className="text-white/60 text-lg leading-relaxed">
+                <div className="col-span-5 flex flex-col h-full justify-center">
+                    <div className="mb-auto pt-12">
+                        <div className="text-xs font-mono text-[#CCFF00] uppercase tracking-widest mb-6 font-bold">Primary Typeface</div>
+                        <h1 className={cn("text-7xl font-bold mb-6 tracking-tight", brand.font.heading)}>{brand.font.name}</h1>
+                        <p className="text-white/60 text-xl leading-relaxed font-light max-w-md">
                             A modern, versatile typeface selected to communicate {brand.vibe} and clarity.
                         </p>
                     </div>
-
-                    <div>
-                        <a
-                            href={`https://fonts.google.com/specimen/${brand.font.name.replace(/\s+/g, '+')}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-full font-semibold hover:bg-stone-200 transition-colors"
-                        >
-                            <span>Get Font</span>
-                            <ExternalLink size={16} />
-                        </a>
-                    </div>
                 </div>
 
-                {/* Right: Specimen */}
-                <div className="col-span-7 bg-white/5 rounded-2xl p-8 border border-white/10 flex flex-col justify-center space-y-12">
-                    {/* Alphabet */}
-                    <div className="space-y-4">
-                        <p className="text-xs font-mono text-white/40 uppercase tracking-widest">Characters</p>
-                        <p className={cn("text-3xl leading-relaxed text-white/90 break-words", brand.font.heading)}>
-                            Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz
-                        </p>
-                        <p className={cn("text-3xl leading-relaxed text-white/60 tracking-widest", brand.font.heading)}>
-                            0123456789
-                        </p>
-                    </div>
+                {/* Right: Specimen Card */}
+                <div className="col-span-7 h-full">
+                    <div className="bg-[#111] rounded-2xl p-10 h-full border border-white/5 flex flex-col justify-between relative overflow-hidden">
+                        {/* Subtle gradient glow */}
+                        <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/5 blur-[100px] rounded-full pointer-events-none" />
 
-                    {/* Sample Paragraph */}
-                    <div className="space-y-4">
-                        <p className="text-xs font-mono text-white/40 uppercase tracking-widest">Usage</p>
-                        <div className="border-l-2 border-[#CCFF00] pl-6 space-y-4">
-                            <h3 className={cn("text-2xl font-bold", brand.font.heading)}>The quick brown fox jumps over the lazy dog.</h3>
-                            <p className="text-white/70 leading-relaxed">
-                                Efficiently unleash cross-media information without cross-media value. Quickly maximize timely deliverables for real-time schemas. Dramatically maintain clicks-and-mortar solutions without functional solutions.
+                        {/* Alphabet */}
+                        <div className="space-y-6 relative z-10">
+                            <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest font-bold">Characters</p>
+                            <p className={cn("text-4xl leading-relaxed text-white/90 break-words font-normal tracking-wide", brand.font.heading)}>
+                                Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz
                             </p>
+                            <p className={cn("text-4xl leading-relaxed text-white/50 tracking-wideness font-normal", brand.font.heading)}>
+                                0123456789
+                            </p>
+                        </div>
+
+                        {/* Usage */}
+                        <div className="space-y-6 relative z-10 pt-12 mt-auto">
+                            <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest font-bold">Usage</p>
+                            <div className="border-l-2 border-[#CCFF00] pl-8 py-2">
+                                <h3 className={cn("text-3xl font-bold mb-4", brand.font.heading)}>The quick brown fox jumps over the lazy dog.</h3>
+                            </div>
                         </div>
                     </div>
                 </div>

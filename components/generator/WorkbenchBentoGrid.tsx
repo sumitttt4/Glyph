@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { BrandIdentity } from '@/lib/data';
+import { cn } from '@/lib/utils';
 import { Copy, Check, Shuffle, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { SlideCover, SlideStrategy, SlideLogo, SlideColors, SlideTypography } from '@/components/generator/BrandSlides';
@@ -361,92 +362,94 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, v
                 {/* 6. Typography Spec - The "Type Specimen" */}
                 <div
                     onClick={onSwapFont}
-                    className="md:col-span-12 md:row-span-1 h-auto min-h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden relative cursor-pointer group hover:bg-stone-50 transition-colors bg-white border border-stone-200"
+                    className="md:col-span-12 md:row-span-1 h-auto min-h-[400px] rounded-[2.5rem] shadow-xl overflow-hidden relative cursor-pointer group hover:bg-stone-50 transition-colors bg-white border border-stone-200"
                 >
-                    <div className="p-8 md:p-10 flex flex-col justify-between h-full">
-                        <div className="flex justify-between items-start mb-8">
+                    <div className="p-8 md:p-12 flex flex-col h-full">
+                        {/* Header */}
+                        <div className="flex justify-between items-start mb-12">
                             <div>
-                                <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-1">Type Scale</h3>
-                                <p className="text-stone-500 font-mono text-xs">8 Styles • {brand.font.name}</p>
+                                <h3 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-2">Type Scale</h3>
+                                <p className="text-stone-500 font-mono text-xs tracking-tight">8 Styles • {brand.font.name}</p>
                             </div>
-                            <div className="p-2 bg-stone-100 rounded-full group-hover:rotate-180 transition-transform duration-500">
-                                <RefreshCw className="w-5 h-5 text-stone-400" />
+                            <div className="p-3 bg-stone-100 rounded-full group-hover:rotate-180 transition-transform duration-500 hover:bg-stone-200">
+                                <RefreshCw className="w-5 h-5 text-stone-500" />
                             </div>
                         </div>
 
-                        {/* Type Scale Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+                        {/* Type Scale Grid - 4 Columns */}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 items-baseline">
+
                             {/* Column 1: Display */}
-                            <div className="space-y-6">
-                                <div className="group/item">
-                                    <p className="text-xs font-mono text-stone-400 mb-1">H1 • 96px</p>
-                                    <p className="text-7xl md:text-8xl font-bold leading-none text-stone-900 tracking-tighter">Aa</p>
+                            <div className="space-y-12">
+                                <div className="group/item relative">
+                                    <div className="flex items-baseline gap-3 mb-2">
+                                        <span className="text-[10px] font-bold text-stone-300 uppercase tracking-wider">H1</span>
+                                        <span className="text-[10px] font-mono text-stone-300">• 96px</span>
+                                    </div>
+                                    <p className={cn("text-8xl md:text-9xl leading-none text-stone-900", brand.font.heading)}>Aa</p>
                                 </div>
-                                <div className="group/item">
-                                    <p className="text-xs font-mono text-stone-400 mb-1">H2 • 60px</p>
-                                    <p className="text-5xl md:text-6xl font-bold leading-tight text-stone-900 tracking-tighter">Title</p>
+                                <div className="group/item relative">
+                                    <div className="flex items-baseline gap-3 mb-2">
+                                        <span className="text-[10px] font-bold text-stone-300 uppercase tracking-wider">H2</span>
+                                        <span className="text-[10px] font-mono text-stone-300">• 60px</span>
+                                    </div>
+                                    <p className={cn("text-6xl md:text-7xl leading-tight text-stone-900 break-words", brand.font.heading)}>Title</p>
                                 </div>
                             </div>
 
-                            {/* Column 2: Headings */}
-                            <div className="space-y-6 flex flex-col justify-end">
-                                <div className="group/item border-b border-stone-100 pb-2">
-                                    <div className="flex justify-between items-baseline w-full">
-                                        <p className="text-4xl md:text-5xl font-bold text-stone-900 tracking-tight">Heading 3</p>
-                                        <span className="text-[10px] font-mono text-stone-400">48px</span>
-                                    </div>
+                            {/* Column 2: Major Headings */}
+                            <div className="space-y-10 self-center">
+                                <div className="group/item flex items-baseline justify-between border-b border-stone-100 pb-3">
+                                    <p className={cn("text-5xl text-stone-900 leading-tight", brand.font.heading)}>Heading 3</p>
+                                    <span className="text-[10px] font-mono text-stone-300 shrink-0 ml-4">48px</span>
                                 </div>
-                                <div className="group/item border-b border-stone-100 pb-2">
-                                    <div className="flex justify-between items-baseline w-full">
-                                        <p className="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Heading 4</p>
-                                        <span className="text-[10px] font-mono text-stone-400">36px</span>
-                                    </div>
+                                <div className="group/item flex items-baseline justify-between border-b border-stone-100 pb-3">
+                                    <p className={cn("text-4xl text-stone-900 leading-tight", brand.font.heading)}>Heading 4</p>
+                                    <span className="text-[10px] font-mono text-stone-300 shrink-0 ml-4">36px</span>
                                 </div>
-                                <div className="group/item border-b border-stone-100 pb-2">
-                                    <div className="flex justify-between items-baseline w-full">
-                                        <p className="text-2xl md:text-3xl font-bold text-stone-900 tracking-tight">Heading 5</p>
-                                        <span className="text-[10px] font-mono text-stone-400">30px</span>
-                                    </div>
+                                <div className="group/item flex items-baseline justify-between border-b border-stone-100 pb-3">
+                                    <p className={cn("text-3xl text-stone-900 leading-tight", brand.font.heading)}>Heading 5</p>
+                                    <span className="text-[10px] font-mono text-stone-300 shrink-0 ml-4">30px</span>
                                 </div>
                             </div>
 
-                            {/* Column 3: Subheadings */}
-                            <div className="space-y-6 flex flex-col justify-end">
-                                <div className="group/item border-b border-stone-100 pb-2">
-                                    <div className="flex justify-between items-baseline w-full">
-                                        <p className="text-xl md:text-2xl font-semibold text-stone-900 tracking-tight">Heading 6</p>
-                                        <span className="text-[10px] font-mono text-stone-400">24px</span>
-                                    </div>
+                            {/* Column 3: Minor Headings */}
+                            <div className="space-y-8 self-center">
+                                <div className="group/item flex items-baseline justify-between border-b border-stone-100 pb-2">
+                                    <p className="text-2xl font-semibold text-stone-900">Heading 6</p>
+                                    <span className="text-[10px] font-mono text-stone-300 shrink-0 ml-4">24px</span>
                                 </div>
-                                <div className="group/item border-b border-stone-100 pb-2">
-                                    <div className="flex justify-between items-baseline w-full">
-                                        <p className="text-lg md:text-xl font-medium text-stone-800 tracking-tight">Heading 7</p>
-                                        <span className="text-[10px] font-mono text-stone-400">20px</span>
-                                    </div>
+                                <div className="group/item flex items-baseline justify-between border-b border-stone-100 pb-2">
+                                    <p className="text-xl font-medium text-stone-800">Heading 7</p>
+                                    <span className="text-[10px] font-mono text-stone-300 shrink-0 ml-4">20px</span>
                                 </div>
-                                <div className="group/item border-b border-stone-100 pb-2">
-                                    <div className="flex justify-between items-baseline w-full">
-                                        <p className="text-base md:text-lg font-medium text-stone-800 tracking-tight">Heading 8</p>
-                                        <span className="text-[10px] font-mono text-stone-400">18px</span>
-                                    </div>
+                                <div className="group/item flex items-baseline justify-between border-b border-stone-100 pb-2">
+                                    <p className="text-lg font-medium text-stone-800">Heading 8</p>
+                                    <span className="text-[10px] font-mono text-stone-300 shrink-0 ml-4">18px</span>
                                 </div>
                             </div>
 
-                            {/* Column 4: Body & Caption */}
-                            <div className="space-y-4 flex flex-col justify-end">
+                            {/* Column 4: Body & UI */}
+                            <div className="space-y-8">
                                 <div>
-                                    <p className="text-base leading-relaxed text-stone-600">
+                                    <p className="text-base leading-relaxed text-stone-600 mb-3">
                                         The quick brown fox jumps over the lazy dog. A good typography system establishes hierarchy and improves readability across all devices.
                                     </p>
-                                    <p className="text-[10px] font-mono text-stone-400 mt-2">Body • 16px</p>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-mono text-stone-300">Body • 16px</span>
+                                    </div>
                                 </div>
-                                <div className="pt-4 border-t border-stone-100">
-                                    <p className="text-xs text-stone-500 uppercase tracking-widest">
+
+                                <div className="pt-8 border-t border-stone-100">
+                                    <p className="text-xs text-stone-400 uppercase tracking-widest font-bold mb-2">
                                         Caption Text
                                     </p>
-                                    <p className="text-[10px] font-mono text-stone-400 mt-1">Caption • 12px</p>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-mono text-stone-300">Caption • 12px</span>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
