@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useCallback } from 'react';
-import { Sidebar } from '@/components/generator/Sidebar';
+import { useState, useCallback, useEffect } from 'react';
+import { Sidebar, GenerationOptions } from '@/components/generator/Sidebar';
 import { Toolbar } from '@/components/generator/Toolbar';
 import { LoadingState } from '@/components/generator/LoadingState';
 import { WorkbenchBentoGrid } from '@/components/generator/WorkbenchBentoGrid';
 import { ProGateModal } from '@/components/generator/ProGateModal';
 import { useBrandGenerator } from '@/hooks/use-brand-generator';
-
-import { GenerationOptions } from '@/components/generator/Sidebar';
+import { createClient } from '@/utils/supabase/client';
 
 export default function GeneratorPage() {
   const brandGenerators = useBrandGenerator();
@@ -17,9 +16,21 @@ export default function GeneratorPage() {
   const [selectedVibe, setSelectedVibe] = useState('minimalist');
   const [viewMode, setViewMode] = useState<'overview' | 'presentation'>('overview');
   const [showProModal, setShowProModal] = useState(false);
+  const [isPro, setIsPro] = useState(false);
 
-  // TODO: Replace with actual Pro status check from auth/database
-  const isPro = false;
+  useEffect(() => {
+    const checkAccess = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+
+      // Grant Pro access to specific admin email
+      if (user?.email === 'sumitsharma9128@gmail.com') {
+        setIsPro(true);
+      }
+    };
+
+    checkAccess();
+  }, []);
 
   const handleGenerate = useCallback((options: GenerationOptions) => {
     generateBrand(options.vibe, options.name, {
