@@ -1,6 +1,9 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+const SUPABASE_URL = 'https://fvvzawoqzgeymcickvtn.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_ULULffspaJObTYOmXo0N-Q_j1h9Mk7V';
+
 export async function middleware(request: NextRequest) {
     let response = NextResponse.next({
         request: {
@@ -9,8 +12,8 @@ export async function middleware(request: NextRequest) {
     });
 
     const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        process.env.NEXT_PUBLIC_SUPABASE_URL || SUPABASE_URL,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY,
         {
             cookies: {
                 getAll() {
