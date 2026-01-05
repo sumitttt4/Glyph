@@ -8,6 +8,10 @@ import { SlideCover, SlideStrategy, SlideLogo, SlideColors } from '@/components/
 import { Mockup3DCard } from '@/components/mockups/Mockup3DCard';
 import { MockupDevice, MockupBrowser } from '@/components/mockups/MockupDevice';
 import { BrowserBrandPreview } from '@/components/mockups/BrowserBrandPreview';
+import { ColorPaletteHorizontal } from '@/components/generator/ColorPaletteStrip';
+import { AppIconVariants } from '@/components/generator/AppIconVariants';
+import { MockupCreditCard, MockupIDBadge } from '@/components/mockups/MockupMerch';
+import { MockupIPhoneHome } from '@/components/mockups/MockupIPhoneHome';
 
 // The Monogram Engine: Intelligently combines Shape + Letter
 function MonogramMark({ brand, color, bg }: { brand: BrandIdentity, color: string, bg: string }) {
@@ -210,27 +214,22 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, v
                     <BrowserBrandPreview brand={brand} />
                 </div>
 
-                {/* 3. Color Palette - The "Chips" */}
-                {/* Spans 3 columns */}
-                <div className="md:col-span-3 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden flex flex-col border border-stone-200 bg-white">
-                    <div className="p-6 pb-2">
-                        <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest">Palette</h3>
-                    </div>
-                    <div className="flex-1 p-2 flex flex-col gap-2">
-                        {colorTokens.map((token) => (
-                            <button
-                                key={token.name}
-                                onClick={() => copyToClipboard(token.color)}
-                                className="flex-1 rounded-xl flex items-center justify-between px-4 group hover:scale-[1.02] transition-transform"
-                                style={{ backgroundColor: token.color }}
-                            >
-                                <span className="text-xs font-bold uppercase mix-blend-difference text-white opacity-80">{token.name}</span>
-                                <span className="text-[10px] font-mono mix-blend-difference text-white bg-black/20 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                    {copiedHex === token.color ? 'COPIED' : token.color}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
+                {/* 3. Color Palette - 4 Core Colors */}
+                <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-stone-200">
+                    <ColorPaletteHorizontal
+                        colors={[
+                            { label: 'Background', hex: tokens.bg },
+                            { label: 'Primary', hex: tokens.primary },
+                            { label: 'Surface', hex: tokens.surface },
+                            { label: 'Text', hex: tokens.text },
+                        ]}
+                        className="h-full"
+                    />
+                </div>
+
+                {/* 3.5. iPhone Home Screen with App Icon */}
+                <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-stone-200">
+                    <MockupIPhoneHome brand={brand} isDark={isDark} />
                 </div>
 
                 {/* 4. Mobile Mockup - Context */}
@@ -243,9 +242,25 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, v
                     </div>
                 </div>
 
-                {/* 5. 3D Business Cards - The "Merch" Shot */}
-                <div className="md:col-span-5 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden bg-stone-50 border border-stone-200 flex items-center justify-center">
+                {/* 5. Credit Card Mockup */}
+                <div
+                    className="md:col-span-5 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-stone-200 relative"
+                    style={{ backgroundColor: tokens.bg }}
+                >
+                    <MockupCreditCard brand={brand} isDark={isDark} />
+                </div>
+
+                {/* 6. Business Cards */}
+                <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden bg-stone-50 border border-stone-200 flex items-center justify-center">
                     <Mockup3DCard brand={brand} stacked />
+                </div>
+
+                {/* 7. ID Badge Mockup */}
+                <div
+                    className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-stone-200"
+                    style={{ background: `linear-gradient(135deg, ${tokens.surface} 0%, ${tokens.bg} 100%)` }}
+                >
+                    <MockupIDBadge brand={brand} isDark={isDark} />
                 </div>
 
                 {/* 6. Typography Spec - The "Type Specimen" */}

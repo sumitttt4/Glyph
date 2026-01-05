@@ -5,8 +5,8 @@ import { Sidebar } from '@/components/generator/Sidebar';
 import { Toolbar } from '@/components/generator/Toolbar';
 import { LoadingState } from '@/components/generator/LoadingState';
 import { WorkbenchBentoGrid } from '@/components/generator/WorkbenchBentoGrid';
+import { ProGateModal } from '@/components/generator/ProGateModal';
 import { useBrandGenerator } from '@/hooks/use-brand-generator';
-import { Menu, X } from 'lucide-react';
 
 import { GenerationOptions } from '@/components/generator/Sidebar';
 
@@ -16,10 +16,12 @@ export default function GeneratorPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedVibe, setSelectedVibe] = useState('minimalist');
   const [viewMode, setViewMode] = useState<'overview' | 'presentation'>('overview');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showProModal, setShowProModal] = useState(false);
+
+  // TODO: Replace with actual Pro status check from auth/database
+  const isPro = false;
 
   const handleGenerate = useCallback((options: GenerationOptions) => {
-    setIsSidebarOpen(false); // Close drawer on generate
     generateBrand(options.vibe, options.name, {
       color: options.color,
       shape: options.shape,
@@ -97,38 +99,26 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
       navigator.clipboard.writeText(componentCode);
       alert('React component copied to clipboard!');
     } else if (type === 'all') {
-      alert('Full Package export coming soon!');
+      if (!isPro) {
+        setShowProModal(true);
+        return;
+      }
+      alert('Generating your full package... (Pro feature coming soon!)');
     }
   };
 
   return (
-    <div className="flex h-screen w-full bg-stone-50 overflow-hidden font-sans">
+    // Mobile: Vertical stack (flex-col), Desktop: Side-by-side (md:flex-row)
+    <div className="flex flex-col md:flex-row min-h-screen w-full bg-stone-50 overflow-auto md:overflow-hidden font-sans">
       <LoadingState isLoading={isGenerating} />
+      <ProGateModal
+        isOpen={showProModal}
+        onClose={() => setShowProModal(false)}
+        featureName="Full Package Export"
+      />
 
-      {/* Mobile Sidebar Toggle Button */}
-      <button
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="md:hidden fixed top-4 left-4 z-50 p-3 bg-white border border-stone-200 rounded-xl shadow-lg active:scale-95 transition-transform"
-        aria-label="Toggle Sidebar"
-      >
-        {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-      </button>
-
-      {/* Sidebar Overlay (Mobile) */}
-      {isSidebarOpen && (
-        <div
-          className="md:hidden fixed inset-0 bg-black/40 z-30 backdrop-blur-sm"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar - Hidden on mobile by default, slide-in drawer when open */}
-      <div className={`
-        fixed md:relative inset-y-0 left-0 z-40
-        transform transition-transform duration-300 ease-out
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        w-[90vw] max-w-[420px] md:w-[420px]
-      `}>
+      {/* Sidebar - Full width on mobile, fixed width + full height on desktop */}
+      <div className="w-full md:w-[420px] md:h-screen shrink-0">
         <Sidebar
           onGenerate={handleGenerate}
           isGenerating={isGenerating}
@@ -137,8 +127,8 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
         />
       </div>
 
-      {/* Main Content */}
-      <main className="flex-1 relative bg-[#FAFAF9] overflow-auto">
+      {/* Main Content - Below sidebar on mobile, beside on desktop */}
+      <main className="flex-1 relative bg-[#FAFAF9] min-h-[60vh] md:min-h-full md:overflow-auto">
         <div
           className="absolute inset-0 opacity-40"
           style={{
@@ -147,8 +137,8 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
           }}
         />
 
-        {/* Toolbar - Responsive positioning */}
-        <div className="absolute top-4 right-4 md:top-6 md:right-8 z-30">
+        {/* Toolbar - Sticky on mobile */}
+        <div className="sticky md:absolute top-0 md:top-6 right-0 md:right-8 z-30 p-3 md:p-0 bg-stone-50/80 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none flex justify-end">
           <Toolbar
             isDark={isDarkMode}
             toggleDark={() => setIsDarkMode(!isDarkMode)}
@@ -164,7 +154,7 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
           />
         </div>
 
-        <div className={`relative z-10 transition-all duration-500 w-full min-h-full pt-16 md:pt-20 pb-20 px-2 md:px-0 ${isDarkMode ? 'dark' : ''}`}>
+        <div className={`relative z-10 transition-all duration-500 w-full min-h-full pt-4 md:pt-20 pb-20 px-2 md:px-0 ${isDarkMode ? 'dark' : ''}`}>
           {brand ? (
             <WorkbenchBentoGrid
               brand={brand}
@@ -174,7 +164,7 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
               setViewMode={setViewMode}
             />
           ) : (
-            <div className="h-full flex items-center justify-center">
+            <div className="h-[40vh] md:h-full flex items-center justify-center">
               <div className="text-center space-y-4 opacity-50 animate-in fade-in duration-700 slide-in-from-bottom-4">
                 <div className="w-16 h-16 bg-white border border-stone-200 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.5)] rounded-2xl mx-auto flex items-center justify-center">
                   <span className="text-2xl">✨</span>
@@ -190,4 +180,5 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
     </div>
   );
 }
+
 

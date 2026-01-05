@@ -182,7 +182,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
     };
 
     return (
-        <aside className="w-full md:w-[420px] h-full bg-white border-r border-stone-200 flex flex-col z-20 overflow-hidden" style={{ boxShadow: 'var(--shadow-lg)' }}>
+        <aside className="w-full md:w-[420px] h-[100dvh] md:h-full bg-white border-r border-stone-200 flex flex-col z-20 overflow-hidden" style={{ boxShadow: 'var(--shadow-lg)' }}>
 
 
 
@@ -202,8 +202,8 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                 </div>
             </div>
 
-            {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto scrollbar-hide p-6 space-y-10">
+            {/* Scrollable Content - Takes remaining space */}
+            <div className="flex-1 overflow-y-auto scrollbar-hide p-6 space-y-8 min-h-0">
 
                 {/* SECTION 01: PROJECT IDENTITY */}
                 <section className="space-y-5" style={{ animation: 'fade-in 0.4s ease-out' }}>
@@ -391,25 +391,26 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
 
             </div>
 
-            {/* Sticky Generate Button Footer - Enhanced */}
-            <div className="p-5 border-t border-stone-200 bg-gradient-to-t from-stone-50 to-white flex gap-3" style={{ boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.03)' }}>
+            {/* Fixed Generate Button Footer - Two Equal Buttons */}
+            <div className="p-4 md:p-5 border-t border-stone-200 bg-gradient-to-t from-stone-50 to-white flex gap-3 sticky bottom-0" style={{ boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
                 <button
                     onClick={handleSurpriseMe}
                     disabled={isGenerating}
-                    className="p-4 bg-gradient-to-br from-stone-100 to-stone-50 hover:from-stone-200 hover:to-stone-100 text-stone-700 rounded-xl transition-all duration-200 flex items-center justify-center disabled:opacity-60 active:scale-95 border border-stone-200 hover:border-stone-300 hover:shadow-md group"
+                    className="flex-1 py-3 md:py-4 bg-gradient-to-br from-stone-100 to-stone-50 hover:from-stone-200 hover:to-stone-100 text-stone-700 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 active:scale-95 border border-stone-200 hover:border-stone-300 hover:shadow-md group"
                     title="Surprise Me"
                     style={{ boxShadow: 'var(--shadow-sm)' }}
                 >
-                    <Shuffle className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
+                    <Shuffle className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
+                    <span className="text-sm">Surprise Me</span>
                 </button>
                 <button
                     onClick={handleGenerate}
                     disabled={isGenerating || !isValid}
-                    className="flex-1 py-4 bg-gradient-to-r from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:shadow-lg"
+                    className="flex-1 py-3 md:py-4 bg-gradient-to-r from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:shadow-lg"
                     title={!isValid ? "Please enter a brand name and description" : "Generate System"}
                     style={{ boxShadow: 'var(--shadow-md)' }}
                 >
-                    <span className="tracking-button">{isGenerating ? 'Generating...' : 'Generate System'}</span>
+                    <span className="text-sm tracking-wide">{isGenerating ? 'Generating...' : 'Generate'}</span>
                 </button>
             </div>
         </aside>
