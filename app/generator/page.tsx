@@ -20,6 +20,13 @@ export default function GeneratorPage() {
 
   useEffect(() => {
     const checkAccess = async () => {
+      // ADMIN BYPASS: Check cookie
+      const hasAdminBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
+      if (hasAdminBypass) {
+        setIsPro(true);
+        return;
+      }
+
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
 
