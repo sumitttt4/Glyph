@@ -23,18 +23,11 @@ export default function LoginPage() {
         setError(null);
         setMessage(null);
 
-
         try {
-            // DEVELOPER BACKDOOR
-            if (email === 'sumitsharma9128@gmail.com') {
-                router.push('/generator');
-                return;
-            }
-
             const { error } = await supabase.auth.signInWithOtp({
                 email,
                 options: {
-                    emailRedirectTo: `${location.origin}/auth/callback`,
+                    emailRedirectTo: `${window.location.origin}/auth/callback?next=/generator`,
                 },
             });
 
