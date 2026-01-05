@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { LogoFull } from '@/components/brand/Logo';
+import { GlyphLogo } from "@/components/brand/GlyphLogo";
 
-// ... (existing imports)
+// ... (imports)
 
 const NAV_LINKS = [
     { href: '#how-it-works', label: 'How It Works' },
@@ -27,18 +27,13 @@ export function Navbar() {
 
     return (
         <nav
-            className={cn(
-                'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-                isScrolled
-                    ? 'bg-white/80 backdrop-blur-lg shadow-sm border-b border-stone-200'
-                    : 'bg-transparent'
-            )}
+        // ... (className)
         >
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16 lg:h-20">
                     {/* Logo */}
-                    <Link href="/" className="group hover:opacity-90 transition-opacity">
-                        <LogoFull className="h-8" />
+                    <Link href="/" className="hover:opacity-80 transition-opacity">
+                        <GlyphLogo />
                     </Link>
 
                     {/* Desktop Nav Links */}

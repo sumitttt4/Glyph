@@ -1,3 +1,4 @@
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { BrandIdentity } from '@/lib/data';
 
 export function MockupDevice({ brand }: { brand: BrandIdentity }) {
@@ -19,10 +20,10 @@ export function MockupDevice({ brand }: { brand: BrandIdentity }) {
 
                 {/* 1. App Header */}
                 <div className="pt-8 pb-4 px-4 flex justify-between items-center" style={{ backgroundColor: bg }}>
-                    <div className="w-6 h-6" style={{ color: primary }}>
-                        <svg viewBox="0 0 24 24" className="fill-current w-full h-full"><path d={brand.shape.path} /></svg>
+                    <div className="w-8 h-8 rounded-full border border-black/5 flex items-center justify-center bg-white shadow-sm">
+                        <BrandLogo brand={brand} className="w-5 h-5" />
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-gray-200"></div>
+                    <div className="w-8 h-8 rounded-full bg-gray-100 border border-black/5"></div>
                 </div>
 
                 {/* 2. Hero Card */}

@@ -1,4 +1,5 @@
 
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { BrandIdentity } from '@/lib/data';
 import { Lock, RotateCw, ChevronLeft, ChevronRight, Share, Plus } from 'lucide-react';
 
@@ -97,18 +98,11 @@ export function BrowserBrandPreview({ brand }: { brand: BrandIdentity }) {
                     <div className="relative z-10 flex flex-col items-center gap-6 animate-in zoom-in-95 duration-700 fade-in slide-in-from-bottom-4">
                         {/* Logo Card */}
                         <div className="w-32 h-32 bg-white rounded-[2rem] shadow-[0_20px_40px_-12px_rgba(0,0,0,0.2)] flex items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-500 border border-white/50">
-                            <svg
-                                viewBox="0 0 24 24"
-                                className="w-full h-full absolute inset-0 text-stone-100 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                            >
-                                <path d={brand.shape.path} fill="currentColor" />
-                            </svg>
-                            <span
-                                className="text-6xl font-bold tracking-tighter relative z-10"
-                                style={{ color: primary }}
-                            >
-                                {initial}
-                            </span>
+                            <BrandLogo
+                                brand={brand}
+                                mode="light"
+                                className="w-20 h-20"
+                            />
                         </div>
 
                         <div className="text-center space-y-1">
