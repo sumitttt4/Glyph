@@ -16,10 +16,6 @@ const FAQS = [
     {
         question: "What do I get with the export?",
         answer: "SVG vectors, PNG assets, Tailwind CSS config, and JSON design tokens. Everything you need to start building immediately."
-    },
-    {
-        question: "What if I'm not satisfied?",
-        answer: "30-day money-back guarantee, no questions asked. Generate unlimited times for free before you buy."
     }
 ];
 

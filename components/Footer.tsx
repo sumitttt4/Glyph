@@ -2,25 +2,23 @@ import Link from 'next/link';
 import { Github, Twitter, Linkedin } from 'lucide-react';
 import { GlyphLogo } from '@/components/brand/GlyphLogo';
 
+// ... (imports remain the same)
+
 const FOOTER_LINKS = {
     product: [
         { label: 'Features', href: '#features' },
         { label: 'Pricing', href: '#pricing' },
         { label: 'Generator', href: '/generate' },
     ],
-    company: [
-        { label: 'About', href: '#' },
-        { label: 'Blog', href: '#' },
-        { label: 'Careers', href: '#' },
-    ],
+    // Company section removed
     legal: [
-        { label: 'Privacy', href: '#' },
-        { label: 'Terms', href: '#' },
+        { label: 'Privacy Policy', href: '/legal/privacy' },
+        { label: 'Terms of Service', href: '/legal/terms' },
     ],
 };
 
 const SOCIAL_LINKS = [
-    { icon: Twitter, href: '#', label: 'Twitter' },
+    { icon: Twitter, href: 'https://x.com/Sumitthq', label: 'X (formerly Twitter)' }, // Updated to X link
     { icon: Github, href: '#', label: 'GitHub' },
     { icon: Linkedin, href: '#', label: 'LinkedIn' },
 ];
@@ -29,9 +27,9 @@ export function Footer() {
     return (
         <footer className="bg-stone-950 text-stone-300">
             <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
                     {/* Brand Column */}
-                    <div className="col-span-2">
+                    <div className="col-span-1 md:col-span-2">
                         <div className="bg-white/5 p-4 rounded-2xl border border-white/10 inline-block mb-4">
                             <GlyphLogo className="scale-90 text-white [&>span]:text-white" />
                         </div>
@@ -43,6 +41,8 @@ export function Footer() {
                                 <a
                                     key={social.label}
                                     href={social.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="p-2 rounded-full bg-stone-800 hover:bg-stone-700 transition-colors"
                                     aria-label={social.label}
                                 >
@@ -66,29 +66,15 @@ export function Footer() {
                         </ul>
                     </div>
 
-                    {/* Company Links */}
-                    <div>
-                        <h4 className="font-semibold text-white mb-4">Company</h4>
-                        <ul className="space-y-3">
-                            {FOOTER_LINKS.company.map((link) => (
-                                <li key={link.label}>
-                                    <a href={link.href} className="text-sm hover:text-white transition-colors">
-                                        {link.label}
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Legal Links */}
+                    {/* Legal Links (Moved up to replace Company) */}
                     <div>
                         <h4 className="font-semibold text-white mb-4">Legal</h4>
                         <ul className="space-y-3">
                             {FOOTER_LINKS.legal.map((link) => (
                                 <li key={link.label}>
-                                    <a href={link.href} className="text-sm hover:text-white transition-colors">
+                                    <Link href={link.href} className="text-sm hover:text-white transition-colors">
                                         {link.label}
-                                    </a>
+                                    </Link>
                                 </li>
                             ))}
                         </ul>
@@ -98,7 +84,7 @@ export function Footer() {
                 {/* Bottom Bar */}
                 <div className="mt-16 pt-8 border-t border-stone-800 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-sm text-stone-500">
-                        © 2024 Glyph Systems. All rights reserved.
+                        © 2026 Glyph Systems. All rights reserved.
                     </p>
                     <p className="text-sm text-stone-500">
                         Built with <span className="text-red-400">♥</span> for founders and developers.

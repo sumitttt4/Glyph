@@ -39,10 +39,10 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, c
     };
 
     return (
-        <div className="flex items-center gap-3">
-            {/* History Controls - Undo/Redo */}
+        <div className="flex items-center gap-2 md:gap-3">
+            {/* History Controls - Hidden on mobile */}
             {(onUndo && onRedo) && (
-                <div className="flex border border-stone-200 rounded-lg p-0.5 bg-white shadow-sm h-10 mr-2 items-center">
+                <div className="hidden md:flex border border-stone-200 rounded-lg p-0.5 bg-white shadow-sm h-10 mr-2 items-center">
                     <button
                         onClick={onUndo}
                         disabled={!canUndo}
@@ -65,44 +65,44 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, c
                 </div>
             )}
 
-            {/* View Mode Toggle */}
-            <div className="flex border border-stone-200 rounded-lg p-0.5 bg-white shadow-sm mr-2 h-10">
+            {/* View Mode Toggle - Compact on mobile */}
+            <div className="flex border border-stone-200 rounded-lg p-0.5 bg-white shadow-sm md:mr-2 h-9 md:h-10">
                 <button
                     onClick={() => setViewMode('overview')}
-                    className={`px-4 text-xs font-semibold rounded-md transition-all ${viewMode === 'overview' ? 'bg-stone-950 text-white shadow-sm' : 'text-stone-500 hover:text-stone-950'}`}
+                    className={`px-2 md:px-4 text-[10px] md:text-xs font-semibold rounded-md transition-all ${viewMode === 'overview' ? 'bg-stone-950 text-white shadow-sm' : 'text-stone-500 hover:text-stone-950'}`}
                 >
                     Overview
                 </button>
                 <button
                     onClick={() => setViewMode('presentation')}
-                    className={`px-4 text-xs font-semibold rounded-md transition-all ${viewMode === 'presentation' ? 'bg-stone-950 text-white shadow-sm' : 'text-stone-500 hover:text-stone-950'}`}
+                    className={`px-2 md:px-4 text-[10px] md:text-xs font-semibold rounded-md transition-all ${viewMode === 'presentation' ? 'bg-stone-950 text-white shadow-sm' : 'text-stone-500 hover:text-stone-950'}`}
                 >
                     Guidelines
                 </button>
             </div>
 
-            {/* Mode Toggle */}
+            {/* Mode Toggle - Always visible */}
             <div className="flex border border-stone-200 rounded-full p-0.5 bg-white shadow-sm">
                 <button
                     onClick={() => !isDark && toggleDark()}
-                    className={`p-2 rounded-full transition-all ${!isDark ? 'bg-stone-950 text-white' : 'text-stone-400 hover:text-stone-600'
+                    className={`p-1.5 md:p-2 rounded-full transition-all ${!isDark ? 'bg-stone-950 text-white' : 'text-stone-400 hover:text-stone-600'
                         }`}
                     title="Light Mode"
                 >
-                    <Sun className="w-4 h-4" />
+                    <Sun className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 </button>
                 <button
                     onClick={() => isDark && toggleDark()}
-                    className={`p-2 rounded-full transition-all ${isDark ? 'bg-stone-950 text-white' : 'text-stone-400 hover:text-stone-600'
+                    className={`p-1.5 md:p-2 rounded-full transition-all ${isDark ? 'bg-stone-950 text-white' : 'text-stone-400 hover:text-stone-600'
                         }`}
                     title="Dark Mode"
                 >
-                    <Moon className="w-4 h-4" />
+                    <Moon className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 </button>
             </div>
 
-            {/* Share Button */}
-            <div className="relative">
+            {/* Share Button - Hidden on mobile */}
+            <div className="relative hidden md:block">
                 <button
                     onClick={() => setShowShare(!showShare)}
                     className="flex items-center gap-2 p-2.5 border border-stone-200 rounded-full bg-white shadow-sm text-stone-700 hover:border-stone-400 transition-all"
@@ -126,14 +126,14 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, c
                 )}
             </div>
 
-            {/* Export Dropdown */}
+            {/* Export Dropdown - Compact on mobile */}
             <div className="relative">
                 <button
                     onClick={() => setShowExport(!showExport)}
-                    className="flex items-center gap-2 px-4 py-2 border border-stone-200 rounded-full bg-white shadow-sm text-sm font-medium text-stone-700 hover:border-stone-400 transition-all h-10"
+                    className="flex items-center gap-1 md:gap-2 px-2.5 md:px-4 py-2 border border-stone-200 rounded-full bg-white shadow-sm text-sm font-medium text-stone-700 hover:border-stone-400 transition-all h-9 md:h-10"
                 >
                     <Download className="w-4 h-4" />
-                    Export
+                    <span className="hidden md:inline">Export</span>
                     <ChevronDown className={`w-3 h-3 transition-transform ${showExport ? 'rotate-180' : ''}`} />
                 </button>
 

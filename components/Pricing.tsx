@@ -146,11 +146,6 @@ export default function Pricing() {
                                 >
                                     Get Lifetime Access
                                 </a>
-
-                                <div className="mt-4 flex items-center justify-center gap-2 text-xs text-stone-400">
-                                    <ShieldCheck className="w-3 h-3" />
-                                    <span>30-day money-back guarantee</span>
-                                </div>
                             </div>
 
                             {/* THE "TEAR-OFF" STUB VISUAL (Bottom) */}
