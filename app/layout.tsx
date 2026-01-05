@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { Analytics } from "@vercel/analytics/react";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -19,6 +21,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`${manrope.variable} ${instrumentSerif.variable}`}>
       <body className="antialiased min-h-screen bg-stone-50 font-sans">
         {children}
+        <Analytics />
       </body>
     </html>
   );
