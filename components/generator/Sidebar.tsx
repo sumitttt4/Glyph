@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Check, Shuffle } from 'lucide-react';
 import { VibeSelector } from './VibeSelector';
 import { expandBriefWithAI, suggestVibeWithAI, expandVibeWithAI } from '@/lib/brand-generator';
+import { GlyphIcon } from '@/components/brand/GlyphLogo';
 
 export interface GenerationOptions {
     prompt: string;
@@ -183,11 +184,13 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
     return (
         <aside className="w-full md:w-[420px] h-full bg-white border-r border-stone-200 flex flex-col z-20 overflow-hidden" style={{ boxShadow: 'var(--shadow-lg)' }}>
 
+
+
             {/* Console Header - Enhanced */}
             <div className="p-5 border-b border-stone-100 flex items-center justify-between sticky top-0 bg-gradient-to-b from-white to-stone-50/50 backdrop-blur-sm z-10" style={{ boxShadow: 'var(--shadow-xs)' }}>
                 <div className="flex items-center gap-2.5 text-sm font-mono text-stone-600">
-                    <div className="w-6 h-6 rounded-md bg-gradient-to-br from-stone-900 to-stone-700 flex items-center justify-center shadow-sm ring-1 ring-stone-200/50">
-                        <span className="text-[10px] text-white font-bold">G</span>
+                    <div className="w-6 h-6 rounded-md bg-stone-900 flex items-center justify-center shadow-sm ring-1 ring-stone-200/50">
+                        <GlyphIcon className="w-4 h-4 text-white" />
                     </div>
                     <span className="tracking-tight font-semibold">GLYPH_CONSOLE</span>
                     <span className="text-stone-300">/</span>

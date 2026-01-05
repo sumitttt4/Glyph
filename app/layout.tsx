@@ -4,9 +4,9 @@ import { manrope, instrumentSerif } from "@/lib/brand-fonts";
 
 export const metadata: Metadata = {
   title: "Glyph | AI Design Engineer",
-  description: "Generate premium brand identity systems in seconds. The starting point for your mark.",
+  description: "Generate premium brand identity systems for your startup in seconds.",
   icons: {
-    icon: '/icon.svg',
+    icon: '/logo.svg',
   },
 };
 

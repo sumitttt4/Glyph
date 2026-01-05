@@ -9,9 +9,47 @@ import { Mockup3DCard } from '@/components/mockups/Mockup3DCard';
 import { MockupDevice, MockupBrowser } from '@/components/mockups/MockupDevice';
 import { BrowserBrandPreview } from '@/components/mockups/BrowserBrandPreview';
 
-import { BrandLogo } from '@/components/brand/BrandLogo';
+// The Monogram Engine: Intelligently combines Shape + Letter
+function MonogramMark({ brand, color, bg }: { brand: BrandIdentity, color: string, bg: string }) {
+    const letter = brand.name.charAt(0).toUpperCase();
 
-// ... (imports remain)
+    // Determine style based on vibe (could be expanded)
+    const isOutline = brand.vibe.toLowerCase().includes('minimal') || brand.vibe.toLowerCase().includes('tech');
+    const isBold = brand.vibe.toLowerCase().includes('bold') || brand.vibe.toLowerCase().includes('playful');
+
+    return (
+        <div className="relative w-full h-full flex items-center justify-center">
+            {/* Background Shape */}
+            <svg
+                viewBox={brand.shape.viewBox || "0 0 24 24"}
+                className="w-full h-full absolute inset-0"
+                style={{
+                    color: isOutline ? 'transparent' : bg,
+                    // If outline mode, add border via stroke (simulated by path here for now, or use css border for some shapes)
+                    filter: isOutline ? `drop-shadow(0 0 1px ${color})` : 'none'
+                }}
+            >
+                <path
+                    d={brand.shape.path}
+                    fill="currentColor"
+                    stroke={isOutline ? color : 'none'}
+                    strokeWidth={isOutline ? "1.5" : "0"}
+                />
+            </svg>
+
+            {/* The Letter */}
+            <span
+                className={`relative z-10 text-7xl font-bold leading-none select-none`}
+                style={{
+                    color: isOutline ? color : (isBold ? '#FFFFFF' : color),
+                    fontFamily: 'var(--font-manrope)' // Ensure consistent font
+                }}
+            >
+                {letter}
+            </span>
+        </div>
+    );
+}
 
 interface WorkbenchBentoGridProps {
     brand: BrandIdentity;
@@ -23,9 +61,48 @@ interface WorkbenchBentoGridProps {
 }
 
 export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, viewMode, setViewMode }: WorkbenchBentoGridProps) {
-    // ... (CONTENT_TEMPLATES logic remains)
+    // PHASE 4: CONTENT INJECTION
+    const CONTENT_TEMPLATES: Record<string, { headline: string; subhead: string; cta: string }> = {
+        minimalist: {
+            headline: "Design is the silent ambassador.",
+            subhead: "We strip away the non-essential to reveal the profound.",
+            cta: "Explore the Collection"
+        },
+        tech: {
+            headline: "The future is already here.",
+            subhead: "Building the digital infrastructure for the next generation.",
+            cta: "Start Building"
+        },
+        nature: {
+            headline: "Return to the source.",
+            subhead: "Sustainable living for a balanced, grounded future.",
+            cta: "Join the Movement"
+        },
+        bold: {
+            headline: "Make your presence felt.",
+            subhead: "For those who refuse to blend into the background.",
+            cta: "Get Loud"
+        },
+        modern: {
+            headline: "Simply better business.",
+            subhead: "Elevating standards through thoughtful innovation.",
+            cta: "Get Started"
+        }
+    };
 
-    // ... (Presentation Mode check remains)
+    const content = CONTENT_TEMPLATES[brand.vibe] || CONTENT_TEMPLATES.modern;
+
+    // If in Presentation Mode, render the Slide Deck
+    if (viewMode === 'presentation') {
+        return (
+            <div className="w-full max-w-[1600px] mx-auto p-4 md:p-8 space-y-8 pb-32">
+                <SlideCover brand={brand} />
+                <SlideStrategy brand={brand} />
+                <SlideLogo brand={brand} />
+                <SlideColors brand={brand} />
+            </div>
+        );
+    }
 
     const [copiedHex, setCopiedHex] = useState<string | null>(null);
 
@@ -92,10 +169,10 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, v
                                 layoutId="main-logo"
                                 className="w-48 h-48 relative drop-shadow-2xl"
                             >
-                                <BrandLogo
+                                <MonogramMark
                                     brand={brand}
-                                    mode={tokens.gradient ? 'dark' : 'light'}
-                                    className="w-full h-full"
+                                    color={tokens.gradient ? '#FFFFFF' : tokens.primary}
+                                    bg={tokens.gradient ? 'rgba(255,255,255,0.15)' : tokens.surface}
                                 />
                             </motion.div>
 

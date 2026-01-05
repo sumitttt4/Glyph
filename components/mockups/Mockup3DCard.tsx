@@ -1,4 +1,3 @@
-import { BrandLogo } from '@/components/brand/BrandLogo';
 import { BrandIdentity } from '@/lib/data';
 import { motion } from 'framer-motion';
 
@@ -31,7 +30,9 @@ export function Mockup3DCard({ brand, stacked = false }: Mockup3DCardProps) {
                     <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-bl-full -mr-4 -mt-4 opacity-50"></div>
 
                     <div className="w-8 h-8 text-white">
-                        <BrandLogo brand={brand} mode="dark" className="w-full h-full" />
+                        <svg viewBox="0 0 24 24" className="w-full h-full fill-current">
+                            <path d={brand.shape.path} />
+                        </svg>
                     </div>
 
                     <div>
@@ -43,7 +44,9 @@ export function Mockup3DCard({ brand, stacked = false }: Mockup3DCardProps) {
                 // Back Design (Contact Info)
                 <div className="relative h-full p-5 flex flex-col justify-center items-center text-center">
                     <div className="w-12 h-12 mb-3 text-stone-900" style={{ color: text }}>
-                        <BrandLogo brand={brand} mode="monochrome" className="w-full h-full opacity-20" />
+                        <svg viewBox="0 0 24 24" className="w-full h-full fill-current opacity-20">
+                            <path d={brand.shape.path} />
+                        </svg>
                     </div>
                     <div className="space-y-1">
                         <div className="h-1.5 w-20 bg-stone-300 mx-auto rounded-full" style={{ backgroundColor: surface }} />
@@ -78,7 +81,7 @@ export function Mockup3DCard({ brand, stacked = false }: Mockup3DCardProps) {
             >
                 <div className="absolute inset-0 p-6 flex flex-col justify-between">
                     <div className="w-10 h-10 text-white fill-current">
-                        <BrandLogo brand={brand} mode="dark" className="w-full h-full" />
+                        <svg viewBox="0 0 24 24"><path d={brand.shape.path} /></svg>
                     </div>
                     <div className="text-white text-2xl font-bold">{brand.name}</div>
                 </div>
