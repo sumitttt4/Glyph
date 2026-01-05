@@ -13,6 +13,8 @@ import { Mockup3DCard } from '@/components/mockups/Mockup3DCard';
 import { FAQ } from '@/components/FAQ';
 import BrowserMockup from '@/components/hero/BrowserMockup';
 import Pricing from '@/components/Pricing';
+import { AuthRescue } from '@/components/auth/AuthRescue';
+import { Suspense } from 'react';
 
 const DEMO_BRAND = {
   id: 'demo',
@@ -67,6 +69,9 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-950 font-sans">
+      <Suspense fallback={null}>
+        <AuthRescue />
+      </Suspense>
       <Navbar />
 
       {/* ==================== HERO SECTION ==================== */}

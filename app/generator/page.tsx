@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Sidebar, GenerationOptions } from '@/components/generator/Sidebar';
 import { Toolbar } from '@/components/generator/Toolbar';
 import { LoadingState } from '@/components/generator/LoadingState';
@@ -8,15 +8,27 @@ import { WorkbenchBentoGrid } from '@/components/generator/WorkbenchBentoGrid';
 import { ProGateModal } from '@/components/generator/ProGateModal';
 import { useBrandGenerator } from '@/hooks/use-brand-generator';
 import { createClient } from '@/utils/supabase/client';
+import { exportBrandPackage } from '@/lib/export';
 
 export default function GeneratorPage() {
   const brandGenerators = useBrandGenerator();
+  // ... rest of component
+
   const { brand, generateBrand, isGenerating, resetBrand } = brandGenerators;
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedVibe, setSelectedVibe] = useState('minimalist');
   const [viewMode, setViewMode] = useState<'overview' | 'presentation'>('overview');
   const [showProModal, setShowProModal] = useState(false);
   const [isPro, setIsPro] = useState(false);
+
+  const mainRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    // Scroll to results on mobile when generation finishes
+    if (!isGenerating && brand && window.innerWidth < 768) {
+      mainRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [isGenerating, brand]);
 
   useEffect(() => {
     const checkAccess = async () => {
@@ -48,7 +60,7 @@ export default function GeneratorPage() {
     });
   }, [generateBrand]);
 
-  const handleExport = (type: string) => {
+  const handleExport = async (type: string) => {
     if (!brand) return;
 
     if (type === 'svg') {
@@ -121,7 +133,12 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
         setShowProModal(true);
         return;
       }
-      alert('Generating your full package... (Pro feature coming soon!)');
+      try {
+        await exportBrandPackage(brand);
+      } catch (error) {
+        console.error("Export failed:", error);
+        alert("Failed to create export package. Please try again.");
+      }
     }
   };
 
@@ -146,7 +163,7 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
       </div>
 
       {/* Main Content - Below sidebar on mobile, beside on desktop */}
-      <main className="flex-1 relative bg-[#FAFAF9] min-h-[60vh] md:min-h-full md:overflow-auto">
+      <main ref={mainRef} className="flex-1 relative bg-[#FAFAF9] min-h-[60vh] md:min-h-full md:overflow-auto">
         <div
           className="absolute inset-0 opacity-40"
           style={{

@@ -64,6 +64,14 @@ export const SlideCover = ({ brand }: { brand: BrandIdentity }) => (
                 Brand Identity Guidelines
             </p>
         </div>
+
+        {/* Viral Badge */}
+        <div className="absolute bottom-8 right-8 flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 opacity-60">
+            <div className="w-3 h-3 bg-[#CCFF00] rounded-full animate-pulse" />
+            <span className="text-[10px] font-mono uppercase tracking-widest text-white/80">
+                Made with Glyph
+            </span>
+        </div>
     </SlideLayout>
 );
 

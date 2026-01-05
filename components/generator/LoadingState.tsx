@@ -8,11 +8,11 @@ interface LoadingStateProps {
 }
 
 const LOADING_MESSAGES = [
+    'Initializing Neural Engine...',
+    'Analyzing Vibe Vector...',
     'Constructing Geometry...',
-    'Calibrating Tokens...',
-    'Analyzing Color Harmony...',
-    'Selecting Typography...',
-    'Rendering Mockups...',
+    'Solving Color Harmony...',
+    'Rendering Brand Assets...',
 ];
 
 export function LoadingState({ isLoading }: LoadingStateProps) {
@@ -26,7 +26,7 @@ export function LoadingState({ isLoading }: LoadingStateProps) {
 
         const interval = setInterval(() => {
             setMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
-        }, 600);
+        }, 800);
 
         return () => clearInterval(interval);
     }, [isLoading]);
