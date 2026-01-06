@@ -140,6 +140,7 @@ export function useBrandGenerator() {
                 theme: selectedTheme,
                 shape: selectedShape,
                 logoLayout: selectedLayout,
+                generationSeed: Date.now() + Math.floor(Math.random() * 100000), // Unique per generation
                 font: {
                     id: randomFont.id,
                     name: randomFont.name,

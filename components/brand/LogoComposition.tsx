@@ -28,7 +28,8 @@ function seededRandom(seed: string) {
  */
 export const LogoComposition = ({ brand, className, layout = 'generative' }: LogoCompositionProps) => {
     const uniqueId = useId();
-    const seed = brand.id + (brand.name || 'brand');
+    // Include generationSeed for unique variations per generation
+    const seed = brand.id + (brand.name || 'brand') + (brand.generationSeed || Date.now());
     const rng = () => seededRandom(seed + uniqueId);
 
     // Deterministic Shape Selection based on brand ID

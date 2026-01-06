@@ -33,6 +33,9 @@ export interface BrandIdentity {
   canvasStyle?: 'solid' | 'gradient' | 'mesh';  // Background style
   font: FontPair;
 
+  // Uniqueness Seed (timestamp + random for parametric variations)
+  generationSeed: number;
+
   // Strategy Core
   strategy?: {
     mission: string;

@@ -43,14 +43,7 @@ export const SHAPES: Shape[] = [
         tags: ['minimalist', 'architectural', 'bold', 'modern'],
         complexity: 'detailed',
     },
-    {
-        id: 'ref-interlace',
-        name: 'Interlace',
-        viewBox: '0 0 24 24',
-        path: 'M12 2L2 12h5v10h10v-5l5-5H12z M7 12l5-5 5 5-5 5-5-5z', // Geometric knot
-        tags: ['architectural', 'complex', 'tech'],
-        complexity: 'moderate',
-    },
+    // NOTE: 'ref-interlace' shape REMOVED - it's now Glyph's exclusive brand mark
 
     // ============================================================
     // 2. TECH & DIGITAL (Grid, Circuits, Data)
