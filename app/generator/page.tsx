@@ -9,6 +9,12 @@ import { ProGateModal } from '@/components/generator/ProGateModal';
 import { useBrandGenerator } from '@/hooks/use-brand-generator';
 import { createClient } from '@/utils/supabase/client';
 import { exportBrandPackage } from '@/lib/export';
+import { generateFaviconPackage } from '@/lib/favicon-generator';
+import { generateSocialMediaKit, downloadSocialAsset } from '@/lib/social-media-kit';
+import { openBrandBookForPrint } from '@/lib/brand-book';
+import { CompareOverlay } from '@/components/generator/CompareOverlay';
+import { RobotEmptyState } from '@/components/generator/RobotEmptyState';
+import { BrandIdentity } from '@/lib/data';
 
 export default function GeneratorPage() {
   const brandGenerators = useBrandGenerator();
@@ -19,7 +25,35 @@ export default function GeneratorPage() {
   const [selectedVibe, setSelectedVibe] = useState('minimalist');
   const [viewMode, setViewMode] = useState<'overview' | 'presentation'>('overview');
   const [showProModal, setShowProModal] = useState(false);
+
   const [isPro, setIsPro] = useState(false);
+  // Compare State
+  const [compareList, setCompareList] = useState<BrandIdentity[]>([]);
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
+
+  const handleAddToCompare = () => {
+    if (!brand) return;
+    if (compareList.find(b => b.id === brand.id)) {
+      alert("This brand is already in your comparison list.");
+      return;
+    }
+    if (compareList.length >= 4) {
+      alert("You can compare up to 4 brands at a time.");
+      return;
+    }
+    setCompareList([...compareList, brand]);
+    // Optional feedback
+    const btn = document.activeElement as HTMLElement;
+    if (btn) {
+      const originalText = btn.innerHTML;
+      btn.innerHTML = "<span class='text-green-600'>Added!</span>";
+      setTimeout(() => btn.innerHTML = originalText, 1000);
+    }
+  };
+
+  const handleRemoveFromCompare = (id: string) => {
+    setCompareList(prev => prev.filter(b => b.id !== id));
+  };
 
   const mainRef = useRef<HTMLElement>(null);
 
@@ -139,6 +173,29 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
         console.error("Export failed:", error);
         alert("Failed to create export package. Please try again.");
       }
+    } else if (type === 'favicon') {
+      // Generate and download favicon package
+      const pkg = generateFaviconPackage(brand);
+      const faviconSvg = pkg.files.find(f => f.name === 'favicon.svg')?.content || '';
+      const blob = new Blob([faviconSvg], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${brand.name.toLowerCase().replace(/\s+/g, '-')}-favicon.svg`;
+      link.click();
+      // Also copy HTML snippet to clipboard
+      navigator.clipboard.writeText(pkg.htmlSnippet);
+      alert('Favicon SVG downloaded! HTML snippet copied to clipboard.');
+    } else if (type === 'social') {
+      const assets = generateSocialMediaKit(brand);
+      // For demo, just download the Twitter profile pic. In prod, we'd zip them.
+      // But let's verify it works by downloading the first few assets
+      assets.slice(0, 3).forEach((asset, i) => {
+        setTimeout(() => downloadSocialAsset(asset, brand.name), i * 300);
+      });
+      alert('Downloading Social Media assets...');
+    } else if (type === 'brandbook') {
+      openBrandBookForPrint(brand);
     }
   };
 
@@ -159,6 +216,7 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
           isGenerating={isGenerating}
           selectedVibe={selectedVibe}
           setSelectedVibe={setSelectedVibe}
+          hasGenerated={!!brand}
         />
       </div>
 
@@ -186,8 +244,18 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
             onRedo={brandGenerators.redo}
             currentHistoryIndex={brandGenerators.historyIndex}
             totalHistory={brandGenerators.historyTotal}
+            onAddToCompare={brand ? handleAddToCompare : undefined}
+            onOpenCompare={() => setIsCompareOpen(true)}
+            compareCount={compareList.length}
           />
         </div>
+
+        <CompareOverlay
+          brands={compareList}
+          isOpen={isCompareOpen}
+          onClose={() => setIsCompareOpen(false)}
+          onRemove={handleRemoveFromCompare}
+        />
 
         <div className={`relative z-10 transition-all duration-500 w-full min-h-full pt-4 md:pt-20 pb-20 px-2 md:px-0 ${isDarkMode ? 'dark' : ''}`}>
           {brand ? (
@@ -199,16 +267,7 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
               setViewMode={setViewMode}
             />
           ) : (
-            <div className="h-[40vh] md:h-full flex items-center justify-center">
-              <div className="text-center space-y-4 opacity-50 animate-in fade-in duration-700 slide-in-from-bottom-4">
-                <div className="w-16 h-16 bg-white border border-stone-200 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.5)] rounded-2xl mx-auto flex items-center justify-center">
-                  <span className="text-2xl">✨</span>
-                </div>
-                <p className="font-mono text-[10px] uppercase tracking-widest text-stone-400 max-w-xs mx-auto">
-                  Configure Brand DNA
-                </p>
-              </div>
-            </div>
+            <RobotEmptyState />
           )}
         </div>
       </main>

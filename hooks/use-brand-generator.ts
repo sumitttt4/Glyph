@@ -5,6 +5,7 @@ import { BrandIdentity } from '@/lib/data';
 import { THEMES } from '@/lib/themes';
 import { SHAPES } from '@/lib/shapes';
 import { fontPairings } from '@/lib/fonts';
+import { suggestLogoComponentsWithAI_V2 } from '@/lib/brand-generator';
 
 const STRATEGY_TEMPLATES: Record<string, any> = {
     minimalist: {
@@ -49,122 +50,183 @@ export function useBrandGenerator() {
     const [isGenerating, setIsGenerating] = useState(false);
     const [history, setHistory] = useState<BrandIdentity[]>([]);
     const [currentIndex, setCurrentIndex] = useState(-1);
+    const [usedIcons, setUsedIcons] = useState<string[]>([]);
 
-    const generateBrand = (
+    const generateBrand = async (
         vibe: string,
         name: string = 'Glyph Generated',
         options: {
             color?: string;
             shape?: string;
             gradient?: { colors: string[]; angle: number } | null;
+            prompt?: string;
             surpriseMe?: boolean
         } = {}
     ) => {
         setIsGenerating(true);
 
-        // Simulate thinking time
-        setTimeout(() => {
-            const filterContent = <T extends { tags: string[] }>(items: T[]) => {
-                const matches = items.filter(item => item.tags.includes(vibe));
-                return matches.length > 0 ? matches : items;
-            };
+        // Helper for content filtering
+        const filterContent = <T extends { tags: string[] }>(items: T[]) => {
+            const matches = items.filter(item => item.tags.includes(vibe));
+            return matches.length > 0 ? matches : items;
+        };
 
-            // 1. SELECT THEME (or override)
-            let selectedTheme: typeof THEMES[0];
+        // Parallel Execution: Minimum animation delay + AI Generation
+        const minDelay = new Promise(resolve => setTimeout(resolve, 2000));
 
-            if (options.color || options.gradient) {
-                // If customized, pick a base theme matching the vibe but OVERRIDE colors
-                const cleanThemes = filterContent(THEMES);
-                const baseTheme = cleanThemes[Math.floor(Math.random() * cleanThemes.length)];
+        let logoIcon: string | undefined;
+        let logoContainer: string | undefined;
+        let logoAssemblerLayout: 'icon_left' | 'icon_right' | 'stacked' | 'badge' | 'monogram' | undefined;
+        let aiColor: string | undefined;
+        let aiFont: string | undefined;
 
-                // Clone and override
-                selectedTheme = {
-                    ...baseTheme,
-                    id: 'custom-override',
-                    name: 'Custom',
-                    tokens: {
-                        ...baseTheme.tokens,
-                        light: {
-                            ...baseTheme.tokens.light,
-                            primary: options.color || baseTheme.tokens.light.primary,
-                            // Use gradient if provided, otherwise keep theme's default or none
-                            gradient: options.gradient ? [options.gradient.colors[0], options.gradient.colors[1]] : baseTheme.tokens.light.gradient,
-                        },
-                        dark: {
-                            ...baseTheme.tokens.dark,
-                            primary: options.color || baseTheme.tokens.dark.primary,
-                            // Basic dark mode adaptation for gradient (simplified)
-                            gradient: options.gradient ? [options.gradient.colors[0], options.gradient.colors[1]] : baseTheme.tokens.dark.gradient,
-                        }
+        // Get AI suggestions if procedural generation is applicable
+        // We do this for "surprise me" or if a prompt exists
+        if (options.prompt || options.surpriseMe) {
+            try {
+                const aiPrompt = options.prompt || `A startup called ${name} in the ${vibe} industry`;
+                const result = await suggestLogoComponentsWithAI_V2(aiPrompt, usedIcons);
+                logoIcon = result.icon;
+                logoContainer = result.container;
+                // Safe cast layout
+                if (['icon_left', 'icon_right', 'stacked', 'badge', 'monogram'].includes(result.layout)) {
+                    logoAssemblerLayout = result.layout as any;
+                }
+                aiColor = result.color;
+                aiFont = result.font;
+
+                setUsedIcons(prev => [...prev, result.icon]);
+            } catch (e) {
+                console.error("AI Icon Gen Error", e);
+            }
+        }
+
+        await minDelay;
+
+        // 1. SELECT THEME (or override)
+        let selectedTheme: typeof THEMES[0];
+
+        // Priority: Option Color > AI Color > Theme Default
+        const effectiveColor = options.color || aiColor;
+
+        if (effectiveColor || options.gradient) {
+            // If customized, pick a base theme matching the vibe but OVERRIDE colors
+            const cleanThemes = filterContent(THEMES);
+            const baseTheme = cleanThemes[Math.floor(Math.random() * cleanThemes.length)];
+
+            // Clone and override
+            selectedTheme = {
+                ...baseTheme,
+                id: 'custom-override',
+                name: 'Custom',
+                tokens: {
+                    ...baseTheme.tokens,
+                    light: {
+                        ...baseTheme.tokens.light,
+                        primary: effectiveColor || baseTheme.tokens.light.primary,
+                        // Use gradient if provided, otherwise keep theme's default or none
+                        gradient: options.gradient ? [options.gradient.colors[0], options.gradient.colors[1]] : baseTheme.tokens.light.gradient,
+                    },
+                    dark: {
+                        ...baseTheme.tokens.dark,
+                        primary: effectiveColor || baseTheme.tokens.dark.primary,
+                        // Basic dark mode adaptation for gradient (simplified)
+                        gradient: options.gradient ? [options.gradient.colors[0], options.gradient.colors[1]] : baseTheme.tokens.dark.gradient,
                     }
-                };
-            } else {
-                // Standard random selection
-                const availableThemes = filterContent(THEMES);
-                selectedTheme = availableThemes[Math.floor(Math.random() * availableThemes.length)];
-            }
-
-
-            // 2. SELECT SHAPE (or override)
-            let selectedShape: typeof SHAPES[0];
-
-            if (options.shape) {
-                // Find shape by ID or ID-suffix (since IDs might be like 'geo-hexagon')
-                selectedShape = SHAPES.find(s => s.id === options.shape) || SHAPES[0];
-            } else {
-                const availableShapes = filterContent(SHAPES);
-                selectedShape = availableShapes[Math.floor(Math.random() * availableShapes.length)];
-            }
-
-            const availableFonts = filterContent(fontPairings);
-            const randomFont = availableFonts[Math.floor(Math.random() * availableFonts.length)];
-
-            // Get Strategy Template or default to Modern
-            const strategy = STRATEGY_TEMPLATES[vibe] || STRATEGY_TEMPLATES['modern'];
-
-            // 3. SELECT LOGO LAYOUT (Generative Engine)
-            const layouts = ['generative', 'swiss', 'bauhaus', 'minimal_grid', 'organic_fluid', 'cut'];
-            // Vibe Mapping
-            let preferredLayout = 'generative';
-            if (vibe === 'minimalist') preferredLayout = Math.random() > 0.4 ? 'swiss' : 'cut';
-            if (vibe === 'tech') preferredLayout = Math.random() > 0.4 ? 'minimal_grid' : 'generative';
-            if (vibe === 'bold') preferredLayout = Math.random() > 0.5 ? 'cut' : 'bauhaus';
-            if (vibe === 'nature' || vibe === 'calm') preferredLayout = 'organic_fluid'; // Soft for nature
-
-            const selectedLayout = preferredLayout as any;
-
-            const newBrand: BrandIdentity = {
-                id: crypto.randomUUID(),
-                vibe,
-                name: name.trim() || 'Untitled Brand',
-                theme: selectedTheme,
-                shape: selectedShape,
-                logoLayout: selectedLayout,
-                generationSeed: Date.now() + Math.floor(Math.random() * 100000), // Unique per generation
-                font: {
-                    id: randomFont.id,
-                    name: randomFont.name,
-                    heading: randomFont.heading.className,
-                    body: randomFont.body.className,
-                    tags: randomFont.tags
-                },
-                strategy: {
-                    ...strategy,
-                    mission: strategy.mission.replace('To ', `To help ${name.trim()} `).replace('To help Glyph Generated ', 'To ')
-                },
-                createdAt: new Date(),
+                }
             };
+        } else {
+            // Standard random selection
+            const availableThemes = filterContent(THEMES);
+            selectedTheme = availableThemes[Math.floor(Math.random() * availableThemes.length)];
+        }
 
-            setBrand(newBrand);
 
-            // Add to history
-            // If we are in the middle of history and generate new, we discard future
-            const newHistory = [...history.slice(0, currentIndex + 1), newBrand];
-            setHistory(newHistory);
-            setCurrentIndex(newHistory.length - 1);
+        // 2. SELECT SHAPE (or override)
+        let selectedShape: typeof SHAPES[0];
 
-            setIsGenerating(false);
-        }, 1500);
+        if (options.shape) {
+            // Find shape by ID or ID-suffix (since IDs might be like 'geo-hexagon')
+            selectedShape = SHAPES.find(s => s.id === options.shape) || SHAPES[0];
+        } else {
+            const availableShapes = filterContent(SHAPES);
+            selectedShape = availableShapes[Math.floor(Math.random() * availableShapes.length)];
+        }
+
+        const availableFonts = filterContent(fontPairings);
+        let selectedFont = availableFonts[Math.floor(Math.random() * availableFonts.length)];
+
+        // AI Font Override
+        if (aiFont) {
+            const matchedFont = fontPairings.find(f => f.name.toLowerCase().includes(aiFont!.toLowerCase()) || f.tags.includes(aiFont!.toLowerCase()));
+            if (matchedFont) selectedFont = matchedFont;
+        }
+
+        // Get Strategy Template or default to Modern
+        const strategy = STRATEGY_TEMPLATES[vibe] || STRATEGY_TEMPLATES['modern'];
+
+        // 3. SELECT LOGO LAYOUT (Generative Engine)
+        // With procedural icons, 'generative' layout will now use LogoEngine if icon is present
+        let selectedLayout = 'generative';
+
+        const newBrand: BrandIdentity = {
+            id: crypto.randomUUID(),
+            vibe,
+            name: name.trim() || 'Untitled Brand',
+            theme: selectedTheme,
+            shape: selectedShape,
+            logoLayout: selectedLayout as any,
+            // Procedural Fields
+            logoIcon,
+            logoContainer,
+            logoAssemblerLayout,
+
+            generationSeed: Date.now() + Math.floor(Math.random() * 100000), // Unique per generation
+            font: {
+                id: selectedFont.id,
+                name: selectedFont.name,
+                heading: selectedFont.heading.className,
+                body: selectedFont.body.className,
+                tags: selectedFont.tags
+            },
+            strategy: {
+                ...strategy,
+                mission: strategy.mission.replace('To ', `To help ${name.trim()} `).replace('To help Glyph Generated ', 'To ')
+            },
+            createdAt: new Date(),
+        };
+
+        setBrand(newBrand);
+
+        // Add to history
+        // If we are in the middle of history and generate new, we discard future
+        const newHistory = [...history.slice(0, currentIndex + 1), newBrand];
+        setHistory(newHistory);
+        setCurrentIndex(newHistory.length - 1);
+
+        setIsGenerating(false);
+
+        // PERSISTENCE: Save to Supabase (Background)
+        // Fire and forget - don't block UI
+        (async () => {
+            try {
+                const { createClient } = await import('@/utils/supabase/client');
+                const supabase = createClient();
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    await supabase.from('brands').insert({
+                        user_id: user.id,
+                        identity: newBrand,
+                        vibe: vibe,
+                        brand_name: name,
+                        created_at: new Date().toISOString()
+                    });
+                    console.log('Brand persisted to DB');
+                }
+            } catch (e) {
+                console.error('Persistence Error', e);
+            }
+        })();
     };
 
     const resetBrand = () => {

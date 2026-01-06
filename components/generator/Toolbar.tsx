@@ -16,9 +16,13 @@ interface ToolbarProps {
     onRedo?: () => void;
     currentHistoryIndex?: number;
     totalHistory?: number;
+    // Compare Props
+    onAddToCompare?: () => void;
+    onOpenCompare?: () => void;
+    compareCount?: number;
 }
 
-export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, canUndo, canRedo, onUndo, onRedo, currentHistoryIndex, totalHistory }: ToolbarProps) {
+export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, canUndo, canRedo, onUndo, onRedo, currentHistoryIndex, totalHistory, onAddToCompare, onOpenCompare, compareCount = 0 }: ToolbarProps) {
     const [showExport, setShowExport] = useState(false);
     const [showShare, setShowShare] = useState(false);
     const [copied, setCopied] = useState(false);
@@ -26,6 +30,9 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, c
     const exportOptions = [
         { id: 'tailwind', label: 'Tailwind Config', icon: FileCode, desc: 'CSS variables & tokens' },
         { id: 'svg', label: 'SVG Logo', icon: Image, desc: 'Vector format' },
+        { id: 'favicon', label: 'Favicon Package', icon: Image, desc: 'All favicon sizes' },
+        { id: 'social', label: 'Social Media Kit', icon: Share2, desc: 'Profile pics & banners' },
+        { id: 'brandbook', label: 'Brand Guidelines', icon: FileCode, desc: 'PDF-ready Brand Book' },
         { id: 'react', label: 'React Component', icon: Code2, desc: 'Copy-paste ready' },
         { id: 'all', label: 'Full Package', icon: Package, desc: 'ZIP with all assets' },
     ];
@@ -125,6 +132,28 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, c
                     </div>
                 )}
             </div>
+
+            {/* Compare Controls */}
+            {onAddToCompare && onOpenCompare && (
+                <div className="flex items-center gap-2 mr-2">
+                    <button
+                        onClick={onAddToCompare}
+                        className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 border border-stone-200 rounded-full bg-white shadow-sm text-stone-500 hover:text-orange-600 hover:border-orange-200 transition-all"
+                        title="Add to Comparison"
+                    >
+                        <span className="text-xl font-light leading-none mb-0.5">+</span>
+                    </button>
+                    {compareCount > 0 && (
+                        <button
+                            onClick={onOpenCompare}
+                            className="flex items-center gap-2 px-3 py-2 h-9 md:h-10 bg-stone-900 text-white rounded-full shadow-sm text-xs font-semibold hover:bg-stone-800 transition-all animate-in fade-in zoom-in duration-200"
+                        >
+                            Compare
+                            <span className="bg-white/20 px-1.5 py-0.5 rounded-full text-[10px]">{compareCount}</span>
+                        </button>
+                    )}
+                </div>
+            )}
 
             {/* Export Dropdown - Compact on mobile */}
             <div className="relative">

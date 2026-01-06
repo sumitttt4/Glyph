@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Check, Shuffle } from 'lucide-react';
 import { VibeSelector } from './VibeSelector';
 import { expandBriefWithAI, suggestVibeWithAI, expandVibeWithAI } from '@/lib/brand-generator';
+import { createClient } from '@/utils/supabase/client';
+import UserProfile from '@/components/auth/UserProfile';
 import { GlyphIcon } from '@/components/brand/GlyphLogo';
 
 export interface GenerationOptions {
@@ -21,6 +23,7 @@ interface SidebarProps {
     isGenerating: boolean;
     selectedVibe: string;
     setSelectedVibe: (vibe: string) => void;
+    hasGenerated?: boolean;
 }
 
 // Tailwind color palettes (shadcn style)
@@ -74,7 +77,7 @@ const GRADIENT_PRESETS = [
     { id: 'peach', name: 'Peach', colors: ['#fb923c', '#fbbf24'], angle: 135 },
 ];
 
-export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVibe }: SidebarProps) {
+export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVibe, hasGenerated }: SidebarProps) {
     const [prompt, setPrompt] = useState('');
     const [brandName, setBrandName] = useState('');
     const [selectedColor, setSelectedColor] = useState('#f97316');
@@ -87,8 +90,56 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
 
     const isValid = brandName.trim().length > 0 && prompt.trim().length > 0 && (selectedVibe || customVibe.trim().length > 0);
 
-    const handleGenerate = () => {
+    // PLG: Restore pending work on load
+    useEffect(() => {
+        const saved = localStorage.getItem('glyph_pending_project');
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                if (data.name) setBrandName(data.name);
+                if (data.prompt) setPrompt(data.prompt);
+                if (data.vibe) setSelectedVibe(data.vibe);
+                if (data.customVibe) setCustomVibe(data.customVibe);
+                if (data.color) setSelectedColor(data.color);
+                // Optional: Clear it after loading, or keep it until successful generation?
+                // Keeping it is safer for now.
+            } catch (e) {
+                console.error("Failed to restore draft", e);
+            }
+        }
+    }, []);
+
+    const handleGenerate = async () => {
         if (!isValid) return;
+
+        // PLG: Check Authed Session
+        // We let them design FIRST (Investment), then ask for Login (Conversion)
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        // Check for dev bypass cookie
+        const isDevBypass = typeof document !== 'undefined' && document.cookie.includes('admin-bypass=true');
+
+        if (!user && !isDevBypass) {
+            // 1. Save their hard work
+            const pendingProject = {
+                name: brandName,
+                prompt,
+                vibe: selectedVibe,
+                customVibe,
+                color: selectedColor,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('glyph_pending_project', JSON.stringify(pendingProject));
+
+            // 2. Redirect to Login (Gate)
+            // We append ?next=/generator so they come right back
+            window.location.href = '/login?next=/generator';
+            return;
+        }
+
+        // If User IS Logged in, we proceed to Generate
+        // (Reward)
         const vibeToUse = selectedVibe === 'custom' && customVibe ? customVibe : selectedVibe;
 
         // Find full gradient object if selected
@@ -297,50 +348,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                         <div className="h-px bg-gradient-to-r from-stone-200 via-stone-300 to-transparent" />
                     </div>
 
-                    {/* SHAPE GRID - Collapsible */}
-                    <div className="space-y-3">
-                        <button
-                            onClick={() => setIsShapesOpen(!isShapesOpen)}
-                            className="w-full flex items-center justify-between group"
-                        >
-                            <span className="text-[10px] font-mono text-stone-500 font-semibold group-hover:text-stone-800 transition-colors">SHAPE_LIBRARY</span>
-                            <div className={`transition-transform duration-200 ${isShapesOpen ? 'rotate-180' : ''}`}>
-                                <svg width="10" height="6" viewBox="0 0 10 6" fill="none" className="opacity-40 group-hover:opacity-100 transition-opacity">
-                                    <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </div>
-                        </button>
 
-                        {isShapesOpen && (
-                            <div className="grid grid-cols-6 gap-2 pt-2 animate-in slide-in-from-top-2 duration-200">
-                                {SHAPE_PRESETS.map((shape) => (
-                                    <button
-                                        key={shape.id}
-                                        onClick={() => setSelectedShape(selectedShape === shape.id ? null : shape.id)}
-                                        className={`aspect-square rounded-lg border transition-all duration-200 flex items-center justify-center group ${selectedShape === shape.id
-                                            ? 'ring-2 ring-stone-900 border-transparent bg-stone-100 shadow-md'
-                                            : 'border-stone-200 bg-white hover:border-stone-400 hover:bg-stone-50 hover:shadow-sm hover:-translate-y-0.5'
-                                            }`}
-                                    >
-                                        <svg
-                                            viewBox="0 0 24 24"
-                                            className={`w-5 h-5 transition-colors ${selectedShape === shape.id ? 'text-stone-900' : 'text-stone-400 group-hover:text-stone-600'}`}
-                                        >
-                                            <path d={shape.path} fill="currentColor" />
-                                        </svg>
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                        {!isShapesOpen && selectedShape && (
-                            <div className="pt-1">
-                                <div className="text-[10px] font-mono text-stone-400 flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                                    <span>Shape Selected: {selectedShape.replace('geo-', '').replace('org-', '').replace('tech-', '').replace('abs-', '')}</span>
-                                </div>
-                            </div>
-                        )}
-                    </div>
 
                     {/* COLOR SWATCHES - Enhanced */}
                     <div className="space-y-3">
@@ -398,16 +406,23 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
             </div>
 
             {/* Fixed Generate Button Footer */}
-            <div className="p-4 md:p-5 border-t border-stone-200 bg-gradient-to-t from-stone-50 to-white sticky bottom-0" style={{ boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
-                <button
-                    onClick={handleGenerate}
-                    disabled={isGenerating || !isValid}
-                    className="w-full py-3 md:py-4 bg-gradient-to-r from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:shadow-lg"
-                    title={!isValid ? "Please enter a brand name and description" : "Generate System"}
-                    style={{ boxShadow: 'var(--shadow-md)' }}
-                >
-                    <span className="text-sm tracking-wide">{isGenerating ? 'Generating...' : 'Generate'}</span>
-                </button>
+            <div className="border-t border-stone-200 bg-gradient-to-t from-stone-50 to-white sticky bottom-0 z-50" style={{ boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
+                <div className="px-5 pt-4 pb-2">
+                    <UserProfile />
+                </div>
+                <div className="px-5 pb-5 pt-2">
+                    <button
+                        onClick={handleGenerate}
+                        disabled={isGenerating || !isValid}
+                        className="w-full py-3 md:py-4 bg-gradient-to-r from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:shadow-lg"
+                        title={!isValid ? "Please enter a brand name and description" : "Generate System"}
+                        style={{ boxShadow: 'var(--shadow-md)' }}
+                    >
+                        <span className="text-sm tracking-wide">
+                            {isGenerating ? 'Generating...' : hasGenerated ? 'Generate Again' : 'Generate'}
+                        </span>
+                    </button>
+                </div>
             </div>
         </aside>
     );

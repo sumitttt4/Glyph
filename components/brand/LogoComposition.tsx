@@ -1,11 +1,15 @@
 import React, { useId } from 'react';
 import { BrandIdentity } from '@/lib/data';
 import { SHAPES, Shape, getRandomShape } from '@/lib/shapes';
+import { AutoLettermark } from './Lettermark';
+import LogoEngine from './LogoEngine';
+import LogoAssembler from './LogoAssembler';
 
 interface LogoCompositionProps {
     brand: BrandIdentity;
     className?: string;
     layout?: 'default' | 'swiss' | 'bauhaus' | 'minimal_grid' | 'organic_fluid' | 'generative' | 'cut';
+    overrideColors?: { primary: string; accent?: string; bg?: string };
 }
 
 /**
@@ -26,7 +30,7 @@ function seededRandom(seed: string) {
  * Logo Composition Engine v2
  * Replaces simple MonogramMark with algorithmic synthesis.
  */
-export const LogoComposition = ({ brand, className, layout = 'generative' }: LogoCompositionProps) => {
+export const LogoComposition = ({ brand, className, layout = 'generative', overrideColors }: LogoCompositionProps) => {
     const uniqueId = useId();
     // Include generationSeed for unique variations per generation
     const seed = brand.id + (brand.name || 'brand') + (brand.generationSeed || Date.now());
@@ -163,12 +167,42 @@ export const LogoComposition = ({ brand, className, layout = 'generative' }: Log
     }
     // Algorithmic decision tree based on Vibe + Random Seed
 
-    // DECISION: Layout Mode
+    // For 'generative' layout, use Procedural Icon Engine if available, otherwise Lettermarks
+    // This allows for 10,000+ unique combinations as requested
+    if (layout === 'generative') {
+        if (brand.logoAssemblerLayout) {
+            return (
+                <LogoAssembler
+                    iconName={brand.logoIcon || 'Sparkles'}
+                    brandName={brand.name}
+                    layout={brand.logoAssemblerLayout}
+                    shape={brand.logoContainer || 'squircle'}
+                    primaryColor={overrideColors?.primary || colors.primary}
+                    fontFamily={brand.font.name}
+                    className={className}
+                />
+            );
+        }
+        if (brand.logoIcon) {
+            return (
+                <LogoEngine
+                    iconName={brand.logoIcon}
+                    containerShape={brand.logoContainer || 'squircle'}
+                    primaryColor={overrideColors?.primary || colors.primary}
+                    className={className}
+                    style="solid"
+                />
+            );
+        }
+        return <AutoLettermark brand={brand} className={className} colors={overrideColors} />;
+    }
+
+    // Legacy shape-based layouts for backward compatibility
     const layoutModeRoll = seededRandom(seed + 'layout');
-    let genLayout = 'stacked';
-    if (layoutModeRoll > 0.8) genLayout = 'radial';
-    else if (layoutModeRoll > 0.5) genLayout = 'intersect';
-    else if (layoutModeRoll > 0.2) genLayout = 'cut'; // New "High Quality Cut" mode
+    let genLayout = 'cut';
+    if (layoutModeRoll > 0.7) genLayout = 'radial';
+    else if (layoutModeRoll > 0.4) genLayout = 'intersect';
+    else if (layoutModeRoll > 0.2) genLayout = 'stacked';
 
     // DECISION: Texture/Fill
     const textureRoll = seededRandom(seed + 'tex');

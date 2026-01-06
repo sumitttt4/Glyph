@@ -30,6 +30,13 @@ export interface BrandIdentity {
   theme: Theme;
   shape: Shape;
   logoLayout?: 'default' | 'swiss' | 'bauhaus' | 'minimal_grid' | 'organic_fluid' | 'generative';
+
+  // Procedural Logo Engine
+  logoIcon?: string;      // Lucide icon name
+
+  logoContainer?: string; // Container shape key
+  logoAssemblerLayout?: 'icon_left' | 'icon_right' | 'stacked' | 'badge' | 'monogram';
+
   canvasStyle?: 'solid' | 'gradient' | 'mesh';  // Background style
   font: FontPair;
 

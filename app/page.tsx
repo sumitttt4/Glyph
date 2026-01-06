@@ -14,7 +14,9 @@ import { FAQ } from '@/components/FAQ';
 import BrowserMockup from '@/components/hero/BrowserMockup';
 import Pricing from '@/components/Pricing';
 import { AuthRescue } from '@/components/auth/AuthRescue';
+
 import { Suspense } from 'react';
+import { LogoComposition } from '@/components/brand/LogoComposition';
 
 const DEMO_BRAND = {
   id: 'demo',
@@ -23,6 +25,7 @@ const DEMO_BRAND = {
   font: { name: 'Instrument Sans', weights: [400, 700] },
   theme: THEMES[0], // Architect
   shape: SHAPES[3], // Hexagon
+  generationSeed: 12345,
 };
 
 // Sample data for the "How It Works" bento
@@ -100,7 +103,7 @@ export default function LandingPage() {
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link
-                  href="/login"
+                  href="/generator"
                   className="inline-flex items-center justify-center h-10 px-6 rounded-full bg-stone-950 text-white text-sm font-semibold hover:bg-stone-800 transition-all shadow-lg hover:shadow-xl active:scale-95"
                 >
                   Start Generating
@@ -181,7 +184,7 @@ export default function LandingPage() {
                   </li>
                 </ul>
 
-                <Link href="/login" className="inline-flex items-center gap-2 text-white font-bold hover:underline underline-offset-4 decoration-[#FF4500]">
+                <Link href="/generator" className="inline-flex items-center gap-2 text-white font-bold hover:underline underline-offset-4 decoration-[#FF4500]">
                   Try the Demo <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -192,10 +195,8 @@ export default function LandingPage() {
                 {/* Logo Block - Large */}
                 <div className="col-span-2 row-span-1 bg-white rounded-2xl p-6 flex items-center justify-between overflow-hidden group hover:shadow-lg transition-shadow">
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-[#FF4500] flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-8 h-8 fill-white">
-                        <path d={DEMO_BRAND.shape.path} />
-                      </svg>
+                    <div className="w-14 h-14 relative">
+                      <LogoComposition brand={DEMO_BRAND as any} />
                     </div>
                     <span className="text-3xl font-bold text-stone-900 tracking-tight">{DEMO_BRAND.name}</span>
                   </div>

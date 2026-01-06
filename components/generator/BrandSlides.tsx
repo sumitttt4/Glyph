@@ -5,6 +5,7 @@ import { BrandIdentity } from '@/lib/data';
 import { cn, hexToRgb, hexToCmyk } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { Check, Copy, ExternalLink, ArrowRight } from 'lucide-react';
+import { LogoComposition } from '@/components/brand/LogoComposition';
 
 // ... (SlideLayout remains same)
 
@@ -52,10 +53,13 @@ const SlideLayout = ({
 export const SlideCover = ({ brand }: { brand: BrandIdentity }) => (
     <SlideLayout brand={brand} className="justify-end">
         <div className="space-y-6">
-            <div className="w-24 h-24 mb-8" style={{ color: brand.theme.tokens.dark.primary }}>
-                <svg viewBox="0 0 24 24" className="w-full h-full fill-current">
-                    <path d={brand.shape.path} />
-                </svg>
+            <div className="w-32 h-32 mb-8">
+                <LogoComposition
+                    brand={brand}
+                    layout="generative"
+                    overrideColors={{ primary: '#FFFFFF' }}
+                    className="w-full h-full drop-shadow-2xl"
+                />
             </div>
             <h1 className={cn("text-6xl md:text-8xl font-bold tracking-tighter", brand.font.heading)}>
                 {brand.name}
@@ -123,10 +127,8 @@ export const SlideLogo = ({ brand }: { brand: BrandIdentity }) => (
             {/* Primary Mark - Bigger */}
             <div className="col-span-2 row-span-2 bg-white rounded-xl p-8 flex flex-col justify-between text-black relative group">
                 <div className="flex-1 flex items-center justify-center">
-                    <div className="w-48 h-48" style={{ color: brand.theme.tokens.light.primary }}>
-                        <svg viewBox="0 0 24 24" className="w-full h-full fill-current drop-shadow-2xl">
-                            <path d={brand.shape.path} />
-                        </svg>
+                    <div className="w-48 h-48 relative">
+                        <LogoComposition brand={brand} layout="generative" />
                     </div>
                 </div>
                 <div className="border-t border-black/10 pt-4 mt-4">
@@ -136,20 +138,16 @@ export const SlideLogo = ({ brand }: { brand: BrandIdentity }) => (
 
             {/* Monotone */}
             <div className="col-span-1 row-span-1 bg-stone-900 rounded-xl p-6 flex flex-col justify-between text-white border border-white/10">
-                <div className="w-16 h-16 text-white self-center">
-                    <svg viewBox="0 0 24 24" className="w-full h-full fill-current">
-                        <path d={brand.shape.path} />
-                    </svg>
+                <div className="w-16 h-16 self-center">
+                    <LogoComposition brand={brand} layout="generative" overrideColors={{ primary: '#FFFFFF' }} />
                 </div>
                 <span className="text-[10px] uppercase font-bold tracking-widest opacity-50 text-center">Monotone</span>
             </div>
 
             {/* Accent */}
             <div className="col-span-1 row-span-1 rounded-xl p-6 flex flex-col justify-between text-white" style={{ backgroundColor: brand.theme.tokens.dark.primary }}>
-                <div className="w-16 h-16 text-white self-center">
-                    <svg viewBox="0 0 24 24" className="w-full h-full fill-current">
-                        <path d={brand.shape.path} />
-                    </svg>
+                <div className="w-16 h-16 self-center">
+                    <LogoComposition brand={brand} layout="generative" overrideColors={{ primary: '#FFFFFF' }} />
                 </div>
                 <span className="text-[10px] uppercase font-bold tracking-widest opacity-80 text-center">Accent</span>
             </div>
@@ -158,10 +156,8 @@ export const SlideLogo = ({ brand }: { brand: BrandIdentity }) => (
             <div className="col-span-2 row-span-1 border border-white/10 rounded-xl p-6 relative flex items-center justify-center bg-white/5">
                 <div className="absolute top-4 left-4 text-[10px] font-mono text-white/40 uppercase tracking-widest">Clear Space</div>
                 <div className="relative p-6 border border-dashed border-white/20">
-                    <div className="w-16 h-16" style={{ color: brand.theme.tokens.dark.text }}>
-                        <svg viewBox="0 0 24 24" className="w-full h-full fill-current">
-                            <path d={brand.shape.path} />
-                        </svg>
+                    <div className="w-16 h-16">
+                        <LogoComposition brand={brand} layout="generative" overrideColors={{ primary: '#FFFFFF' }} />
                     </div>
                     {/* Measurement lines */}
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-mono text-white/40">x</div>

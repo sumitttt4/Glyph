@@ -126,9 +126,12 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, v
                         {/* Header */}
                         <div className="flex justify-between items-start relative z-30">
                             <div className="w-16 h-16 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-sm">
-                                <svg viewBox="0 0 24 24" className="w-8 h-8" style={{ color: tokens.gradient ? '#FFFFFF' : tokens.text }}>
-                                    <path d={brand.shape.path} fill="currentColor" />
-                                </svg>
+                                <div className="w-8 h-8 relative">
+                                    <LogoComposition
+                                        brand={brand}
+                                        overrideColors={{ primary: tokens.gradient ? '#FFFFFF' : tokens.text }}
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -139,10 +142,9 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, v
                                 layoutId="main-logo"
                                 className="w-48 h-48 relative drop-shadow-2xl"
                             >
-                                <MonogramMark
+                                <LogoComposition
                                     brand={brand}
-                                    color={tokens.gradient ? '#FFFFFF' : tokens.primary}
-                                    bg={tokens.gradient ? 'rgba(255,255,255,0.15)' : tokens.surface}
+                                    overrideColors={tokens.gradient ? { primary: '#FFFFFF' } : undefined}
                                 />
                             </motion.div>
 

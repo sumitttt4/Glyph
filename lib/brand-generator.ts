@@ -344,11 +344,15 @@ function generateFallbackDNA(name: string, description: string, vibe: BrandVibe)
 export async function expandBriefWithAI(shortBrief: string): Promise<string> {
     const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY;
 
+    console.log('[Reframe] API Key present:', !!apiKey, 'Key length:', apiKey?.length || 0);
+
     if (!apiKey || shortBrief.length < 3) {
+        console.log('[Reframe] Skipping - no API key or brief too short');
         return shortBrief;
     }
 
     try {
+        console.log('[Reframe] Calling Groq API...');
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -369,12 +373,21 @@ export async function expandBriefWithAI(shortBrief: string): Promise<string> {
             }),
         });
 
-        if (!response.ok) throw new Error('API error');
+        console.log('[Reframe] Response status:', response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('[Reframe] API error:', response.status, errorText);
+            throw new Error('API error');
+        }
 
         const data = await response.json();
-        return data.choices[0]?.message?.content?.trim() || shortBrief;
+        const result = data.choices[0]?.message?.content?.trim() || shortBrief;
+        console.log('[Reframe] Success:', result);
+        return result;
 
-    } catch {
+    } catch (error) {
+        console.error('[Reframe] Catch error:', error);
         return shortBrief;
     }
 }
@@ -460,5 +473,184 @@ export async function expandVibeWithAI(vibeKeywords: string): Promise<string> {
 
     } catch {
         return vibeKeywords;
+    }
+}
+
+// AI-powered Logo Component Selection (Procedural Generation)
+export async function suggestLogoComponentsWithAI(brief: string, exclude: string[] = []): Promise<{ icon: string; container: string }> {
+    const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY;
+
+    // Fallback if no API key
+    if (!apiKey) {
+        return { icon: 'Sparkles', container: 'squircle' };
+    }
+
+    const sysPrompt = `
+AVAILABLE ICON LIBRARIES (Use these or similar Lucide icons, do not stick to only these):
+
+1. TECH/SAAS: 
+[Cpu, Database, Server, Terminal, Code2, GitBranch, Globe, Network, Wifi, Radio, Signal, Zap, Battery, HardDrive, Laptop, Smartphone, Bot, Rocket, Layers, Box, Hexagon]
+
+2. FINANCE/TRUST: 
+[Shield, Lock, Key, CreditCard, Wallet, Banknote, Landmark, Scale, TrendingUp, PieChart, BarChart, Target, Award, Crown, Briefcase, Building, Anchor]
+
+3. CREATIVE/STUDIO: 
+[PenTool, Brush, Palette, Image, Camera, Video, Mic, Music, Aperture, Framer, Component, Figma, Scissors, Wand, Sparkles, Feather, Eye]
+
+4. NATURE/GROWTH: 
+[Leaf, Sprout, Flower, Tree, Sun, Moon, Cloud, Wind, Droplet, Flame, Mountain, Snowflake, Waves, Sunset, Bird]
+
+INSTRUCTIONS:
+1. Analyze the user's startup description.
+2. Select a SPECIFIC icon from the lists above (or any valid Lucide icon name) that is metaphorically relevant to the brief.
+3. NEVER return "Circle", "Square" or generic shapes as an icon.
+4. Select a container shape from: ["squircle", "cyber", "diamond", "hexagon", "pill"].
+5. Avoid these icons if possible: ${exclude.join(', ')}.
+
+Respond with a JSON object ONLY: { "icon": "IconName", "container": "ShapeName" }
+`;
+
+    try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                    { role: 'system', content: sysPrompt },
+                    { role: 'user', content: brief }
+                ],
+                temperature: 0.5,
+                max_tokens: 100,
+                response_format: { type: "json_object" }
+            }),
+        });
+
+        if (!response.ok) throw new Error('API error');
+
+        const data = await response.json();
+        const content = data.choices[0]?.message?.content?.trim();
+
+        try {
+            const result = JSON.parse(content);
+            return {
+                icon: result.icon || 'Sparkles',
+                container: result.container || 'squircle'
+            };
+        } catch (e) {
+            console.error('JSON Parse Error:', e);
+            return { icon: 'Sparkles', container: 'squircle' };
+        }
+
+    } catch (e) {
+        console.error('Logo AI Error:', e);
+        return { icon: 'Sparkles', container: 'squircle' };
+    }
+}
+
+// V2: AI-powered Logo with Assembler Layout Support (Concept by Senior Art Director)
+export async function suggestLogoComponentsWithAI_V2(brief: string, exclude: string[] = []): Promise<{
+    icon: string;
+    container: string;
+    layout: string;
+    color?: string;
+    font?: string;
+}> {
+    const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY;
+
+    // Fallback if no API key
+    if (!apiKey) {
+        return { icon: 'Sparkles', container: 'squircle', layout: 'icon_left' };
+    }
+
+    const sysPrompt = `
+You are a Senior Art Director. Your goal is to design a unique, metaphorical logo for a startup.
+
+TRAINING DATA (DESIGN LOGIC):
+- Metaphor Matching:
+  * "Fast/Speed" -> Use Icons: [Zap, Activity, Rabbit, Rocket, Wind, Timer, Gauge]
+  * "Secure/Safe" -> Use Icons: [Shield, Lock, Eye, Fingerprint, Castle, Key, Anchor]
+  * "Growth/Money" -> Use Icons: [TrendingUp, Sprout, BarChart, Coin, Landmark, Wallet]
+  * "Community/Social" -> Use Icons: [Users, Heart, Globe, MessageCircle, Handshake]
+  * "Tech/AI" -> Use Icons: [Cpu, Bot, Sparkles, Network, Code, Terminal, Database]
+  * "Nature/Eco" -> Use Icons: [Leaf, Tree, Sun, Droplet, Mountain, Wind, Flower]
+  * "Creative" -> Use Icons: [PenTool, Palette, Image, Camera, Box, Layers, Feather]
+
+- Layout Rules:
+  * IF "Corporate/Trust" -> Use Layout: "icon_left" (Classic)
+  * IF "Creative/Fun/App" -> Use Layout: "stacked" or "badge"
+  * IF "Tech/Minimal" -> Use Layout: "icon_left" or "monogram"
+  * IF "Luxury/Fashion" -> Use Layout: "monogram" or "icon_right"
+
+- Typography Rules:
+  * "Tech" -> Font: "Inter" or "Space Grotesk"
+  * "Luxury" -> Font: "Playfair Display" or "Cinzel"
+  * "Modern" -> Font: "Manrope" or "DM Sans"
+  * "Friendly" -> Font: "Outfit" or "Fredoka"
+
+INSTRUCTIONS:
+1. Analyze the user's startup brief deeply.
+2. Select a SPECIFIC icon from Lucide React library that is metaphorically relevant. AVOID generic shapes if possible.
+3. Select a Layout from: ["icon_left", "icon_right", "stacked", "badge", "monogram"].
+4. Select a Container Shape from: ["squircle", "circle", "sharp", "pill", "ghost", "hexagon", "diamond"].
+5. Select a Primary Color (Hex Code) that matches the vibe.
+6. Select a Font Family (Google Font name, e.g. Inter, Manrope, Playfair Display).
+
+AVOID using these icons (they were used recently): ${exclude.join(', ')}.
+
+Respond with a JSON object ONLY: 
+{ 
+  "icon": "IconName", 
+  "layout": "LayoutName", 
+  "shape": "ShapeName", 
+  "color": "#HexCode", 
+  "font": "FontName" 
+}
+`;
+
+    try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                    { role: 'system', content: sysPrompt },
+                    { role: 'user', content: brief }
+                ],
+                temperature: 0.6,
+                max_tokens: 150,
+                response_format: { type: "json_object" }
+            }),
+        });
+
+        if (!response.ok) throw new Error('API error');
+
+        const data = await response.json();
+        const content = data.choices[0]?.message?.content?.trim();
+
+        try {
+            const result = JSON.parse(content);
+            return {
+                icon: result.icon || 'Sparkles',
+                container: result.shape || 'squircle',
+                layout: result.layout || 'icon_left',
+                color: result.color,
+                font: result.font
+            };
+        } catch (e) {
+            console.error('JSON Parse Error:', e);
+            return { icon: 'Sparkles', container: 'squircle', layout: 'icon_left' };
+        }
+
+    } catch (e) {
+        console.error('Logo AI Error:', e);
+        return { icon: 'Sparkles', container: 'squircle', layout: 'icon_left' };
     }
 }

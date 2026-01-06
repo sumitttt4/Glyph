@@ -49,12 +49,12 @@ export const LogoConstruction = ({ brand, className }: LogoConstructionProps) =>
                 <div className="relative w-full h-full">
                     {/* Outline / Construction Ghost */}
                     <div className="absolute inset-0 opacity-10 scale-110 blur-sm pointer-events-none grayscale">
-                        <LogoComposition brand={brand} />
+                        <LogoComposition brand={brand} layout="generative" />
                     </div>
 
                     {/* Real Logo */}
                     <div className="relative z-10 w-full h-full drop-shadow-2xl">
-                        <LogoComposition brand={brand} />
+                        <LogoComposition brand={brand} layout="generative" />
                     </div>
                 </div>
             </div>

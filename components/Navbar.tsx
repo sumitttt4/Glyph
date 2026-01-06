@@ -57,7 +57,7 @@ export function Navbar() {
                     {/* Desktop CTA */}
                     <div className="hidden md:flex items-center gap-4">
                         <Link
-                            href="/login"
+                            href="/generator"
                             className="inline-flex items-center h-9 px-4 rounded-full bg-stone-950 text-white text-sm font-medium hover:bg-stone-800 transition-all shadow-lg hover:shadow-xl active:scale-95"
                         >
                             Launch Generator
@@ -89,7 +89,7 @@ export function Navbar() {
                             </a>
                         ))}
                         <Link
-                            href="/login"
+                            href="/generator"
                             className="block w-full text-center px-5 py-3 rounded-full bg-stone-950 text-white text-sm font-medium"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
