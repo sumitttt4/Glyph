@@ -143,8 +143,8 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
   };
 
   return (
-    // Mobile: Vertical stack (flex-col), Desktop: Side-by-side (md:flex-row)
-    <div className="flex flex-col md:flex-row min-h-screen w-full bg-stone-50 overflow-auto md:overflow-hidden font-sans">
+    // Mobile: Vertical stack, Desktop: Fixed sidebar + scrollable main
+    <div className="min-h-screen w-full bg-stone-50 font-sans">
       <LoadingState isLoading={isGenerating} />
       <ProGateModal
         isOpen={showProModal}
@@ -152,8 +152,8 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
         featureName="Full Package Export"
       />
 
-      {/* Sidebar - Full width on mobile, fixed width + full height on desktop */}
-      <div className="w-full md:w-[420px] md:h-screen shrink-0">
+      {/* Sidebar - Fixed on desktop, normal flow on mobile */}
+      <div className="md:fixed md:left-0 md:top-0 md:bottom-0 md:w-[420px] md:overflow-y-auto overflow-x-hidden md:border-r md:border-stone-200 z-40 scrollbar-hide">
         <Sidebar
           onGenerate={handleGenerate}
           isGenerating={isGenerating}
@@ -162,8 +162,8 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
         />
       </div>
 
-      {/* Main Content - Below sidebar on mobile, beside on desktop */}
-      <main ref={mainRef} className="flex-1 relative bg-[#FAFAF9] min-h-[60vh] md:min-h-full md:overflow-auto">
+      {/* Main Content - Has left margin on desktop to account for fixed sidebar */}
+      <main ref={mainRef} className="relative bg-[#FAFAF9] min-h-screen md:ml-[420px]">
         <div
           className="absolute inset-0 opacity-40"
           style={{

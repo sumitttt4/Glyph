@@ -123,12 +123,13 @@ export function useBrandGenerator() {
             const strategy = STRATEGY_TEMPLATES[vibe] || STRATEGY_TEMPLATES['modern'];
 
             // 3. SELECT LOGO LAYOUT (Generative Engine)
-            const layouts = ['generative', 'swiss', 'bauhaus', 'minimal_grid', 'generative']; // weighted towards generative
+            const layouts = ['generative', 'swiss', 'bauhaus', 'minimal_grid', 'organic_fluid', 'cut'];
             // Vibe Mapping
             let preferredLayout = 'generative';
-            if (vibe === 'minimalist') preferredLayout = Math.random() > 0.5 ? 'swiss' : 'minimal_grid';
-            if (vibe === 'tech') preferredLayout = Math.random() > 0.5 ? 'minimal_grid' : 'generative';
-            if (vibe === 'bold') preferredLayout = Math.random() > 0.5 ? 'bauhaus' : 'generative';
+            if (vibe === 'minimalist') preferredLayout = Math.random() > 0.4 ? 'swiss' : 'cut';
+            if (vibe === 'tech') preferredLayout = Math.random() > 0.4 ? 'minimal_grid' : 'generative';
+            if (vibe === 'bold') preferredLayout = Math.random() > 0.5 ? 'cut' : 'bauhaus';
+            if (vibe === 'nature' || vibe === 'calm') preferredLayout = 'organic_fluid'; // Soft for nature
 
             const selectedLayout = preferredLayout as any;
 

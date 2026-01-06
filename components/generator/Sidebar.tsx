@@ -257,25 +257,31 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                         onVibeChange={setSelectedVibe}
                     />
 
-                    {/* Custom Vibe Input */}
+                    {/* Custom Vibe Input - Auto-expanding like GPT/Claude */}
                     <div className="relative">
-                        <input
-                            type="text"
+                        <textarea
                             value={customVibe}
                             onChange={(e) => {
                                 setCustomVibe(e.target.value);
                                 if (e.target.value) setSelectedVibe('custom');
+                                // Auto-resize
+                                e.target.style.height = 'auto';
+                                e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
                             }}
                             onFocus={() => setSelectedVibe('custom')}
                             placeholder="Or type your own vibe..."
-                            className={`w-full h-11 px-4 text-sm border rounded-xl transition-all outline-none ${selectedVibe === 'custom'
+                            rows={1}
+                            className={`w-full min-h-[44px] max-h-[120px] px-4 py-3 text-sm border rounded-xl transition-all outline-none resize-none overflow-hidden ${selectedVibe === 'custom'
                                 ? 'ring-2 ring-stone-900 bg-stone-50 border-transparent shadow-sm'
                                 : 'border-stone-200 bg-stone-50 hover:border-stone-300 hover:shadow-sm'
                                 }`}
-                            style={{ boxShadow: selectedVibe === 'custom' ? 'var(--shadow-sm)' : 'inset 0 1px 2px rgba(0, 0, 0, 0.03)' }}
+                            style={{
+                                boxShadow: selectedVibe === 'custom' ? 'var(--shadow-sm)' : 'inset 0 1px 2px rgba(0, 0, 0, 0.03)',
+                                scrollbarWidth: 'none', // Firefox
+                            }}
                         />
                         {selectedVibe === 'custom' && (
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            <div className="absolute right-3 top-3">
                                 <span className="text-[9px] font-mono text-stone-600 bg-stone-200 px-2 py-1 rounded-md shadow-xs">CUSTOM</span>
                             </div>
                         )}
@@ -391,22 +397,12 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
 
             </div>
 
-            {/* Fixed Generate Button Footer - Two Equal Buttons */}
-            <div className="p-4 md:p-5 border-t border-stone-200 bg-gradient-to-t from-stone-50 to-white flex gap-3 sticky bottom-0" style={{ boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
-                <button
-                    onClick={handleSurpriseMe}
-                    disabled={isGenerating}
-                    className="flex-1 py-3 md:py-4 bg-gradient-to-br from-stone-100 to-stone-50 hover:from-stone-200 hover:to-stone-100 text-stone-700 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 active:scale-95 border border-stone-200 hover:border-stone-300 hover:shadow-md group"
-                    title="Surprise Me"
-                    style={{ boxShadow: 'var(--shadow-sm)' }}
-                >
-                    <Shuffle className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
-                    <span className="text-sm">Surprise Me</span>
-                </button>
+            {/* Fixed Generate Button Footer */}
+            <div className="p-4 md:p-5 border-t border-stone-200 bg-gradient-to-t from-stone-50 to-white sticky bottom-0" style={{ boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
                 <button
                     onClick={handleGenerate}
                     disabled={isGenerating || !isValid}
-                    className="flex-1 py-3 md:py-4 bg-gradient-to-r from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:shadow-lg"
+                    className="w-full py-3 md:py-4 bg-gradient-to-r from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:shadow-lg"
                     title={!isValid ? "Please enter a brand name and description" : "Generate System"}
                     style={{ boxShadow: 'var(--shadow-md)' }}
                 >

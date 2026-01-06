@@ -16,87 +16,40 @@ export interface Shape {
 
 export const SHAPES: Shape[] = [
     // ============================================================
-    // 1. BASIC GEOMETRY (The Atoms)
+    // 1. BASIC GEOMETRY (REMOVED as per user request for "Non-Generic")
+    // ============================================================
+    /* 
+     * Basic shapes (Triangle, Square, Circle, etc.) have been removed 
+     * to ensure all generated logos feel premium and "designed".
+     */
+
+    // ============================================================
+    // 1.5. HIGH-END REFERENCE (The "Architectural" Set)
     // ============================================================
     {
-        id: 'geo-triangle',
-        name: 'Triangle',
-        viewBox: '0 0 24 24',
-        path: 'M12 2L2 22h20L12 2z',
-        tags: ['minimalist', 'geometric', 'modern', 'bold'],
-        complexity: 'simple',
+        id: 'ref-dynamic-wing',
+        name: 'Dynamic Wing',
+        viewBox: '0 0 100 100',
+        path: 'M20,80 C20,40 50,10 80,10 L80,30 C60,30 40,50 40,80 Z M30,90 C30,50 60,20 90,20 L90,40 C70,40 50,60 50,90 Z',
+        // Custom path: Two sweeping stylized leaves/wings similar to the reference image
+        tags: ['minimalist', 'architectural', 'premium', 'dynamic'],
+        complexity: 'detailed',
     },
     {
-        id: 'geo-square',
-        name: 'Square',
+        id: 'ref-sharp-s',
+        name: 'Geometric S',
         viewBox: '0 0 24 24',
-        path: 'M3 3h18v18H3z',
-        tags: ['minimalist', 'geometric', 'professional', 'tech'],
-        complexity: 'simple',
+        path: 'M20 4h-4l-4 4-4-4H4v4l6 6-6 6v4h4l4-4 4 4h4v-4l-6-6 6-6V4z', // Sharp angular S
+        tags: ['minimalist', 'architectural', 'bold', 'modern'],
+        complexity: 'detailed',
     },
     {
-        id: 'geo-circle',
-        name: 'Circle',
+        id: 'ref-interlace',
+        name: 'Interlace',
         viewBox: '0 0 24 24',
-        path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z',
-        tags: ['minimalist', 'organic', 'clean', 'modern'],
-        complexity: 'simple',
-    },
-    {
-        id: 'geo-hexagon',
-        name: 'Hexagon',
-        viewBox: '0 0 24 24',
-        path: 'M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9z',
-        tags: ['tech', 'geometric', 'bold', 'structure'],
-        complexity: 'simple',
-    },
-    {
-        id: 'geo-diamond',
-        name: 'Diamond',
-        viewBox: '0 0 24 24',
-        path: 'M12 2L2 12l10 10 10-10L12 2z',
-        tags: ['minimalist', 'premium', 'geometric', 'luxury'],
-        complexity: 'simple',
-    },
-    {
-        id: 'geo-pentagon',
-        name: 'Pentagon',
-        viewBox: '0 0 24 24',
-        path: 'M12 2L3 9.5l3.5 11h11l3.5-11L12 2z',
-        tags: ['geometric', 'bold', 'professional'],
-        complexity: 'simple',
-    },
-    {
-        id: 'geo-octagon',
-        name: 'Octagon',
-        viewBox: '0 0 24 24',
-        path: 'M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86L7.86 2z',
-        tags: ['geometric', 'tech', 'bold', 'stable'],
-        complexity: 'simple',
-    },
-    {
-        id: 'geo-semicircle-up',
-        name: 'Semicircle Up',
-        viewBox: '0 0 24 24',
-        path: 'M12 2C6.48 2 2 6.48 2 12h20c0-5.52-4.48-10-10-10z',
-        tags: ['minimalist', 'abstract', 'modern'],
-        complexity: 'simple',
-    },
-    {
-        id: 'geo-semicircle-down',
-        name: 'Semicircle Down',
-        viewBox: '0 0 24 24',
-        path: 'M12 22c5.52 0 10-4.48 10-10H2c0 5.52 4.48 10 10 10z',
-        tags: ['minimalist', 'abstract', 'modern'],
-        complexity: 'simple',
-    },
-    {
-        id: 'geo-trapezoid',
-        name: 'Trapezoid',
-        viewBox: '0 0 24 24',
-        path: 'M20 18H4l4-12h8l4 12z',
-        tags: ['geometric', 'stable', 'modern'],
-        complexity: 'simple',
+        path: 'M12 2L2 12h5v10h10v-5l5-5H12z M7 12l5-5 5 5-5 5-5-5z', // Geometric knot
+        tags: ['architectural', 'complex', 'tech'],
+        complexity: 'moderate',
     },
 
     // ============================================================
@@ -320,6 +273,57 @@ export const SHAPES: Shape[] = [
         viewBox: '0 0 24 24',
         path: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',
         tags: ['organic', 'warm', 'care'],
+        complexity: 'simple',
+    },
+    // ============================================================
+    // 6. CONTAINERS & FRAMES (Base Shapes for Cuts)
+    // ============================================================
+    {
+        id: 'cont-shield-simple',
+        name: 'Shield Simple',
+        viewBox: '0 0 24 24',
+        path: 'M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z',
+        tags: ['classic', 'shield', 'protection', 'bold'],
+        complexity: 'simple',
+    },
+    {
+        id: 'cont-badge-hex',
+        name: 'Badge Hex',
+        viewBox: '0 0 24 24',
+        path: 'M12 2l9 4v12l-9 4-9-4V6l9-4z', // Hexagon but used as container
+        tags: ['modern', 'badge', 'tech'],
+        complexity: 'simple',
+    },
+    {
+        id: 'cont-circle-thick',
+        name: 'Circle Container',
+        viewBox: '0 0 24 24',
+        path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z', // Full circle
+        tags: ['classic', 'modern', 'minimalist'],
+        complexity: 'simple',
+    },
+    {
+        id: 'cont-rounded-square',
+        name: 'Rounded Square',
+        viewBox: '0 0 24 24',
+        path: 'M5 3h14c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2z',
+        tags: ['modern', 'app', 'tech'],
+        complexity: 'simple',
+    },
+    {
+        id: 'cont-flag',
+        name: 'Flag',
+        viewBox: '0 0 24 24',
+        path: 'M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z',
+        tags: ['classic', 'symbol', 'bold'],
+        complexity: 'simple',
+    },
+    {
+        id: 'cont-tag',
+        name: 'Tag',
+        viewBox: '0 0 24 24',
+        path: 'M20 10V6h-4l-6 6 4 4zm-6 8l-6-6v-6h6l6 6z', // Tag shape
+        tags: ['modern', 'retail', 'clean'],
         complexity: 'simple',
     }
 ];

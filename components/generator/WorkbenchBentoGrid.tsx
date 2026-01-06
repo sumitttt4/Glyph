@@ -15,6 +15,8 @@ import { MockupCreditCard, MockupIDBadge } from '@/components/mockups/MockupMerc
 import { MockupIPhoneHome } from '@/components/mockups/MockupIPhoneHome';
 import { MonogramMark } from '@/components/brand/MonogramMark';
 import { LogoComposition } from '../brand/LogoComposition';
+import { LogoConstruction } from '../brand/LogoConstruction';
+import { SafariBrowserMockup } from '../mockups/SafariBrowserMockup';
 
 
 
@@ -173,9 +175,10 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, v
                     </div>
                 </motion.div>
 
-                {/* 2. Web Browser Mockup - "Browser-in-Browser" Preview */}
-                <div className="md:col-span-5 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden relative">
-                    <BrowserBrandPreview brand={brand} />
+                {/* 2. Construction / Blueprint View */}
+                {/* Spans 5 columns on Desktop to create the "Hero Feature" look alongside the 4-col palette below */}
+                <div className="md:col-span-5 md:row-span-1 h-[320px] bg-white rounded-[2.5rem] overflow-hidden border border-stone-200 relative group shadow-sm">
+                    <LogoConstruction brand={brand} className="w-full h-full" />
                 </div>
 
                 {/* Logo Block - Large */}
@@ -198,6 +201,11 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, v
                     <div className="absolute right-0 bottom-0 opacity-[0.03] pointer-events-none transform translate-y-1/3 translate-x-1/4 scale-150">
                         <LogoComposition brand={brand} />
                     </div>
+                </div>
+
+                {/* Safari Browser Mockup - Shows Favicon & Website Preview */}
+                <div className="md:col-span-8 md:row-span-1 h-[380px] bg-stone-100 rounded-[2.5rem] overflow-hidden border border-stone-200 relative group p-6 flex items-center justify-center">
+                    <SafariBrowserMockup brand={brand} className="w-full max-w-3xl shadow-2xl" />
                 </div>
                 {/* 3. Color Palette - 4 Core Colors */}
                 <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-stone-200">
