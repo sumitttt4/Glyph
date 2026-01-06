@@ -1,6 +1,7 @@
 "use client";
 
 import { BrandIdentity } from '@/lib/data';
+import { LogoComposition } from '@/components/brand/LogoComposition';
 
 interface MockupToteBagProps {
     brand: BrandIdentity;
@@ -44,13 +45,9 @@ export function MockupToteBag({ brand, isDark = false }: MockupToteBagProps) {
                     />
 
                     {/* Logo */}
-                    <svg
-                        viewBox={brand.shape.viewBox || "0 0 24 24"}
-                        className="w-20 h-20 relative z-10"
-                        fill={tokens.primary}
-                    >
-                        <path d={brand.shape.path} />
-                    </svg>
+                    <div className="w-20 h-20 relative z-10">
+                        <LogoComposition brand={brand} />
+                    </div>
                 </div>
             </div>
         </div>
@@ -91,25 +88,17 @@ export function MockupIDBadge({ brand, isDark = false }: MockupIDBadgeProps) {
                     />
 
                     {/* Logo watermark background */}
-                    <svg
-                        viewBox={brand.shape.viewBox || "0 0 24 24"}
-                        className="absolute top-8 left-1/2 -translate-x-1/2 w-24 h-24 opacity-20"
-                        fill="white"
-                    >
-                        <path d={brand.shape.path} />
-                    </svg>
+                    <div className="absolute top-6 left-1/2 -translate-x-1/2 w-28 h-28 opacity-20">
+                        <LogoComposition brand={brand} overrideColors={{ primary: '#FFFFFF' }} />
+                    </div>
 
                     {/* Badge content */}
                     <div className="absolute bottom-0 left-0 right-0 p-4 pt-8" style={{ backgroundColor: tokens.bg }}>
                         {/* Logo small */}
                         <div className="flex items-center gap-2 mb-3">
-                            <svg
-                                viewBox={brand.shape.viewBox || "0 0 24 24"}
-                                className="w-5 h-5"
-                                fill={tokens.primary}
-                            >
-                                <path d={brand.shape.path} />
-                            </svg>
+                            <div className="w-6 h-6">
+                                <LogoComposition brand={brand} />
+                            </div>
                             <span
                                 className="font-bold text-sm uppercase tracking-wider"
                                 style={{ color: tokens.text }}
@@ -161,13 +150,9 @@ export function MockupCreditCard({ brand, isDark = false }: MockupCreditCardProp
 
                 {/* Logo top left */}
                 <div className="absolute top-4 left-4 flex items-center gap-2">
-                    <svg
-                        viewBox={brand.shape.viewBox || "0 0 24 24"}
-                        className="w-8 h-8"
-                        fill="white"
-                    >
-                        <path d={brand.shape.path} />
-                    </svg>
+                    <div className="w-10 h-10">
+                        <LogoComposition brand={brand} overrideColors={{ primary: '#FFFFFF' }} />
+                    </div>
                     <span className="font-bold text-white text-sm uppercase tracking-wider">
                         {brand.name}
                     </span>

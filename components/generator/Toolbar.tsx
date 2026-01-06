@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Sun, Moon, Download, ChevronDown, FileCode, Image, Package, Code2, Share2, Link, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import UserProfile from '@/components/auth/UserProfile';
 
 interface ToolbarProps {
     isDark: boolean;
@@ -88,24 +89,27 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, c
                 </button>
             </div>
 
-            {/* Mode Toggle - Always visible */}
-            <div className="flex border border-stone-200 rounded-full p-0.5 bg-white shadow-sm">
-                <button
-                    onClick={() => !isDark && toggleDark()}
-                    className={`p-1.5 md:p-2 rounded-full transition-all ${!isDark ? 'bg-stone-950 text-white' : 'text-stone-400 hover:text-stone-600'
-                        }`}
-                    title="Light Mode"
-                >
-                    <Sun className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                </button>
-                <button
-                    onClick={() => isDark && toggleDark()}
-                    className={`p-1.5 md:p-2 rounded-full transition-all ${isDark ? 'bg-stone-950 text-white' : 'text-stone-400 hover:text-stone-600'
-                        }`}
-                    title="Dark Mode"
-                >
-                    <Moon className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                </button>
+            {/* Apple-Style Dark Mode Toggle */}
+            <div
+                className="relative w-16 h-8 rounded-full cursor-pointer transition-colors duration-300 shadow-inner"
+                style={{
+                    backgroundColor: isDark ? '#1d1d1f' : '#e5e5ea',
+                }}
+                onClick={toggleDark}
+            >
+                {/* Sun Icon */}
+                <Sun
+                    className={`absolute left-1.5 top-1.5 w-5 h-5 text-amber-500 transition-opacity duration-300 ${isDark ? 'opacity-30' : 'opacity-100'}`}
+                />
+                {/* Moon Icon */}
+                <Moon
+                    className={`absolute right-1.5 top-1.5 w-5 h-5 text-indigo-300 transition-opacity duration-300 ${isDark ? 'opacity-100' : 'opacity-30'}`}
+                />
+                {/* Sliding Knob */}
+                <div
+                    className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-md transition-all duration-300 ease-in-out ${isDark ? 'left-9' : 'left-1'}`}
+                    style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
+                />
             </div>
 
             {/* Share Button - Hidden on mobile */}
@@ -188,6 +192,11 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, c
                         ))}
                     </div>
                 )}
+            </div>
+
+            {/* Profile Menu */}
+            <div className="pl-2 border-l border-stone-200">
+                <UserProfile />
             </div>
         </div>
     );

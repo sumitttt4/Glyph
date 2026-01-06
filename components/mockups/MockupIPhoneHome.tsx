@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoComposition } from '@/components/brand/LogoComposition';
 import { BrandIdentity } from '@/lib/data';
 
 interface MockupIPhoneHomeProps {
@@ -44,19 +45,15 @@ export function MockupIPhoneHome({ brand, isDark = false }: MockupIPhoneHomeProp
                             {/* Single Featured App Icon */}
                             <div className="flex flex-col items-center justify-center px-8">
                                 <div
-                                    className="w-16 h-16 rounded-[16px] flex items-center justify-center shadow-xl mb-2"
+                                    className="w-16 h-16 rounded-[16px] flex items-center justify-center shadow-xl mb-2 overflow-hidden"
                                     style={{
                                         backgroundColor: 'white',
                                         boxShadow: '0 8px 24px rgba(0,0,0,0.3)'
                                     }}
                                 >
-                                    <svg
-                                        viewBox={brand.shape.viewBox || "0 0 24 24"}
-                                        className="w-9 h-9"
-                                        fill={tokens.primary}
-                                    >
-                                        <path d={brand.shape.path} />
-                                    </svg>
+                                    <div className="w-10 h-10">
+                                        <LogoComposition brand={brand} />
+                                    </div>
                                 </div>
                                 <span className="text-white text-[11px] font-medium">
                                     {brand.name.length > 10 ? brand.name.slice(0, 10) : brand.name}

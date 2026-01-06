@@ -103,6 +103,14 @@ export function useBrandGenerator() {
 
         await minDelay;
 
+        // Fallback: Ensure we always have an icon (Fixes "Font instead of Logo" issue)
+        if (!logoIcon) {
+            const FALLBACK_ICONS = ['Sparkles', 'Zap', 'Shield', 'Leaf', 'Code2', 'Rocket', 'Layers'];
+            logoIcon = FALLBACK_ICONS[Math.floor(Math.random() * FALLBACK_ICONS.length)];
+            logoContainer = 'squircle';
+            logoAssemblerLayout = 'icon_left';
+        }
+
         // 1. SELECT THEME (or override)
         let selectedTheme: typeof THEMES[0];
 

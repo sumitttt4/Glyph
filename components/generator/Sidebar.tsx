@@ -5,7 +5,6 @@ import { Check, Shuffle } from 'lucide-react';
 import { VibeSelector } from './VibeSelector';
 import { expandBriefWithAI, suggestVibeWithAI, expandVibeWithAI } from '@/lib/brand-generator';
 import { createClient } from '@/utils/supabase/client';
-import UserProfile from '@/components/auth/UserProfile';
 import { GlyphIcon } from '@/components/brand/GlyphLogo';
 
 export interface GenerationOptions {
@@ -407,10 +406,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
 
             {/* Fixed Generate Button Footer */}
             <div className="border-t border-stone-200 bg-gradient-to-t from-stone-50 to-white sticky bottom-0 z-50" style={{ boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
-                <div className="px-5 pt-4 pb-2">
-                    <UserProfile />
-                </div>
-                <div className="px-5 pb-5 pt-2">
+                <div className="px-5 pb-5 pt-4">
                     <button
                         onClick={handleGenerate}
                         disabled={isGenerating || !isValid}

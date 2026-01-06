@@ -1,4 +1,5 @@
 import { BrandIdentity } from '@/lib/data';
+import { LogoComposition } from '@/components/brand/LogoComposition';
 
 export function MockupDevice({ brand }: { brand: BrandIdentity }) {
     const primary = brand.theme.tokens.light.primary;
@@ -19,8 +20,8 @@ export function MockupDevice({ brand }: { brand: BrandIdentity }) {
 
                 {/* 1. App Header */}
                 <div className="pt-8 pb-4 px-4 flex justify-between items-center" style={{ backgroundColor: bg }}>
-                    <div className="w-6 h-6" style={{ color: primary }}>
-                        <svg viewBox="0 0 24 24" className="fill-current w-full h-full"><path d={brand.shape.path} /></svg>
+                    <div className="w-6 h-6">
+                        <LogoComposition brand={brand} />
                     </div>
                     <div className="w-8 h-8 rounded-full bg-gray-200"></div>
                 </div>
@@ -110,8 +111,8 @@ export function MockupBrowser({ brand }: { brand: BrandIdentity }) {
                     </div>
                     <div className="w-1/2 h-full rounded-lg relative overflow-hidden" style={{ backgroundColor: primary }}>
                         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-                        <div className="absolute center w-20 h-20 text-white inset-0 m-auto opacity-50">
-                            <svg viewBox="0 0 24 24" className="fill-current"><path d={brand.shape.path} /></svg>
+                        <div className="absolute inset-0 m-auto w-20 h-20 opacity-50">
+                            <LogoComposition brand={brand} overrideColors={{ primary: '#FFFFFF' }} />
                         </div>
                     </div>
                 </div>

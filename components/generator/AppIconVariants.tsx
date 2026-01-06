@@ -1,6 +1,7 @@
 "use client";
 
 import { BrandIdentity } from '@/lib/data';
+import { LogoComposition } from '@/components/brand/LogoComposition';
 
 interface AppIconVariantsProps {
     brand: BrandIdentity;
@@ -26,13 +27,9 @@ export function AppIconVariants({ brand, isDark = false }: AppIconVariantsProps)
                         className="absolute inset-0 opacity-30"
                         style={{ background: 'linear-gradient(135deg, white 0%, transparent 50%)' }}
                     />
-                    <svg
-                        viewBox={brand.shape.viewBox || "0 0 24 24"}
-                        className="w-12 h-12 relative z-10"
-                        fill="white"
-                    >
-                        <path d={brand.shape.path} />
-                    </svg>
+                    <div className="w-12 h-12 relative z-10">
+                        <LogoComposition brand={brand} overrideColors={{ primary: '#FFFFFF' }} />
+                    </div>
                 </div>
                 <span className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Filled</span>
             </div>
@@ -46,13 +43,9 @@ export function AppIconVariants({ brand, isDark = false }: AppIconVariantsProps)
                         boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
                     }}
                 >
-                    <svg
-                        viewBox={brand.shape.viewBox || "0 0 24 24"}
-                        className="w-12 h-12"
-                        fill={tokens.primary}
-                    >
-                        <path d={brand.shape.path} />
-                    </svg>
+                    <div className="w-12 h-12">
+                        <LogoComposition brand={brand} />
+                    </div>
                 </div>
                 <span className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Outline</span>
             </div>
@@ -80,13 +73,9 @@ export function AppIconStack({ brand, isDark = false }: AppIconVariantsProps) {
                     boxShadow: `0 12px 32px ${tokens.primary}50`
                 }}
             >
-                <svg
-                    viewBox={brand.shape.viewBox || "0 0 24 24"}
-                    className="w-10 h-10"
-                    fill="white"
-                >
-                    <path d={brand.shape.path} />
-                </svg>
+                <div className="w-10 h-10">
+                    <LogoComposition brand={brand} overrideColors={{ primary: '#FFFFFF' }} />
+                </div>
             </div>
         </div>
     );

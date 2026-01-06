@@ -207,7 +207,7 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, v
 
                 {/* Safari Browser Mockup - Shows Favicon & Website Preview */}
                 <div className="md:col-span-8 md:row-span-1 h-[380px] bg-stone-100 rounded-[2.5rem] overflow-hidden border border-stone-200 relative group p-6 flex items-center justify-center">
-                    <SafariBrowserMockup brand={brand} className="w-full max-w-3xl shadow-2xl" />
+                    <SafariBrowserMockup brand={brand} className="w-full max-w-3xl shadow-2xl" isDark={isDark} />
                 </div>
                 {/* 3. Color Palette - 4 Core Colors */}
                 <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-stone-200">

@@ -33,8 +33,9 @@ function seededRandom(seed: string) {
 export const LogoComposition = ({ brand, className, layout = 'generative', overrideColors }: LogoCompositionProps) => {
     const uniqueId = useId();
     // Include generationSeed for unique variations per generation
-    const seed = brand.id + (brand.name || 'brand') + (brand.generationSeed || Date.now());
-    const rng = () => seededRandom(seed + uniqueId);
+    // IMPORTANT: Use stable fallback (not Date.now()) to ensure consistent logos across all instances
+    const seed = brand.id + (brand.name || 'brand') + (brand.generationSeed || brand.id || 'stable');
+    const rng = () => seededRandom(seed);
 
     // Deterministic Shape Selection based on brand ID
     const shapeIndex1 = Math.floor(seededRandom(seed + 's1') * SHAPES.length);
@@ -167,34 +168,87 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
     }
     // Algorithmic decision tree based on Vibe + Random Seed
 
-    // For 'generative' layout, use Procedural Icon Engine if available, otherwise Lettermarks
-    // This allows for 10,000+ unique combinations as requested
+    // For 'generative' layout, use the SVG shape composition engine
+    // This creates the geometric logo marks like cut-outs, radial patterns, etc.
     if (layout === 'generative') {
-        if (brand.logoAssemblerLayout) {
-            return (
-                <LogoAssembler
-                    iconName={brand.logoIcon || 'Sparkles'}
-                    brandName={brand.name}
-                    layout={brand.logoAssemblerLayout}
-                    shape={brand.logoContainer || 'squircle'}
-                    primaryColor={overrideColors?.primary || colors.primary}
-                    fontFamily={brand.font.name}
-                    className={className}
-                />
-            );
-        }
-        if (brand.logoIcon) {
-            return (
-                <LogoEngine
-                    iconName={brand.logoIcon}
-                    containerShape={brand.logoContainer || 'squircle'}
-                    primaryColor={overrideColors?.primary || colors.primary}
-                    className={className}
-                    style="solid"
-                />
-            );
-        }
-        return <AutoLettermark brand={brand} className={className} colors={overrideColors} />;
+        // Select layout algorithmically based on seed
+        // Removed 'intersect' layout as it produces ugly two-shape overlaps
+        // Prioritizing 'radial' (crown-like) and 'cut' (negative space) for best results
+        const layoutModeRoll = seededRandom(seed + 'layout');
+        let genLayout = 'radial'; // Default to beautiful radial (crown) layout
+        if (layoutModeRoll > 0.6) genLayout = 'radial';      // 40% - crown style
+        else if (layoutModeRoll > 0.3) genLayout = 'cut';    // 30% - negative space
+        else genLayout = 'stacked';                           // 30% - layered
+
+        // Texture decision
+        const textureRoll = seededRandom(seed + 'tex');
+        const isOutlined = textureRoll > 0.7;
+
+        return (
+            <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                {/* --- CUT / NEGATIVE SPACE LAYOUT --- */}
+                {genLayout === 'cut' && (
+                    <>
+                        <defs>
+                            <mask id={`mask-cut-${uniqueId}`}>
+                                <rect width="100" height="100" fill="white" />
+                                <g transform={`translate(${50 - secondaryScale * 12}, ${50 - secondaryScale * 12}) scale(${secondaryScale})`}>
+                                    <path d={secondaryShape.path} fill="black" />
+                                </g>
+                            </mask>
+                        </defs>
+                        <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
+                            <path
+                                d={primaryShape.path}
+                                fill={overrideColors?.primary || colors.primary}
+                                mask={`url(#mask-cut-${uniqueId})`}
+                            />
+                        </g>
+                    </>
+                )}
+
+                {/* --- RADIATING LAYOUT --- */}
+                {genLayout === 'radial' && (
+                    <g transform="translate(50,50)">
+                        {[0, 60, 120, 180, 240, 300].map((angle, i) => (
+                            <g key={i} transform={`rotate(${angle}) translate(0, -25) scale(${primaryScale * 0.3})`}>
+                                <path
+                                    d={primaryShape.path}
+                                    fill={isOutlined ? 'none' : (overrideColors?.primary || colors.primary)}
+                                    stroke={overrideColors?.primary || colors.primary}
+                                    strokeWidth={isOutlined ? 1.5 : 0}
+                                    opacity={0.9}
+                                />
+                            </g>
+                        ))}
+                    </g>
+                )}
+
+                {/* --- INTERSECT LAYOUT --- */}
+                {genLayout === 'intersect' && (
+                    <>
+                        <g transform={`translate(${50 - secondaryScale * 10}, ${50 - secondaryScale * 10}) scale(${secondaryScale * 0.8})`} opacity="0.6">
+                            <path d={secondaryShape.path} fill={overrideColors?.primary || colors.accent || colors.primary} />
+                        </g>
+                        <g transform={`translate(${50 - primaryScale * 8}, ${50 - primaryScale * 8}) scale(${primaryScale * 0.6})`} style={{ mixBlendMode: 'multiply' }}>
+                            <path d={primaryShape.path} fill={overrideColors?.primary || colors.primary} />
+                        </g>
+                    </>
+                )}
+
+                {/* --- STACKED LAYOUT --- */}
+                {genLayout === 'stacked' && (
+                    <>
+                        <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
+                            <path d={primaryShape.path} fill={overrideColors?.primary || colors.primary} />
+                        </g>
+                        <g transform={`translate(${50 - secondaryScale * 6}, ${50 - secondaryScale * 6}) scale(${secondaryScale * 0.4})`}>
+                            <path d={secondaryShape.path} fill="white" opacity="0.4" />
+                        </g>
+                    </>
+                )}
+            </svg>
+        );
     }
 
     // Legacy shape-based layouts for backward compatibility

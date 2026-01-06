@@ -1,6 +1,7 @@
 import { BrandIdentity } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { Download } from 'lucide-react';
+import { LogoComposition } from '@/components/brand/LogoComposition';
 
 interface LogoCellProps {
     brand: BrandIdentity;
@@ -45,13 +46,7 @@ export function LogoCell({ brand, mode }: LogoCellProps) {
             </button>
 
             <div className="w-24 h-24 mb-6">
-                <svg
-                    viewBox={brand.shape.viewBox || "0 0 24 24"}
-                    className="w-full h-full fill-current transition-colors duration-500"
-                    style={{ color: tokens.primary }}
-                >
-                    <path d={brand.shape.path} />
-                </svg>
+                <LogoComposition brand={brand} />
             </div>
             <h2
                 className={cn("text-3xl font-bold tracking-tight transition-colors duration-500", brand.font.heading)}
