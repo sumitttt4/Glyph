@@ -122,12 +122,23 @@ export function useBrandGenerator() {
             // Get Strategy Template or default to Modern
             const strategy = STRATEGY_TEMPLATES[vibe] || STRATEGY_TEMPLATES['modern'];
 
+            // 3. SELECT LOGO LAYOUT (Generative Engine)
+            const layouts = ['generative', 'swiss', 'bauhaus', 'minimal_grid', 'generative']; // weighted towards generative
+            // Vibe Mapping
+            let preferredLayout = 'generative';
+            if (vibe === 'minimalist') preferredLayout = Math.random() > 0.5 ? 'swiss' : 'minimal_grid';
+            if (vibe === 'tech') preferredLayout = Math.random() > 0.5 ? 'minimal_grid' : 'generative';
+            if (vibe === 'bold') preferredLayout = Math.random() > 0.5 ? 'bauhaus' : 'generative';
+
+            const selectedLayout = preferredLayout as any;
+
             const newBrand: BrandIdentity = {
                 id: crypto.randomUUID(),
                 vibe,
                 name: name.trim() || 'Untitled Brand',
                 theme: selectedTheme,
                 shape: selectedShape,
+                logoLayout: selectedLayout,
                 font: {
                     id: randomFont.id,
                     name: randomFont.name,

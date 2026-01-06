@@ -3,7 +3,7 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { BrandIdentity } from '@/lib/data';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { MonogramMark } from '@/components/brand/MonogramMark';
+import { LogoComposition } from '@/components/brand/LogoComposition';
 
 export async function exportBrandPackage(brand: BrandIdentity) {
   const zip = new JSZip();
@@ -20,40 +20,25 @@ export async function exportBrandPackage(brand: BrandIdentity) {
   if (icons) {
     // A. Primary Logo (Color)
     const primarySvg = renderToStaticMarkup(
-      <MonogramMark
+      <LogoComposition
         brand={brand}
-        color={brand.theme.tokens.light.primary}
-        bg={brand.theme.tokens.light.surface}
       />
     );
-    // Wrap in standard SVG tag if not present (MonogramMark returns a div wrapper, we need to extract SVG or render it wrapped)
-    // MonogramMark returns a DIV with SVG inside. We need to clean this up for export.
-    // Actually, for a pure SVG export, we don't want the container div.
-    // The MonogramMark component returns a <div> with <svg> inside.
-    // We should probably modify MonogramMark to return just SVG if requested, or parse the string.
-    // For now, let's wrap it in an SVG "File" structure if needed, or just cleaner regex extract.
-    // A simple way is to use a specific props to output ONLY svg?
-    // Or regex extract <svg ... </svg>
-    const primarySvgString = extractSvg(primarySvg);
-    icons.file("logo-primary.svg", primarySvgString);
+    icons.file("logo-primary.svg", extractSvg(primarySvg));
 
-    // B. Monotone Black
+    // B. Monotone Black (We cheat by making a temp brand with black colors)
+    // LogoComposition reads from brand.theme.tokens.light directly.
+    // For export, we need to temporarily clone the brand with overridden colors.
+    const blackBrand = { ...brand, theme: { ...brand.theme, tokens: { ...brand.theme.tokens, light: { ...brand.theme.tokens.light, primary: '#000000', text: '#000000', accent: '#000000', bg: 'transparent' } } } };
     const blackSvg = renderToStaticMarkup(
-      <MonogramMark
-        brand={brand}
-        color="#000000"
-        bg="transparent"
-      />
+      <LogoComposition brand={blackBrand} />
     );
     icons.file("logo-black.svg", extractSvg(blackSvg));
 
     // C. Monotone White
+    const whiteBrand = { ...brand, theme: { ...brand.theme, tokens: { ...brand.theme.tokens, light: { ...brand.theme.tokens.light, primary: '#FFFFFF', text: '#FFFFFF', accent: '#FFFFFF', bg: 'transparent' } } } };
     const whiteSvg = renderToStaticMarkup(
-      <MonogramMark
-        brand={brand}
-        color="#FFFFFF"
-        bg="transparent"
-      />
+      <LogoComposition brand={whiteBrand} />
     );
     icons.file("logo-white.svg", extractSvg(whiteSvg));
   }

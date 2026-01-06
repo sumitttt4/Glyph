@@ -5,10 +5,11 @@
  * and defines the central BrandIdentity interface.
  */
 
-// Re-export from intelligence engine modules
-export type { Theme, ThemeTokens } from './themes';
-export type { Shape } from './shapes';
-export type { FontFamily, FontPairing } from './typography';
+import { Theme, ThemeTokens } from './themes';
+import { Shape } from './shapes';
+import { FontFamily, FontPairing } from './typography';
+
+export type { Theme, ThemeTokens, Shape, FontFamily, FontPairing };
 
 // Font Pair for generated brands (simplified)
 export interface FontPair {
@@ -24,24 +25,15 @@ export interface BrandIdentity {
   id: string;
   vibe: string;
   name: string;
-  theme: {
-    id: string;
-    name: string;
-    tags: string[];
-    tokens: {
-      light: { bg: string; text: string; primary: string; surface: string; muted: string; border: string; accent?: string; gradient?: [string, string] };
-      dark: { bg: string; text: string; primary: string; surface: string; muted: string; border: string; accent?: string; gradient?: [string, string] };
-    };
-  };
-  shape: {
-    id: string;
-    name: string;
-    path: string;
-    viewBox: string;
-    tags: string[];
-  };
+
+  // Visual Core
+  theme: Theme;
+  shape: Shape;
+  logoLayout?: 'default' | 'swiss' | 'bauhaus' | 'minimal_grid' | 'organic_fluid' | 'generative';
   canvasStyle?: 'solid' | 'gradient' | 'mesh';  // Background style
   font: FontPair;
+
+  // Strategy Core
   strategy?: {
     mission: string;
     vision: string;
@@ -49,5 +41,6 @@ export interface BrandIdentity {
     audience: string;
     tone: string;
   };
+
   createdAt: Date;
 }

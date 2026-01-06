@@ -14,6 +14,7 @@ import { AppIconVariants } from '@/components/generator/AppIconVariants';
 import { MockupCreditCard, MockupIDBadge } from '@/components/mockups/MockupMerch';
 import { MockupIPhoneHome } from '@/components/mockups/MockupIPhoneHome';
 import { MonogramMark } from '@/components/brand/MonogramMark';
+import { LogoComposition } from '../brand/LogoComposition';
 
 
 
@@ -177,6 +178,27 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, v
                     <BrowserBrandPreview brand={brand} />
                 </div>
 
+                {/* Logo Block - Large */}
+                <div className="col-span-2 row-span-2 md:col-span-2 md:row-span-1 bg-white rounded-3xl p-6 md:p-8 flex items-center justify-between overflow-hidden relative group hover:shadow-xl transition-all duration-500 border border-stone-100">
+                    <div className="flex items-center gap-6 md:gap-8 z-10 w-full">
+                        <div className="w-24 h-24 md:w-28 md:h-28 shrink-0 relative">
+                            <LogoComposition brand={brand} />
+                        </div>
+                        <div className="flex flex-col gap-1 min-w-0">
+                            <h2 className={cn("text-4xl md:text-5xl font-bold tracking-tight text-stone-950 truncate", brand.font.heading)}>
+                                {brand.name}
+                            </h2>
+                            <p className="text-sm font-mono text-stone-400 uppercase tracking-widest pl-0.5">
+                                {brand.logoLayout === 'generative' ? 'Generative Mark' : 'Brand Mark'}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Background Pattern */}
+                    <div className="absolute right-0 bottom-0 opacity-[0.03] pointer-events-none transform translate-y-1/3 translate-x-1/4 scale-150">
+                        <LogoComposition brand={brand} />
+                    </div>
+                </div>
                 {/* 3. Color Palette - 4 Core Colors */}
                 <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-stone-200">
                     <ColorPaletteHorizontal

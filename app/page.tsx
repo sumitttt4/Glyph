@@ -86,10 +86,7 @@ export default function LandingPage() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             {/* Left: Content */}
             <div className="text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-100 border border-stone-200 text-stone-600 text-sm mb-6">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                v1.0 Now Live
-              </div>
+              <div className="hidden lg:block w-full"></div>
 
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
                 The Design Engineer <br className="hidden sm:block" />
@@ -161,9 +158,7 @@ export default function LandingPage() {
 
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-stone-700 bg-stone-800/50 text-stone-300 text-xs font-mono mb-6 uppercase tracking-widest">
-                  Generation Engine v1
-                </div>
+
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6">
                   Visualize your startup in <br className="hidden md:block" /> <span className="text-[#FF4500]">High Fidelity</span>.
                 </h2>
