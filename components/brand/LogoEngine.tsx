@@ -10,8 +10,6 @@ export const CONTAINERS: Record<string, string> = {
     'diamond': 'rotate-45 rounded-xl',
     'cyber': 'rounded-tl-2xl rounded-br-2xl rounded-tr-sm rounded-bl-sm', // Tech shape
     'pill': 'rounded-full',
-    'sharp': 'rounded-none',
-    'circle': 'rounded-full', // Alias
 };
 
 // 2. THE STYLES (Fill, Outline, Duotone)

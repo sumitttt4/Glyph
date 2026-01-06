@@ -37,8 +37,8 @@ export default function GeneratorPage() {
       alert("This brand is already in your comparison list.");
       return;
     }
-    if (compareList.length >= 4) {
-      alert("You can compare up to 4 brands at a time.");
+    if (compareList.length >= 8) {
+      alert("You can compare up to 8 brands at a time.");
       return;
     }
     setCompareList([...compareList, brand]);
@@ -199,6 +199,30 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
     }
   };
 
+
+  // Handle generating variations
+  const handleGenerateVariations = async () => {
+    if (!brand) return;
+
+    // 1. Add current brand if not present
+    if (!compareList.find(b => b.id === brand.id)) {
+      setCompareList(prev => [...prev, brand]);
+    }
+
+    // 2. Generate 4 variations
+    const variations = await brandGenerators.generateVariations(brand);
+
+    // 3. Add to comparison
+    setCompareList(prev => {
+      const currentIds = new Set(prev.map(b => b.id));
+      const newOnes = variations.filter(v => !currentIds.has(v.id));
+      return [...prev, ...newOnes].slice(0, 8);
+    });
+
+    // 4. Open overlay
+    setIsCompareOpen(true);
+  };
+
   return (
     // Mobile: Vertical stack, Desktop: Fixed sidebar + scrollable main
     <div className="min-h-screen w-full bg-stone-50 font-sans">
@@ -247,14 +271,22 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
             onAddToCompare={brand ? handleAddToCompare : undefined}
             onOpenCompare={() => setIsCompareOpen(true)}
             compareCount={compareList.length}
+            onVariations={brand ? handleGenerateVariations : undefined}
+            isGenerating={brandGenerators.isGenerating}
           />
         </div>
 
         <CompareOverlay
           brands={compareList}
           isOpen={isCompareOpen}
+          isGenerating={brandGenerators.isGenerating}
           onClose={() => setIsCompareOpen(false)}
           onRemove={handleRemoveFromCompare}
+          onSelect={(selectedBrand) => {
+            brandGenerators.setBrand?.(selectedBrand);
+            setIsCompareOpen(false);
+          }}
+          onGenerateMore={handleGenerateVariations}
         />
 
         <div className={`relative z-10 transition-all duration-500 w-full min-h-full pt-4 md:pt-20 pb-20 px-2 md:px-0 ${isDarkMode ? 'dark' : ''}`}>
@@ -263,6 +295,7 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
               brand={brand}
               isDark={isDarkMode}
               onShuffleLogo={() => generateBrand(selectedVibe, brand.name)}
+              onVariations={handleGenerateVariations}
               viewMode={viewMode}
               setViewMode={setViewMode}
             />

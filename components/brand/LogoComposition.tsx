@@ -153,10 +153,11 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
                     </filter>
                 </defs>
                 <g filter={`url(#blur-${uniqueId})`} style={{ isolation: 'isolate' }}>
-                    <circle cx="40" cy="40" r="25" fill={colors.primary} />
-                    <circle cx="60" cy="60" r="30" fill={colors.accent || colors.primary} />
-                    <g transform="translate(50, 50) scale(1.5)">
+                    <g transform="translate(40, 40) scale(1.5)">
                         <path d={primaryShape.path} fill={colors.primary} />
+                    </g>
+                    <g transform="translate(60, 60) scale(1.8)">
+                        <path d={secondaryShape.path} fill={colors.accent || colors.primary} />
                     </g>
                 </g>
                 {/* Sharp Overlay to retaining legibility */}
@@ -307,7 +308,6 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
                             />
                         </g>
                     ))}
-                    <circle r="15" fill={colors.bg} />
                     <text x="0" y="5" fontSize="14" fontWeight="bold" textAnchor="middle" fill={colors.text}>
                         {initial}
                     </text>

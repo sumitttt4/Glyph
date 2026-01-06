@@ -329,14 +329,83 @@ export function generateBrandBookHTML(brand: BrandIdentity): string {
         </div>
         
         <div class="section">
-            <h3>Type Scale</h3>
-            <div style="margin: 1rem 0;">
-                <div style="font-size: 2.5rem; font-weight: 700;">Display — 40px</div>
-                <div style="font-size: 2rem; font-weight: 700;">H1 — 32px</div>
-                <div style="font-size: 1.5rem; font-weight: 600;">H2 — 24px</div>
-                <div style="font-size: 1.25rem; font-weight: 600;">H3 — 20px</div>
-                <div style="font-size: 1rem;">Body — 16px</div>
-                <div style="font-size: 0.875rem; color: #737373;">Small — 14px</div>
+            <h3>Type Scale & Detailed Specs</h3>
+            
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.875rem;">
+                <tr style="border-bottom: 2px solid ${colors.border || '#e5e5e5'}; text-align: left;">
+                    <th style="padding: 0.5rem; width: 30%;">Usage</th>
+                    <th style="padding: 0.5rem; width: 25%;">Font Family</th>
+                    <th style="padding: 0.5rem; width: 15%;">Size</th>
+                    <th style="padding: 0.5rem; width: 15%;">Tracking</th>
+                    <th style="padding: 0.5rem; width: 15%;">Leading</th>
+                </tr>
+                <tr style="border-bottom: 1px solid ${colors.border || '#f5f5f5'};">
+                    <td style="padding: 1rem 0.5rem;">
+                        <span style="font-size: 3rem; font-weight: 800; line-height: 1; color: ${colors.primary};">H1</span>
+                        <div style="font-size: 0.75rem; color: #78716c; margin-top: 0.25rem;">Main Headlines</div>
+                    </td>
+                    <td style="padding: 1rem 0.5rem;">${brand.font.heading}</td>
+                    <td style="padding: 1rem 0.5rem;">48-72px</td>
+                    <td style="padding: 1rem 0.5rem;">-0.04em</td>
+                    <td style="padding: 1rem 0.5rem;">1.1</td>
+                </tr>
+                <tr style="border-bottom: 1px solid ${colors.border || '#f5f5f5'};">
+                    <td style="padding: 1rem 0.5rem;">
+                        <span style="font-size: 2.25rem; font-weight: 700; line-height: 1.1; color: ${colors.text};">H2</span>
+                        <div style="font-size: 0.75rem; color: #78716c; margin-top: 0.25rem;">Section Headers</div>
+                    </td>
+                    <td style="padding: 1rem 0.5rem;">${brand.font.heading}</td>
+                    <td style="padding: 1rem 0.5rem;">32-48px</td>
+                    <td style="padding: 1rem 0.5rem;">-0.03em</td>
+                    <td style="padding: 1rem 0.5rem;">1.15</td>
+                </tr>
+                <tr style="border-bottom: 1px solid ${colors.border || '#f5f5f5'};">
+                    <td style="padding: 1rem 0.5rem;">
+                        <span style="font-size: 1.75rem; font-weight: 600; line-height: 1.2; color: ${colors.text};">H3</span>
+                        <div style="font-size: 0.75rem; color: #78716c; margin-top: 0.25rem;">Card Titles</div>
+                    </td>
+                    <td style="padding: 1rem 0.5rem;">${brand.font.heading}</td>
+                    <td style="padding: 1rem 0.5rem;">24-32px</td>
+                    <td style="padding: 1rem 0.5rem;">-0.02em</td>
+                    <td style="padding: 1rem 0.5rem;">1.2</td>
+                </tr>
+                <tr style="border-bottom: 1px solid ${colors.border || '#f5f5f5'};">
+                    <td style="padding: 1rem 0.5rem;">
+                        <span style="font-size: 1.5rem; font-weight: 600; line-height: 1.25; color: ${colors.text};">H4</span>
+                        <div style="font-size: 0.75rem; color: #78716c; margin-top: 0.25rem;">Subtitles</div>
+                    </td>
+                    <td style="padding: 1rem 0.5rem;">${brand.font.heading}</td>
+                    <td style="padding: 1rem 0.5rem;">20-24px</td>
+                    <td style="padding: 1rem 0.5rem;">-0.01em</td>
+                    <td style="padding: 1rem 0.5rem;">1.25</td>
+                </tr>
+                 <tr style="border-bottom: 1px solid ${colors.border || '#f5f5f5'};">
+                    <td style="padding: 1rem 0.5rem;">
+                        <span style="font-size: 1rem; font-weight: 400; line-height: 1.6; color: ${colors.text};">Body</span>
+                        <div style="font-size: 0.75rem; color: #78716c; margin-top: 0.25rem;">Primary Text</div>
+                    </td>
+                    <td style="padding: 1rem 0.5rem;">${brand.font.body}</td>
+                    <td style="padding: 1rem 0.5rem;">16-18px</td>
+                    <td style="padding: 1rem 0.5rem;">0em</td>
+                    <td style="padding: 1rem 0.5rem;">1.6</td>
+                </tr>
+                 <tr style="border-bottom: 1px solid ${colors.border || '#f5f5f5'};">
+                    <td style="padding: 1rem 0.5rem;">
+                        <span style="font-size: 0.875rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: ${colors.text};">Label</span>
+                        <div style="font-size: 0.75rem; color: #78716c; margin-top: 0.25rem;">UI Elements</div>
+                    </td>
+                    <td style="padding: 1rem 0.5rem;">${brand.font.body}</td>
+                    <td style="padding: 1rem 0.5rem;">12-14px</td>
+                    <td style="padding: 1rem 0.5rem;">0.05em</td>
+                    <td style="padding: 1rem 0.5rem;">1.0</td>
+                </tr>
+            </table>
+
+            <div style="margin-top: 2rem; padding: 1.5rem; background: #fdfdfd; border: 1px solid #f0f0f0; border-radius: 8px;">
+                <h4 style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #78716c; margin-bottom: 0.5rem;">Typographic Hierarchy Rule</h4>
+                <p style="font-size: 0.875rem; color: #57534e;">
+                    Headings (H1—H3) should typically be rendered in <strong>${brand.name.charAt(0).toUpperCase() + brand.name.slice(1)} Primary Color</strong> (${colors.primary}) when used as hero elements, or <strong>Text Base</strong> (${colors.text}) for standard document flow. All body text should strictly use the Text Base color for optimal readability.
+                </p>
             </div>
         </div>
         

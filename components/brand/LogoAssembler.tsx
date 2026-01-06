@@ -10,8 +10,6 @@ export type LogoAssemblerLayout = 'icon_left' | 'icon_right' | 'stacked' | 'badg
 // 2. THE CONTAINER SHAPES
 export const ASSEMBLER_SHAPES: Record<string, string> = {
     'squircle': 'rounded-2xl',
-    'circle': 'rounded-full',
-    'sharp': 'rounded-none',
     'pill': 'rounded-full', // Adjusted to generic pill utility if needed, strictly rounded-full usually works for square aspect
     'ghost': 'bg-transparent border-2', // Outline style
     'hexagon': 'clip-path-hexagon', // CSS class support needed

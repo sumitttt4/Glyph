@@ -104,14 +104,8 @@ export const SHAPES: Shape[] = [
         tags: ['tech', 'data', 'pixel', 'modern'],
         complexity: 'detailed',
     },
-    {
-        id: 'tech-signal-radial',
-        name: 'Signal Radial',
-        viewBox: '0 0 24 24',
-        path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c4.42 0 8 3.58 8 8s-3.58 8-8 8-8-3.58-8-8 3.58-8 8-8zm0 4c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zm0 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z',
-        tags: ['tech', 'connectivity', 'modern'],
-        complexity: 'moderate',
-    },
+    // Concentric shapes removed for being too generic (target/eye look)
+
 
     // ============================================================
     // 3. ORGANIC & FLUID (Nature, Soft, Flow)
@@ -125,28 +119,12 @@ export const SHAPES: Shape[] = [
         complexity: 'moderate',
     },
     {
-        id: 'org-blob-1',
-        name: 'Blob 1',
-        viewBox: '0 0 24 24',
-        path: 'M12 2C8 2 4 6 4 11s2 9 8 11 10-4 10-10S16 2 12 2z', // Roughly simplified
-        tags: ['organic', 'fluid', 'friendly'],
-        complexity: 'simple',
-    },
-    {
         id: 'org-drop',
         name: 'Drop',
         viewBox: '0 0 24 24',
         path: 'M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0L12 2.69z',
         tags: ['nature', 'water', 'clean'],
         complexity: 'simple',
-    },
-    {
-        id: 'org-wave-circle',
-        name: 'Wave Circle',
-        viewBox: '0 0 24 24',
-        path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5c1.2 0 2.3.5 3.2 1.3l.1.1c.4.4.4 1 0 1.4s-1 .4-1.4 0l-.1-.1C11.3 9.7 10.7 9.5 10 9.5c-1.4 0-2.5 1.1-2.5 2.5s1.1 2.5 2.5 2.5c.7 0 1.3-.3 1.8-.8.4-.4 1-.4 1.4 0s.4 1 0 1.4C12.4 16.1 11.2 16.5 10 16.5z',
-        tags: ['organic', 'flow', 'modern'],
-        complexity: 'moderate',
     },
     {
         id: 'org-sun-rays',
@@ -160,30 +138,6 @@ export const SHAPES: Shape[] = [
     // ============================================================
     // 4. ABSTRACT & BAUHAUS (Artistic, Complex)
     // ============================================================
-    {
-        id: 'abs-arch',
-        name: 'Arch',
-        viewBox: '0 0 24 24',
-        path: 'M12 2C6.48 2 2 6.48 2 12v10h4v-7c0-3.31 2.69-6 6-6s6 2.69 6 6v7h4V12c0-5.52-4.48-10-10-10z',
-        tags: ['abstract', 'bauhaus', 'structure'],
-        complexity: 'moderate',
-    },
-    {
-        id: 'abs-stairs',
-        name: 'Stairs',
-        viewBox: '0 0 24 24',
-        path: 'M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-6 14H7v-4h6v4zm6-6h-6V7h6v4z',
-        tags: ['abstract', 'geometric', 'modern'],
-        complexity: 'simple',
-    },
-    {
-        id: 'abs-eyes',
-        name: 'Abstract Eye',
-        viewBox: '0 0 24 24',
-        path: 'M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z',
-        tags: ['abstract', 'vision', 'modern'],
-        complexity: 'moderate',
-    },
     {
         id: 'abs-swoosh',
         name: 'Swoosh',
@@ -213,22 +167,6 @@ export const SHAPES: Shape[] = [
     // 5. MARKS & SYMBOLS (Direct Communication)
     // ============================================================
     {
-        id: 'mark-plus-circle',
-        name: 'Plus Circle',
-        viewBox: '0 0 24 24',
-        path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z',
-        tags: ['minimalist', 'health', 'positive', 'bold'],
-        complexity: 'simple',
-    },
-    {
-        id: 'mark-arrow-circle',
-        name: 'Arrow Circle Up',
-        viewBox: '0 0 24 24',
-        path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4-8l-4-4-4 4h2.5v4.5h3V12H16z',
-        tags: ['growth', 'dynamic', 'action'],
-        complexity: 'moderate',
-    },
-    {
         id: 'mark-star-4',
         name: 'Star 4-Point',
         viewBox: '0 0 24 24',
@@ -245,27 +183,11 @@ export const SHAPES: Shape[] = [
         complexity: 'moderate',
     },
     {
-        id: 'mark-flame',
-        name: 'Flame',
-        viewBox: '0 0 24 24',
-        path: 'M16.5 13c-.55 0-1 .45-1 1s.45 1 1 1c1.1 0 2-.9 2-2 0-3.5-3-5.5-5-5.5-.55 0-1 .45-1 1s.45 1 1 1c1.55 0 2.5 1.5 2.5 3 0 1.1-.9 2-2 2s-2-.9-2-2c0-.55-.45-1-1-1s-1 .45-1 1c0 2.21 1.79 4 4 4s4-1.79 4-4c0-.55-.45-1-1-1z M12 3a9 9 0 0 0-9 9 9 9 0 0 0 9 9 9 9 0 0 0 9-9 9 9 0 0 0-9-9z', // Simplified abstract flame
-        tags: ['energy', 'bold', 'warm'],
-        complexity: 'moderate',
-    },
-    {
         id: 'mark-lightning-filled',
         name: 'Lightning Filled',
         viewBox: '0 0 24 24',
         path: 'M7 2v11h3v9l7-12h-4l4-8H7z',
         tags: ['energy', 'tech', 'flash'],
-        complexity: 'simple',
-    },
-    {
-        id: 'mark-heart',
-        name: 'Heart',
-        viewBox: '0 0 24 24',
-        path: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',
-        tags: ['organic', 'warm', 'care'],
         complexity: 'simple',
     },
     // ============================================================
@@ -285,38 +207,6 @@ export const SHAPES: Shape[] = [
         viewBox: '0 0 24 24',
         path: 'M12 2l9 4v12l-9 4-9-4V6l9-4z', // Hexagon but used as container
         tags: ['modern', 'badge', 'tech'],
-        complexity: 'simple',
-    },
-    {
-        id: 'cont-circle-thick',
-        name: 'Circle Container',
-        viewBox: '0 0 24 24',
-        path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z', // Full circle
-        tags: ['classic', 'modern', 'minimalist'],
-        complexity: 'simple',
-    },
-    {
-        id: 'cont-rounded-square',
-        name: 'Rounded Square',
-        viewBox: '0 0 24 24',
-        path: 'M5 3h14c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2z',
-        tags: ['modern', 'app', 'tech'],
-        complexity: 'simple',
-    },
-    {
-        id: 'cont-flag',
-        name: 'Flag',
-        viewBox: '0 0 24 24',
-        path: 'M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z',
-        tags: ['classic', 'symbol', 'bold'],
-        complexity: 'simple',
-    },
-    {
-        id: 'cont-tag',
-        name: 'Tag',
-        viewBox: '0 0 24 24',
-        path: 'M20 10V6h-4l-6 6 4 4zm-6 8l-6-6v-6h6l6 6z', // Tag shape
-        tags: ['modern', 'retail', 'clean'],
         complexity: 'simple',
     }
 ];

@@ -259,9 +259,87 @@ export function useBrandGenerator() {
         }
     };
 
+    const generateVariations = async (baseBrand: BrandIdentity) => {
+        setIsGenerating(true);
+        const variations: BrandIdentity[] = [];
+
+        // Helper to get random item different from current
+        const getDifferent = <T extends { id: string }>(items: T[], currentId: string) => {
+            const pool = items.filter(i => i.id !== currentId);
+            return pool[Math.floor(Math.random() * pool.length)] || items[0];
+        };
+
+        // Variation 1: Same Shape & Font, New Color (Theme)
+        const newTheme = getDifferent(THEMES.filter(t => t.tags.includes(baseBrand.vibe)), baseBrand.theme.id);
+        variations.push({
+            ...baseBrand,
+            id: crypto.randomUUID(),
+            theme: newTheme,
+            logoLayout: 'generative',
+            generationSeed: Date.now() + 1,
+            createdAt: new Date()
+        });
+
+        // Variation 2: Same Theme, New Shape
+        const newShape = getDifferent(SHAPES.filter(s => s.tags.includes(baseBrand.vibe) || s.tags.includes('minimalist')), baseBrand.shape.id);
+        variations.push({
+            ...baseBrand,
+            id: crypto.randomUUID(),
+            shape: newShape,
+            logoLayout: 'generative',
+            generationSeed: Date.now() + 2,
+            createdAt: new Date()
+        });
+
+        // Variation 3: Same Theme & Shape, New Font
+        const newFont = getDifferent(fontPairings.filter(f => f.tags.includes(baseBrand.vibe) || f.tags.includes('modern')), baseBrand.font.id);
+        variations.push({
+            ...baseBrand,
+            id: crypto.randomUUID(),
+            font: {
+                id: newFont.id,
+                name: newFont.name,
+                heading: newFont.heading.className,
+                body: newFont.body.className,
+                tags: newFont.tags
+            },
+            logoLayout: 'generative',
+            generationSeed: Date.now() + 3,
+            createdAt: new Date()
+        });
+
+        // Variation 4: Wildcard (Same Vibe, Random Everything)
+        // We use the same generation logic but force specific randoms
+        const randomTheme = THEMES[Math.floor(Math.random() * THEMES.length)];
+        const randomShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+        const randomFont = fontPairings[Math.floor(Math.random() * fontPairings.length)];
+
+        variations.push({
+            ...baseBrand,
+            id: crypto.randomUUID(),
+            theme: randomTheme,
+            shape: randomShape,
+            font: {
+                id: randomFont.id,
+                name: randomFont.name,
+                heading: randomFont.heading.className,
+                body: randomFont.body.className,
+                tags: randomFont.tags
+            },
+            logoLayout: 'generative',
+            generationSeed: Date.now() + 4,
+            createdAt: new Date()
+        });
+
+        setIsGenerating(false);
+        return variations;
+    };
+
     return {
         brand,
+        setBrand,
         generateBrand,
+        generateVariations,
         isGenerating,
         resetBrand,
         // History controls

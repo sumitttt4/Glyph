@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Sun, Moon, Download, ChevronDown, FileCode, Image, Package, Code2, Share2, Link, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Sun, Moon, Download, ChevronDown, FileCode, Image, Package, Code2, Share2, Link, Copy, Check, ChevronLeft, ChevronRight, Shuffle, RefreshCw } from 'lucide-react';
 import UserProfile from '@/components/auth/UserProfile';
 
 interface ToolbarProps {
@@ -21,9 +21,11 @@ interface ToolbarProps {
     onAddToCompare?: () => void;
     onOpenCompare?: () => void;
     compareCount?: number;
+    onVariations?: () => void;
+    isGenerating?: boolean;
 }
 
-export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, canUndo, canRedo, onUndo, onRedo, currentHistoryIndex, totalHistory, onAddToCompare, onOpenCompare, compareCount = 0 }: ToolbarProps) {
+export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, canUndo, canRedo, onUndo, onRedo, currentHistoryIndex, totalHistory, onAddToCompare, onOpenCompare, compareCount = 0, onVariations, isGenerating }: ToolbarProps) {
     const [showExport, setShowExport] = useState(false);
     const [showShare, setShowShare] = useState(false);
     const [copied, setCopied] = useState(false);
@@ -140,6 +142,20 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, c
             {/* Compare Controls */}
             {onAddToCompare && onOpenCompare && (
                 <div className="flex items-center gap-2 mr-2">
+                    <button
+                        onClick={onVariations}
+                        disabled={!onVariations || isGenerating}
+                        className="hidden md:flex items-center gap-2 px-3 py-2 h-9 md:h-10 border border-stone-200 rounded-full bg-white shadow-sm text-xs font-semibold hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50 transition-all disabled:opacity-50"
+                        title="Generate Variations"
+                    >
+                        {isGenerating ? (
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                            <Shuffle className="w-3.5 h-3.5" />
+                        )}
+                        <span>{isGenerating ? 'Thinking...' : 'Variations'}</span>
+                    </button>
+
                     <button
                         onClick={onAddToCompare}
                         className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 border border-stone-200 rounded-full bg-white shadow-sm text-stone-500 hover:text-orange-600 hover:border-orange-200 transition-all"

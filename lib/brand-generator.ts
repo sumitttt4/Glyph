@@ -15,12 +15,8 @@ export const VIBES = ["Minimalist", "Tech", "Organic", "Bold", "Luxury"] as cons
 
 // SVG paths for logo generation (Groq picks one)
 export const LOGO_PATHS = {
-    star: "M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9L12 2Z",
     hexagon: "M12 2L21 7V17L12 22L3 17V7L12 2Z",
     diamond: "M12 2L22 12L12 22L2 12L12 2Z",
-    circle: "M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z",
-    square: "M4 4H20V20H4V4Z",
-    triangle: "M12 2L22 20H2L12 2Z",
     shield: "M12 2L20 6V12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12V6L12 2Z",
     bolt: "M13 2L3 14H12L11 22L21 10H12L13 2Z",
 };
@@ -126,7 +122,7 @@ export async function generateBrandWithGroq(description: string): Promise<BrandD
                 body: parsed.font?.body || "Inter",
             },
             vibe: parsed.vibe || "Tech",
-            logoPath: LOGO_PATHS[parsed.logoStyle as keyof typeof LOGO_PATHS] || LOGO_PATHS.star,
+            logoPath: LOGO_PATHS[parsed.logoStyle as keyof typeof LOGO_PATHS] || LOGO_PATHS.hexagon,
         };
 
     } catch (error) {
@@ -142,7 +138,7 @@ function generateFallbackBrand(description: string): BrandData {
     // Simple keyword-based generation
     let colors = { primary: "#FF4500", secondary: "#0EA5E9", ink: "#0C0A09", canvas: "#FAFAF9" };
     let vibe: BrandData['vibe'] = "Tech";
-    let logoStyle: keyof typeof LOGO_PATHS = "star";
+    let logoStyle: keyof typeof LOGO_PATHS = "hexagon";
 
     if (lowerDesc.includes("finance") || lowerDesc.includes("bank")) {
         colors = { primary: "#0D9488", secondary: "#6366F1", ink: "#0C0A09", canvas: "#F0FDF4" };
@@ -163,7 +159,7 @@ function generateFallbackBrand(description: string): BrandData {
     } else if (lowerDesc.includes("bold") || lowerDesc.includes("energy")) {
         colors = { primary: "#EF4444", secondary: "#F97316", ink: "#0C0A09", canvas: "#FEF2F2" };
         vibe = "Bold";
-        logoStyle = "triangle";
+        logoStyle = "bolt";
     }
 
     // Extract name from description or generate one
@@ -503,7 +499,7 @@ AVAILABLE ICON LIBRARIES (Use these or similar Lucide icons, do not stick to onl
 INSTRUCTIONS:
 1. Analyze the user's startup description.
 2. Select a SPECIFIC icon from the lists above (or any valid Lucide icon name) that is metaphorically relevant to the brief.
-3. NEVER return "Circle", "Square" or generic shapes as an icon.
+3. NEVER return "Circle", "Square", "Heart" or generic shapes as an icon.
 4. Select a container shape from: ["squircle", "cyber", "diamond", "hexagon", "pill"].
 5. Avoid these icons if possible: ${exclude.join(', ')}.
 
@@ -571,12 +567,12 @@ You are a Senior Art Director. Your goal is to design a unique, metaphorical log
 
 TRAINING DATA (DESIGN LOGIC):
 - Metaphor Matching:
-  * "Fast/Speed" -> Use Icons: [Zap, Activity, Rabbit, Rocket, Wind, Timer, Gauge]
-  * "Secure/Safe" -> Use Icons: [Shield, Lock, Eye, Fingerprint, Castle, Key, Anchor]
-  * "Growth/Money" -> Use Icons: [TrendingUp, Sprout, BarChart, Coin, Landmark, Wallet]
-  * "Community/Social" -> Use Icons: [Users, Heart, Globe, MessageCircle, Handshake]
+  * "Fast/Speed" -> Use Icons: [Zap, Activity, Rocket, Wind, Timer, Gauge]
+  * "Secure/Safe" -> Use Icons: [Shield, Lock, Fingerprint, Castle, Key, Anchor]
+  * "Growth/Money" -> Use Icons: [TrendingUp, Sprout, BarChart, Landmark, Wallet]
+  * "Community/Social" -> Use Icons: [Users, Globe, MessageCircle, Handshake, Share2]
   * "Tech/AI" -> Use Icons: [Cpu, Bot, Sparkles, Network, Code, Terminal, Database]
-  * "Nature/Eco" -> Use Icons: [Leaf, Tree, Sun, Droplet, Mountain, Wind, Flower]
+  * "Nature/Eco" -> Use Icons: [Leaf, Tree, Mountain, Wind, Flower, Waves]
   * "Creative" -> Use Icons: [PenTool, Palette, Image, Camera, Box, Layers, Feather]
 
 - Layout Rules:
@@ -593,9 +589,11 @@ TRAINING DATA (DESIGN LOGIC):
 
 INSTRUCTIONS:
 1. Analyze the user's startup brief deeply.
-2. Select a SPECIFIC icon from Lucide React library that is metaphorically relevant. AVOID generic shapes if possible.
+2. Select a SPECIFIC icon from Lucide React library that is metaphorically relevant. 
+   - STRICTLY FORBIDDEN: [Heart, Circle, Square, Rectangle, Triangle, Target, Disc, Orbit, Eye].
+   - Avoid generic, common AI looks (like concentric circles or simple targets).
 3. Select a Layout from: ["icon_left", "icon_right", "stacked", "badge", "monogram"].
-4. Select a Container Shape from: ["squircle", "circle", "sharp", "pill", "ghost", "hexagon", "diamond"].
+4. Select a Container Shape from: ["squircle", "pill", "ghost", "hexagon", "diamond", "cyber"].
 5. Select a Primary Color (Hex Code) that matches the vibe.
 6. Select a Font Family (Google Font name, e.g. Inter, Manrope, Playfair Display).
 

@@ -5,7 +5,7 @@ import { BrandIdentity } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { Copy, Check, Shuffle, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { SlideCover, SlideStrategy, SlideLogo, SlideColors, SlideTypography } from '@/components/generator/BrandSlides';
+import { SlideCover, SlideStrategy, SlideLogo, SlideColors, SlideTypography, SlideSocial, SlideOutdoor } from '@/components/generator/BrandSlides';
 import { Mockup3DCard } from '@/components/mockups/Mockup3DCard';
 import { MockupDevice, MockupBrowser } from '@/components/mockups/MockupDevice';
 import { BrowserBrandPreview } from '@/components/mockups/BrowserBrandPreview';
@@ -25,11 +25,12 @@ interface WorkbenchBentoGridProps {
     isDark: boolean;
     onShuffleLogo?: () => void;
     onSwapFont?: () => void;
+    onVariations?: () => void;
     viewMode: 'overview' | 'presentation';
     setViewMode?: (mode: 'overview' | 'presentation') => void;
 }
 
-export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, viewMode, setViewMode }: WorkbenchBentoGridProps) {
+export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, onVariations, viewMode, setViewMode }: WorkbenchBentoGridProps) {
     // PHASE 4: CONTENT INJECTION
     const CONTENT_TEMPLATES: Record<string, { headline: string; subhead: string; cta: string }> = {
         minimalist: {
@@ -70,6 +71,8 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, v
                 <SlideLogo brand={brand} />
                 <SlideColors brand={brand} />
                 <SlideTypography brand={brand} />
+                <SlideSocial brand={brand} />
+                <SlideOutdoor brand={brand} />
             </div>
         );
     }
@@ -132,6 +135,27 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, v
                                         overrideColors={{ primary: tokens.gradient ? '#FFFFFF' : tokens.text }}
                                     />
                                 </div>
+                            </div>
+
+                            {/* Actions overlay moved inside the flex header */}
+                            <div className="flex bg-white/10 backdrop-blur-md rounded-2xl p-1 border border-white/20">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); onShuffleLogo?.(); }}
+                                    className="p-2 hover:bg-white/20 rounded-xl transition-all text-white/80 hover:text-white"
+                                    title="Shuffle Selection"
+                                >
+                                    <RefreshCw className="w-4 h-4" />
+                                </button>
+                                {onVariations && (
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); onVariations(); }}
+                                        className="p-2 hover:bg-white/20 rounded-xl transition-all text-white/80 hover:text-white flex items-center gap-2 px-3 border-l border-white/10"
+                                        title="Explore Variations"
+                                    >
+                                        <Shuffle className="w-4 h-4" />
+                                        <span className="text-[10px] font-bold uppercase tracking-wider">Variations</span>
+                                    </button>
+                                )}
                             </div>
                         </div>
 
