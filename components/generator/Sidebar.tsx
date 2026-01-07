@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { Check, Shuffle } from 'lucide-react';
 import { VibeSelector } from './VibeSelector';
 import { expandBriefWithAI, suggestVibeWithAI, expandVibeWithAI } from '@/lib/brand-generator';
-import { createClient } from '@/utils/supabase/client';
 import { GlyphIcon } from '@/components/brand/GlyphLogo';
 
 export interface GenerationOptions {
@@ -106,34 +105,10 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
     const handleGenerate = async () => {
         if (!isValid) return;
 
-        // PLG: Check Authed Session
-        // We let them design FIRST (Investment), then ask for Login (Conversion)
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
+        // PLG: Allow everyone to generate (Investment phase)
+        // Login is only required for "Guidelines" and "Export" (Conversion phase)
 
-        // Check for dev bypass cookie
-        const isDevBypass = typeof document !== 'undefined' && document.cookie.includes('admin-bypass=true');
-
-        if (!user && !isDevBypass) {
-            // 1. Save their hard work
-            const pendingProject = {
-                name: brandName,
-                prompt,
-                vibe: selectedVibe,
-                customVibe,
-                color: selectedColor,
-                timestamp: Date.now()
-            };
-            localStorage.setItem('glyph_pending_project', JSON.stringify(pendingProject));
-
-            // 2. Redirect to Login (Gate)
-            // We append ?next=/generator so they come right back
-            window.location.href = '/login?next=/generator';
-            return;
-        }
-
-        // If User IS Logged in, we proceed to Generate
-        // (Reward)
+        // Find full gradient object if selected
         const vibeToUse = selectedVibe === 'custom' && customVibe ? customVibe : selectedVibe;
 
         // Find full gradient object if selected

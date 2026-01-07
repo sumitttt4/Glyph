@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { getSubscriptionStatus, getPlanDisplayInfo } from '@/lib/subscription';
 

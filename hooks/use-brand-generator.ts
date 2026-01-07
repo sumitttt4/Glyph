@@ -218,7 +218,7 @@ export function useBrandGenerator() {
         // Fire and forget - don't block UI
         (async () => {
             try {
-                const { createClient } = await import('@/utils/supabase/client');
+                const { createClient } = await import('@/lib/supabase/client');
                 const supabase = createClient();
                 const { data: { user } } = await supabase.auth.getUser();
                 if (user) {

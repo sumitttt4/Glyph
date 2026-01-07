@@ -3,16 +3,17 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Zap, Palette, Code, Download, Check } from 'lucide-react';
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
+import { ArrowRight, Sparkles, Zap, Layers, Palette, Layout, Type, ShieldCheck, Download, Check, Code } from 'lucide-react';
+import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
 import { THEMES } from '@/lib/themes';
 import { SHAPES } from '@/lib/shapes';
 import { MockupBrowser, MockupDevice } from '@/components/mockups/MockupDevice';
 import { Mockup3DCard } from '@/components/mockups/Mockup3DCard';
-import { FAQ } from '@/components/FAQ';
+import { Button } from '@/components/ui/button';
+import { FAQ } from '@/components/landing/FAQ';
 import BrowserMockup from '@/components/hero/BrowserMockup';
-import Pricing from '@/components/Pricing';
+import Pricing from '@/components/landing/Pricing';
 import { AuthRescue } from '@/components/auth/AuthRescue';
 
 import { Suspense } from 'react';

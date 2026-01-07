@@ -214,6 +214,9 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             const startX = 50 - (gridSize * cellSize) / 2;
             const startY = 50 - (gridSize * cellSize) / 2;
 
+            const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff' || primaryColor.toLowerCase() === 'white';
+            const cellFill = isWhite ? 'black' : 'white';
+
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
                     <rect x="10" y="10" width="80" height="80" rx="16" fill={primaryColor} />
@@ -222,7 +225,7 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
                         const col = i % gridSize;
                         if (seededRandom(seed + `c${i}`) < 0.4) return null;
                         return (
-                            <rect key={i} x={startX + col * cellSize + 2} y={startY + row * cellSize + 2} width={cellSize - 4} height={cellSize - 4} rx="4" fill="white" opacity={0.9} />
+                            <rect key={i} x={startX + col * cellSize + 2} y={startY + row * cellSize + 2} width={cellSize - 4} height={cellSize - 4} rx="4" fill={cellFill} opacity={0.9} />
                         );
                     })}
                 </svg>
@@ -307,14 +310,16 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
 
         // 7. SPLIT: Two complementary halves
         if (compositionStyle === 'split') {
+            const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff' || primaryColor.toLowerCase() === 'white';
+            const innerFill = isWhite ? 'black' : 'white';
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
                     <rect x="10" y="10" width="80" height="80" rx="16" fill={primaryColor} />
                     <g transform={`translate(25, 35) scale(${primaryScale * 0.55})`}>
-                        <path d={primaryShape.path} fill="white" />
+                        <path d={primaryShape.path} fill={innerFill} />
                     </g>
                     <g transform={`translate(55, 45) scale(${primaryScale * 0.55}) rotate(180)`}>
-                        <path d={primaryShape.path} fill="white" opacity="0.5" />
+                        <path d={primaryShape.path} fill={innerFill} opacity="0.5" />
                     </g>
                 </svg>
             );
@@ -322,13 +327,15 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
 
         // 8. DIAMOND: Rotated container
         if (compositionStyle === 'diamond') {
+            const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff' || primaryColor.toLowerCase() === 'white';
+            const innerFill = isWhite ? 'black' : 'white';
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
                     <g transform="translate(50, 50) rotate(45)">
                         <rect x="-30" y="-30" width="60" height="60" rx="10" fill={primaryColor} />
                     </g>
                     <g transform={`translate(${50 - primaryScale * 8}, ${50 - primaryScale * 8}) scale(${primaryScale * 0.7})`}>
-                        <path d={primaryShape.path} fill="white" />
+                        <path d={primaryShape.path} fill={innerFill} />
                     </g>
                 </svg>
             );
@@ -336,14 +343,16 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
 
         // 9. CORNER: Shape in corner accent
         if (compositionStyle === 'corner') {
+            const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff' || primaryColor.toLowerCase() === 'white';
+            const innerFill = isWhite ? 'black' : 'white';
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
                     <rect x="10" y="10" width="80" height="80" rx="16" fill={primaryColor} />
                     <g transform={`translate(22, 22) scale(${primaryScale * 0.9})`}>
-                        <path d={primaryShape.path} fill="white" />
+                        <path d={primaryShape.path} fill={innerFill} />
                     </g>
                     <g transform={`translate(60, 60) scale(${primaryScale * 0.4})`}>
-                        <path d={primaryShape.path} fill="white" opacity="0.3" />
+                        <path d={primaryShape.path} fill={innerFill} opacity="0.3" />
                     </g>
                 </svg>
             );

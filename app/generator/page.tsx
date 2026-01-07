@@ -7,7 +7,7 @@ import { LoadingState } from '@/components/generator/LoadingState';
 import { WorkbenchBentoGrid } from '@/components/generator/WorkbenchBentoGrid';
 import { ProGateModal } from '@/components/generator/ProGateModal';
 import { useBrandGenerator } from '@/hooks/use-brand-generator';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { exportBrandPackage } from '@/lib/export';
 import { generateFaviconPackage } from '@/lib/favicon-generator';
 import { generateSocialMediaKit, downloadSocialAsset } from '@/lib/social-media-kit';
@@ -95,6 +95,37 @@ export default function GeneratorPage() {
     checkAccess();
   }, []);
 
+  // PLG: Check Authed Session Helper (Gate)
+  const checkAuth = async (): Promise<boolean> => {
+    // 1. Check cookies for bypass first (fastest)
+    const hasAdminBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
+    if (hasAdminBypass) return true;
+
+    // 2. Check Supabase session
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) return true;
+
+    // 3. Not logged in -> Save State & Redirect
+    if (brand) {
+      const pendingProject = {
+        name: brand.name,
+        prompt: "Draft Concept", // We don't have original prompt here easily, but brand object has data
+        vibe: brand.vibe,
+        color: brand.theme.tokens.light.primary,
+        // We should ideally persist the full brand object or re-generate. 
+        // For now, let's just save the inputs we have or the brand object itself if possible.
+        // Better: Saving the inputs allows re-generation.
+        timestamp: Date.now()
+      };
+      localStorage.setItem('glyph_pending_project', JSON.stringify(pendingProject));
+    }
+
+    window.location.href = '/login?next=/generator';
+    return false;
+  };
+
   const handleGenerate = useCallback((options: GenerationOptions) => {
     generateBrand(options.vibe, options.name, {
       color: options.color,
@@ -106,6 +137,10 @@ export default function GeneratorPage() {
 
   const handleExport = async (type: string) => {
     if (!brand) return;
+
+    // GATE: All Exports require login
+    const isAuthed = await checkAuth();
+    if (!isAuthed) return;
 
     if (type === 'svg') {
       // Use the composed logo generator that matches the app display
@@ -274,7 +309,14 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
             toggleDark={() => setIsDarkMode(!isDarkMode)}
             onExport={handleExport}
             viewMode={viewMode}
-            setViewMode={setViewMode}
+            setViewMode={async (mode) => {
+              if (mode === 'presentation') {
+                // GATE: Guidelines require login
+                const isAuthed = await checkAuth();
+                if (!isAuthed) return;
+              }
+              setViewMode(mode);
+            }}
             canUndo={brandGenerators.canUndo}
             canRedo={brandGenerators.canRedo}
             onUndo={brandGenerators.undo}
@@ -310,7 +352,14 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
               onShuffleLogo={() => generateBrand(selectedVibe, brand.name)}
               onVariations={handleGenerateVariations}
               viewMode={viewMode}
-              setViewMode={setViewMode}
+              setViewMode={async (mode) => {
+                if (mode === 'presentation') {
+                  // GATE: Guidelines require login
+                  const isAuthed = await checkAuth();
+                  if (!isAuthed) return;
+                }
+                setViewMode(mode);
+              }}
             />
           ) : (
             <RobotEmptyState />

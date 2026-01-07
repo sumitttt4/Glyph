@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { BrandIdentity } from '@/lib/data';
 import { LogoComposition } from '@/components/brand/LogoComposition';
 
