@@ -2,9 +2,11 @@
  * Dodo Payments Webhook Handler
  * 
  * Receives payment.completed events and marks user as Pro in Supabase.
+ * Includes signature verification for security.
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createHmac } from 'crypto';
 
 // Get Supabase admin client (lazy initialization)
 function getSupabaseAdmin() {
@@ -14,10 +16,72 @@ function getSupabaseAdmin() {
     );
 }
 
+/**
+ * Verify webhook signature from Dodo Payments
+ * Dodo uses HMAC-SHA256 signature in the 'x-dodo-signature' header
+ */
+function verifyWebhookSignature(payload: string, signature: string | null): boolean {
+    const secret = process.env.DODO_WEBHOOK_SECRET;
+
+    // If no secret configured, skip verification (development only)
+    if (!secret) {
+        console.warn('[Dodo Webhook] No DODO_WEBHOOK_SECRET configured - skipping verification');
+        return true;
+    }
+
+    if (!signature) {
+        console.error('[Dodo Webhook] No signature in request');
+        return false;
+    }
+
+    // Calculate expected signature
+    const expectedSignature = createHmac('sha256', secret)
+        .update(payload)
+        .digest('hex');
+
+    // Compare signatures (timing-safe comparison)
+    const signatureBuffer = Buffer.from(signature);
+    const expectedBuffer = Buffer.from(expectedSignature);
+
+    if (signatureBuffer.length !== expectedBuffer.length) {
+        return false;
+    }
+
+    // Use timing-safe comparison
+    let result = 0;
+    for (let i = 0; i < signatureBuffer.length; i++) {
+        result |= signatureBuffer[i] ^ expectedBuffer[i];
+    }
+
+    return result === 0;
+}
+
+/**
+ * Sanitize email input
+ */
+function sanitizeEmail(email: string | undefined): string | null {
+    if (!email || typeof email !== 'string') return null;
+    // Basic email validation and sanitization
+    const sanitized = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(sanitized) ? sanitized : null;
+}
+
 export async function POST(request: NextRequest) {
     try {
-        const body = await request.json();
+        const rawBody = await request.text();
+        const signature = request.headers.get('x-dodo-signature') ||
+            request.headers.get('x-webhook-signature');
 
+        // Verify signature in production
+        if (process.env.NODE_ENV === 'production' || process.env.DODO_WEBHOOK_SECRET) {
+            if (!verifyWebhookSignature(rawBody, signature)) {
+                console.error('[Dodo Webhook] Invalid signature');
+                return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+            }
+        }
+
+        const body = JSON.parse(rawBody);
         console.log('[Dodo Webhook] Received:', JSON.stringify(body, null, 2));
 
         // Dodo Payments sends different event types

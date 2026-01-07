@@ -221,6 +221,150 @@ export const THEMES: Theme[] = [
             dark: { bg: '#1F0510', text: '#FDF2F8', primary: '#EC4899', surface: '#38091B', muted: '#F472B6', border: '#9D174D' },
         },
     },
+
+    // ============================================================
+    // 7. PREMIUM NEW ADDITIONS
+    // ============================================================
+    {
+        id: 'premium-violet',
+        name: 'Midnight Violet',
+        description: 'Creative agencies, premium SaaS.',
+        tags: ['creative', 'premium', 'modern'],
+        tokens: {
+            light: { bg: '#FAF5FF', text: '#581C87', primary: '#7C3AED', surface: '#FFFFFF', muted: '#A78BFA', border: '#E9D5FF' },
+            dark: { bg: '#0D0811', text: '#FAF5FF', primary: '#A78BFA', surface: '#1E1229', muted: '#C4B5FD', border: '#4C1D95' },
+        },
+    },
+    {
+        id: 'premium-rose',
+        name: 'Rose Gold',
+        description: 'Luxury beauty, feminine premium.',
+        tags: ['luxury', 'feminine', 'premium'],
+        tokens: {
+            light: { bg: '#FFF9F5', text: '#4A2C2B', primary: '#B76E79', surface: '#FFFFFF', muted: '#D4A5A5', border: '#F5E6E0' },
+            dark: { bg: '#1A1212', text: '#FFF9F5', primary: '#D4A5B5', surface: '#2D2020', muted: '#E9C8CF', border: '#4A2C2B' },
+        },
+    },
+    {
+        id: 'premium-arctic',
+        name: 'Arctic Blue',
+        description: 'Clean, clinical, healthcare tech.',
+        tags: ['clean', 'tech', 'trust', 'minimalist'],
+        tokens: {
+            light: { bg: '#F8FBFF', text: '#0F3460', primary: '#1E90FF', surface: '#FFFFFF', muted: '#6B9AC4', border: '#D4E5F7' },
+            dark: { bg: '#0A1628', text: '#F8FBFF', primary: '#4AA8FF', surface: '#142640', muted: '#7CB3D0', border: '#1E3A5F' },
+        },
+    },
+    {
+        id: 'premium-forest',
+        name: 'Forest Deep',
+        description: 'Outdoor brands, sustainability.',
+        tags: ['nature', 'organic', 'bold'],
+        tokens: {
+            light: { bg: '#F5FAF5', text: '#1D3A1D', primary: '#2D5A2D', surface: '#FFFFFF', muted: '#5A8A5A', border: '#C8E0C8' },
+            dark: { bg: '#0F1A0F', text: '#E8F5E8', primary: '#4A9A4A', surface: '#1A2F1A', muted: '#7CC07C', border: '#2D5A2D' },
+        },
+    },
+    {
+        id: 'premium-solar',
+        name: 'Solar Flare',
+        description: 'Energy, warmth, enthusiasm.',
+        tags: ['bold', 'vibrant', 'warm'],
+        tokens: {
+            light: { bg: '#FFFBF0', text: '#5A3E1B', primary: '#FF8C00', surface: '#FFFFFF', muted: '#CCA76A', border: '#FFE4B5' },
+            dark: { bg: '#1A1408', text: '#FFF8E8', primary: '#FFB347', surface: '#2D2410', muted: '#FFCC80', border: '#5A3E1B' },
+        },
+    },
+    {
+        id: 'premium-graphite',
+        name: 'Graphite Pro',
+        description: 'Professional services, law, consulting.',
+        tags: ['professional', 'minimalist', 'luxury'],
+        tokens: {
+            light: { bg: '#FAFAFA', text: '#2D2D2D', primary: '#4A4A4A', surface: '#FFFFFF', muted: '#8A8A8A', border: '#E0E0E0' },
+            dark: { bg: '#1A1A1A', text: '#FAFAFA', primary: '#AAAAAA', surface: '#2A2A2A', muted: '#B0B0B0', border: '#3A3A3A' },
+        },
+    },
+    {
+        id: 'premium-coral',
+        name: 'Coral Reef',
+        description: 'Travel, hospitality, vibrant lifestyle.',
+        tags: ['vibrant', 'warm', 'playful'],
+        tokens: {
+            light: { bg: '#FFF5F2', text: '#6B3A3A', primary: '#FF6B6B', surface: '#FFFFFF', muted: '#D19090', border: '#FFD4D4' },
+            dark: { bg: '#1F1515', text: '#FFF5F2', primary: '#FF8585', surface: '#2D2020', muted: '#E0A0A0', border: '#5A3030' },
+        },
+    },
+    {
+        id: 'premium-lavender',
+        name: 'Lavender Fields',
+        description: 'Wellness, skincare, calm brands.',
+        tags: ['calm', 'feminine', 'organic'],
+        tokens: {
+            light: { bg: '#FAF8FF', text: '#4A4066', primary: '#9B8AC4', surface: '#FFFFFF', muted: '#B8A8D4', border: '#E8E0F0' },
+            dark: { bg: '#141018', text: '#F8F5FF', primary: '#B8A8D4', surface: '#201828', muted: '#C8B8E4', border: '#3A3050' },
+        },
+    },
+    {
+        id: 'premium-steel',
+        name: 'Industrial Steel',
+        description: 'Manufacturing, automotive, B2B.',
+        tags: ['bold', 'professional', 'tech'],
+        tokens: {
+            light: { bg: '#F5F7FA', text: '#2C3E50', primary: '#5D6D7E', surface: '#FFFFFF', muted: '#85929E', border: '#D5DBDB' },
+            dark: { bg: '#1A2332', text: '#F5F7FA', primary: '#85929E', surface: '#2C3E50', muted: '#AAB7B8', border: '#34495E' },
+        },
+    },
+    {
+        id: 'premium-neon',
+        name: 'Neon Cyber',
+        description: 'Gaming, esports, nightlife.',
+        tags: ['tech', 'bold', 'vibrant', 'futuristic'],
+        tokens: {
+            light: { bg: '#0D0D0D', text: '#00FF88', primary: '#00FF88', surface: '#1A1A1A', muted: '#888888', border: '#333333' },
+            dark: { bg: '#000000', text: '#00FF88', primary: '#00FF88', surface: '#0D0D0D', muted: '#00CC6A', border: '#00FF88' },
+        },
+    },
+    {
+        id: 'premium-wine',
+        name: 'Vintage Wine',
+        description: 'Wine, gourmet, heritage brands.',
+        tags: ['luxury', 'classic', 'warm'],
+        tokens: {
+            light: { bg: '#FDF8F8', text: '#5A2D42', primary: '#8B3A5A', surface: '#FFFFFF', muted: '#A85A75', border: '#F0D8E0' },
+            dark: { bg: '#180D12', text: '#FDF8F8', primary: '#B85A7A', surface: '#2A1820', muted: '#D08090', border: '#5A2D42' },
+        },
+    },
+    {
+        id: 'premium-mint',
+        name: 'Fresh Mint',
+        description: 'Fintech, clean money, fresh starts.',
+        tags: ['clean', 'trust', 'modern'],
+        tokens: {
+            light: { bg: '#F0FFF4', text: '#1A4A3A', primary: '#38A169', surface: '#FFFFFF', muted: '#68D391', border: '#C6F6D5' },
+            dark: { bg: '#0D1A14', text: '#F0FFF4', primary: '#48BB78', surface: '#1A2F28', muted: '#9AE6B4', border: '#22543D' },
+        },
+    },
+    {
+        id: 'premium-copper',
+        name: 'Warm Copper',
+        description: 'Craft, artisan, handmade.',
+        tags: ['organic', 'warm', 'craft'],
+        tokens: {
+            light: { bg: '#FDF8F2', text: '#5A3A28', primary: '#CD7F32', surface: '#FFFFFF', muted: '#D4A574', border: '#F0DBC8' },
+            dark: { bg: '#1A140E', text: '#FDF8F2', primary: '#D4A574', surface: '#2D2418', muted: '#E0B894', border: '#5A3A28' },
+        },
+    },
+    {
+        id: 'premium-midnight',
+        name: 'True Midnight',
+        description: 'Ultra dark, premium products.',
+        tags: ['dark', 'luxury', 'minimalist'],
+        tokens: {
+            light: { bg: '#0A0A0F', text: '#F0F0F5', primary: '#6B7AFF', surface: '#14141F', muted: '#9CA3AF', border: '#2A2A3F' },
+            dark: { bg: '#050508', text: '#F5F5FA', primary: '#8B9AFF', surface: '#0A0A14', muted: '#B0B5C0', border: '#1A1A2F' },
+        },
+    },
 ];
 
 // ============================================================

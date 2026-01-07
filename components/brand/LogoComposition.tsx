@@ -169,27 +169,24 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
     }
     // Algorithmic decision tree based on Vibe + Random Seed
 
-    // CREATIVE COMPOSITIONS - Multiple layout styles for variety
+    // CREATIVE COMPOSITIONS - 12+ layout styles for premium variety
     if (layout === 'generative') {
-        // Decide composition style based on seed (each variation will be different)
         const layoutRoll = seededRandom(seed + 'comp');
         const textureRoll = seededRandom(seed + 'tex');
-        const isOutlined = textureRoll > 0.65;
-
-        // 4 composition styles: radial, grid, cluster, container
-        let compositionStyle: 'radial' | 'grid' | 'cluster' | 'container';
-        if (layoutRoll > 0.75) compositionStyle = 'radial';
-        else if (layoutRoll > 0.5) compositionStyle = 'grid';
-        else if (layoutRoll > 0.25) compositionStyle = 'cluster';
-        else compositionStyle = 'container';
-
+        const isOutlined = textureRoll > 0.6;
         const primaryColor = overrideColors?.primary || colors.primary;
+        const accentColor = colors.accent || primaryColor;
 
-        // RADIAL: Shapes arranged in a circle (like the droplet pattern you showed)
+        // 12 composition styles for maximum variety
+        const styles = ['radial', 'grid', 'cluster', 'container', 'spiral', 'wave', 'split', 'diamond', 'corner', 'overlap', 'frame', 'monogram'] as const;
+        const styleIndex = Math.floor(layoutRoll * styles.length);
+        const compositionStyle = styles[styleIndex];
+
+        // 1. RADIAL: Shapes in a circle
         if (compositionStyle === 'radial') {
-            const numItems = 5 + Math.floor(seededRandom(seed + 'radialN') * 3); // 5-7 items
-            const radius = 28;
-            const itemScale = primaryScale * 0.35;
+            const numItems = 5 + Math.floor(seededRandom(seed + 'radialN') * 4);
+            const radius = 26;
+            const itemScale = primaryScale * 0.32;
 
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
@@ -201,12 +198,7 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
                             const y = Math.sin(rad) * radius;
                             return (
                                 <g key={i} transform={`translate(${x}, ${y}) rotate(${angle + 90}) scale(${itemScale})`}>
-                                    <path
-                                        d={primaryShape.path}
-                                        fill={isOutlined ? 'none' : primaryColor}
-                                        stroke={isOutlined ? primaryColor : 'none'}
-                                        strokeWidth={isOutlined ? 2 : 0}
-                                    />
+                                    <path d={primaryShape.path} fill={isOutlined ? 'none' : primaryColor} stroke={isOutlined ? primaryColor : 'none'} strokeWidth={2} />
                                 </g>
                             );
                         })}
@@ -215,78 +207,198 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             );
         }
 
-        // GRID: Pixel-like grid pattern (like the squircle with squares)
+        // 2. GRID: Pixel-like pattern
         if (compositionStyle === 'grid') {
-            const gridSize = 3;
-            const cellSize = 22;
-            const gap = 4;
-            const startX = 50 - ((gridSize * cellSize + (gridSize - 1) * gap) / 2);
-            const startY = 50 - ((gridSize * cellSize + (gridSize - 1) * gap) / 2);
+            const gridSize = 2 + Math.floor(seededRandom(seed + 'gridS') * 2);
+            const cellSize = 70 / gridSize;
+            const startX = 50 - (gridSize * cellSize) / 2;
+            const startY = 50 - (gridSize * cellSize) / 2;
 
-            // Create rounded container
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                    {/* Container background */}
                     <rect x="10" y="10" width="80" height="80" rx="16" fill={primaryColor} />
-                    {/* Grid cells */}
                     {Array.from({ length: gridSize * gridSize }).map((_, i) => {
                         const row = Math.floor(i / gridSize);
                         const col = i % gridSize;
-                        const show = seededRandom(seed + `cell${i}`) > 0.35;
-                        if (!show) return null;
+                        if (seededRandom(seed + `c${i}`) < 0.4) return null;
                         return (
-                            <rect
-                                key={i}
-                                x={startX + col * (cellSize + gap)}
-                                y={startY + row * (cellSize + gap)}
-                                width={cellSize}
-                                height={cellSize}
-                                rx="4"
-                                fill="white"
-                                opacity={0.9}
-                            />
+                            <rect key={i} x={startX + col * cellSize + 2} y={startY + row * cellSize + 2} width={cellSize - 4} height={cellSize - 4} rx="4" fill="white" opacity={0.9} />
                         );
                     })}
                 </svg>
             );
         }
 
-        // CLUSTER: Grouped shapes in organic arrangement (like hexagon cluster)
+        // 3. CLUSTER: Organic grouping
         if (compositionStyle === 'cluster') {
             const positions = [
-                { x: 50, y: 35, scale: 1 },
-                { x: 35, y: 55, scale: 0.85 },
-                { x: 65, y: 55, scale: 0.85 },
-                { x: 42, y: 70, scale: 0.7 },
-                { x: 58, y: 70, scale: 0.7 },
+                { x: 50, y: 32, scale: 1 }, { x: 32, y: 52, scale: 0.85 }, { x: 68, y: 52, scale: 0.85 },
+                { x: 40, y: 72, scale: 0.7 }, { x: 60, y: 72, scale: 0.7 }
             ];
-            const baseScale = primaryScale * 0.4;
+            const baseScale = primaryScale * 0.38;
 
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
                     {positions.map((pos, i) => (
                         <g key={i} transform={`translate(${pos.x - 12 * baseScale * pos.scale}, ${pos.y - 12 * baseScale * pos.scale}) scale(${baseScale * pos.scale})`}>
-                            <path
-                                d={primaryShape.path}
-                                fill={isOutlined ? 'none' : primaryColor}
-                                stroke={isOutlined ? primaryColor : 'none'}
-                                strokeWidth={isOutlined ? 2.5 : 0}
-                                opacity={0.85 + i * 0.03}
-                            />
+                            <path d={primaryShape.path} fill={isOutlined ? 'none' : primaryColor} stroke={isOutlined ? primaryColor : 'none'} strokeWidth={2.5} opacity={0.85 + i * 0.03} />
                         </g>
                     ))}
                 </svg>
             );
         }
 
-        // CONTAINER: Shape inside a squircle container (clean app-icon style)
+        // 4. CONTAINER: Shape inside squircle
+        if (compositionStyle === 'container') {
+            // Fix for white-on-white: If primaryColor is white (guidelines view), make inner shape black or transparent cut-out
+            const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff' || primaryColor.toLowerCase() === 'white';
+            const innerFill = isWhite ? 'black' : 'white';
+
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="10" width="80" height="80" rx="18" fill={primaryColor} />
+                    <g transform={`translate(${50 - primaryScale * 10}, ${50 - primaryScale * 10}) scale(${primaryScale * 0.85})`}>
+                        <path d={primaryShape.path} fill={innerFill} />
+                    </g>
+                </svg>
+            );
+        }
+
+        // 5. SPIRAL: Shapes in spiral pattern
+        if (compositionStyle === 'spiral') {
+            const numItems = 6;
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(50, 50)">
+                        {Array.from({ length: numItems }).map((_, i) => {
+                            const angle = i * 60;
+                            const radius = 10 + i * 5;
+                            const scale = 0.5 + i * 0.12;
+                            const x = Math.cos(angle * Math.PI / 180) * radius;
+                            const y = Math.sin(angle * Math.PI / 180) * radius;
+                            return (
+                                <g key={i} transform={`translate(${x}, ${y}) scale(${primaryScale * 0.25 * scale})`}>
+                                    <path d={primaryShape.path} fill={primaryColor} opacity={0.4 + i * 0.1} />
+                                </g>
+                            );
+                        })}
+                    </g>
+                </svg>
+            );
+        }
+
+        // 6. WAVE: Horizontal wave of shapes
+        if (compositionStyle === 'wave') {
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    {[0, 1, 2, 3, 4].map((i) => {
+                        const x = 15 + i * 18;
+                        const y = 50 + Math.sin(i * 1.2) * 15;
+                        const scale = 0.6 + Math.abs(Math.sin(i * 0.8)) * 0.4;
+                        return (
+                            <g key={i} transform={`translate(${x - 10}, ${y - 10}) scale(${primaryScale * 0.35 * scale})`}>
+                                <path d={primaryShape.path} fill={primaryColor} opacity={0.7 + i * 0.06} />
+                            </g>
+                        );
+                    })}
+                </svg>
+            );
+        }
+
+        // 7. SPLIT: Two complementary halves
+        if (compositionStyle === 'split') {
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="10" width="80" height="80" rx="16" fill={primaryColor} />
+                    <g transform={`translate(25, 35) scale(${primaryScale * 0.55})`}>
+                        <path d={primaryShape.path} fill="white" />
+                    </g>
+                    <g transform={`translate(55, 45) scale(${primaryScale * 0.55}) rotate(180)`}>
+                        <path d={primaryShape.path} fill="white" opacity="0.5" />
+                    </g>
+                </svg>
+            );
+        }
+
+        // 8. DIAMOND: Rotated container
+        if (compositionStyle === 'diamond') {
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(50, 50) rotate(45)">
+                        <rect x="-30" y="-30" width="60" height="60" rx="10" fill={primaryColor} />
+                    </g>
+                    <g transform={`translate(${50 - primaryScale * 8}, ${50 - primaryScale * 8}) scale(${primaryScale * 0.7})`}>
+                        <path d={primaryShape.path} fill="white" />
+                    </g>
+                </svg>
+            );
+        }
+
+        // 9. CORNER: Shape in corner accent
+        if (compositionStyle === 'corner') {
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="10" width="80" height="80" rx="16" fill={primaryColor} />
+                    <g transform={`translate(22, 22) scale(${primaryScale * 0.9})`}>
+                        <path d={primaryShape.path} fill="white" />
+                    </g>
+                    <g transform={`translate(60, 60) scale(${primaryScale * 0.4})`}>
+                        <path d={primaryShape.path} fill="white" opacity="0.3" />
+                    </g>
+                </svg>
+            );
+        }
+
+        // 10. OVERLAP: Layered shapes
+        if (compositionStyle === 'overlap') {
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    <g transform={`translate(30, 30) scale(${primaryScale * 0.8})`}>
+                        <path d={primaryShape.path} fill={primaryColor} opacity="0.4" />
+                    </g>
+                    <g transform={`translate(40, 40) scale(${primaryScale * 0.8})`}>
+                        <path d={primaryShape.path} fill={primaryColor} opacity="0.7" />
+                    </g>
+                    <g transform={`translate(50, 50) scale(${primaryScale * 0.8})`}>
+                        <path d={primaryShape.path} fill={primaryColor} />
+                    </g>
+                </svg>
+            );
+        }
+
+        // 11. FRAME: Shape with outline frame
+        if (compositionStyle === 'frame') {
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    <rect x="12" y="12" width="76" height="76" rx="14" fill="none" stroke={primaryColor} strokeWidth="3" />
+                    <g transform={`translate(${50 - primaryScale * 10}, ${50 - primaryScale * 10}) scale(${primaryScale * 0.85})`}>
+                        <path d={primaryShape.path} fill={primaryColor} />
+                    </g>
+                </svg>
+            );
+        }
+
+        // 12. MONOGRAM: Letter + Shape combo
+        if (compositionStyle === 'monogram') {
+            const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff' || primaryColor.toLowerCase() === 'white';
+            const contentFill = isWhite ? 'black' : 'white';
+
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="10" width="80" height="80" rx="18" fill={primaryColor} />
+                    <text x="50" y="62" fontSize="40" fontWeight="bold" textAnchor="middle" fill={contentFill} fontFamily="system-ui">{initial}</text>
+                    <g transform={`translate(65, 22) scale(${primaryScale * 0.35})`}>
+                        <path d={primaryShape.path} fill={contentFill} opacity="0.8" />
+                    </g>
+                </svg>
+            );
+        }
+
+        // Default fallback
         return (
             <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                {/* Squircle container */}
-                <rect x="10" y="10" width="80" height="80" rx="18" fill={primaryColor} />
-                {/* Centered shape */}
-                <g transform={`translate(${50 - primaryScale * 10}, ${50 - primaryScale * 10}) scale(${primaryScale * 0.85})`}>
-                    <path d={primaryShape.path} fill="white" />
+                <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
+                    <path d={primaryShape.path} fill={primaryColor} />
                 </g>
             </svg>
         );
