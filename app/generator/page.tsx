@@ -108,9 +108,9 @@ export default function GeneratorPage() {
     if (!brand) return;
 
     if (type === 'svg') {
-      const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${brand.shape.viewBox || "0 0 24 24"}">
-        <path d="${brand.shape.path}" fill="${brand.theme.tokens.light.primary}" />
-      </svg>`;
+      // Use the composed logo generator that matches the app display
+      const { generateComposedLogoSVG } = await import('@/lib/svg-exporter');
+      const svgContent = generateComposedLogoSVG(brand, 'color');
       const blob = new Blob([svgContent], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');

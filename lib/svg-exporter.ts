@@ -1,29 +1,154 @@
 /**
- * Clean SVG Exporter
+ * Logo Composition SVG Generator
  * 
- * Generates production-ready SVG files from brand shape data.
- * No React dependencies - pure string output.
+ * Server-side compatible version of LogoComposition that outputs pure SVG strings.
+ * This matches the exact output of the React LogoComposition component.
  */
 
 import { BrandIdentity } from './data';
-
-export type SVGVariant = 'color' | 'black' | 'white' | 'outline';
+import { SHAPES, Shape } from './shapes';
 
 /**
- * Generate a clean SVG string from brand shape data
+ * Deterministic PRNG based on string seed (same as LogoComposition)
  */
-export function generateLogoSVG(
+function seededRandom(seed: string): number {
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+        const char = seed.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+    }
+    const x = Math.sin(hash) * 10000;
+    return x - Math.floor(x);
+}
+
+/**
+ * Get shape scale factor to normalize to 100x100 canvas
+ */
+function getShapeScale(shape: { viewBox?: string }): number {
+    if (!shape.viewBox) return 3;
+    const parts = shape.viewBox.split(' ');
+    const width = parseFloat(parts[2]) || 24;
+    return 80 / width;
+}
+
+export type SVGVariant = 'color' | 'black' | 'white';
+
+/**
+ * Generate the composed logo SVG (matching LogoComposition output)
+ */
+export function generateComposedLogoSVG(
+    brand: BrandIdentity,
+    variant: SVGVariant = 'color'
+): string {
+    const seed = brand.id + (brand.name || 'brand') + (brand.generationSeed || brand.id || 'stable');
+
+    // Get shapes
+    const safeShapes = SHAPES.length > 0 ? SHAPES : [{ id: 'fallback', path: 'M0 0h100v100H0z', name: 'Fallback', viewBox: '0 0 100 100', tags: [], complexity: 'simple' as const }];
+    const shapeIndex1 = Math.floor(seededRandom(seed + 's1') * safeShapes.length);
+    const shapeIndex2 = Math.floor(seededRandom(seed + 's2') * safeShapes.length);
+
+    const primaryShape = brand.shape || safeShapes[shapeIndex1 % safeShapes.length];
+    const secondaryShape = safeShapes[shapeIndex2 % safeShapes.length];
+
+    const primaryScale = getShapeScale(primaryShape);
+    const secondaryScale = getShapeScale(secondaryShape);
+
+    // Determine colors based on variant
+    let primaryColor: string;
+    let accentColor: string;
+    let bgColor: string;
+
+    switch (variant) {
+        case 'black':
+            primaryColor = '#000000';
+            accentColor = '#333333';
+            bgColor = 'transparent';
+            break;
+        case 'white':
+            primaryColor = '#FFFFFF';
+            accentColor = '#EEEEEE';
+            bgColor = 'transparent';
+            break;
+        case 'color':
+        default:
+            primaryColor = brand.theme.tokens.light.primary;
+            accentColor = brand.theme.tokens.light.accent || brand.theme.tokens.light.primary;
+            bgColor = 'transparent';
+            break;
+    }
+
+    // Determine layout based on seed (same logic as LogoComposition)
+    const layoutModeRoll = seededRandom(seed + 'layout');
+    let genLayout = 'radial';
+    if (layoutModeRoll > 0.6) genLayout = 'radial';
+    else if (layoutModeRoll > 0.3) genLayout = 'cut';
+    else genLayout = 'stacked';
+
+    const textureRoll = seededRandom(seed + 'tex');
+    const isOutlined = textureRoll > 0.7;
+
+    // Generate unique ID for masks
+    const uniqueId = `logo-${brand.id.substring(0, 8)}`;
+
+    let svgContent = '';
+
+    // Generate layout-specific content
+    if (genLayout === 'cut') {
+        svgContent = `
+    <defs>
+        <mask id="mask-cut-${uniqueId}">
+            <rect width="100" height="100" fill="white"/>
+            <g transform="translate(${50 - secondaryScale * 12}, ${50 - secondaryScale * 12}) scale(${secondaryScale})">
+                <path d="${secondaryShape.path}" fill="black"/>
+            </g>
+        </mask>
+    </defs>
+    <g transform="translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})">
+        <path d="${primaryShape.path}" fill="${primaryColor}" mask="url(#mask-cut-${uniqueId})"/>
+    </g>`;
+    } else if (genLayout === 'radial') {
+        const angles = [0, 60, 120, 180, 240, 300];
+        const radialPaths = angles.map((angle, i) => {
+            const strokeAttr = isOutlined
+                ? `fill="none" stroke="${primaryColor}" stroke-width="1.5"`
+                : `fill="${primaryColor}"`;
+            return `<g transform="rotate(${angle}) translate(0, -25) scale(${primaryScale * 0.3})">
+                <path d="${primaryShape.path}" ${strokeAttr} opacity="0.9"/>
+            </g>`;
+        }).join('\n        ');
+
+        svgContent = `
+    <g transform="translate(50,50)">
+        ${radialPaths}
+    </g>`;
+    } else if (genLayout === 'stacked') {
+        svgContent = `
+    <g transform="translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})">
+        <path d="${primaryShape.path}" fill="${primaryColor}"/>
+    </g>
+    <g transform="translate(${50 - secondaryScale * 6}, ${50 - secondaryScale * 6}) scale(${secondaryScale * 0.4})">
+        <path d="${secondaryShape.path}" fill="white" opacity="0.4"/>
+    </g>`;
+    }
+
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+${svgContent}
+</svg>`;
+}
+
+/**
+ * Generate simple icon-only SVG (just the shape)
+ */
+export function generateSimpleLogoSVG(
     brand: BrandIdentity,
     variant: SVGVariant = 'color'
 ): string {
     const viewBox = brand.shape.viewBox || '0 0 24 24';
     const path = brand.shape.path;
 
-    // Determine fill color based on variant
     let fillColor: string;
-    let strokeColor: string | null = null;
-    let strokeWidth: string | null = null;
-
     switch (variant) {
         case 'black':
             fillColor = '#000000';
@@ -31,43 +156,30 @@ export function generateLogoSVG(
         case 'white':
             fillColor = '#FFFFFF';
             break;
-        case 'outline':
-            fillColor = 'none';
-            strokeColor = brand.theme.tokens.light.primary;
-            strokeWidth = '1.5';
-            break;
         case 'color':
         default:
             fillColor = brand.theme.tokens.light.primary;
             break;
     }
 
-    // Build stroke attributes if needed
-    const strokeAttrs = strokeColor
-        ? ` stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"`
-        : '';
-
     return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" fill="none">
-  <path d="${path}" fill="${fillColor}"${strokeAttrs}/>
+    <path d="${path}" fill="${fillColor}"/>
 </svg>`;
 }
 
 /**
- * Generate logo with brand name as text (wordmark)
+ * Generate wordmark SVG (logo + brand name)
  */
 export function generateWordmarkSVG(
     brand: BrandIdentity,
     variant: SVGVariant = 'color'
 ): string {
-    const shapeViewBox = brand.shape.viewBox || '0 0 24 24';
     const path = brand.shape.path;
-
-    // Parse viewBox to get dimensions
+    const shapeViewBox = brand.shape.viewBox || '0 0 24 24';
     const [, , vbWidth] = shapeViewBox.split(' ').map(Number);
     const shapeScale = 24 / (vbWidth || 24);
 
-    // Determine colors
     let primaryColor: string;
     let textColor: string;
 
@@ -86,57 +198,27 @@ export function generateWordmarkSVG(
             break;
     }
 
-    // Wordmark layout: icon on left, text on right
     const iconSize = 32;
     const textX = iconSize + 12;
     const totalWidth = textX + brand.name.length * 12;
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalWidth} 40" fill="none">
-  <!-- Icon -->
-  <g transform="translate(4, 4) scale(${shapeScale})">
-    <path d="${path}" fill="${primaryColor}"/>
-  </g>
-  <!-- Brand Name -->
-  <text x="${textX}" y="28" font-family="${brand.font.heading}, system-ui, sans-serif" font-size="20" font-weight="700" fill="${textColor}">
-    ${brand.name}
-  </text>
+    <!-- Icon -->
+    <g transform="translate(4, 4) scale(${shapeScale})">
+        <path d="${path}" fill="${primaryColor}"/>
+    </g>
+    <!-- Brand Name -->
+    <text x="${textX}" y="28" font-family="${brand.font.heading}, system-ui, sans-serif" font-size="20" font-weight="700" fill="${textColor}">
+        ${brand.name}
+    </text>
 </svg>`;
 }
 
 /**
- * Generate favicon-optimized SVG (simplified, high contrast)
+ * Generate favicon SVG
  */
 export function generateFaviconSVG(brand: BrandIdentity): string {
-    const path = brand.shape.path;
-    const viewBox = brand.shape.viewBox || '0 0 24 24';
-    const primaryColor = brand.theme.tokens.light.primary;
-
-    return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}">
-  <path d="${path}" fill="${primaryColor}"/>
-</svg>`;
-}
-
-/**
- * Generate all logo variants as an object
- */
-export function generateAllLogoVariants(brand: BrandIdentity): {
-    color: string;
-    black: string;
-    white: string;
-    outline: string;
-    wordmarkColor: string;
-    wordmarkBlack: string;
-    favicon: string;
-} {
-    return {
-        color: generateLogoSVG(brand, 'color'),
-        black: generateLogoSVG(brand, 'black'),
-        white: generateLogoSVG(brand, 'white'),
-        outline: generateLogoSVG(brand, 'outline'),
-        wordmarkColor: generateWordmarkSVG(brand, 'color'),
-        wordmarkBlack: generateWordmarkSVG(brand, 'black'),
-        favicon: generateFaviconSVG(brand),
-    };
+    // For favicon, use the composed logo but simplified
+    return generateComposedLogoSVG(brand, 'color');
 }
