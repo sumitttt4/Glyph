@@ -11,7 +11,7 @@ import { createClient } from '@/utils/supabase/client';
 import { exportBrandPackage } from '@/lib/export';
 import { generateFaviconPackage } from '@/lib/favicon-generator';
 import { generateSocialMediaKit, downloadSocialAsset } from '@/lib/social-media-kit';
-import { openBrandBookForPrint } from '@/lib/brand-book';
+import { downloadBrandBookPDF } from '@/lib/pdf-generator';
 import { CompareOverlay } from '@/components/generator/CompareOverlay';
 import { RobotEmptyState } from '@/components/generator/RobotEmptyState';
 import { BrandIdentity } from '@/lib/data';
@@ -76,10 +76,20 @@ export default function GeneratorPage() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
 
-      // Grant Pro access to specific admin email
-      if (user?.email === 'sumitsharma9128@gmail.com') {
+      if (!user?.email) return;
+
+      // Check if user is Pro from Supabase profiles table (Dodo Payments integration)
+      const { fetchProStatusFromDB, ADMIN_EMAILS } = await import('@/lib/subscription');
+
+      // Admin emails always get Pro
+      if (ADMIN_EMAILS.includes(user.email)) {
         setIsPro(true);
+        return;
       }
+
+      // Check database for Pro status (set by Dodo webhook)
+      const isProFromDB = await fetchProStatusFromDB(supabase, user.email);
+      setIsPro(isProFromDB);
     };
 
     checkAccess();
@@ -195,7 +205,13 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
       });
       alert('Downloading Social Media assets...');
     } else if (type === 'brandbook') {
-      openBrandBookForPrint(brand);
+      try {
+        await downloadBrandBookPDF(brand);
+        alert('Brand Guidelines PDF downloaded!');
+      } catch (error) {
+        console.error('PDF generation failed:', error);
+        alert('Failed to generate PDF. Please try again.');
+      }
     }
   };
 

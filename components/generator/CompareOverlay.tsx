@@ -62,73 +62,76 @@ export function CompareOverlay({ brands, onClose, onRemove, onSelect, onGenerate
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                        {brands.map((brand) => (
-                            <div key={brand.id} className="relative group bg-white rounded-3xl shadow-xl border border-stone-200 overflow-hidden flex flex-col hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
-                                {/* Remove Button */}
-                                <button
-                                    onClick={() => onRemove(brand.id)}
-                                    className="absolute top-4 right-4 p-2 bg-white/90 backdrop-blur rounded-full text-stone-400 hover:text-red-500 hover:bg-white shadow-md z-10 opacity-0 group-hover:opacity-100 transition-all border border-transparent hover:border-red-100"
-                                >
-                                    <X className="w-4 h-4" />
-                                </button>
+                        {brands.filter(brand => brand && brand.theme?.tokens?.light).map((brand) => {
+                            const colors = brand.theme.tokens.light;
+                            return (
+                                <div key={brand.id} className="relative group bg-white rounded-3xl shadow-xl border border-stone-200 overflow-hidden flex flex-col hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
+                                    {/* Remove Button */}
+                                    <button
+                                        onClick={() => onRemove(brand.id)}
+                                        className="absolute top-4 right-4 p-2 bg-white/90 backdrop-blur rounded-full text-stone-400 hover:text-red-500 hover:bg-white shadow-md z-10 opacity-0 group-hover:opacity-100 transition-all border border-transparent hover:border-red-100"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
 
-                                {/* Logo Preview Area */}
-                                <div
-                                    className="aspect-square flex flex-col items-center justify-center relative p-10 overflow-hidden"
-                                    style={{ background: brand.theme.tokens.light.bg }}
-                                >
-                                    {/* Subtle background texture */}
-                                    <div className="absolute inset-0 opacity-5 pointer-events-none"
-                                        style={{ backgroundImage: `radial-gradient(${brand.theme.tokens.light.primary} 1px, transparent 1px)`, backgroundSize: '16px 16px' }} />
+                                    {/* Logo Preview Area */}
+                                    <div
+                                        className="aspect-square flex flex-col items-center justify-center relative p-10 overflow-hidden"
+                                        style={{ background: colors.bg || '#FAFAF9' }}
+                                    >
+                                        {/* Subtle background texture */}
+                                        <div className="absolute inset-0 opacity-5 pointer-events-none"
+                                            style={{ backgroundImage: `radial-gradient(${colors.primary || '#666'} 1px, transparent 1px)`, backgroundSize: '16px 16px' }} />
 
-                                    <div className="w-full h-full relative z-10 drop-shadow-2xl scale-125">
-                                        <LogoComposition brand={brand} />
-                                    </div>
-                                </div>
-
-                                {/* Content Details */}
-                                <div className="p-6 flex flex-col flex-1 bg-white">
-                                    <div className="text-center mb-6">
-                                        <h3
-                                            className="text-2xl font-bold tracking-tight mb-1"
-                                            style={{
-                                                fontFamily: brand.font.heading,
-                                                color: brand.theme.tokens.light.text
-                                            }}
-                                        >
-                                            {brand.name}
-                                        </h3>
-                                        <p className="text-[10px] font-mono font-bold tracking-[0.2em] uppercase opacity-40">
-                                            {brand.vibe} IDENTITY
-                                        </p>
-                                    </div>
-
-                                    {/* Details Table */}
-                                    <div className="space-y-3 mb-6 pt-4 border-t border-stone-50">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-[10px] font-mono text-stone-400 uppercase tracking-wider">Typeface</span>
-                                            <span className="text-xs font-semibold text-stone-700">{brand.font.name}</span>
+                                        <div className="w-full h-full relative z-10 drop-shadow-2xl scale-125">
+                                            <LogoComposition brand={brand} />
                                         </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-[10px] font-mono text-stone-400 uppercase tracking-wider">Palette</span>
-                                            <div className="flex gap-1.5">
-                                                <div className="w-4 h-4 rounded-full border border-stone-100 shadow-sm" style={{ background: brand.theme.tokens.light.primary }} />
-                                                <div className="w-4 h-4 rounded-full border border-stone-100 shadow-sm" style={{ background: brand.theme.tokens.light.accent || brand.theme.tokens.light.primary }} />
-                                                <div className="w-4 h-4 rounded-full border border-stone-200 shadow-sm" style={{ background: brand.theme.tokens.light.bg }} />
+                                    </div>
+
+                                    {/* Content Details */}
+                                    <div className="p-6 flex flex-col flex-1 bg-white">
+                                        <div className="text-center mb-6">
+                                            <h3
+                                                className="text-2xl font-bold tracking-tight mb-1"
+                                                style={{
+                                                    fontFamily: brand.font?.heading || 'inherit',
+                                                    color: colors.text || '#1a1a1a'
+                                                }}
+                                            >
+                                                {brand.name}
+                                            </h3>
+                                            <p className="text-[10px] font-mono font-bold tracking-[0.2em] uppercase opacity-40">
+                                                {brand.vibe} IDENTITY
+                                            </p>
+                                        </div>
+
+                                        {/* Details Table */}
+                                        <div className="space-y-3 mb-6 pt-4 border-t border-stone-50">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-[10px] font-mono text-stone-400 uppercase tracking-wider">Typeface</span>
+                                                <span className="text-xs font-semibold text-stone-700">{brand.font?.name || 'Default'}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-[10px] font-mono text-stone-400 uppercase tracking-wider">Palette</span>
+                                                <div className="flex gap-1.5">
+                                                    <div className="w-4 h-4 rounded-full border border-stone-100 shadow-sm" style={{ background: colors.primary || '#666' }} />
+                                                    <div className="w-4 h-4 rounded-full border border-stone-100 shadow-sm" style={{ background: colors.accent || colors.primary || '#666' }} />
+                                                    <div className="w-4 h-4 rounded-full border border-stone-200 shadow-sm" style={{ background: colors.bg || '#FFF' }} />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* Action Button */}
-                                    <button
-                                        onClick={() => onSelect(brand)}
-                                        className="w-full py-3 bg-stone-50 hover:bg-stone-900 hover:text-white border border-stone-200 rounded-xl text-sm font-bold transition-all duration-300"
-                                    >
-                                        Select This Brand
-                                    </button>
+                                        {/* Action Button */}
+                                        <button
+                                            onClick={() => onSelect(brand)}
+                                            className="w-full py-3 bg-stone-50 hover:bg-stone-900 hover:text-white border border-stone-200 rounded-xl text-sm font-bold transition-all duration-300"
+                                        >
+                                            Select This Brand
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </div>

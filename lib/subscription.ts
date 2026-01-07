@@ -62,6 +62,38 @@ export function getSubscriptionStatus(
 }
 
 /**
+ * Fetch Pro status from Supabase profiles table
+ * This is used to check if a user has paid via Dodo Payments
+ */
+export async function fetchProStatusFromDB(
+    supabaseClient: any,
+    email: string | null | undefined
+): Promise<boolean> {
+    if (!email) return false;
+
+    // Check if admin email first
+    if (ADMIN_EMAILS.includes(email)) return true;
+
+    try {
+        const { data, error } = await supabaseClient
+            .from('profiles')
+            .select('is_pro')
+            .eq('email', email)
+            .single();
+
+        if (error) {
+            console.log('[Subscription] Profile fetch error:', error.message);
+            return false;
+        }
+
+        return data?.is_pro === true;
+    } catch (e) {
+        console.error('[Subscription] DB fetch failed:', e);
+        return false;
+    }
+}
+
+/**
  * Check if a feature is available for the user's plan
  */
 export function hasFeatureAccess(
