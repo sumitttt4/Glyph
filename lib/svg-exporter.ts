@@ -78,15 +78,14 @@ export function generateComposedLogoSVG(
             break;
     }
 
-    // Determine layout based on seed (same logic as LogoComposition)
+    // Determine layout based on seed - ONLY single and cut (premium layouts)
     const layoutModeRoll = seededRandom(seed + 'layout');
-    let genLayout = 'radial';
-    if (layoutModeRoll > 0.6) genLayout = 'radial';
-    else if (layoutModeRoll > 0.3) genLayout = 'cut';
-    else genLayout = 'stacked';
+    let genLayout = 'single';
+    if (layoutModeRoll > 0.5) genLayout = 'single';
+    else genLayout = 'cut';
 
     const textureRoll = seededRandom(seed + 'tex');
-    const isOutlined = textureRoll > 0.7;
+    const isOutlined = textureRoll > 0.75;
 
     // Generate unique ID for masks
     const uniqueId = `logo-${brand.id.substring(0, 8)}`;
@@ -94,7 +93,17 @@ export function generateComposedLogoSVG(
     let svgContent = '';
 
     // Generate layout-specific content
-    if (genLayout === 'cut') {
+    if (genLayout === 'single') {
+        // Clean single shape - premium look
+        const strokeAttr = isOutlined
+            ? `fill="none" stroke="${primaryColor}" stroke-width="1.5"`
+            : `fill="${primaryColor}"`;
+        svgContent = `
+    <g transform="translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})">
+        <path d="${primaryShape.path}" ${strokeAttr}/>
+    </g>`;
+    } else if (genLayout === 'cut') {
+        // Negative space cut - still premium
         svgContent = `
     <defs>
         <mask id="mask-cut-${uniqueId}">
@@ -106,29 +115,6 @@ export function generateComposedLogoSVG(
     </defs>
     <g transform="translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})">
         <path d="${primaryShape.path}" fill="${primaryColor}" mask="url(#mask-cut-${uniqueId})"/>
-    </g>`;
-    } else if (genLayout === 'radial') {
-        const angles = [0, 60, 120, 180, 240, 300];
-        const radialPaths = angles.map((angle, i) => {
-            const strokeAttr = isOutlined
-                ? `fill="none" stroke="${primaryColor}" stroke-width="1.5"`
-                : `fill="${primaryColor}"`;
-            return `<g transform="rotate(${angle}) translate(0, -25) scale(${primaryScale * 0.3})">
-                <path d="${primaryShape.path}" ${strokeAttr} opacity="0.9"/>
-            </g>`;
-        }).join('\n        ');
-
-        svgContent = `
-    <g transform="translate(50,50)">
-        ${radialPaths}
-    </g>`;
-    } else if (genLayout === 'stacked') {
-        svgContent = `
-    <g transform="translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})">
-        <path d="${primaryShape.path}" fill="${primaryColor}"/>
-    </g>
-    <g transform="translate(${50 - secondaryScale * 6}, ${50 - secondaryScale * 6}) scale(${secondaryScale * 0.4})">
-        <path d="${secondaryShape.path}" fill="white" opacity="0.4"/>
     </g>`;
     }
 

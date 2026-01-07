@@ -169,186 +169,171 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
     }
     // Algorithmic decision tree based on Vibe + Random Seed
 
-    // For 'generative' layout, use the SVG shape composition engine
-    // This creates the geometric logo marks like cut-outs, radial patterns, etc.
+    // CREATIVE COMPOSITIONS - Multiple layout styles for variety
     if (layout === 'generative') {
-        // Select layout algorithmically based on seed
-        // Removed 'intersect' layout as it produces ugly two-shape overlaps
-        // Prioritizing 'radial' (crown-like) and 'cut' (negative space) for best results
-        const layoutModeRoll = seededRandom(seed + 'layout');
-        let genLayout = 'radial'; // Default to beautiful radial (crown) layout
-        if (layoutModeRoll > 0.6) genLayout = 'radial';      // 40% - crown style
-        else if (layoutModeRoll > 0.3) genLayout = 'cut';    // 30% - negative space
-        else genLayout = 'stacked';                           // 30% - layered
-
-        // Texture decision
+        // Decide composition style based on seed (each variation will be different)
+        const layoutRoll = seededRandom(seed + 'comp');
         const textureRoll = seededRandom(seed + 'tex');
-        const isOutlined = textureRoll > 0.7;
+        const isOutlined = textureRoll > 0.65;
 
-        return (
-            <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                {/* --- CUT / NEGATIVE SPACE LAYOUT --- */}
-                {genLayout === 'cut' && (
-                    <>
-                        <defs>
-                            <mask id={`mask-cut-${uniqueId}`}>
-                                <rect width="100" height="100" fill="white" />
-                                <g transform={`translate(${50 - secondaryScale * 12}, ${50 - secondaryScale * 12}) scale(${secondaryScale})`}>
-                                    <path d={secondaryShape.path} fill="black" />
+        // 4 composition styles: radial, grid, cluster, container
+        let compositionStyle: 'radial' | 'grid' | 'cluster' | 'container';
+        if (layoutRoll > 0.75) compositionStyle = 'radial';
+        else if (layoutRoll > 0.5) compositionStyle = 'grid';
+        else if (layoutRoll > 0.25) compositionStyle = 'cluster';
+        else compositionStyle = 'container';
+
+        const primaryColor = overrideColors?.primary || colors.primary;
+
+        // RADIAL: Shapes arranged in a circle (like the droplet pattern you showed)
+        if (compositionStyle === 'radial') {
+            const numItems = 5 + Math.floor(seededRandom(seed + 'radialN') * 3); // 5-7 items
+            const radius = 28;
+            const itemScale = primaryScale * 0.35;
+
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(50, 50)">
+                        {Array.from({ length: numItems }).map((_, i) => {
+                            const angle = (360 / numItems) * i - 90;
+                            const rad = angle * (Math.PI / 180);
+                            const x = Math.cos(rad) * radius;
+                            const y = Math.sin(rad) * radius;
+                            return (
+                                <g key={i} transform={`translate(${x}, ${y}) rotate(${angle + 90}) scale(${itemScale})`}>
+                                    <path
+                                        d={primaryShape.path}
+                                        fill={isOutlined ? 'none' : primaryColor}
+                                        stroke={isOutlined ? primaryColor : 'none'}
+                                        strokeWidth={isOutlined ? 2 : 0}
+                                    />
                                 </g>
-                            </mask>
-                        </defs>
-                        <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
+                            );
+                        })}
+                    </g>
+                </svg>
+            );
+        }
+
+        // GRID: Pixel-like grid pattern (like the squircle with squares)
+        if (compositionStyle === 'grid') {
+            const gridSize = 3;
+            const cellSize = 22;
+            const gap = 4;
+            const startX = 50 - ((gridSize * cellSize + (gridSize - 1) * gap) / 2);
+            const startY = 50 - ((gridSize * cellSize + (gridSize - 1) * gap) / 2);
+
+            // Create rounded container
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    {/* Container background */}
+                    <rect x="10" y="10" width="80" height="80" rx="16" fill={primaryColor} />
+                    {/* Grid cells */}
+                    {Array.from({ length: gridSize * gridSize }).map((_, i) => {
+                        const row = Math.floor(i / gridSize);
+                        const col = i % gridSize;
+                        const show = seededRandom(seed + `cell${i}`) > 0.35;
+                        if (!show) return null;
+                        return (
+                            <rect
+                                key={i}
+                                x={startX + col * (cellSize + gap)}
+                                y={startY + row * (cellSize + gap)}
+                                width={cellSize}
+                                height={cellSize}
+                                rx="4"
+                                fill="white"
+                                opacity={0.9}
+                            />
+                        );
+                    })}
+                </svg>
+            );
+        }
+
+        // CLUSTER: Grouped shapes in organic arrangement (like hexagon cluster)
+        if (compositionStyle === 'cluster') {
+            const positions = [
+                { x: 50, y: 35, scale: 1 },
+                { x: 35, y: 55, scale: 0.85 },
+                { x: 65, y: 55, scale: 0.85 },
+                { x: 42, y: 70, scale: 0.7 },
+                { x: 58, y: 70, scale: 0.7 },
+            ];
+            const baseScale = primaryScale * 0.4;
+
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    {positions.map((pos, i) => (
+                        <g key={i} transform={`translate(${pos.x - 12 * baseScale * pos.scale}, ${pos.y - 12 * baseScale * pos.scale}) scale(${baseScale * pos.scale})`}>
                             <path
                                 d={primaryShape.path}
-                                fill={overrideColors?.primary || colors.primary}
-                                mask={`url(#mask-cut-${uniqueId})`}
+                                fill={isOutlined ? 'none' : primaryColor}
+                                stroke={isOutlined ? primaryColor : 'none'}
+                                strokeWidth={isOutlined ? 2.5 : 0}
+                                opacity={0.85 + i * 0.03}
                             />
                         </g>
-                    </>
-                )}
+                    ))}
+                </svg>
+            );
+        }
 
-                {/* --- RADIATING LAYOUT --- */}
-                {genLayout === 'radial' && (
-                    <g transform="translate(50,50)">
-                        {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-                            <g key={i} transform={`rotate(${angle}) translate(0, -25) scale(${primaryScale * 0.3})`}>
-                                <path
-                                    d={primaryShape.path}
-                                    fill={isOutlined ? 'none' : (overrideColors?.primary || colors.primary)}
-                                    stroke={overrideColors?.primary || colors.primary}
-                                    strokeWidth={isOutlined ? 1.5 : 0}
-                                    opacity={0.9}
-                                />
-                            </g>
-                        ))}
-                    </g>
-                )}
-
-                {/* --- INTERSECT LAYOUT --- */}
-                {genLayout === 'intersect' && (
-                    <>
-                        <g transform={`translate(${50 - secondaryScale * 10}, ${50 - secondaryScale * 10}) scale(${secondaryScale * 0.8})`} opacity="0.6">
-                            <path d={secondaryShape.path} fill={overrideColors?.primary || colors.accent || colors.primary} />
-                        </g>
-                        <g transform={`translate(${50 - primaryScale * 8}, ${50 - primaryScale * 8}) scale(${primaryScale * 0.6})`} style={{ mixBlendMode: 'multiply' }}>
-                            <path d={primaryShape.path} fill={overrideColors?.primary || colors.primary} />
-                        </g>
-                    </>
-                )}
-
-                {/* --- STACKED LAYOUT --- */}
-                {genLayout === 'stacked' && (
-                    <>
-                        <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
-                            <path d={primaryShape.path} fill={overrideColors?.primary || colors.primary} />
-                        </g>
-                        <g transform={`translate(${50 - secondaryScale * 6}, ${50 - secondaryScale * 6}) scale(${secondaryScale * 0.4})`}>
-                            <path d={secondaryShape.path} fill="white" opacity="0.4" />
-                        </g>
-                    </>
-                )}
+        // CONTAINER: Shape inside a squircle container (clean app-icon style)
+        return (
+            <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                {/* Squircle container */}
+                <rect x="10" y="10" width="80" height="80" rx="18" fill={primaryColor} />
+                {/* Centered shape */}
+                <g transform={`translate(${50 - primaryScale * 10}, ${50 - primaryScale * 10}) scale(${primaryScale * 0.85})`}>
+                    <path d={primaryShape.path} fill="white" />
+                </g>
             </svg>
         );
     }
 
-    // Legacy shape-based layouts for backward compatibility
+    // Legacy fallback - also uses premium single-shape layouts only
     const layoutModeRoll = seededRandom(seed + 'layout');
-    let genLayout = 'cut';
-    if (layoutModeRoll > 0.7) genLayout = 'radial';
-    else if (layoutModeRoll > 0.4) genLayout = 'intersect';
-    else if (layoutModeRoll > 0.2) genLayout = 'stacked';
+    let genLayout = 'single';
+    if (layoutModeRoll > 0.5) genLayout = 'single';
+    else genLayout = 'cut';
 
     // DECISION: Texture/Fill
     const textureRoll = seededRandom(seed + 'tex');
-    const isOutlined = textureRoll > 0.7;
+    const isOutlined = textureRoll > 0.75;
 
     return (
         <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-            {/* --- CUT / NEGATIVE SPACE LAYOUT (The "Less is More" Logic) --- */}
+            {/* --- SINGLE CLEAN SHAPE (Premium) --- */}
+            {genLayout === 'single' && (
+                <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
+                    <path
+                        d={primaryShape.path}
+                        fill={isOutlined ? 'none' : colors.primary}
+                        stroke={isOutlined ? colors.primary : 'none'}
+                        strokeWidth={isOutlined ? 1.5 : 0}
+                    />
+                </g>
+            )}
+
+            {/* --- CUT / NEGATIVE SPACE LAYOUT (Premium) --- */}
             {genLayout === 'cut' && (
                 <>
                     <defs>
                         <mask id={`mask-cut-${uniqueId}`}>
-                            {/* Base: White (Reveals) */}
                             <rect width="100" height="100" fill="white" />
-                            {/* Cutout: Black (Hides) */}
                             <g transform={`translate(${50 - secondaryScale * 12}, ${50 - secondaryScale * 12}) scale(${secondaryScale})`}>
                                 <path d={secondaryShape.path} fill="black" />
                             </g>
                         </mask>
                     </defs>
 
-                    {/* Container Shape */}
                     <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
                         <path
                             d={primaryShape.path}
                             fill={colors.primary}
                             mask={`url(#mask-cut-${uniqueId})`}
                         />
-                    </g>
-
-                    {/* Optional: Letter in the cut (if shape is simple) */}
-                    <text x="50" y="65" fontSize="20" fontWeight="bold" textAnchor="middle" fill={colors.text} opacity="0" className="opacity-0">
-                        {initial}
-                    </text>
-                </>
-            )}
-            {/* --- RADIATING LAYOUT --- */}
-            {genLayout === 'radial' && (
-                <g transform="translate(50,50)">
-                    {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-                        <g key={i} transform={`rotate(${angle}) translate(0, -20) scale(${primaryScale * 0.25})`}>
-                            <path
-                                d={primaryShape.path}
-                                fill={isOutlined ? 'none' : colors.primary}
-                                stroke={colors.primary}
-                                strokeWidth={isOutlined ? 1.5 : 0}
-                                opacity={0.8}
-                            />
-                        </g>
-                    ))}
-                    <text x="0" y="5" fontSize="14" fontWeight="bold" textAnchor="middle" fill={colors.text}>
-                        {initial}
-                    </text>
-                </g>
-            )}
-
-            {/* --- INTERSECT LAYOUT --- */}
-            {genLayout === 'intersect' && (
-                <>
-                    <g transform={`translate(${50 - secondaryScale * 10}, ${50 - secondaryScale * 10}) scale(${secondaryScale * 0.8})`} opacity="0.6">
-                        <path d={secondaryShape.path} fill={colors.accent || colors.primary} />
-                    </g>
-                    <g transform={`translate(${50 - primaryScale * 8}, ${50 - primaryScale * 8}) scale(${primaryScale * 0.6})`} style={{ mixBlendMode: 'multiply' }}>
-                        <path d={primaryShape.path} fill={colors.primary} />
-                    </g>
-                    <text x="50" y="62" fontSize="32" fontWeight="bold" textAnchor="middle" fill="white">
-                        {initial}
-                    </text>
-                </>
-            )}
-
-            {/* --- STACKED (Standard but Polished) --- */}
-            {genLayout === 'stacked' && (
-                <>
-                    <defs>
-                        <mask id={`mask-stacked-${uniqueId}`}>
-                            <rect width="100" height="100" fill="white" />
-                            <text x="50" y="65" fontSize="48" fontWeight="bold" textAnchor="middle" fill="black">
-                                {initial}
-                            </text>
-                        </mask>
-                    </defs>
-
-                    {/* Background Shape */}
-                    <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
-                        <path d={primaryShape.path} fill={colors.primary} mask={`url(#mask-stacked-${uniqueId})`} />
-                    </g>
-
-                    {/* Inner Accent */}
-                    <g transform={`translate(${50 - secondaryScale * 6}, ${50 - secondaryScale * 6}) scale(${secondaryScale * 0.4})`}>
-                        <path d={secondaryShape.path} fill={colors.accent || colors.primary} opacity="0.3" />
                     </g>
                 </>
             )}

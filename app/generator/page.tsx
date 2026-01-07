@@ -197,13 +197,10 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
       navigator.clipboard.writeText(pkg.htmlSnippet);
       alert('Favicon SVG downloaded! HTML snippet copied to clipboard.');
     } else if (type === 'social') {
-      const assets = generateSocialMediaKit(brand);
-      // For demo, just download the Twitter profile pic. In prod, we'd zip them.
-      // But let's verify it works by downloading the first few assets
-      assets.slice(0, 3).forEach((asset, i) => {
-        setTimeout(() => downloadSocialAsset(asset, brand.name), i * 300);
-      });
-      alert('Downloading Social Media assets...');
+      // Download complete social media kit as ZIP
+      const { downloadSocialMediaKitZip } = await import('@/lib/social-media-kit');
+      await downloadSocialMediaKitZip(brand);
+      alert('Social Media Kit downloaded!');
     } else if (type === 'brandbook') {
       try {
         await downloadBrandBookPDF(brand);

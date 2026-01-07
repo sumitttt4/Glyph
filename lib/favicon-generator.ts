@@ -1,34 +1,61 @@
 /**
  * Favicon Generator Utility
  * 
- * Generates favicon assets from brand lettermark
+ * Generates favicon assets from brand shape (not lettermark)
  */
 
 import { BrandIdentity } from './data';
 
 /**
- * Generate SVG favicon content
+ * Get shape scale factor for a target canvas size
+ */
+function getShapeScale(viewBox: string, targetSize: number): number {
+    const parts = viewBox.split(' ');
+    const width = parseFloat(parts[2]) || 24;
+    return (targetSize * 0.65) / width; // 65% of target to leave padding
+}
+
+/**
+ * Generate SVG favicon content using actual brand shape
  */
 export function generateFaviconSVG(brand: BrandIdentity): string {
-    const initial = brand.name.charAt(0).toUpperCase();
     const colors = brand.theme.tokens.light;
+    const shape = brand.shape;
+    const viewBox = shape.viewBox || '0 0 24 24';
+    const parts = viewBox.split(' ').map(Number);
+    const shapeWidth = parts[2] || 24;
+    const shapeHeight = parts[3] || 24;
+    const scale = getShapeScale(viewBox, 32);
+    const offsetX = (32 - shapeWidth * scale) / 2;
+    const offsetY = (32 - shapeHeight * scale) / 2;
 
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
     <rect width="32" height="32" rx="6" fill="${colors.primary}"/>
-    <text x="16" y="23" font-size="20" font-weight="800" text-anchor="middle" fill="white" font-family="system-ui, -apple-system, sans-serif">${initial}</text>
+    <g transform="translate(${offsetX}, ${offsetY}) scale(${scale})">
+        <path d="${shape.path}" fill="white"/>
+    </g>
 </svg>`;
 }
 
 /**
- * Generate Apple Touch Icon SVG (180x180)
+ * Generate Apple Touch Icon SVG (180x180) using actual brand shape
  */
 export function generateAppleTouchIcon(brand: BrandIdentity): string {
-    const initial = brand.name.charAt(0).toUpperCase();
     const colors = brand.theme.tokens.light;
+    const shape = brand.shape;
+    const viewBox = shape.viewBox || '0 0 24 24';
+    const parts = viewBox.split(' ').map(Number);
+    const shapeWidth = parts[2] || 24;
+    const shapeHeight = parts[3] || 24;
+    const scale = getShapeScale(viewBox, 180);
+    const offsetX = (180 - shapeWidth * scale) / 2;
+    const offsetY = (180 - shapeHeight * scale) / 2;
 
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
     <rect width="180" height="180" rx="36" fill="${colors.primary}"/>
-    <text x="90" y="125" font-size="110" font-weight="800" text-anchor="middle" fill="white" font-family="system-ui, -apple-system, sans-serif">${initial}</text>
+    <g transform="translate(${offsetX}, ${offsetY}) scale(${scale})">
+        <path d="${shape.path}" fill="white"/>
+    </g>
 </svg>`;
 }
 
