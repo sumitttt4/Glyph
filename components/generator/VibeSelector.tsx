@@ -23,12 +23,8 @@ interface VibeSelectorProps {
 export function VibeSelector({ selectedVibe, onVibeChange }: VibeSelectorProps) {
     return (
         <div className="space-y-3">
-            <label className="text-xs font-mono uppercase text-stone-500 tracking-wide font-semibold">
-                Select Your Vibe
-            </label>
-
-            {/* Tactile Tiles Grid - Enhanced */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Simple Grid */}
+            <div className="grid grid-cols-2 gap-2">
                 {VIBES.map((vibe) => {
                     const isSelected = selectedVibe === vibe.id;
 
@@ -37,56 +33,24 @@ export function VibeSelector({ selectedVibe, onVibeChange }: VibeSelectorProps) 
                             key={vibe.id}
                             onClick={() => onVibeChange(vibe.id)}
                             className={`
-                                relative h-20 p-4 rounded-xl text-left
-                                transition-all duration-200 ease-out
-                                group
-                                
-                                /* Base styling */
-                                bg-white border
-                                
-                                /* Hover */
-                                hover:-translate-y-1 hover:border-stone-400
-                                
-                                /* Active */
-                                active:scale-[0.98]
-                                
-                                /* Selected */
+                                relative flex flex-col items-start justify-center p-3 rounded-md text-left border transition-all outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2
                                 ${isSelected
-                                    ? 'ring-2 ring-stone-900 bg-gradient-to-br from-stone-50 to-white border-transparent shadow-md'
-                                    : 'border-stone-200 hover:shadow-lg'
+                                    ? 'bg-neutral-50 border-neutral-900 ring-0 shadow-sm'
+                                    : 'bg-white border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50'
                                 }
                             `}
-                            style={{ 
-                                boxShadow: isSelected 
-                                    ? 'var(--shadow-md)' 
-                                    : 'var(--shadow-xs)'
-                            }}
                         >
-                            {/* Check Circle */}
-                            {isSelected && (
-                                <div className="absolute top-3 right-3" style={{ animation: 'fade-in 0.2s ease-out' }}>
-                                    <CheckCircle2 className="w-5 h-5 text-stone-900 fill-stone-900 drop-shadow-sm" />
-                                </div>
-                            )}
-
-                            {/* Content */}
-                            <div className="flex flex-col justify-center h-full">
-                                <div className={`font-bold text-base mb-1 transition-colors ${
-                                    isSelected ? 'text-stone-900' : 'text-stone-700 group-hover:text-stone-900'
-                                }`}>
+                            <div className="flex w-full items-center justify-between mb-1">
+                                <span className={`text-sm font-medium ${isSelected ? 'text-neutral-900' : 'text-neutral-700'}`}>
                                     {vibe.title}
-                                </div>
-                                <div className={`text-[11px] leading-tight transition-colors ${
-                                    isSelected ? 'text-stone-600' : 'text-stone-400 group-hover:text-stone-500'
-                                }`}>
-                                    {vibe.desc}
-                                </div>
+                                </span>
+                                {isSelected && (
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-neutral-900" />
+                                )}
                             </div>
-
-                            {/* Subtle gradient overlay on hover */}
-                            {!isSelected && (
-                                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-stone-50/0 to-stone-100/0 group-hover:from-stone-50/50 group-hover:to-stone-100/30 transition-all duration-200 pointer-events-none" />
-                            )}
+                            <span className={`text-xs ${isSelected ? 'text-neutral-600' : 'text-neutral-500'}`}>
+                                {vibe.desc}
+                            </span>
                         </button>
                     );
                 })}

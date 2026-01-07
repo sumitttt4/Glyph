@@ -58,6 +58,7 @@ export function useBrandGenerator() {
         options: {
             color?: string;
             shape?: string;
+            archetype?: 'symbol' | 'wordmark';
             gradient?: { colors: string[]; angle: number } | null;
             prompt?: string;
             surpriseMe?: boolean
@@ -183,6 +184,7 @@ export function useBrandGenerator() {
             name: name.trim() || 'Untitled Brand',
             theme: selectedTheme,
             shape: selectedShape,
+            archetype: options.archetype, // ADDED
             logoLayout: selectedLayout as any,
             // Procedural Fields
             logoIcon,

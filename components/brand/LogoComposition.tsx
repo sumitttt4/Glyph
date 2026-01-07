@@ -1,4 +1,7 @@
+"use client";
+
 import React, { useId } from 'react';
+import { motion } from 'framer-motion';
 import { BrandIdentity } from '@/lib/data';
 import { SHAPES, Shape, getRandomShape } from '@/lib/shapes';
 import { AutoLettermark } from './Lettermark';
@@ -27,40 +30,84 @@ function seededRandom(seed: string) {
 }
 
 /**
- * Logo Composition Engine v2
- * Replaces simple MonogramMark with algorithmic synthesis.
+ * Logo Composition Engine v3 (Parametric)
  */
 export const LogoComposition = ({ brand, className, layout = 'generative', overrideColors }: LogoCompositionProps) => {
     const uniqueId = useId();
-    // Include generationSeed for unique variations per generation
-    // IMPORTANT: Use stable fallback (not Date.now()) to ensure consistent logos across all instances
     const seed = brand.id + (brand.name || 'brand') + (brand.generationSeed || brand.id || 'stable');
     const rng = () => seededRandom(seed);
 
-    // Deterministic Shape Selection based on brand ID
+    // Deterministic Shape Selection
     const shapeIndex1 = Math.floor(seededRandom(seed + 's1') * SHAPES.length);
     const shapeIndex2 = Math.floor(seededRandom(seed + 's2') * SHAPES.length);
-
-    // Safety check for SHAPES being populated
     const safeShapes = SHAPES.length > 0 ? SHAPES : [{ id: 'fallback', path: 'M0 0h100v100H0z', name: 'Fallback', viewBox: '0 0 100 100', tags: [], complexity: 'simple' }];
-
     const primaryShape = brand.shape || safeShapes[shapeIndex1 % safeShapes.length];
     const secondaryShape = safeShapes[shapeIndex2 % safeShapes.length];
 
     const colors = brand.theme.tokens.light;
+    const primaryColor = overrideColors?.primary || colors.primary;
     const initial = brand.name.charAt(0).toUpperCase();
 
-    // VIEWBOX NORMALIZATION: Calculate scale factor to normalize shapes to 100x100 canvas
+    // VIEWBOX NORMALIZATION
     const getShapeScale = (shape: { viewBox?: string }): number => {
-        if (!shape.viewBox) return 3; // Default scale for missing viewBox
+        if (!shape.viewBox) return 3;
         const parts = shape.viewBox.split(' ');
         const width = parseFloat(parts[2]) || 24;
-        // If viewBox is 24x24, we need scale ~3 to fill 100x100. If 100x100, scale ~1.
-        return 80 / width; // 80 gives padding, so a 24-wide shape becomes scale 3.33
+        return 80 / width;
     };
-
     const primaryScale = getShapeScale(primaryShape);
     const secondaryScale = getShapeScale(secondaryShape);
+
+    // -------------------------------------------------------------------------
+    // ARCHETYPE FORK
+    // -------------------------------------------------------------------------
+
+    // A. WORDMARK ARCHETYPE
+    if (brand.archetype === 'wordmark') {
+        const isTech = brand.vibe.toLowerCase().includes('tech');
+        const isLuxury = brand.vibe.toLowerCase().includes('luxury');
+
+        let fontFamily = 'var(--font-heading)'; // Default
+        let tracking = '0';
+        let textTransform = 'none';
+        let fontWeight = 'bold';
+
+        if (isTech) {
+            tracking = '-0.05em';
+            textTransform = 'lowercase';
+            fontWeight = '900';
+        } else if (isLuxury) {
+            tracking = '0.2em';
+            textTransform = 'uppercase';
+            fontWeight = '300';
+        }
+
+        return (
+            <motion.svg viewBox="0 0 200 60" className={className} xmlns="http://www.w3.org/2000/svg">
+                <motion.text
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    x="100"
+                    y="38"
+                    fontSize="24"
+                    fontFamily={fontFamily}
+                    fontWeight={fontWeight}
+                    letterSpacing={tracking}
+                    textAnchor="middle"
+                    fill={primaryColor}
+                    style={{ textTransform: textTransform as any }}
+                >
+                    {brand.name}
+                </motion.text>
+            </motion.svg>
+        );
+    }
+
+    // B. SYMBOL ARCHETYPE (DEFAULT)
+    // Force SOLID GEOMETRY (no outlines) if archetype is symbol
+    const forceSolid = brand.archetype === 'symbol';
+
 
     // -------------------------------------------------------------------------
     // RENDER STRATEGIES
@@ -180,7 +227,8 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
         // 12 composition styles for maximum variety
         const styles = ['radial', 'grid', 'cluster', 'container', 'spiral', 'wave', 'split', 'diamond', 'corner', 'overlap', 'frame', 'monogram'] as const;
         const styleIndex = Math.floor(layoutRoll * styles.length);
-        const compositionStyle = styles[styleIndex];
+        // Force 'grid' style if archetype is symbol to ensure the solid geometry construction look
+        const compositionStyle = brand.archetype === 'symbol' ? 'grid' : styles[styleIndex];
 
         // 1. RADIAL: Shapes in a circle
         if (compositionStyle === 'radial') {
@@ -207,28 +255,81 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             );
         }
 
-        // 2. GRID: Pixel-like pattern
-        if (compositionStyle === 'grid') {
-            const gridSize = 2 + Math.floor(seededRandom(seed + 'gridS') * 2);
+        // 2. GRID / CONSTRUCTION: Pixel-like pattern or 2x2/3x3 Grid
+        if (compositionStyle === 'grid' || brand.archetype === 'symbol') { // Force this style for symbol archetype often
+            // For Symbol Archetype, prefer 2x2 or 3x3 solid blocks
+            const isSymbolMode = brand.archetype === 'symbol';
+            const gridSize = isSymbolMode ? (seededRandom(seed + 'gridS') > 0.5 ? 2 : 3) : (2 + Math.floor(seededRandom(seed + 'gridS') * 2));
             const cellSize = 70 / gridSize;
             const startX = 50 - (gridSize * cellSize) / 2;
             const startY = 50 - (gridSize * cellSize) / 2;
 
             const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff' || primaryColor.toLowerCase() === 'white';
             const cellFill = isWhite ? 'black' : 'white';
+            // Force solid blocks for symbol mode
+            const bgFill = primaryColor;
 
             return (
-                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                    <rect x="10" y="10" width="80" height="80" rx="16" fill={primaryColor} />
+                <motion.svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    {/* Background Grid Lines (Engineering feel) */}
+                    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 0.3 }} transition={{ duration: 1 }}>
+                        {/* Outer Frame */}
+                        <rect x={startX} y={startY} width={gridSize * cellSize} height={gridSize * cellSize} fill="none" stroke={primaryColor} strokeWidth="0.5" opacity="0.5" />
+
+                        {/* Inner Grid Lines */}
+                        {Array.from({ length: gridSize - 1 }).map((_, i) => (
+                            <React.Fragment key={i}>
+                                {/* Vertical */}
+                                <line
+                                    x1={startX + (i + 1) * cellSize} y1={startY}
+                                    x2={startX + (i + 1) * cellSize} y2={startY + gridSize * cellSize}
+                                    stroke={primaryColor} strokeWidth="0.25"
+                                />
+                                {/* Horizontal */}
+                                <line
+                                    x1={startX} y1={startY + (i + 1) * cellSize}
+                                    x2={startX + gridSize * cellSize} y2={startY + (i + 1) * cellSize}
+                                    stroke={primaryColor} strokeWidth="0.25"
+                                />
+                            </React.Fragment>
+                        ))}
+                    </motion.g>
+
+                    <motion.rect
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.5, ease: "backOut" }}
+                        x="10" y="10" width="80" height="80" rx="16" fill={bgFill}
+                    />
+
                     {Array.from({ length: gridSize * gridSize }).map((_, i) => {
                         const row = Math.floor(i / gridSize);
                         const col = i % gridSize;
-                        if (seededRandom(seed + `c${i}`) < 0.4) return null;
+                        // In symbol mode, we carve OUT (negative space)
+                        const isActive = seededRandom(seed + `c${i}`) < (isSymbolMode ? 0.4 : 0.4);
+                        if (!isActive) return null;
+
                         return (
-                            <rect key={i} x={startX + col * cellSize + 2} y={startY + row * cellSize + 2} width={cellSize - 4} height={cellSize - 4} rx="4" fill={cellFill} opacity={0.9} />
+                            <motion.rect
+                                key={i}
+                                initial={{ opacity: 0, scale: 0 }}
+                                animate={{ opacity: isSymbolMode ? 1 : 0.9, scale: 1 }}
+                                transition={{
+                                    type: "spring",
+                                    stiffness: 200,
+                                    damping: 20,
+                                    delay: 0.2 + (i * 0.1)
+                                }}
+                                x={startX + col * cellSize + 2}
+                                y={startY + row * cellSize + 2}
+                                width={cellSize - 4}
+                                height={cellSize - 4}
+                                rx={isSymbolMode ? 2 : 4}
+                                fill={cellFill}
+                            />
                         );
                     })}
-                </svg>
+                </motion.svg>
             );
         }
 

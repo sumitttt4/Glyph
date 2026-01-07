@@ -6,10 +6,13 @@ import { VibeSelector } from './VibeSelector';
 import { expandBriefWithAI, suggestVibeWithAI, expandVibeWithAI } from '@/lib/brand-generator';
 import { GlyphIcon } from '@/components/brand/GlyphLogo';
 
+import { ArchetypeSelector } from './ArchetypeSelector';
+
 export interface GenerationOptions {
     prompt: string;
     vibe: string;
     name: string;
+    archetype: 'symbol' | 'wordmark';
     color?: string;
     shape?: string;
     gradient?: { colors: string[]; angle: number } | null;
@@ -78,6 +81,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
     const [customVibe, setCustomVibe] = useState('');
     const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
     const [selectedShape, setSelectedShape] = useState<string | null>(null);
+    const [selectedArchetype, setSelectedArchetype] = useState<'symbol' | 'wordmark'>('symbol'); // ADDING STATE
     const [isShapesOpen, setIsShapesOpen] = useState(false);
     const [isAiLoading, setIsAiLoading] = useState(false);
 
@@ -94,6 +98,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                 if (data.vibe) setSelectedVibe(data.vibe);
                 if (data.customVibe) setCustomVibe(data.customVibe);
                 if (data.color) setSelectedColor(data.color);
+                if (data.archetype) setSelectedArchetype(data.archetype); // RESTORE
                 // Optional: Clear it after loading, or keep it until successful generation?
                 // Keeping it is safer for now.
             } catch (e) {
@@ -121,6 +126,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
             vibe: vibeToUse,
             name: brandName,
             color: selectedColor,
+            archetype: selectedArchetype,
             shape: selectedShape || undefined,
             gradient: gradientObj ? { colors: gradientObj.colors, angle: gradientObj.angle } : null,
         });
@@ -163,6 +169,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
             vibe: selectedVibe || "bold",
             name: finalName,
             color: randomColor,
+            archetype: 'symbol',
             shape: randomShape.id,
             gradient: { colors: randomGradient.colors, angle: randomGradient.angle },
             surpriseMe: true
@@ -202,132 +209,128 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
     };
 
     return (
-        <aside className="w-full md:w-[420px] h-[100dvh] md:h-full bg-white border-r border-stone-200 flex flex-col z-20 overflow-hidden" style={{ boxShadow: 'var(--shadow-lg)' }}>
+        <aside className="w-full md:w-[400px] h-[100dvh] md:h-full bg-background border-r flex flex-col z-20 overflow-hidden bg-white">
 
-
-
-            {/* Console Header - Enhanced */}
-            <div className="p-5 border-b border-stone-100 flex items-center justify-between sticky top-0 bg-gradient-to-b from-white to-stone-50/50 backdrop-blur-sm z-10" style={{ boxShadow: 'var(--shadow-xs)' }}>
-                <div className="flex items-center gap-2.5 text-sm font-mono text-stone-600">
-                    <div className="w-6 h-6 rounded-md bg-stone-900 flex items-center justify-center shadow-sm ring-1 ring-stone-200/50">
-                        <GlyphIcon className="w-4 h-4 text-white" />
+            {/* Header */}
+            <div className="h-14 border-b flex items-center justify-between px-6 bg-white shrink-0">
+                <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-md bg-black text-white flex items-center justify-center">
+                        <GlyphIcon className="w-3 h-3" />
                     </div>
-                    <span className="tracking-tight font-semibold">GLYPH_CONSOLE</span>
-                    <span className="text-stone-300">/</span>
-                    <span className="text-stone-400 font-normal">NEW_PROJECT</span>
+                    <span className="text-sm font-semibold tracking-tight text-neutral-900">Glyph</span>
                 </div>
-                <div className="flex items-center gap-2.5">
-                    <span className="text-[10px] font-mono text-stone-500 px-2 py-0.5 bg-stone-100 rounded">v1.0</span>
-                    <div className="h-2 w-2 rounded-full bg-green-500" style={{ animation: 'pulse-glow 2s ease-in-out infinite' }} />
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-neutral-100 border border-neutral-200">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                        <span className="text-[10px] font-medium text-neutral-500 uppercase tracking-wide">Ready</span>
+                    </div>
                 </div>
             </div>
 
-            {/* Scrollable Content - Takes remaining space */}
-            <div className="flex-1 overflow-y-auto scrollbar-hide p-6 space-y-8 min-h-0">
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-8 min-h-0">
 
-                {/* SECTION 01: PROJECT IDENTITY */}
-                <section className="space-y-5" style={{ animation: 'fade-in 0.4s ease-out' }}>
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-bold tracking-wide text-stone-500 uppercase block">
-                            01 // Project Identity
-                        </label>
-                        <div className="h-px bg-gradient-to-r from-stone-200 via-stone-300 to-transparent" />
+                {/* PROJECT DETAILS */}
+                <section className="space-y-4">
+                    <div className="flex items-center gap-2 mb-2">
+                        <h3 className="text-sm font-medium text-neutral-900">Project Identity</h3>
                     </div>
-                    <div className="space-y-3">
-                        <input
-                            type="text"
-                            value={brandName}
-                            onChange={(e) => setBrandName(e.target.value)}
-                            className="w-full h-12 px-4 rounded-xl bg-stone-50 border border-stone-200 focus:border-stone-900 focus:ring-2 focus:ring-stone-900/10 outline-none font-semibold text-lg transition-all placeholder:text-stone-400 placeholder:font-normal hover:border-stone-300 hover:shadow-sm"
-                            placeholder="Brand Name (e.g. SafeAgree)"
-                            style={{ boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.03)' }}
-                        />
-                        <div className="relative group">
-                            <textarea
-                                value={prompt}
-                                onChange={(e) => setPrompt(e.target.value)}
-                                className="w-full h-24 p-4 rounded-xl bg-stone-50 border border-stone-200 focus:border-stone-900 focus:ring-2 focus:ring-stone-900/10 outline-none resize-none text-sm leading-relaxed placeholder:text-stone-400 transition-all hover:border-stone-300 hover:shadow-sm"
-                                placeholder="Describe the mission..."
-                                style={{ boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.03)' }}
+
+                    <div className="space-y-4">
+                        <ArchetypeSelector selected={selectedArchetype} onSelect={setSelectedArchetype} />
+
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-medium text-neutral-500">Brand Name</label>
+                            <input
+                                type="text"
+                                value={brandName}
+                                onChange={(e) => setBrandName(e.target.value)}
+                                className="flex h-10 w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all hover:border-neutral-300"
+                                placeholder="e.g. Acme Corp"
                             />
-                            <button
-                                onClick={handleExpandBrief}
-                                disabled={!prompt.trim() || isAiLoading}
-                                className="absolute bottom-3 right-3 px-3 py-1.5 text-[10px] font-semibold text-orange-600 bg-orange-50 rounded-md hover:bg-orange-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:shadow-sm active:scale-95"
-                            >
-                                {isAiLoading ? 'Reframing...' : 'Reframe'}
-                            </button>
+                        </div>
+
+                        <div className="space-y-1.5 relative">
+                            <label className="text-xs font-medium text-neutral-500 flex justify-between">
+                                <span>Mission Statement</span>
+                                <button
+                                    onClick={handleExpandBrief}
+                                    disabled={!prompt.trim() || isAiLoading}
+                                    className="text-[10px] text-blue-600 hover:text-blue-700 disabled:opacity-50 disabled:cursor-default"
+                                >
+                                    {isAiLoading ? 'Reframing...' : 'Reframe with AI ✨'}
+                                </button>
+                            </label>
+                            <div className="relative">
+                                <textarea
+                                    value={prompt}
+                                    onChange={(e) => setPrompt(e.target.value)}
+                                    className="flex min-h-[100px] w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-y transition-all hover:border-neutral-300"
+                                    placeholder="Describe your brand's core values and mission..."
+                                />
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* SECTION 02: AESTHETIC ENGINE */}
-                <section className="space-y-5" style={{ animation: 'fade-in 0.5s ease-out' }}>
-                    <div className="flex justify-between items-end">
-                        <div className="space-y-2 flex-1">
-                            <label className="text-[10px] font-bold tracking-wide text-stone-500 uppercase block">
-                                02 // Aesthetic Engine
-                            </label>
-                            <div className="h-px bg-gradient-to-r from-stone-200 via-stone-300 to-transparent" />
-                        </div>
-                        <span className="text-[9px] text-stone-600 font-mono bg-gradient-to-br from-stone-100 to-stone-50 px-2.5 py-1 rounded-md border border-stone-200 shadow-xs">AI_TUNED</span>
-                    </div>
-                    <VibeSelector
-                        selectedVibe={selectedVibe}
-                        onVibeChange={setSelectedVibe}
-                    />
+                <div className="h-px bg-neutral-100" />
 
-                    {/* Custom Vibe Input - Auto-expanding like GPT/Claude */}
-                    <div className="relative">
-                        <textarea
-                            value={customVibe}
-                            onChange={(e) => {
-                                setCustomVibe(e.target.value);
-                                if (e.target.value) setSelectedVibe('custom');
-                                // Auto-resize
-                                e.target.style.height = 'auto';
-                                e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
-                            }}
-                            onFocus={() => setSelectedVibe('custom')}
-                            placeholder="Or type your own vibe..."
-                            rows={1}
-                            className={`w-full min-h-[44px] max-h-[120px] px-4 py-3 text-sm border rounded-xl transition-all outline-none resize-none overflow-hidden ${selectedVibe === 'custom'
-                                ? 'ring-2 ring-stone-900 bg-stone-50 border-transparent shadow-sm'
-                                : 'border-stone-200 bg-stone-50 hover:border-stone-300 hover:shadow-sm'
-                                }`}
-                            style={{
-                                boxShadow: selectedVibe === 'custom' ? 'var(--shadow-sm)' : 'inset 0 1px 2px rgba(0, 0, 0, 0.03)',
-                                scrollbarWidth: 'none', // Firefox
-                            }}
+                {/* AESTHETIC */}
+                <section className="space-y-4">
+                    <h3 className="text-sm font-medium text-neutral-900">Aesthetic Direction</h3>
+
+                    <div className="space-y-4">
+                        <VibeSelector
+                            selectedVibe={selectedVibe}
+                            onVibeChange={setSelectedVibe}
                         />
-                        {selectedVibe === 'custom' && (
-                            <div className="absolute right-3 top-3">
-                                <span className="text-[9px] font-mono text-stone-600 bg-stone-200 px-2 py-1 rounded-md shadow-xs">CUSTOM</span>
+
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-medium text-neutral-500">Custom Vibe (Optional)</label>
+                            <div className="relative">
+                                <textarea
+                                    value={customVibe}
+                                    onChange={(e) => {
+                                        setCustomVibe(e.target.value);
+                                        if (e.target.value) setSelectedVibe('custom');
+                                        e.target.style.height = 'auto';
+                                        e.target.style.height = Math.min(e.target.scrollHeight, 100) + 'px';
+                                    }}
+                                    onFocus={() => setSelectedVibe('custom')}
+                                    placeholder="Describe a specific look..."
+                                    rows={1}
+                                    className={`flex w-full rounded-md border text-sm px-3 py-2 ring-offset-white placeholder:text-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 resize-none overflow-hidden transition-all min-h-[40px] ${selectedVibe === 'custom'
+                                            ? 'border-neutral-950 ring-0'
+                                            : 'border-neutral-200 bg-white hover:border-neutral-300'
+                                        }`}
+                                />
+                                {selectedVibe === 'custom' && (
+                                    <div className="absolute right-2 top-2">
+                                        <span className="w-2 h-2 rounded-full bg-neutral-900 block" />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div className="h-px bg-neutral-100" />
+
+                {/* VISUALS */}
+                <section className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-medium text-neutral-900">Color System</h3>
+                        {selectedColor && (
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-neutral-50 border border-neutral-200">
+                                <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: selectedColor }} />
+                                <span className="text-xs font-mono text-neutral-600">{selectedColor}</span>
                             </div>
                         )}
                     </div>
-                </section>
 
-                {/* SECTION 03: VISUAL PRIMITIVES */}
-                <section className="space-y-6" style={{ animation: 'fade-in 0.6s ease-out' }}>
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-bold tracking-wide text-stone-500 uppercase block">
-                            03 // Visual Primitives
-                        </label>
-                        <div className="h-px bg-gradient-to-r from-stone-200 via-stone-300 to-transparent" />
-                    </div>
-
-
-
-                    {/* COLOR SWATCHES - Enhanced */}
                     <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-mono text-stone-500 font-semibold">COLOR_PALETTE</span>
-                            <span className="text-[10px] font-mono text-stone-600 bg-stone-100 px-2 py-1 rounded-md">{selectedColor}</span>
-                        </div>
-
-                        {/* Color Circles - 8 per row */}
-                        <div className="grid grid-cols-8 gap-2.5">
+                        {/* Compact Color Grid */}
+                        <div className="grid grid-cols-11 gap-1">
                             {Object.entries(COLOR_PALETTES).map(([name, colors]) => (
                                 <button
                                     key={name}
@@ -335,32 +338,36 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                                         setActiveColorFamily(activeColorFamily === name ? null : name);
                                         setSelectedColor(colors[5]);
                                     }}
-                                    className={`group relative w-full aspect-square rounded-full border transition-all duration-200 focus:ring-2 ring-offset-2 ring-stone-900 outline-none ${activeColorFamily === name
-                                        ? 'ring-2 ring-offset-2 ring-stone-900 shadow-md scale-110'
-                                        : 'border-stone-200 hover:scale-110 hover:shadow-sm'
+                                    className={`group relative w-full aspect-[4/5] rounded-[4px] transition-all hover:scale-110 hover:z-10 ${activeColorFamily === name
+                                            ? 'ring-1 ring-neutral-950 ring-offset-1 z-10 shadow-sm'
+                                            : 'hover:ring-1 hover:ring-neutral-200'
                                         }`}
                                     title={name}
                                 >
-                                    <div className="absolute inset-1 rounded-full shadow-inner" style={{ backgroundColor: colors[5] }} />
+                                    <div className="absolute inset-0 rounded-[3px]" style={{ backgroundColor: colors[5] }} />
                                 </button>
                             ))}
                         </div>
 
-                        {/* Active Palette Shades */}
+                        {/* Expanded Shades */}
                         {activeColorFamily && (
-                            <div className="bg-gradient-to-br from-stone-50 to-stone-100 rounded-xl p-3 space-y-2 border border-stone-200 shadow-sm" style={{ animation: 'fade-in 0.3s ease-out' }}>
-                                <div className="text-[9px] font-mono text-stone-600 uppercase font-semibold tracking-wider">{activeColorFamily}</div>
-                                <div className="flex gap-1">
+                            <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-100 animate-in fade-in slide-in-from-top-2 duration-200">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">{activeColorFamily}</span>
+                                </div>
+                                <div className="flex gap-1 h-8">
                                     {COLOR_PALETTES[activeColorFamily as keyof typeof COLOR_PALETTES].map((color, i) => (
                                         <button
                                             key={i}
                                             onClick={() => setSelectedColor(color)}
-                                            className={`flex-1 h-6 first:rounded-l-md last:rounded-r-md transition-all duration-200 hover:scale-y-110 hover:shadow-sm relative ${selectedColor === color ? 'ring-2 ring-stone-900 ring-offset-2 z-10 shadow-md' : ''
-                                                }`}
+                                            className={`flex-1 rounded-[2px] transition-transform hover:scale-y-110 hover:shadow-sm relative group`}
                                             style={{ backgroundColor: color }}
+                                            title={color}
                                         >
                                             {selectedColor === color && (
-                                                <Check className={`w-3 h-3 absolute inset-0 m-auto drop-shadow-sm ${i < 5 ? 'text-stone-900' : 'text-white'}`} />
+                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${i < 5 ? 'bg-neutral-900' : 'bg-white'} shadow-sm`} />
+                                                </div>
                                             )}
                                         </button>
                                     ))}
@@ -368,27 +375,30 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                             </div>
                         )}
                     </div>
-
-
                 </section>
-
             </div>
 
-            {/* Fixed Generate Button Footer */}
-            <div className="border-t border-stone-200 bg-gradient-to-t from-stone-50 to-white sticky bottom-0 z-50" style={{ boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
-                <div className="px-5 pb-5 pt-4">
-                    <button
-                        onClick={handleGenerate}
-                        disabled={isGenerating || !isValid}
-                        className="w-full py-3 md:py-4 bg-gradient-to-r from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:shadow-lg"
-                        title={!isValid ? "Please enter a brand name and description" : "Generate System"}
-                        style={{ boxShadow: 'var(--shadow-md)' }}
-                    >
-                        <span className="text-sm tracking-wide">
-                            {isGenerating ? 'Generating...' : hasGenerated ? 'Generate Again' : 'Generate'}
-                        </span>
-                    </button>
-                </div>
+            {/* Footer */}
+            <div className="p-4 border-t border-neutral-100 bg-white mt-auto shrink-0">
+                <button
+                    onClick={handleGenerate}
+                    disabled={isGenerating || !isValid}
+                    className="w-full h-11 inline-flex items-center justify-center rounded-md bg-neutral-900 px-8 text-sm font-medium text-neutral-50 shadow transition-colors hover:bg-neutral-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 disabled:pointer-events-none disabled:opacity-50"
+                >
+                    {isGenerating ? (
+                        <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <span>Crafting Identity...</span>
+                        </div>
+                    ) : hasGenerated ? (
+                        <div className="flex items-center gap-2">
+                            <Shuffle className="w-4 h-4" />
+                            <span>Regenerate System</span>
+                        </div>
+                    ) : (
+                        'Generate Identity'
+                    )}
+                </button>
             </div>
         </aside>
     );

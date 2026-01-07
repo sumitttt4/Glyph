@@ -29,6 +29,7 @@ export interface BrandIdentity {
   // Visual Core
   theme: Theme;
   shape: Shape;
+  archetype?: 'symbol' | 'wordmark'; // New field for logic fork
   logoLayout?: 'default' | 'swiss' | 'bauhaus' | 'minimal_grid' | 'organic_fluid' | 'generative';
 
   // Procedural Logo Engine
