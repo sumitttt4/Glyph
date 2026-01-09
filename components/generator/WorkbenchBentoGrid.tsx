@@ -17,6 +17,7 @@ import { MonogramMark } from '@/components/brand/MonogramMark';
 import { LogoComposition } from '../brand/LogoComposition';
 import { LogoConstruction } from '../brand/LogoConstruction';
 import { SafariBrowserMockup } from '../mockups/SafariBrowserMockup';
+import { FontSelector } from './FontSelector';
 
 
 
@@ -25,12 +26,18 @@ interface WorkbenchBentoGridProps {
     isDark: boolean;
     onShuffleLogo?: () => void;
     onSwapFont?: () => void;
+    onUpdateFont?: (font: any) => void;
+    onCycleColor?: () => void;
     onVariations?: () => void;
     viewMode: 'overview' | 'presentation';
     setViewMode?: (mode: 'overview' | 'presentation') => void;
 }
 
-export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, onVariations, viewMode, setViewMode }: WorkbenchBentoGridProps) {
+export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, onUpdateFont, onCycleColor, onVariations, viewMode, setViewMode }: WorkbenchBentoGridProps) {
+    // New State for Font Selector
+    const [isFontSelectorOpen, setIsFontSelectorOpen] = useState(false);
+    const [copiedHex, setCopiedHex] = useState<string | null>(null);
+
     // PHASE 4: CONTENT INJECTION
     const CONTENT_TEMPLATES: Record<string, { headline: string; subhead: string; cta: string }> = {
         minimalist: {
@@ -68,16 +75,14 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
             <div className="w-full max-w-[1600px] mx-auto p-4 md:p-8 space-y-8 pb-32">
                 <SlideCover brand={brand} />
                 <SlideStrategy brand={brand} />
-                <SlideLogo brand={brand} />
+                <SlideLogo brand={brand} onCycleColor={onCycleColor} />
                 <SlideColors brand={brand} />
-                <SlideTypography brand={brand} />
+                <SlideTypography brand={brand} onSwapFont={onSwapFont} onUpdateFont={onUpdateFont} />
                 <SlideSocial brand={brand} />
                 <SlideOutdoor brand={brand} />
             </div>
         );
     }
-
-    const [copiedHex, setCopiedHex] = useState<string | null>(null);
 
     const mode = isDark ? 'dark' : 'light';
     const tokens = brand.theme.tokens[mode];
@@ -215,8 +220,16 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                 {/* Logo Block - Large */}
                 <div className="col-span-2 row-span-2 md:col-span-2 md:row-span-1 bg-white rounded-3xl p-6 md:p-8 flex items-center justify-between overflow-hidden relative group hover:shadow-xl transition-all duration-500 border border-stone-100">
                     <div className="flex items-center gap-6 md:gap-8 z-10 w-full">
-                        <div className="w-24 h-24 md:w-28 md:h-28 shrink-0 relative">
+                        <div className="w-24 h-24 md:w-28 md:h-28 shrink-0 relative group/logo">
                             <LogoComposition brand={brand} />
+                            {/* Color Cycler for Logo */}
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onCycleColor?.(); }}
+                                className="absolute -bottom-2 -right-2 p-2 bg-stone-900 text-white rounded-full opacity-0 group-hover/logo:opacity-100 transition-all shadow-lg hover:scale-110"
+                                title="Cycle Color"
+                            >
+                                <RefreshCw className="w-3 h-3" />
+                            </button>
                         </div>
                         <div className="flex flex-col gap-1 min-w-0">
                             <h2 className={cn("text-4xl md:text-5xl font-bold tracking-tight text-stone-950 truncate", brand.font.heading)}>
@@ -299,9 +312,16 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                                 <h3 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-2">Type Scale</h3>
                                 <p className="text-stone-500 font-mono text-xs tracking-tight">8 Styles • {brand.font.name}</p>
                             </div>
-                            <div className="p-3 bg-stone-100 rounded-full group-hover:rotate-180 transition-transform duration-500 hover:bg-stone-200">
-                                <RefreshCw className="w-5 h-5 text-stone-500" />
-                            </div>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsFontSelectorOpen(true);
+                                }}
+                                className="flex items-center gap-2 px-3 py-1.5 bg-stone-100 rounded-full group-hover:bg-stone-200 transition-colors duration-300"
+                            >
+                                <span className="text-[10px] font-bold text-stone-500 uppercase tracking-wider">Change Font</span>
+                                <RefreshCw className="w-4 h-4 text-stone-500 group-hover:rotate-180 transition-transform duration-500" />
+                            </button>
                         </div>
 
                         {/* Type Scale Grid - 4 Columns */}
@@ -383,6 +403,17 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                 </div>
 
             </div>
+
+            {/* FONT SELECTOR DIALOG */}
+            <FontSelector
+                isOpen={isFontSelectorOpen}
+                onClose={() => setIsFontSelectorOpen(false)}
+                currentFontId={brand.font.id}
+                onSelect={(font) => {
+                    onUpdateFont?.(font);
+                    // Also call onSwapFont if provided for legacy support, though we prefer onUpdateFont
+                }}
+            />
         </div>
     );
 }

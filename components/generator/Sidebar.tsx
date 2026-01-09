@@ -7,6 +7,7 @@ import { expandBriefWithAI, suggestVibeWithAI, expandVibeWithAI } from '@/lib/br
 import { GlyphIcon } from '@/components/brand/GlyphLogo';
 
 import { ArchetypeSelector } from './ArchetypeSelector';
+import { BrandContextSelector, INDUSTRIES } from './BrandContextSelector';
 
 export interface GenerationOptions {
     prompt: string;
@@ -209,63 +210,79 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
     };
 
     return (
-        <aside className="w-full md:w-[400px] h-[100dvh] md:h-full bg-background border-r flex flex-col z-20 overflow-hidden bg-white">
+        <aside className="w-full md:w-[400px] h-[100dvh] md:h-full bg-white border-r border-stone-200 flex flex-col z-20 overflow-hidden shadow-[4px_0_24px_-12px_rgba(0,0,0,0.1)]">
 
-            {/* Header */}
-            <div className="h-14 border-b flex items-center justify-between px-6 bg-white shrink-0">
-                <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-md bg-black text-white flex items-center justify-center">
-                        <GlyphIcon className="w-3 h-3" />
+            {/* Header - Premium Height & Spacing */}
+            <div className="h-16 border-b border-stone-100 flex items-center justify-between px-6 bg-white shrink-0 sticky top-0 z-10">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-6 h-6 rounded-lg bg-stone-950 text-white flex items-center justify-center shadow-md shadow-stone-900/10">
+                        <GlyphIcon className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-sm font-semibold tracking-tight text-neutral-900">Glyph</span>
+                    <span className="text-sm font-bold tracking-tight text-stone-900">Glyph</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-neutral-100 border border-neutral-200">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                        <span className="text-[10px] font-medium text-neutral-500 uppercase tracking-wide">Ready</span>
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-stone-50 border border-stone-100">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+                        <span className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider">Ready</span>
                     </div>
                 </div>
             </div>
 
             {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-8 min-h-0">
+            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 scrollbar-hide">
 
                 {/* PROJECT DETAILS */}
-                <section className="space-y-4">
-                    <div className="flex items-center gap-2 mb-2">
-                        <h3 className="text-sm font-medium text-neutral-900">Project Identity</h3>
+                <section className="space-y-6">
+                    <div className="flex flex-col space-y-1">
+                        <h3 className="text-sm font-semibold text-stone-900 tracking-tight">Project Identity</h3>
+                        <p className="text-xs text-stone-500">Define the core DNA of your brand.</p>
                     </div>
 
-                    <div className="space-y-4">
-                        <ArchetypeSelector selected={selectedArchetype} onSelect={setSelectedArchetype} />
+                    <div className="space-y-5">
+                        <BrandContextSelector
+                            onSelect={(industry) => {
+                                // AUTO-SELECT LOGIC based on Industry DNA
+                                setSelectedVibe(industry.vibe);
+                                if (industry.archetype === 'app-icon') {
+                                    setSelectedArchetype('symbol');
+                                } else if (industry.archetype === 'wordmark') {
+                                    setSelectedArchetype('wordmark');
+                                }
+                            }}
+                        />
 
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-neutral-500">Brand Name</label>
+                        <div className="space-y-3">
+                            <label className="text-[13px] font-medium text-stone-700">Archetype</label>
+                            <ArchetypeSelector selected={selectedArchetype} onSelect={setSelectedArchetype} />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[13px] font-medium text-stone-700">Brand Name</label>
                             <input
                                 type="text"
                                 value={brandName}
                                 onChange={(e) => setBrandName(e.target.value)}
-                                className="flex h-10 w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all hover:border-neutral-300"
+                                className="flex h-10 w-full rounded-lg border border-stone-200 bg-transparent px-3 py-2 text-sm shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2 placeholder:text-stone-400 hover:border-stone-300"
                                 placeholder="e.g. Acme Corp"
                             />
                         </div>
 
-                        <div className="space-y-1.5 relative">
-                            <label className="text-xs font-medium text-neutral-500 flex justify-between">
-                                <span>Mission Statement</span>
+                        <div className="space-y-2 relative">
+                            <div className="flex items-center justify-between">
+                                <label className="text-[13px] font-medium text-stone-700">Mission Statement</label>
                                 <button
                                     onClick={handleExpandBrief}
                                     disabled={!prompt.trim() || isAiLoading}
-                                    className="text-[10px] text-blue-600 hover:text-blue-700 disabled:opacity-50 disabled:cursor-default"
+                                    className="text-[11px] font-medium text-blue-600 hover:text-blue-700 disabled:opacity-50 disabled:cursor-default flex items-center gap-1 transition-colors"
                                 >
-                                    {isAiLoading ? 'Reframing...' : 'Reframe with AI ✨'}
+                                    {isAiLoading ? 'Reframing...' : <>Reframe with AI <span className="text-xs">✨</span></>}
                                 </button>
-                            </label>
+                            </div>
                             <div className="relative">
                                 <textarea
                                     value={prompt}
                                     onChange={(e) => setPrompt(e.target.value)}
-                                    className="flex min-h-[100px] w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-y transition-all hover:border-neutral-300"
+                                    className="flex min-h-[60px] w-full rounded-lg border border-stone-200 bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-white placeholder:text-stone-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-y transition-all hover:border-stone-300"
                                     placeholder="Describe your brand's core values and mission..."
                                 />
                             </div>
@@ -273,20 +290,23 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                     </div>
                 </section>
 
-                <div className="h-px bg-neutral-100" />
+                <div className="h-px bg-stone-100" />
 
                 {/* AESTHETIC */}
-                <section className="space-y-4">
-                    <h3 className="text-sm font-medium text-neutral-900">Aesthetic Direction</h3>
+                <section className="space-y-6">
+                    <div className="flex flex-col space-y-1">
+                        <h3 className="text-sm font-semibold text-stone-900 tracking-tight">Aesthetic Direction</h3>
+                        <p className="text-xs text-stone-500">Choose the visual language.</p>
+                    </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                         <VibeSelector
                             selectedVibe={selectedVibe}
                             onVibeChange={setSelectedVibe}
                         />
 
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-neutral-500">Custom Vibe (Optional)</label>
+                        <div className="space-y-2">
+                            <label className="text-[13px] font-medium text-stone-700">Custom Vibe <span className="text-stone-400 font-normal">(Optional)</span></label>
                             <div className="relative">
                                 <textarea
                                     value={customVibe}
@@ -299,14 +319,17 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                                     onFocus={() => setSelectedVibe('custom')}
                                     placeholder="Describe a specific look..."
                                     rows={1}
-                                    className={`flex w-full rounded-md border text-sm px-3 py-2 ring-offset-white placeholder:text-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 resize-none overflow-hidden transition-all min-h-[40px] ${selectedVibe === 'custom'
-                                            ? 'border-neutral-950 ring-0'
-                                            : 'border-neutral-200 bg-white hover:border-neutral-300'
+                                    className={`flex w-full rounded-lg border px-3 py-2.5 text-sm ring-offset-white placeholder:text-stone-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2 resize-none overflow-hidden transition-all min-h-[42px] shadow-sm ${selectedVibe === 'custom'
+                                        ? 'border-stone-900 ring-0 bg-white'
+                                        : 'border-stone-200 bg-transparent hover:border-stone-300'
                                         }`}
                                 />
                                 {selectedVibe === 'custom' && (
-                                    <div className="absolute right-2 top-2">
-                                        <span className="w-2 h-2 rounded-full bg-neutral-900 block" />
+                                    <div className="absolute right-3 top-3">
+                                        <span className="relative flex h-2 w-2">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-stone-900"></span>
+                                        </span>
                                     </div>
                                 )}
                             </div>
@@ -314,23 +337,26 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                     </div>
                 </section>
 
-                <div className="h-px bg-neutral-100" />
+                <div className="h-px bg-stone-100" />
 
-                {/* VISUALS */}
-                <section className="space-y-4">
+                {/* COLOR SYSTEM */}
+                <section className="space-y-6">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-medium text-neutral-900">Color System</h3>
+                        <div className="flex flex-col space-y-1">
+                            <h3 className="text-sm font-semibold text-stone-900 tracking-tight">Color System</h3>
+                            <p className="text-xs text-stone-500">Select a primary palette.</p>
+                        </div>
                         {selectedColor && (
-                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-neutral-50 border border-neutral-200">
-                                <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: selectedColor }} />
-                                <span className="text-xs font-mono text-neutral-600">{selectedColor}</span>
+                            <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-white border border-stone-200 shadow-sm">
+                                <div className="w-3.5 h-3.5 rounded-full shadow-inner ring-1 ring-black/5" style={{ backgroundColor: selectedColor }} />
+                                <span className="text-[10px] font-mono font-medium text-stone-600 uppercase">{selectedColor}</span>
                             </div>
                         )}
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                         {/* Compact Color Grid */}
-                        <div className="grid grid-cols-11 gap-1">
+                        <div className="grid grid-cols-7 gap-2">
                             {Object.entries(COLOR_PALETTES).map(([name, colors]) => (
                                 <button
                                     key={name}
@@ -338,35 +364,35 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                                         setActiveColorFamily(activeColorFamily === name ? null : name);
                                         setSelectedColor(colors[5]);
                                     }}
-                                    className={`group relative w-full aspect-[4/5] rounded-[4px] transition-all hover:scale-110 hover:z-10 ${activeColorFamily === name
-                                            ? 'ring-1 ring-neutral-950 ring-offset-1 z-10 shadow-sm'
-                                            : 'hover:ring-1 hover:ring-neutral-200'
+                                    className={`group relative w-full aspect-square rounded-full transition-all duration-200 hover:scale-110 ${activeColorFamily === name
+                                        ? 'ring-2 ring-stone-900 ring-offset-2 z-10 shadow-md scale-110'
+                                        : 'hover:ring-2 hover:ring-stone-200 hover:ring-offset-1 opacity-90 hover:opacity-100'
                                         }`}
                                     title={name}
                                 >
-                                    <div className="absolute inset-0 rounded-[3px]" style={{ backgroundColor: colors[5] }} />
+                                    <div className="absolute inset-0 rounded-full shadow-sm ring-1 ring-black/5" style={{ backgroundColor: colors[5] }} />
                                 </button>
                             ))}
                         </div>
 
                         {/* Expanded Shades */}
                         {activeColorFamily && (
-                            <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-100 animate-in fade-in slide-in-from-top-2 duration-200">
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">{activeColorFamily}</span>
+                            <div className="p-4 bg-stone-50 rounded-xl border border-stone-100 animate-in fade-in slide-in-from-top-2 duration-200 shadow-inner">
+                                <div className="flex justify-between items-center mb-3">
+                                    <span className="text-[11px] font-bold uppercase tracking-widest text-stone-500">{activeColorFamily} Spectrum</span>
                                 </div>
-                                <div className="flex gap-1 h-8">
+                                <div className="flex gap-1 h-10 w-full">
                                     {COLOR_PALETTES[activeColorFamily as keyof typeof COLOR_PALETTES].map((color, i) => (
                                         <button
                                             key={i}
                                             onClick={() => setSelectedColor(color)}
-                                            className={`flex-1 rounded-[2px] transition-transform hover:scale-y-110 hover:shadow-sm relative group`}
+                                            className={`flex-1 first:rounded-l-md last:rounded-r-md transition-all hover:scale-y-110 hover:shadow-lg relative group z-0 hover:z-10 focus:z-10 focus:outline-none`}
                                             style={{ backgroundColor: color }}
                                             title={color}
                                         >
                                             {selectedColor === color && (
                                                 <div className="absolute inset-0 flex items-center justify-center">
-                                                    <div className={`w-1.5 h-1.5 rounded-full ${i < 5 ? 'bg-neutral-900' : 'bg-white'} shadow-sm`} />
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${i < 5 ? 'bg-stone-900' : 'bg-white'} shadow-sm`} />
                                                 </div>
                                             )}
                                         </button>
@@ -379,11 +405,11 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-neutral-100 bg-white mt-auto shrink-0">
+            <div className="p-6 border-t border-stone-100 bg-white z-20 shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.1)]">
                 <button
                     onClick={handleGenerate}
                     disabled={isGenerating || !isValid}
-                    className="w-full h-11 inline-flex items-center justify-center rounded-md bg-neutral-900 px-8 text-sm font-medium text-neutral-50 shadow transition-colors hover:bg-neutral-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 disabled:pointer-events-none disabled:opacity-50"
+                    className="w-full h-12 inline-flex items-center justify-center rounded-xl bg-stone-900 px-8 text-sm font-semibold text-white shadow-lg shadow-stone-900/20 transition-all hover:bg-stone-800 hover:shadow-stone-900/30 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none disabled:translate-y-0"
                 >
                     {isGenerating ? (
                         <div className="flex items-center gap-2">

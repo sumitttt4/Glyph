@@ -30,7 +30,7 @@ export interface BrandIdentity {
   theme: Theme;
   shape: Shape;
   archetype?: 'symbol' | 'wordmark'; // New field for logic fork
-  logoLayout?: 'default' | 'swiss' | 'bauhaus' | 'minimal_grid' | 'organic_fluid' | 'generative';
+  logoLayout?: 'default' | 'swiss' | 'bauhaus' | 'minimal_grid' | 'organic_fluid' | 'generative' | 'radial';
 
   // Procedural Logo Engine
   logoIcon?: string;      // Lucide icon name
@@ -39,7 +39,16 @@ export interface BrandIdentity {
   logoAssemblerLayout?: 'icon_left' | 'icon_right' | 'stacked' | 'badge' | 'monogram';
 
   canvasStyle?: 'solid' | 'gradient' | 'mesh';  // Background style
-  font: FontPair;
+  font: {
+    id: string;
+    name: string;
+    heading: string;  // CSS class or font family
+    body: string;     // CSS class or font family
+    headingName?: string; // Human readable
+    bodyName?: string; // Human readable
+    tags: string[];
+  };
+
 
   // Uniqueness Seed (timestamp + random for parametric variations)
   generationSeed: number;

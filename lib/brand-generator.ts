@@ -360,7 +360,12 @@ export async function expandBriefWithAI(shortBrief: string): Promise<string> {
                 messages: [
                     {
                         role: 'system',
-                        content: `You are a brand copywriter. Take the user's rough brand idea and reframe it into a clearer, more compelling 1-2 sentence description. Fix grammar, sharpen the positioning, and make it sound professional. Keep the core meaning. No quotes or markdown.`
+                        content: `You are a brand copywriter. Take the user's rough brand idea and reframe it into a clearer, more compelling 1-2 sentence description. 
+                        
+                        CRITICAL INSTRUCTION: Analyze the core 'keywords' that would generate a great logo (e.g., speed, shield, leaf, brain, spark). 
+                        Rewrite the brief to explicitly include these 2-3 visual nouns or adjectives that describe the brand's essence, ensuring they flow naturally.
+                        
+                        Fix grammar, sharpen the positioning, and make it sound professional. Keep the core meaning. No quotes or markdown.`
                     },
                     { role: 'user', content: shortBrief }
                 ],

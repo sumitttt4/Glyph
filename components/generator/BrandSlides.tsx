@@ -4,10 +4,11 @@ import { useState } from 'react';
 import { BrandIdentity } from '@/lib/data';
 import { cn, hexToRgb, hexToCmyk } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { Check, Copy, ExternalLink, ArrowRight } from 'lucide-react';
+import { Check, Copy, ExternalLink, ArrowRight, RefreshCw } from 'lucide-react';
 import { LogoComposition } from '@/components/brand/LogoComposition';
 import { MockupSocial } from '@/components/mockups/MockupSocial';
 import { MockupBillboard } from '@/components/mockups/MockupBillboard';
+import { FontSelector } from './FontSelector';
 
 // ... (SlideLayout remains same)
 
@@ -16,12 +17,14 @@ const SlideLayout = ({
     children,
     className,
     title,
-    brand
+    brand,
+    action
 }: {
     children: React.ReactNode;
     className?: string;
     title?: string;
-    brand: BrandIdentity
+    brand: BrandIdentity;
+    action?: React.ReactNode;
 }) => (
     <div className={cn("aspect-video w-full bg-stone-950 text-white p-8 md:p-12 lg:p-16 flex flex-col relative overflow-hidden", className)}>
         {/* Background Ambient */}
@@ -39,16 +42,14 @@ const SlideLayout = ({
                     <h2 className="text-sm font-mono uppercase tracking-widest text-white/50 mb-1">Glyph Generator</h2>
                     <h3 className="text-2xl font-bold tracking-tight">{title}</h3>
                 </div>
-                <div className="text-right">
-                    <p className="text-sm font-mono text-white/50">v1.0</p>
-                </div>
+                {action && <div>{action}</div>}
             </div>
         )}
 
         <div className="flex-1 relative z-10">
             {children}
         </div>
-    </div>
+    </div >
 );
 
 // ==================== 1. COVER SLIDE ====================
@@ -123,8 +124,20 @@ export const SlideStrategy = ({ brand }: { brand: BrandIdentity }) => {
 };
 
 // ==================== 3. LOGO CONSTRUCTION ====================
-export const SlideLogo = ({ brand }: { brand: BrandIdentity }) => (
-    <SlideLayout brand={brand} title="Logo Marks">
+export const SlideLogo = ({ brand, onCycleColor }: { brand: BrandIdentity, onCycleColor?: () => void }) => (
+    <SlideLayout
+        brand={brand}
+        title={`Logo Marks for ${brand.name}`}
+        action={
+            <button
+                onClick={onCycleColor}
+                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors border border-white/10 backdrop-blur-md"
+            >
+                <RefreshCw className="w-4 h-4" />
+                Cycle Color
+            </button>
+        }
+    >
         <div className="grid grid-cols-4 grid-rows-2 gap-6 h-full">
             {/* Primary Mark - Bigger */}
             <div className="col-span-2 row-span-2 bg-white rounded-xl p-8 flex flex-col justify-between text-black relative group">
@@ -229,7 +242,7 @@ export const SlideColors = ({ brand }: { brand: BrandIdentity }) => {
     const t = brand.theme.tokens;
 
     return (
-        <SlideLayout brand={brand} title="Color Palette">
+        <SlideLayout brand={brand} title={`Color Palette for ${brand.name}`}>
             <div className="grid grid-cols-4 h-full gap-6">
                 <ColorCard label="Primary" hex={t.light.primary} dark />
                 <ColorCard label="Background (Dark)" hex={t.dark.bg} dark />
@@ -241,7 +254,9 @@ export const SlideColors = ({ brand }: { brand: BrandIdentity }) => {
 };
 
 // ==================== 5. TYPOGRAPHY ====================
-export const SlideTypography = ({ brand }: { brand: BrandIdentity }) => {
+export const SlideTypography = ({ brand, onSwapFont, onUpdateFont }: { brand: BrandIdentity, onSwapFont?: () => void, onUpdateFont?: (font: any) => void }) => {
+    const [isFontSelectorOpen, setIsFontSelectorOpen] = useState(false);
+
     // Type Scale Data matching our PDF export logic
     const TypeScale = [
         { role: 'Display', size: '48-72px', tracking: '-0.04em', leading: '1.1', weight: 'Bold' },
@@ -251,7 +266,29 @@ export const SlideTypography = ({ brand }: { brand: BrandIdentity }) => {
     ];
 
     return (
-        <SlideLayout brand={brand} title="Typography System">
+        <SlideLayout
+            brand={brand}
+            title={`Typography for ${brand.name}`}
+            action={
+                <button
+                    onClick={() => setIsFontSelectorOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors border border-white/10 backdrop-blur-md"
+                >
+                    <RefreshCw className="w-4 h-4" />
+                    Change Font
+                </button>
+            }
+        >
+
+            <FontSelector
+                isOpen={isFontSelectorOpen}
+                onClose={() => setIsFontSelectorOpen(false)}
+                currentFontId={brand.font.id}
+                onSelect={(font) => {
+                    onUpdateFont?.(font);
+                }}
+            />
+
             <div className="grid grid-cols-12 gap-6 h-full p-2">
 
                 {/* LEFT: Font Pair Showcase - Compacted */}
@@ -262,7 +299,7 @@ export const SlideTypography = ({ brand }: { brand: BrandIdentity }) => {
                             <span className="text-5xl font-black">Aa</span>
                         </div>
                         <div className="text-[9px] font-mono text-[#CCFF00] uppercase tracking-widest mb-1 font-bold">Heading</div>
-                        <h2 className={cn("text-3xl font-bold mb-1", brand.font.heading)}>{brand.font.name}</h2>
+                        <h2 className={cn("text-3xl font-bold mb-1", brand.font.heading)}>{brand.font.headingName || brand.font.name}</h2>
                         <p className="text-white/50 text-xs leading-snug">
                             Commanding geometric precision.
                         </p>
@@ -274,7 +311,7 @@ export const SlideTypography = ({ brand }: { brand: BrandIdentity }) => {
                             <span className="text-5xl font-serif italic">Gg</span>
                         </div>
                         <div className="text-[9px] font-mono text-blue-400 uppercase tracking-widest mb-1 font-bold">Body</div>
-                        <h2 className={cn("text-2xl font-bold mb-1", brand.font.body)}>{brand.font.body.replace('sans-serif', '').replace('serif', '').trim() || 'Inter'}</h2>
+                        <h2 className={cn("text-2xl font-bold mb-1", brand.font.body)}>{brand.font.bodyName || 'Inter'}</h2>
                         <p className="text-white/50 text-xs leading-snug">
                             Clean, legible, distinct.
                         </p>
@@ -331,7 +368,7 @@ export const SlideTypography = ({ brand }: { brand: BrandIdentity }) => {
 // ==================== 6. SOCIAL MEDIA ====================
 export const SlideSocial = ({ brand }: { brand: BrandIdentity }) => {
     return (
-        <SlideLayout brand={brand} title="Social Presence">
+        <SlideLayout brand={brand} title={`Social Presence for ${brand.name}`}>
             <div className="grid grid-cols-2 gap-8 h-full items-center">
 
                 {/* Simulated Feed */}
@@ -362,7 +399,7 @@ export const SlideSocial = ({ brand }: { brand: BrandIdentity }) => {
 // ==================== 7. OUTDOOR / BILLBOARD ====================
 export const SlideOutdoor = ({ brand }: { brand: BrandIdentity }) => {
     return (
-        <SlideLayout brand={brand} title="Brand in the Wild">
+        <SlideLayout brand={brand} title={`Brand in the Wild for ${brand.name}`}>
             <div className="flex flex-col gap-8 h-full">
                 {/* Large Highway Billboard */}
                 <div className="flex-1 rounded-2xl overflow-hidden shadow-2xl bg-stone-900 border border-white/10">

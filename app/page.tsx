@@ -12,12 +12,11 @@ import { MockupBrowser, MockupDevice } from '@/components/mockups/MockupDevice';
 import { Mockup3DCard } from '@/components/mockups/Mockup3DCard';
 import { Button } from '@/components/ui/button';
 import { FAQ } from '@/components/landing/FAQ';
-import BrowserMockup from '@/components/hero/BrowserMockup';
 import Pricing from '@/components/landing/Pricing';
 import { AuthRescue } from '@/components/auth/AuthRescue';
-
 import { Suspense } from 'react';
 import { LogoComposition } from '@/components/brand/LogoComposition';
+import HeroAnimation from '@/components/landing/HeroAnimation';
 
 const DEMO_BRAND = {
   id: 'demo',
@@ -118,9 +117,9 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right: Browser Mockup - Dense Composition */}
-            <div className="hidden md:flex justify-center items-center mt-8 lg:mt-0">
-              <BrowserMockup />
+            {/* Right: The Living Hero Animation */}
+            <div className="flex justify-center items-center mt-8 lg:mt-0">
+              <HeroAnimation />
             </div>
           </div>
         </div>

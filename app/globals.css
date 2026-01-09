@@ -169,6 +169,12 @@ body {
   /* Chrome, Safari, Opera */
 }
 
+/* Global Scrollbar Hide as requested */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
 /* Robot Empty State Animations */
 @keyframes float {
 

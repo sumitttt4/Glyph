@@ -178,6 +178,13 @@ export function useBrandGenerator() {
         // With procedural icons, 'generative' layout will now use LogoEngine if icon is present
         let selectedLayout = 'generative';
 
+        // NEW LOGIC: Radial Engine Selection
+        // 40% chance for Tech or Nature brands to use Radial Engine
+        const isScienceVibe = vibe === 'tech' || vibe === 'nature';
+        if (isScienceVibe && Math.random() > 0.6) {
+            selectedLayout = 'radial';
+        }
+
         const newBrand: BrandIdentity = {
             id: crypto.randomUUID(),
             vibe,
@@ -197,6 +204,8 @@ export function useBrandGenerator() {
                 name: selectedFont.name,
                 heading: selectedFont.heading.className,
                 body: selectedFont.body.className,
+                headingName: selectedFont.headingName,
+                bodyName: selectedFont.bodyName,
                 tags: selectedFont.tags
             },
             strategy: {
@@ -303,6 +312,8 @@ export function useBrandGenerator() {
                 name: newFont.name,
                 heading: newFont.heading.className,
                 body: newFont.body.className,
+                headingName: newFont.headingName,
+                bodyName: newFont.bodyName,
                 tags: newFont.tags
             },
             logoLayout: 'generative',
@@ -326,6 +337,8 @@ export function useBrandGenerator() {
                 name: randomFont.name,
                 heading: randomFont.heading.className,
                 body: randomFont.body.className,
+                headingName: randomFont.headingName,
+                bodyName: randomFont.bodyName,
                 tags: randomFont.tags
             },
             logoLayout: 'generative',
@@ -334,7 +347,18 @@ export function useBrandGenerator() {
         });
 
         setIsGenerating(false);
+        setIsGenerating(false);
         return variations;
+    };
+
+    const updateBrand = (updates: Partial<BrandIdentity>) => {
+        if (!brand) return;
+        const updated = { ...brand, ...updates };
+        setBrand(updated);
+        // Add to history
+        const newHistory = [...history.slice(0, currentIndex + 1), updated];
+        setHistory(newHistory);
+        setCurrentIndex(newHistory.length - 1);
     };
 
     return {
@@ -342,6 +366,7 @@ export function useBrandGenerator() {
         setBrand,
         generateBrand,
         generateVariations,
+        updateBrand,
         isGenerating,
         resetBrand,
         // History controls

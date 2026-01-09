@@ -15,6 +15,8 @@ import { downloadBrandBookPDF } from '@/lib/pdf-generator';
 import { CompareOverlay } from '@/components/generator/CompareOverlay';
 import { RobotEmptyState } from '@/components/generator/RobotEmptyState';
 import { BrandIdentity } from '@/lib/data';
+import { SoftGateVariations } from '@/components/generator/SoftGateVariations';
+
 
 export default function GeneratorPage() {
   const brandGenerators = useBrandGenerator();
@@ -252,20 +254,14 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
   const handleGenerateVariations = async () => {
     if (!brand) return;
 
-    // 1. Add current brand if not present
-    if (!compareList.find(b => b.id === brand.id)) {
-      setCompareList(prev => [...prev, brand]);
-    }
+
 
     // 2. Generate 4 variations
     const variations = await brandGenerators.generateVariations(brand);
 
-    // 3. Add to comparison
-    setCompareList(prev => {
-      const currentIds = new Set(prev.map(b => b.id));
-      const newOnes = variations.filter(v => !currentIds.has(v.id));
-      return [...prev, ...newOnes].slice(0, 8);
-    });
+    // 3. Reset comparison to Current + New Variations
+    // This ensures we always show fresh results (fixing the "stays the same" issue)
+    setCompareList([brand, ...variations]);
 
     // 4. Open overlay
     setIsCompareOpen(true);
@@ -344,23 +340,101 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
           onGenerateMore={handleGenerateVariations}
         />
 
+
         <div className={`relative z-10 transition-all duration-500 w-full min-h-full pt-4 md:pt-20 pb-20 px-2 md:px-0 ${isDarkMode ? 'dark' : ''}`}>
           {brand ? (
-            <WorkbenchBentoGrid
-              brand={brand}
-              isDark={isDarkMode}
-              onShuffleLogo={() => generateBrand(selectedVibe, brand.name)}
-              onVariations={handleGenerateVariations}
-              viewMode={viewMode}
-              setViewMode={async (mode) => {
-                if (mode === 'presentation') {
-                  // GATE: Guidelines require login
-                  const isAuthed = await checkAuth();
-                  if (!isAuthed) return;
-                }
-                setViewMode(mode);
-              }}
-            />
+            <div className="max-w-7xl mx-auto">
+              <WorkbenchBentoGrid
+                brand={brand}
+                isDark={isDarkMode}
+                onShuffleLogo={() => generateBrand(selectedVibe, brand.name)}
+                onVariations={handleGenerateVariations}
+                onUpdateFont={(newFont) => {
+                  brandGenerators.updateBrand({
+                    font: {
+                      id: newFont.id,
+                      name: newFont.name,
+                      heading: newFont.heading.className,
+                      body: newFont.body.className,
+                      headingName: newFont.headingName,
+                      bodyName: newFont.bodyName,
+                      tags: newFont.tags
+                    }
+                  });
+                }}
+                onCycleColor={() => {
+                  if (!brand) return;
+                  const tokens = brand.theme.tokens;
+                  const mode = isDarkMode ? 'dark' : 'light';
+                  const currentTokens = tokens[mode];
+
+                  // Rotate: Primary -> Accent -> Surface -> Text -> Primary
+                  // We simulate this by creating a new custom theme
+                  // Actually, LogoComposition uses 'primary'.
+                  // We want to force the Primary Brand Color to be the next one in the palette.
+                  // BUT, 'primary' is a specific token.
+
+                  // Let's grab the current palette from Sidebar? No access.
+                  // Let's just rotate the existing tokens if they feel distinct.
+                  // BETTER: Shift the Hue of the primary color?
+                  // USER REQUEST: "he mistakely chose the color... wants to edit same logo with different color"
+                  // This suggests swapping to a DIFFERENT PALETTE, potentially.
+                  // But `updateBrand` takes partial.
+
+                  // Let's implement a simple Hue Shift for now, or rotate if we knew the palette.
+                  // Since we don't know the full palette here, let's just cycle through standard colors?
+                  // No, that breaks the "System".
+
+                  // Alternative: If the user selected a color in Sidebar, he expects THAT color.
+                  // But we are in the grid.
+
+                  // Let's try to find the Current Theme in the THEMES list and pick the next one?
+                  // Importing THEMES might be heavy here? No, it's fine.
+                  import('@/lib/themes').then(({ THEMES }) => {
+                    // Find current theme index
+                    const currentIndex = THEMES.findIndex(t => t.id === brand.theme.id);
+                    const nextTheme = THEMES[(currentIndex + 1) % THEMES.length];
+
+                    // Keep the same shape, just update theme
+                    brandGenerators.updateBrand({
+                      theme: nextTheme
+                    });
+                  });
+                }}
+                onSwapFont={() => {
+                  import('@/lib/fonts').then(({ fontPairings }) => {
+                    const currentFontId = brand.font.id;
+                    const currentIndex = fontPairings.findIndex(f => f.id === currentFontId);
+                    const nextFont = fontPairings[(currentIndex + 1) % fontPairings.length];
+                    brandGenerators.updateBrand({
+                      font: {
+                        id: nextFont.id,
+                        name: nextFont.name,
+                        heading: nextFont.heading.className,
+                        body: nextFont.body.className,
+                        headingName: nextFont.headingName,
+                        bodyName: nextFont.bodyName,
+                        tags: nextFont.tags
+                      }
+                    });
+                  });
+                }}
+                viewMode={viewMode}
+                setViewMode={async (mode) => {
+                  if (mode === 'presentation') {
+                    // GATE: Guidelines require login
+                    const isAuthed = await checkAuth();
+                    if (!isAuthed) return;
+                  }
+                  setViewMode(mode);
+                }}
+              />
+
+              {/* SOFT GATE for Email Capture */}
+              <div className="max-w-3xl mx-auto px-4">
+                <SoftGateVariations onUnlock={handleGenerateVariations} />
+              </div>
+            </div>
           ) : (
             <RobotEmptyState />
           )}

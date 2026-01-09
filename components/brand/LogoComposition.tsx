@@ -7,11 +7,12 @@ import { SHAPES, Shape, getRandomShape } from '@/lib/shapes';
 import { AutoLettermark } from './Lettermark';
 import LogoEngine from './LogoEngine';
 import LogoAssembler from './LogoAssembler';
+import RadialLogo from './RadialLogo';
 
 interface LogoCompositionProps {
     brand: BrandIdentity;
     className?: string;
-    layout?: 'default' | 'swiss' | 'bauhaus' | 'minimal_grid' | 'organic_fluid' | 'generative' | 'cut';
+    layout?: 'default' | 'swiss' | 'bauhaus' | 'minimal_grid' | 'organic_fluid' | 'generative' | 'cut' | 'radial';
     overrideColors?: { primary: string; accent?: string; bg?: string };
 }
 
@@ -63,7 +64,7 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
     // -------------------------------------------------------------------------
 
     // A. WORDMARK ARCHETYPE
-    if (brand.archetype === 'wordmark') {
+    if (brand.archetype?.toLowerCase() === 'wordmark') {
         const isTech = brand.vibe.toLowerCase().includes('tech');
         const isLuxury = brand.vibe.toLowerCase().includes('luxury');
 
@@ -112,6 +113,26 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
     // -------------------------------------------------------------------------
     // RENDER STRATEGIES
     // -------------------------------------------------------------------------
+
+    // 0. RADIAL ENGINE (New)
+    if (layout === 'radial') {
+        return (
+            <div className={className}>
+                {/* Radial Logo Component - We wrap in div to match SVG prop expectations mostly, 
+                     but RadialLogo outputs a div tree. 
+                     Usage in SVG contexts might require foreignObject if className is SVG. 
+                     However, LogoComposition is usually used in Div contexts. 
+                     If used in SVG, we need to be careful. 
+                     Looking at usage: It returns SVGs for other layouts.
+                     RadialLogo returns a DIV.
+                     We should wrap it in foreignObject if we are inside an SVG, OR RadialLogo should simply return SVG elements.
+                     The user provided div-based code.
+                     Let's check usage sites.
+                  */}
+                <RadialLogo name={brand.name} color={primaryColor} className="w-full h-full" />
+            </div>
+        );
+    }
 
     // 1. SWISS: Large asymmetrical shape, small tight typography
     if (layout === 'swiss') {
@@ -225,10 +246,51 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
         const accentColor = colors.accent || primaryColor;
 
         // 12 composition styles for maximum variety
+        // 12 composition styles for maximum variety
         const styles = ['radial', 'grid', 'cluster', 'container', 'spiral', 'wave', 'split', 'diamond', 'corner', 'overlap', 'frame', 'monogram'] as const;
-        const styleIndex = Math.floor(layoutRoll * styles.length);
-        // Force 'grid' style if archetype is symbol to ensure the solid geometry construction look
-        const compositionStyle = brand.archetype === 'symbol' ? 'grid' : styles[styleIndex];
+
+        let compositionStyle: string = styles[Math.floor(layoutRoll * styles.length)];
+
+        // SMART SELECTION LOGIC
+        if (brand.vibe.includes('tech')) {
+            compositionStyle = 'tech_circuit';
+        } else if (brand.archetype === 'symbol') {
+            // For symbols, prioritize layouts that show the shape clearly, unless we want the grid
+            const symbolStyles = ['single', 'container', 'frame', 'diamond', 'tech_circuit'];
+            compositionStyle = symbolStyles[Math.floor(layoutRoll * symbolStyles.length)];
+        }
+
+        // SPECIAL TECH CIRCUIT LAYOUT
+        if (compositionStyle === 'tech_circuit') {
+            const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff' || primaryColor.toLowerCase() === 'white';
+            const strokeColor = primaryColor;
+
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    {/* Circuit Lines Background */}
+                    <g opacity="0.4" stroke={strokeColor} strokeWidth="0.5" fill="none">
+                        <path d="M10,50 L30,50 L40,40" />
+                        <path d="M90,50 L70,50 L60,60" />
+                        <path d="M50,10 L50,30 L60,40" />
+                        <path d="M50,90 L50,70 L40,60" />
+                        <circle cx="10" cy="50" r="1.5" fill={strokeColor} stroke="none" />
+                        <circle cx="90" cy="50" r="1.5" fill={strokeColor} stroke="none" />
+                        <circle cx="50" cy="10" r="1.5" fill={strokeColor} stroke="none" />
+                        <circle cx="50" cy="90" r="1.5" fill={strokeColor} stroke="none" />
+                    </g>
+
+                    {/* Central Shape */}
+                    <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
+                        <path d={primaryShape.path} fill={primaryColor} />
+                    </g>
+
+                    {/* Tech Accents */}
+                    <g transform="translate(50, 50)" opacity="0.8">
+                        <rect x="-40" y="-40" width="80" height="80" rx="20" fill="none" stroke={strokeColor} strokeWidth="1" strokeDasharray="10 5" opacity="0.3" />
+                    </g>
+                </svg>
+            );
+        }
 
         // 1. RADIAL: Shapes in a circle
         if (compositionStyle === 'radial') {
@@ -255,76 +317,41 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             );
         }
 
-        // 2. GRID / CONSTRUCTION: Pixel-like pattern or 2x2/3x3 Grid
-        if (compositionStyle === 'grid' || brand.archetype === 'symbol') { // Force this style for symbol archetype often
-            // For Symbol Archetype, prefer 2x2 or 3x3 solid blocks
-            const isSymbolMode = brand.archetype === 'symbol';
-            const gridSize = isSymbolMode ? (seededRandom(seed + 'gridS') > 0.5 ? 2 : 3) : (2 + Math.floor(seededRandom(seed + 'gridS') * 2));
+        // 2. GRID / CONSTRUCTION (Simplified for when explicitly chosen)
+        if (compositionStyle === 'grid') {
+            const gridSize = 3;
             const cellSize = 70 / gridSize;
             const startX = 50 - (gridSize * cellSize) / 2;
             const startY = 50 - (gridSize * cellSize) / 2;
-
-            const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff' || primaryColor.toLowerCase() === 'white';
-            const cellFill = isWhite ? 'black' : 'white';
-            // Force solid blocks for symbol mode
             const bgFill = primaryColor;
+            const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff';
+            const cellFill = isWhite ? 'black' : 'white';
 
             return (
                 <motion.svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                    {/* Background Grid Lines (Engineering feel) */}
-                    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 0.3 }} transition={{ duration: 1 }}>
-                        {/* Outer Frame */}
-                        <rect x={startX} y={startY} width={gridSize * cellSize} height={gridSize * cellSize} fill="none" stroke={primaryColor} strokeWidth="0.5" opacity="0.5" />
-
-                        {/* Inner Grid Lines */}
-                        {Array.from({ length: gridSize - 1 }).map((_, i) => (
-                            <React.Fragment key={i}>
-                                {/* Vertical */}
-                                <line
-                                    x1={startX + (i + 1) * cellSize} y1={startY}
-                                    x2={startX + (i + 1) * cellSize} y2={startY + gridSize * cellSize}
-                                    stroke={primaryColor} strokeWidth="0.25"
-                                />
-                                {/* Horizontal */}
-                                <line
-                                    x1={startX} y1={startY + (i + 1) * cellSize}
-                                    x2={startX + gridSize * cellSize} y2={startY + (i + 1) * cellSize}
-                                    stroke={primaryColor} strokeWidth="0.25"
-                                />
-                            </React.Fragment>
-                        ))}
-                    </motion.g>
-
                     <motion.rect
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.5, ease: "backOut" }}
                         x="10" y="10" width="80" height="80" rx="16" fill={bgFill}
                     />
-
                     {Array.from({ length: gridSize * gridSize }).map((_, i) => {
                         const row = Math.floor(i / gridSize);
                         const col = i % gridSize;
-                        // In symbol mode, we carve OUT (negative space)
-                        const isActive = seededRandom(seed + `c${i}`) < (isSymbolMode ? 0.4 : 0.4);
+                        const isActive = seededRandom(seed + `c${i}`) < 0.4;
                         if (!isActive) return null;
 
                         return (
                             <motion.rect
                                 key={i}
                                 initial={{ opacity: 0, scale: 0 }}
-                                animate={{ opacity: isSymbolMode ? 1 : 0.9, scale: 1 }}
-                                transition={{
-                                    type: "spring",
-                                    stiffness: 200,
-                                    damping: 20,
-                                    delay: 0.2 + (i * 0.1)
-                                }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.2 + (i * 0.1) }}
                                 x={startX + col * cellSize + 2}
                                 y={startY + row * cellSize + 2}
                                 width={cellSize - 4}
                                 height={cellSize - 4}
-                                rx={isSymbolMode ? 2 : 4}
+                                rx={2}
                                 fill={cellFill}
                             />
                         );
