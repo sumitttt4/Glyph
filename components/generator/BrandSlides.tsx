@@ -18,15 +18,17 @@ const SlideLayout = ({
     className,
     title,
     brand,
-    action
+    action,
+    id
 }: {
     children: React.ReactNode;
     className?: string;
     title?: string;
     brand: BrandIdentity;
     action?: React.ReactNode;
+    id?: string;
 }) => (
-    <div className={cn("aspect-video w-full bg-stone-950 text-white p-8 md:p-12 lg:p-16 flex flex-col relative overflow-hidden", className)}>
+    <div id={id} className={cn("aspect-video w-full bg-stone-950 text-white p-8 md:p-12 lg:p-16 flex flex-col relative overflow-hidden", className)}>
         {/* Background Ambient */}
         <div
             className="absolute top-0 right-0 w-2/3 h-full opacity-20 pointer-events-none"
@@ -53,8 +55,8 @@ const SlideLayout = ({
 );
 
 // ==================== 1. COVER SLIDE ====================
-export const SlideCover = ({ brand }: { brand: BrandIdentity }) => (
-    <SlideLayout brand={brand} className="justify-end">
+export const SlideCover = ({ brand, id }: { brand: BrandIdentity, id?: string }) => (
+    <SlideLayout brand={brand} id={id} className="justify-end">
         <div className="space-y-6">
             <div className="w-32 h-32 mb-8">
                 <LogoComposition
@@ -83,12 +85,12 @@ export const SlideCover = ({ brand }: { brand: BrandIdentity }) => (
 );
 
 // ==================== 2. STRATEGY SLIDE ====================
-export const SlideStrategy = ({ brand }: { brand: BrandIdentity }) => {
+export const SlideStrategy = ({ brand, id }: { brand: BrandIdentity, id?: string }) => {
     const s = brand.strategy;
     if (!s) return null;
 
     return (
-        <SlideLayout brand={brand} title="Brand Strategy">
+        <SlideLayout brand={brand} id={id} title="Brand Strategy">
             <div className="grid grid-cols-2 gap-x-12 gap-y-12 h-full">
                 <div>
                     <h4 className="text-[#CCFF00] text-sm font-mono uppercase tracking-widest mb-4">Mission</h4>
@@ -124,7 +126,7 @@ export const SlideStrategy = ({ brand }: { brand: BrandIdentity }) => {
 };
 
 // ==================== 3. LOGO CONSTRUCTION ====================
-export const SlideLogo = ({ brand, onCycleColor }: { brand: BrandIdentity, onCycleColor?: () => void }) => (
+export const SlideLogo = ({ brand, onCycleColor, id }: { brand: BrandIdentity, onCycleColor?: () => void, id?: string }) => (
     <SlideLayout
         brand={brand}
         title={`Logo Marks for ${brand.name}`}
@@ -137,6 +139,7 @@ export const SlideLogo = ({ brand, onCycleColor }: { brand: BrandIdentity, onCyc
                 Cycle Color
             </button>
         }
+        id={id}
     >
         <div className="grid grid-cols-4 grid-rows-2 gap-6 h-full">
             {/* Primary Mark - Bigger */}
@@ -238,11 +241,11 @@ const ColorCard = ({ label, hex, dark = false }: { label: string, hex: string, d
     );
 };
 
-export const SlideColors = ({ brand }: { brand: BrandIdentity }) => {
+export const SlideColors = ({ brand, id }: { brand: BrandIdentity, id?: string }) => {
     const t = brand.theme.tokens;
 
     return (
-        <SlideLayout brand={brand} title={`Color Palette for ${brand.name}`}>
+        <SlideLayout brand={brand} id={id} title={`Color Palette for ${brand.name}`}>
             <div className="grid grid-cols-4 h-full gap-6">
                 <ColorCard label="Primary" hex={t.light.primary} dark />
                 <ColorCard label="Background (Dark)" hex={t.dark.bg} dark />
@@ -254,7 +257,7 @@ export const SlideColors = ({ brand }: { brand: BrandIdentity }) => {
 };
 
 // ==================== 5. TYPOGRAPHY ====================
-export const SlideTypography = ({ brand, onSwapFont, onUpdateFont }: { brand: BrandIdentity, onSwapFont?: () => void, onUpdateFont?: (font: any) => void }) => {
+export const SlideTypography = ({ brand, onSwapFont, onUpdateFont, id }: { brand: BrandIdentity, onSwapFont?: () => void, onUpdateFont?: (font: any) => void, id?: string }) => {
     const [isFontSelectorOpen, setIsFontSelectorOpen] = useState(false);
 
     // Type Scale Data matching our PDF export logic
@@ -278,6 +281,7 @@ export const SlideTypography = ({ brand, onSwapFont, onUpdateFont }: { brand: Br
                     Change Font
                 </button>
             }
+            id={id}
         >
 
             <FontSelector
@@ -366,9 +370,9 @@ export const SlideTypography = ({ brand, onSwapFont, onUpdateFont }: { brand: Br
 };
 
 // ==================== 6. SOCIAL MEDIA ====================
-export const SlideSocial = ({ brand }: { brand: BrandIdentity }) => {
+export const SlideSocial = ({ brand, id }: { brand: BrandIdentity, id?: string }) => {
     return (
-        <SlideLayout brand={brand} title={`Social Presence for ${brand.name}`}>
+        <SlideLayout brand={brand} id={id} title={`Social Presence for ${brand.name}`}>
             <div className="grid grid-cols-2 gap-8 h-full items-center">
 
                 {/* Simulated Feed */}
@@ -397,9 +401,9 @@ export const SlideSocial = ({ brand }: { brand: BrandIdentity }) => {
 };
 
 // ==================== 7. OUTDOOR / BILLBOARD ====================
-export const SlideOutdoor = ({ brand }: { brand: BrandIdentity }) => {
+export const SlideOutdoor = ({ brand, id }: { brand: BrandIdentity, id?: string }) => {
     return (
-        <SlideLayout brand={brand} title={`Brand in the Wild for ${brand.name}`}>
+        <SlideLayout brand={brand} id={id} title={`Brand in the Wild for ${brand.name}`}>
             <div className="flex flex-col gap-8 h-full">
                 {/* Large Highway Billboard */}
                 <div className="flex-1 rounded-2xl overflow-hidden shadow-2xl bg-stone-900 border border-white/10">

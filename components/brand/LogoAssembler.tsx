@@ -25,6 +25,7 @@ interface LogoAssemblerProps {
     fontFamily?: string;
     className?: string;
     accentColor?: string; // Optional accent
+    gap?: number;         // Dynamic spacing
 }
 
 export default function LogoAssembler({
@@ -35,7 +36,8 @@ export default function LogoAssembler({
     primaryColor,
     fontFamily,
     className,
-    accentColor
+    accentColor,
+    gap = 12 // Default equivalent to gap-3 (3 * 4px = 12px)
 }: LogoAssemblerProps) {
 
     // Dynamic Icon
@@ -87,7 +89,7 @@ export default function LogoAssembler({
     // 1. Classic (Icon Left)
     if (layout === 'icon_left') {
         return (
-            <div className={cn("flex items-center gap-3", className)}>
+            <div className={cn("flex items-center", className)} style={{ gap: `${gap}px` }}>
                 <IconMark />
                 <Wordmark />
             </div>
@@ -97,7 +99,7 @@ export default function LogoAssembler({
     // 1b. Icon Right
     if (layout === 'icon_right') {
         return (
-            <div className={cn("flex items-center gap-3 flex-row-reverse", className)}>
+            <div className={cn("flex items-center flex-row-reverse", className)} style={{ gap: `${gap}px` }}>
                 <IconMark />
                 <Wordmark />
             </div>
@@ -107,7 +109,7 @@ export default function LogoAssembler({
     // 2. Stacked (App Icon Style - Vertical)
     if (layout === 'stacked') {
         return (
-            <div className={cn("flex flex-col items-center gap-3 text-center", className)}>
+            <div className={cn("flex flex-col items-center text-center", className)} style={{ gap: `${gap}px` }}>
                 <IconMark size={32} />
                 <Wordmark />
             </div>

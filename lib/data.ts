@@ -37,6 +37,11 @@ export interface BrandIdentity {
 
   logoContainer?: string; // Container shape key
   logoAssemblerLayout?: 'icon_left' | 'icon_right' | 'stacked' | 'badge' | 'monogram';
+  logoTweaks?: {
+    scale: number;    // 0.5 to 1.5
+    gap: number;      // 0 to 48px
+    rotate: number;  // 0 to 360deg
+  };
 
   canvasStyle?: 'solid' | 'gradient' | 'mesh';  // Background style
   font: {

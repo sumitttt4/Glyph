@@ -56,8 +56,12 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
         const width = parseFloat(parts[2]) || 24;
         return 80 / width;
     };
-    const primaryScale = getShapeScale(primaryShape);
+    const primaryScale = getShapeScale(primaryShape) * (brand.logoTweaks?.scale || 1);
     const secondaryScale = getShapeScale(secondaryShape);
+
+    // Tweak Values
+    const rotate = brand.logoTweaks?.rotate || 0;
+    const gap = brand.logoTweaks?.gap || 0;
 
     // -------------------------------------------------------------------------
     // ARCHETYPE FORK
@@ -280,7 +284,7 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
                     </g>
 
                     {/* Central Shape */}
-                    <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
+                    <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale}) rotate(${rotate}, 50, 50)`} style={{ transformOrigin: 'center' }}>
                         <path d={primaryShape.path} fill={primaryColor} />
                     </g>
 
@@ -388,7 +392,7 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
                     <rect x="10" y="10" width="80" height="80" rx="18" fill={primaryColor} />
-                    <g transform={`translate(${50 - primaryScale * 10}, ${50 - primaryScale * 10}) scale(${primaryScale * 0.85})`}>
+                    <g transform={`translate(${50 - primaryScale * 10}, ${50 - primaryScale * 10}) scale(${primaryScale * 0.85}) rotate(${rotate}, 50, 50)`} style={{ transformOrigin: 'center' }}>
                         <path d={primaryShape.path} fill={innerFill} />
                     </g>
                 </svg>
@@ -508,7 +512,7 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
                     <rect x="12" y="12" width="76" height="76" rx="14" fill="none" stroke={primaryColor} strokeWidth="3" />
-                    <g transform={`translate(${50 - primaryScale * 10}, ${50 - primaryScale * 10}) scale(${primaryScale * 0.85})`}>
+                    <g transform={`translate(${50 - primaryScale * 10}, ${50 - primaryScale * 10}) scale(${primaryScale * 0.85}) rotate(${rotate}, 50, 50)`} style={{ transformOrigin: 'center' }}>
                         <path d={primaryShape.path} fill={primaryColor} />
                     </g>
                 </svg>
@@ -534,7 +538,10 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
         // Default fallback
         return (
             <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
+                <g
+                    transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale}) rotate(${rotate}, 50, 50)`}
+                    style={{ transformOrigin: 'center' }}
+                >
                     <path d={primaryShape.path} fill={primaryColor} />
                 </g>
             </svg>

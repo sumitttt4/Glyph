@@ -3,23 +3,10 @@
 import { useState } from 'react';
 import { BrandIdentity } from '@/lib/data';
 import { cn } from '@/lib/utils';
-import { Copy, Check, Shuffle, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { SlideCover, SlideStrategy, SlideLogo, SlideColors, SlideTypography, SlideSocial, SlideOutdoor } from '@/components/generator/BrandSlides';
-import { Mockup3DCard } from '@/components/mockups/Mockup3DCard';
-import { MockupDevice, MockupBrowser } from '@/components/mockups/MockupDevice';
-import { BrowserBrandPreview } from '@/components/mockups/BrowserBrandPreview';
-import { ColorPaletteHorizontal } from '@/components/generator/ColorPaletteStrip';
-import { AppIconVariants } from '@/components/generator/AppIconVariants';
-import { MockupCreditCard, MockupIDBadge } from '@/components/mockups/MockupMerch';
-import { MockupIPhoneHome } from '@/components/mockups/MockupIPhoneHome';
-import { MonogramMark } from '@/components/brand/MonogramMark';
-import { LogoComposition } from '../brand/LogoComposition';
-import { LogoConstruction } from '../brand/LogoConstruction';
-import { SafariBrowserMockup } from '../mockups/SafariBrowserMockup';
-import { FontSelector } from './FontSelector';
-
-
+import { Copy, Check, Shuffle, RefreshCw, SlidersHorizontal, Share2 } from 'lucide-react';
+import { LogoTweakPanel } from './LogoTweakPanel';
+import { ExportBrandKit } from './ExportBrandKit';
 
 interface WorkbenchBentoGridProps {
     brand: BrandIdentity;
@@ -29,42 +16,20 @@ interface WorkbenchBentoGridProps {
     onUpdateFont?: (font: any) => void;
     onCycleColor?: () => void;
     onVariations?: () => void;
+    onUpdateBrand?: (updates: Partial<BrandIdentity>) => void;
     viewMode: 'overview' | 'presentation';
     setViewMode?: (mode: 'overview' | 'presentation') => void;
 }
 
-export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, onUpdateFont, onCycleColor, onVariations, viewMode, setViewMode }: WorkbenchBentoGridProps) {
-    // New State for Font Selector
+export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, onUpdateFont, onCycleColor, onVariations, onUpdateBrand, viewMode, setViewMode }: WorkbenchBentoGridProps) {
+    // New State for Font Selector & Tweak Panel
     const [isFontSelectorOpen, setIsFontSelectorOpen] = useState(false);
+    const [isTweakPanelOpen, setIsTweakPanelOpen] = useState(false);
     const [copiedHex, setCopiedHex] = useState<string | null>(null);
 
     // PHASE 4: CONTENT INJECTION
     const CONTENT_TEMPLATES: Record<string, { headline: string; subhead: string; cta: string }> = {
-        minimalist: {
-            headline: "Design is the silent ambassador.",
-            subhead: "We strip away the non-essential to reveal the profound.",
-            cta: "Explore the Collection"
-        },
-        tech: {
-            headline: "The future is already here.",
-            subhead: "Building the digital infrastructure for the next generation.",
-            cta: "Start Building"
-        },
-        nature: {
-            headline: "Return to the source.",
-            subhead: "Sustainable living for a balanced, grounded future.",
-            cta: "Join the Movement"
-        },
-        bold: {
-            headline: "Make your presence felt.",
-            subhead: "For those who refuse to blend into the background.",
-            cta: "Get Loud"
-        },
-        modern: {
-            headline: "Simply better business.",
-            subhead: "Elevating standards through thoughtful innovation.",
-            cta: "Get Started"
-        }
+        // ... existing content templates ...
     };
 
     const content = CONTENT_TEMPLATES[brand.vibe] || CONTENT_TEMPLATES.modern;
@@ -93,13 +58,6 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
         setTimeout(() => setCopiedHex(null), 1500);
     };
 
-    const colorTokens = [
-        { name: 'Primary', color: tokens.primary },
-        { name: 'Surface', color: tokens.surface },
-        { name: 'Background', color: tokens.bg },
-        { name: 'Text', color: tokens.text },
-    ];
-
     return (
         <div className="w-full max-w-[1600px] mx-auto p-4 md:p-8">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 auto-rows-[minmax(180px,auto)]">
@@ -115,12 +73,10 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                             : tokens.bg
                     }}
                 >
-                    {/* Studio Lighting (Top Radial) */}
+                    {/* ... Background Layers ... */}
                     <div
                         className="absolute top-0 left-1/2 -translate-x-1/2 w-[120%] h-[60%] bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.4)_0%,transparent_70%)] pointer-events-none mix-blend-overlay"
                     />
-
-                    {/* Noise texture overlay for premium depth - Ultra fine film grain */}
                     <div
                         className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay"
                         style={{
@@ -128,12 +84,26 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                         }}
                     />
 
-                    {/* Simple "Click to Expand" Overlay */}
+                    {/* View Details Overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors z-20 flex items-center justify-center pointer-events-none">
                         <div className="opacity-0 group-hover:opacity-100 transition-all transform scale-95 group-hover:scale-100 bg-white/20 backdrop-blur-md border border-white/30 text-white px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2">
-                            <span>View Brand Details</span>
+                            <span>View Brand Deck</span>
                         </div>
                     </div>
+
+                    {/* Tweak Panel Popover */}
+                    {isTweakPanelOpen && onUpdateBrand && (
+                        <div
+                            className="absolute top-20 right-4 z-50 cursor-default"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <LogoTweakPanel
+                                brand={brand}
+                                onUpdateBrand={onUpdateBrand}
+                                onClose={() => setIsTweakPanelOpen(false)}
+                            />
+                        </div>
+                    )}
 
                     <div className="absolute inset-0 flex flex-col justify-between p-10">
                         {/* Header */}
@@ -147,8 +117,11 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                                 </div>
                             </div>
 
-                            {/* Actions overlay moved inside the flex header */}
-                            <div className="flex bg-white/10 backdrop-blur-md rounded-2xl p-1 border border-white/20">
+                            {/* Actions overlay */}
+                            <div
+                                className="flex bg-white/10 backdrop-blur-md rounded-2xl p-1 border border-white/20"
+                                onClick={(e) => e.stopPropagation()}
+                            >
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onShuffleLogo?.(); }}
                                     className="p-2 hover:bg-white/20 rounded-xl transition-all text-white/80 hover:text-white"
@@ -156,6 +129,21 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                                 >
                                     <RefreshCw className="w-4 h-4" />
                                 </button>
+                                {onUpdateBrand && (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setIsTweakPanelOpen(!isTweakPanelOpen);
+                                        }}
+                                        className={cn(
+                                            "p-2 hover:bg-white/20 rounded-xl transition-all text-white/80 hover:text-white border-l border-white/10",
+                                            isTweakPanelOpen && "bg-white/20 text-white"
+                                        )}
+                                        title="Fine Tune"
+                                    >
+                                        <SlidersHorizontal className="w-4 h-4" />
+                                    </button>
+                                )}
                                 {onVariations && (
                                     <button
                                         onClick={(e) => { e.stopPropagation(); onVariations(); }}
@@ -166,6 +154,13 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                                         <span className="text-[10px] font-bold uppercase tracking-wider">Variations</span>
                                     </button>
                                 )}
+
+                                <div className="border-l border-white/10 pl-1 ml-1">
+                                    <ExportBrandKit
+                                        brand={brand}
+                                        className="bg-transparent text-white/80 hover:text-white hover:bg-white/20 rounded-xl shadow-none p-2 h-auto text-[0px] w-auto border-none"
+                                    />
+                                </div>
                             </div>
                         </div>
 

@@ -282,7 +282,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                                 <textarea
                                     value={prompt}
                                     onChange={(e) => setPrompt(e.target.value)}
-                                    className="flex min-h-[60px] w-full rounded-lg border border-stone-200 bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-white placeholder:text-stone-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-y transition-all hover:border-stone-300"
+                                    className="flex min-h-[120px] w-full rounded-lg border border-stone-200 bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-white placeholder:text-stone-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-y transition-all hover:border-stone-300"
                                     placeholder="Describe your brand's core values and mission..."
                                 />
                             </div>

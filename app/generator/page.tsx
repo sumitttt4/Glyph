@@ -349,6 +349,7 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
                 isDark={isDarkMode}
                 onShuffleLogo={() => generateBrand(selectedVibe, brand.name)}
                 onVariations={handleGenerateVariations}
+                onUpdateBrand={brandGenerators.updateBrand}
                 onUpdateFont={(newFont) => {
                   brandGenerators.updateBrand({
                     font: {
