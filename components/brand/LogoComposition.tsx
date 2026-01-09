@@ -257,7 +257,9 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
 
         // SMART SELECTION LOGIC
         if (brand.vibe.includes('tech')) {
-            compositionStyle = 'tech_circuit';
+            // Tech-appropriate styles with variety
+            const techStyles = ['tech_circuit', 'grid', 'frame', 'diamond', 'container'];
+            compositionStyle = techStyles[Math.floor(layoutRoll * techStyles.length)];
         } else if (brand.archetype === 'symbol') {
             // For symbols, prioritize layouts that show the shape clearly, unless we want the grid
             const symbolStyles = ['single', 'container', 'frame', 'diamond', 'tech_circuit'];

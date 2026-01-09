@@ -7,6 +7,19 @@ import { motion } from 'framer-motion';
 import { Copy, Check, Shuffle, RefreshCw, SlidersHorizontal, Share2 } from 'lucide-react';
 import { LogoTweakPanel } from './LogoTweakPanel';
 import { ExportBrandKit } from './ExportBrandKit';
+import { SlideCover, SlideStrategy, SlideLogo, SlideColors, SlideTypography, SlideSocial, SlideOutdoor } from './BrandSlides';
+import { LogoComposition } from '../brand/LogoComposition';
+import { LogoConstruction } from '../brand/LogoConstruction';
+import { SafariBrowserMockup } from '../mockups/SafariBrowserMockup';
+import { ColorPaletteHorizontal } from './ColorPaletteStrip';
+import { AppIconVariants } from './AppIconVariants';
+import { MockupCreditCard, MockupIDBadge } from '../mockups/MockupMerch';
+import { MockupIPhoneHome } from '../mockups/MockupIPhoneHome';
+import { Mockup3DCard } from '../mockups/Mockup3DCard';
+import { MockupDevice, MockupBrowser } from '../mockups/MockupDevice';
+import { BrowserBrandPreview } from '../mockups/BrowserBrandPreview';
+import { MonogramMark } from '../brand/MonogramMark';
+import { FontSelector } from './FontSelector';
 
 interface WorkbenchBentoGridProps {
     brand: BrandIdentity;
