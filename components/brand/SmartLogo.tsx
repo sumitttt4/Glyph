@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrandIdentity } from '@/lib/data';
-import LogoComposition from './LogoComposition';
+import { LogoComposition } from './LogoComposition';
 import LogoAssembler from './LogoAssembler';
 
 interface SmartLogoProps {
     brand: BrandIdentity;
     className?: string;
-    overrideColors?: { primary?: string; accent?: string };
+    overrideColors?: { primary: string; accent?: string; bg?: string };
     layout?: 'default' | 'swiss' | 'bauhaus' | 'minimal_grid' | 'organic_fluid' | 'generative' | 'radial';
 }
 
@@ -19,7 +19,7 @@ export default function SmartLogo({ brand, className, overrideColors, layout }: 
     const hasIcon = brand.logoIcon && brand.logoIcon !== '';
     const isSymbol = brand.archetype?.toLowerCase() === 'symbol';
 
-    if (isSymbol && hasIcon) {
+    if (isSymbol && hasIcon && brand.logoIcon) {
         const mode = 'light'; // You can make this dynamic based on props
         const tokens = brand.theme.tokens[mode];
 
