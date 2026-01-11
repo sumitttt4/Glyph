@@ -201,41 +201,27 @@ const ColorCard = ({ label, hex, dark = false }: { label: string, hex: string, d
         <div
             onClick={handleCopy}
             className={cn(
-                "rounded-xl p-6 flex flex-col justify-between relative group cursor-pointer transition-all hover:scale-[1.02]",
-                dark ? "text-white" : "text-black bg-white"
+                "rounded-xl p-4 flex flex-col justify-between relative group cursor-pointer transition-all hover:scale-[1.02] min-h-[140px]",
+                dark ? "text-white" : "text-black bg-white border border-black/5"
             )}
             style={{ backgroundColor: dark ? hex : 'white' }}
         >
             {/* Color Swatch if card is white */}
             {!dark && (
-                <div className="w-12 h-12 rounded-full mb-4 border border-black/10" style={{ backgroundColor: hex }} />
+                <div className="w-16 h-16 rounded-xl mb-3 border border-black/10 shadow-sm" style={{ backgroundColor: hex }} />
             )}
 
-            <div className="space-y-4">
-                <div>
-                    <div className={cn("font-mono text-xs mb-1 uppercase tracking-wider", dark ? "opacity-50" : "opacity-40")}>{label}</div>
-                    <div className="font-bold text-2xl tracking-tight">{hex.toUpperCase()}</div>
-                </div>
-
-                {/* Technical Values */}
-                <div className="space-y-1 pt-4 border-t border-current border-opacity-10">
-                    <div className="flex justify-between text-[10px] font-mono opacity-60">
-                        <span>RGB</span>
-                        <span>{hexToRgb(hex)}</span>
-                    </div>
-                    <div className="flex justify-between text-[10px] font-mono opacity-60">
-                        <span>CMYK</span>
-                        <span>{hexToCmyk(hex)}</span>
-                    </div>
-                </div>
+            <div className="space-y-1 mt-auto">
+                <div className={cn("font-mono text-[10px] uppercase tracking-wider", dark ? "opacity-50" : "opacity-40")}>{label}</div>
+                <div className="font-bold text-lg tracking-tight">{hex.toUpperCase()}</div>
             </div>
 
             {/* Hover Copy Indicator */}
             <div className={cn(
-                "absolute top-4 right-4 p-2 rounded-full transition-all opacity-0 group-hover:opacity-100",
+                "absolute top-3 right-3 p-1.5 rounded-full transition-all opacity-0 group-hover:opacity-100",
                 copied ? "bg-green-500 text-white" : "bg-black/10 text-current"
             )}>
-                {copied ? <Check size={14} /> : <Copy size={14} />}
+                {copied ? <Check size={12} /> : <Copy size={12} />}
             </div>
         </div>
     );
@@ -246,11 +232,34 @@ export const SlideColors = ({ brand, id }: { brand: BrandIdentity, id?: string }
 
     return (
         <SlideLayout brand={brand} id={id} title={`Color Palette for ${brand.name}`}>
-            <div className="grid grid-cols-4 h-full gap-6">
-                <ColorCard label="Primary" hex={t.light.primary} dark />
-                <ColorCard label="Background (Dark)" hex={t.dark.bg} dark />
-                <ColorCard label="Surface" hex={t.dark.bg} dark />{/* Note: Surface usually matches bg in this simplified model, or slightly lighter */}
-                <ColorCard label="Neutral" hex={t.dark.border} dark />
+            <div className="grid grid-cols-2 h-full gap-10">
+                {/* LIGHT MODE */}
+                <div className="flex flex-col gap-4">
+                    <div className="text-[11px] font-mono text-white/60 uppercase tracking-widest flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full bg-white border border-white/20" />
+                        Light Mode
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 flex-1">
+                        <ColorCard label="Primary" hex={t.light.primary} />
+                        <ColorCard label="Background" hex={t.light.bg} />
+                        <ColorCard label="Text" hex={t.light.text} />
+                        <ColorCard label="Border" hex={t.light.border} />
+                    </div>
+                </div>
+
+                {/* DARK MODE */}
+                <div className="flex flex-col gap-4">
+                    <div className="text-[11px] font-mono text-white/60 uppercase tracking-widest flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full bg-stone-900 border border-white/20" />
+                        Dark Mode
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 flex-1">
+                        <ColorCard label="Primary" hex={t.dark.primary} dark />
+                        <ColorCard label="Background" hex={t.dark.bg} dark />
+                        <ColorCard label="Text" hex={t.dark.text} dark />
+                        <ColorCard label="Border" hex={t.dark.border} dark />
+                    </div>
+                </div>
             </div>
         </SlideLayout>
     );

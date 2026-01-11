@@ -7,6 +7,7 @@ import { LoadingState } from '@/components/generator/LoadingState';
 import { WorkbenchBentoGrid } from '@/components/generator/WorkbenchBentoGrid';
 import { ProGateModal } from '@/components/generator/ProGateModal';
 import { useBrandGenerator } from '@/hooks/use-brand-generator';
+import { useSubscription } from '@/hooks/use-subscription';
 import { createClient } from '@/lib/supabase/client';
 import { exportBrandPackage } from '@/lib/export';
 import { generateFaviconPackage } from '@/lib/favicon-generator';
@@ -29,6 +30,14 @@ export default function GeneratorPage() {
   const [showProModal, setShowProModal] = useState(false);
 
   const [isPro, setIsPro] = useState(false);
+  const subscription = useSubscription();
+
+  // Update isPro when subscription loads
+  useEffect(() => {
+    if (!subscription.isLoading) {
+      setIsPro(subscription.isPro);
+    }
+  }, [subscription.isPro, subscription.isLoading]);
   // Compare State
   const [compareList, setCompareList] = useState<BrandIdentity[]>([]);
   const [isCompareOpen, setIsCompareOpen] = useState(false);

@@ -8,11 +8,11 @@ interface LoadingStateProps {
 }
 
 const LOADING_MESSAGES = [
-    'Initializing Neural Engine...',
-    'Analyzing Vibe Vector...',
-    'Constructing Geometry...',
-    'Solving Color Harmony...',
-    'Rendering Brand Assets...',
+    'Understanding your vision',
+    'Searching for the perfect vibe',
+    'Crafting color harmony',
+    'Designing your logo mark',
+    'Building your brand identity',
 ];
 
 export function LoadingState({ isLoading }: LoadingStateProps) {
@@ -26,7 +26,7 @@ export function LoadingState({ isLoading }: LoadingStateProps) {
 
         const interval = setInterval(() => {
             setMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
-        }, 800);
+        }, 900);
 
         return () => clearInterval(interval);
     }, [isLoading]);
@@ -38,53 +38,81 @@ export function LoadingState({ isLoading }: LoadingStateProps) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0 z-50 flex items-center justify-center"
-                    style={{
-                        backgroundColor: '#1A3A1A', // Dark green cutting mat
-                        backgroundImage: `
-              linear-gradient(rgba(34,197,94,0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(34,197,94,0.1) 1px, transparent 1px)
-            `,
-                        backgroundSize: '24px 24px',
-                    }}
+                    className="absolute inset-0 z-50 flex items-center justify-center bg-stone-950"
                 >
+                    {/* Subtle gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-stone-900 via-stone-950 to-black" />
+
+                    {/* Ambient glow */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-orange-500/5 rounded-full blur-3xl" />
+
                     {/* Center Content */}
-                    <div className="text-center">
-                        {/* Animated Logo Mark */}
-                        <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                            className="w-16 h-16 mx-auto mb-8 border-4 border-green-400 border-t-transparent rounded-full"
-                        />
+                    <div className="relative z-10 text-center max-w-md px-8">
+                        {/* Animated Ring */}
+                        <div className="relative w-20 h-20 mx-auto mb-10">
+                            <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                                className="absolute inset-0 border-2 border-stone-700 border-t-orange-500 rounded-full"
+                            />
+                            <motion.div
+                                animate={{ rotate: -360 }}
+                                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                                className="absolute inset-2 border border-stone-800 border-t-stone-500 rounded-full"
+                            />
+                            {/* Center dot */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-2 h-2 bg-orange-500 rounded-full" />
+                            </div>
+                        </div>
 
                         {/* Loading Message */}
-                        <motion.p
-                            key={messageIndex}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            className="text-green-400 font-mono text-lg tracking-wide"
-                        >
-                            {LOADING_MESSAGES[messageIndex]}
-                        </motion.p>
+                        <AnimatePresence mode="wait">
+                            <motion.p
+                                key={messageIndex}
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -8 }}
+                                transition={{ duration: 0.3 }}
+                                className="text-stone-300 text-lg font-medium tracking-wide"
+                            >
+                                {LOADING_MESSAGES[messageIndex]}
+                            </motion.p>
+                        </AnimatePresence>
 
-                        {/* Progress Dots */}
-                        <div className="flex justify-center gap-2 mt-6">
-                            {LOADING_MESSAGES.map((_, i) => (
-                                <div
+                        {/* Typewriter dots */}
+                        <motion.div
+                            className="flex justify-center gap-1 mt-2"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                        >
+                            {[0, 1, 2].map((i) => (
+                                <motion.span
                                     key={i}
-                                    className={`w-2 h-2 rounded-full transition-colors ${i <= messageIndex ? 'bg-green-400' : 'bg-green-900'
-                                        }`}
-                                />
+                                    animate={{ opacity: [0.3, 1, 0.3] }}
+                                    transition={{
+                                        duration: 1.2,
+                                        repeat: Infinity,
+                                        delay: i * 0.2
+                                    }}
+                                    className="text-stone-500"
+                                >
+                                    .
+                                </motion.span>
                             ))}
+                        </motion.div>
+
+                        {/* Progress bar */}
+                        <div className="mt-10 w-full h-0.5 bg-stone-800 rounded-full overflow-hidden">
+                            <motion.div
+                                className="h-full bg-gradient-to-r from-orange-500 to-orange-400"
+                                initial={{ width: '0%' }}
+                                animate={{ width: `${((messageIndex + 1) / LOADING_MESSAGES.length) * 100}%` }}
+                                transition={{ duration: 0.5, ease: 'easeOut' }}
+                            />
                         </div>
                     </div>
-
-                    {/* Corner Grid Lines (Cutting Mat Aesthetic) */}
-                    <div className="absolute top-8 left-8 w-16 h-16 border-l-2 border-t-2 border-green-600 opacity-50" />
-                    <div className="absolute top-8 right-8 w-16 h-16 border-r-2 border-t-2 border-green-600 opacity-50" />
-                    <div className="absolute bottom-8 left-8 w-16 h-16 border-l-2 border-b-2 border-green-600 opacity-50" />
-                    <div className="absolute bottom-8 right-8 w-16 h-16 border-r-2 border-b-2 border-green-600 opacity-50" />
                 </motion.div>
             )}
         </AnimatePresence>
