@@ -36,7 +36,7 @@ export interface BrandIdentity {
   logoIcon?: string;      // Lucide icon name
 
   logoContainer?: string; // Container shape key
-  logoAssemblerLayout?: 'icon_left' | 'icon_right' | 'stacked' | 'badge' | 'monogram';
+  logoAssemblerLayout?: 'icon_left' | 'icon_right' | 'stacked' | 'badge' | 'monogram' | 'icon_only';
   logoTweaks?: {
     scale: number;    // 0.5 to 1.5
     gap: number;      // 0 to 48px
@@ -58,14 +58,27 @@ export interface BrandIdentity {
   // Uniqueness Seed (timestamp + random for parametric variations)
   generationSeed: number;
 
-  // Strategy Core
+  // Premium Strategy Module
   strategy?: {
+    tagline: string;
     mission: string;
     vision: string;
-    values: string[];
-    audience: string;
-    tone: string;
+    values: string[]; // Legacy support
+    audience: string; // Legacy support
+    archetype: string;
+    voice: {
+      tone: string;
+      dos: string[];
+      donts: string[];
+    };
+    marketing: {
+      headline: string;
+      subhead: string;
+      about: string;
+    };
   };
+
+
 
   createdAt: Date;
 }

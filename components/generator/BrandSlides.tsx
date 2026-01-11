@@ -187,7 +187,7 @@ export const SlideLogo = ({ brand, onCycleColor, id }: { brand: BrandIdentity, o
 );
 
 // ==================== 4. COLOR PALETTE ====================
-// Helper Card
+// Helper Card - Always shows swatch in contrasting container
 const ColorCard = ({ label, hex, dark = false }: { label: string, hex: string, dark?: boolean }) => {
     const [copied, setCopied] = useState(false);
 
@@ -202,24 +202,29 @@ const ColorCard = ({ label, hex, dark = false }: { label: string, hex: string, d
             onClick={handleCopy}
             className={cn(
                 "rounded-xl p-4 flex flex-col justify-between relative group cursor-pointer transition-all hover:scale-[1.02] min-h-[140px]",
-                dark ? "text-white" : "text-black bg-white border border-black/5"
+                dark
+                    ? "bg-stone-900 text-white border border-white/10"
+                    : "bg-white text-stone-900 border border-stone-200"
             )}
-            style={{ backgroundColor: dark ? hex : 'white' }}
         >
-            {/* Color Swatch if card is white */}
-            {!dark && (
-                <div className="w-16 h-16 rounded-xl mb-3 border border-black/10 shadow-sm" style={{ backgroundColor: hex }} />
-            )}
+            {/* Color Swatch - Always visible */}
+            <div
+                className="w-full h-16 rounded-lg border shadow-sm mb-3"
+                style={{
+                    backgroundColor: hex,
+                    borderColor: dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                }}
+            />
 
             <div className="space-y-1 mt-auto">
-                <div className={cn("font-mono text-[10px] uppercase tracking-wider", dark ? "opacity-50" : "opacity-40")}>{label}</div>
+                <div className={cn("font-mono text-[10px] uppercase tracking-wider", dark ? "text-white/50" : "text-stone-400")}>{label}</div>
                 <div className="font-bold text-lg tracking-tight">{hex.toUpperCase()}</div>
             </div>
 
             {/* Hover Copy Indicator */}
             <div className={cn(
                 "absolute top-3 right-3 p-1.5 rounded-full transition-all opacity-0 group-hover:opacity-100",
-                copied ? "bg-green-500 text-white" : "bg-black/10 text-current"
+                copied ? "bg-green-500 text-white" : (dark ? "bg-white/10 text-white" : "bg-black/10 text-stone-900")
             )}>
                 {copied ? <Check size={12} /> : <Copy size={12} />}
             </div>
@@ -229,36 +234,50 @@ const ColorCard = ({ label, hex, dark = false }: { label: string, hex: string, d
 
 export const SlideColors = ({ brand, id }: { brand: BrandIdentity, id?: string }) => {
     const t = brand.theme.tokens;
+    const [isDark, setIsDark] = useState(false);
+    const tokens = isDark ? t.dark : t.light;
 
     return (
-        <SlideLayout brand={brand} id={id} title={`Color Palette for ${brand.name}`}>
-            <div className="grid grid-cols-2 h-full gap-10">
-                {/* LIGHT MODE */}
-                <div className="flex flex-col gap-4">
-                    <div className="text-[11px] font-mono text-white/60 uppercase tracking-widest flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-full bg-white border border-white/20" />
-                        Light Mode
+        <SlideLayout
+            brand={brand}
+            id={id}
+            title={`Color Palette for ${brand.name}`}
+            action={
+                <button
+                    onClick={() => setIsDark(!isDark)}
+                    className="flex items-center gap-3 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-medium transition-all border border-white/10"
+                >
+                    {/* Toggle Track */}
+                    <div className={cn(
+                        "w-12 h-6 rounded-full p-1 transition-colors",
+                        isDark ? "bg-stone-800" : "bg-white/20"
+                    )}>
+                        <div className={cn(
+                            "w-4 h-4 rounded-full transition-transform",
+                            isDark
+                                ? "translate-x-6 bg-white"
+                                : "translate-x-0 bg-yellow-400"
+                        )} />
                     </div>
-                    <div className="grid grid-cols-2 gap-4 flex-1">
-                        <ColorCard label="Primary" hex={t.light.primary} />
-                        <ColorCard label="Background" hex={t.light.bg} />
-                        <ColorCard label="Text" hex={t.light.text} />
-                        <ColorCard label="Border" hex={t.light.border} />
-                    </div>
+                    <span className="text-white/80">
+                        {isDark ? "Dark Mode" : "Light Mode"}
+                    </span>
+                </button>
+            }
+        >
+            <div className="h-full flex flex-col gap-6">
+                {/* Color Grid - 4 Columns */}
+                <div className="grid grid-cols-4 gap-6 flex-1">
+                    <ColorCard label="Primary" hex={tokens.primary} dark={isDark} />
+                    <ColorCard label="Background" hex={tokens.bg} dark={isDark} />
+                    <ColorCard label="Surface" hex={tokens.surface} dark={isDark} />
+                    <ColorCard label="Border" hex={tokens.border} dark={isDark} />
                 </div>
 
-                {/* DARK MODE */}
-                <div className="flex flex-col gap-4">
-                    <div className="text-[11px] font-mono text-white/60 uppercase tracking-widest flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-full bg-stone-900 border border-white/20" />
-                        Dark Mode
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 flex-1">
-                        <ColorCard label="Primary" hex={t.dark.primary} dark />
-                        <ColorCard label="Background" hex={t.dark.bg} dark />
-                        <ColorCard label="Text" hex={t.dark.text} dark />
-                        <ColorCard label="Border" hex={t.dark.border} dark />
-                    </div>
+                {/* Bottom Row - Text Colors */}
+                <div className="grid grid-cols-2 gap-6 h-1/3">
+                    <ColorCard label="Text (Foreground)" hex={tokens.text} dark={isDark} />
+                    <ColorCard label="Muted (Subtext)" hex={tokens.muted} dark={isDark} />
                 </div>
             </div>
         </SlideLayout>
@@ -434,5 +453,134 @@ export const SlideOutdoor = ({ brand, id }: { brand: BrandIdentity, id?: string 
                 </div>
             </div>
         </SlideLayout>
+    );
+};
+
+// ==================== 8. MERCH & MOCKUPS (PREMIUM) ====================
+export const SlideMockups = ({ brand, id }: { brand: BrandIdentity, id?: string }) => {
+    // Dynamic import to avoid circular dep issues if any
+    const { MockupBusinessCard, MockupToteBag, MockupSignage } = require('@/components/brand/MockupGenerator');
+
+    return (
+        <SlideLayout brand={brand} id={id} title={`Brand Application for ${brand.name}`}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+
+                {/* 1. Business Card (Professional) */}
+                <div className="flex flex-col gap-4">
+                    <div className="flex-1 bg-stone-200 rounded-2xl overflow-hidden shadow-lg border border-white/20 relative group">
+                        <div className="absolute inset-0 bg-stone-300/50" />
+                        <MockupBusinessCard brand={brand} />
+
+                        {/* Hover Label */}
+                        <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                            Stationery System
+                        </div>
+                    </div>
+                    <p className="text-xs text-center font-mono opacity-50 uppercase tracking-widest">Brand Stationery</p>
+                </div>
+
+                {/* 2. Apparel (Merch) */}
+                <div className="flex flex-col gap-4">
+                    <div className="flex-1 bg-white rounded-2xl overflow-hidden shadow-lg border border-stone-100 relative group">
+                        <MockupToteBag brand={brand} />
+                        <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                            Merchandise
+                        </div>
+                    </div>
+                    <p className="text-xs text-center font-mono opacity-50 uppercase tracking-widest">Official Merch</p>
+                </div>
+
+                {/* 3. Signage (Physical) */}
+                <div className="flex flex-col gap-4">
+                    <div className="flex-1 bg-stone-900 rounded-2xl overflow-hidden shadow-lg border border-stone-800 relative group">
+                        <MockupSignage brand={brand} />
+                        <div className="absolute bottom-4 left-4 bg-white/20 backdrop-blur text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                            Storefront
+                        </div>
+                    </div>
+                    <p className="text-xs text-center font-mono opacity-50 uppercase tracking-widest">Physical Signage</p>
+                </div>
+
+            </div>
+        </SlideLayout>
+    );
+};
+
+// ==================== 9. PITCH DECK PREVIEW ====================
+export const SlidePitchDeck = ({ brand, id }: { brand: BrandIdentity, id?: string }) => {
+    return (
+        <SlideLayout brand={brand} id={id} title="Launch Ready Assets">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-full">
+
+                {/* Visual: Title Slide */}
+                <div className="flex flex-col gap-4">
+                    <div className="flex-1 rounded-xl shadow-xl overflow-hidden relative flex flex-col items-center justify-center p-8 bg-white" style={{ backgroundColor: brand.theme.tokens.light.bg }}>
+                        <div className="absolute inset-0 opacity-10" style={{ backgroundColor: brand.theme.tokens.light.primary, backgroundImage: 'radial-gradient(circle at 50% 50%, white 2px, transparent 2px)', backgroundSize: '30px 30px' }} />
+
+                        <div className="relative z-10 w-24 mb-6">
+                            <LogoComposition brand={{ ...brand, logoAssemblerLayout: 'stacked' }} layout="generative" />
+                        </div>
+
+                        <h1 className={cn("text-3xl font-bold text-center mb-2", brand.font.heading)} style={{ color: brand.theme.tokens.light.text }}>
+                            {brand.strategy?.tagline || "Invest in the Future"}
+                        </h1>
+                        <p className="text-sm opacity-60 font-mono tracking-widest uppercase" style={{ color: brand.theme.tokens.light.muted }}>
+                            Series A Deck • {new Date().getFullYear()}
+                        </p>
+
+                        {/* Decoration */}
+                        <div className="absolute bottom-0 left-0 w-full h-2" style={{ backgroundColor: brand.theme.tokens.light.primary }} />
+                    </div>
+                    <p className="text-xs text-center font-mono opacity-50 uppercase tracking-widest text-white/50">Title Slide Template</p>
+                </div>
+
+                {/* Visual: Content Slide */}
+                <div className="flex flex-col gap-4">
+                    <div className="flex-1 rounded-xl shadow-xl overflow-hidden relative p-8 bg-white border border-stone-200" style={{ backgroundColor: '#ffffff' }}>
+                        {/* Header */}
+                        <div className="flex justify-between items-center mb-12 border-b pb-4" style={{ borderColor: brand.theme.tokens.light.border }}>
+                            <h2 className={cn("text-xl font-bold", brand.font.heading)} style={{ color: brand.theme.tokens.light.text }}>
+                                Market Opportunity
+                            </h2>
+                            <div className="w-8 opacity-50">
+                                <LogoComposition brand={{ ...brand, logoAssemblerLayout: 'icon_only' }} layout="generative" />
+                            </div>
+                        </div>
+
+                        {/* Content */}
+                        <div className="space-y-6">
+                            {[1, 2, 3].map((i) => (
+                                <div key={i} className="flex gap-4">
+                                    <div className="w-2 h-2 rounded-full mt-2 shrink-0" style={{ backgroundColor: brand.theme.tokens.light.primary }} />
+                                    <div className="space-y-2 flex-1">
+                                        <div className="h-4 w-3/4 rounded bg-stone-100" />
+                                        <div className="h-4 w-1/2 rounded bg-stone-50" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Footer */}
+                        <div className="absolute bottom-4 right-8 text-[10px] text-stone-400 font-mono">
+                            Confidential • Slide 4
+                        </div>
+                    </div>
+                    <p className="text-xs text-center font-mono opacity-50 uppercase tracking-widest text-white/50">Content Slide Template</p>
+                </div>
+
+            </div>
+        </SlideLayout>
+    );
+};
+
+// ==================== 10. BRAND GUIDELINES ====================
+export const SlideGuidelines = ({ brand, id }: { brand: BrandIdentity, id?: string }) => {
+    // Dynamic import to avoid circular dependencies
+    const { BrandGuidelines } = require('@/components/brand/BrandGuidelines');
+
+    return (
+        <div id={id} className="w-full min-h-screen bg-stone-100 py-12">
+            <BrandGuidelines brand={brand} />
+        </div>
     );
 };

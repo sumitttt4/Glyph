@@ -1,11 +1,12 @@
 import React from 'react';
 import * as Icons from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getIconById } from '@/lib/icons';
 // We assume fonts are handled by the parent/global context, but we can accept fontFamily.
 
 // 1. THE LAYOUT VARIATIONS
 // This is the secret to variety. It changes the physical structure.
-export type LogoAssemblerLayout = 'icon_left' | 'icon_right' | 'stacked' | 'badge' | 'monogram';
+export type LogoAssemblerLayout = 'icon_left' | 'icon_right' | 'stacked' | 'badge' | 'monogram' | 'icon_only';
 
 // 2. THE CONTAINER SHAPES
 export const ASSEMBLER_SHAPES: Record<string, string> = {
@@ -40,14 +41,17 @@ export default function LogoAssembler({
     gap = 12 // Default equivalent to gap-3 (3 * 4px = 12px)
 }: LogoAssemblerProps) {
 
-    // Dynamic Icon
+    // Check for custom icon from our library first
+    const customIcon = getIconById(iconName);
+
+    // Fallback to Lucide if not a custom icon
     // @ts-ignore - Dynamic access
-    const IconComponent = Icons[iconName] || Icons.Sparkles;
+    const LucideIcon = Icons[iconName] || Icons.Sparkles;
 
     const isGhost = shape === 'ghost';
     const isDiamond = shape === 'diamond';
 
-    // Render the Icon Part
+    // Render the Icon Part - supports both custom SVG and Lucide
     const IconMark = ({ size = 24, forceColor }: { size?: number, forceColor?: string }) => (
         <div
             className={cn(
@@ -65,11 +69,28 @@ export default function LogoAssembler({
             }}
         >
             <div className={cn(isDiamond && "-rotate-45")}>
-                <IconComponent
-                    size={size}
-                    strokeWidth={2.5}
-                    color={forceColor || (isGhost ? primaryColor : 'white')}
-                />
+                {customIcon ? (
+                    // Render custom SVG from our library
+                    <svg
+                        width={size}
+                        height={size}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke={forceColor || (isGhost ? primaryColor : 'white')}
+                        strokeWidth={2.5}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        <path d={customIcon.path} />
+                    </svg>
+                ) : (
+                    // Fallback to Lucide icon
+                    <LucideIcon
+                        size={size}
+                        strokeWidth={2.5}
+                        color={forceColor || (isGhost ? primaryColor : 'white')}
+                    />
+                )}
             </div>
         </div>
     );
@@ -116,6 +137,27 @@ export default function LogoAssembler({
         );
     }
 
+    // Helper to render just the raw icon (Custom or Lucide)
+    const IconElement = ({ size, color, strokeWidth = 2.5 }: { size: number, color?: string, strokeWidth?: number }) => {
+        if (customIcon) {
+            return (
+                <svg
+                    width={size}
+                    height={size}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke={color || (isGhost ? primaryColor : 'white')}
+                    strokeWidth={strokeWidth}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                >
+                    <path d={customIcon.path} />
+                </svg>
+            );
+        }
+        return <LucideIcon size={size} color={color || (isGhost ? primaryColor : 'white')} strokeWidth={strokeWidth} />;
+    };
+
     // 3. Badge (Tiny, Pill shape for container)
     if (layout === 'badge') {
         return (
@@ -130,7 +172,7 @@ export default function LogoAssembler({
                     className="p-1.5 bg-white rounded-full shadow-sm flex items-center justify-center"
                     style={{ color: primaryColor }}
                 >
-                    <IconComponent size={14} strokeWidth={2.5} />
+                    <IconElement size={14} strokeWidth={2.5} />
                 </div>
                 <span
                     className="text-sm font-bold uppercase tracking-widest opacity-80"
@@ -157,10 +199,19 @@ export default function LogoAssembler({
                     {brandName.charAt(0)}
                 </span>
                 <div className="absolute -bottom-2 -right-2 bg-white p-1.5 rounded-full border-2 border-white shadow-sm">
-                    <IconComponent size={16} color={primaryColor} strokeWidth={3} />
+                    <IconElement size={16} color={primaryColor} strokeWidth={3} />
                 </div>
             </div>
         )
+    }
+
+    // 5. Icon Only (New)
+    if (layout === 'icon_only') {
+        return (
+            <div className={cn("flex items-center justify-center", className)}>
+                <IconElement size={32} strokeWidth={2.5} />
+            </div>
+        );
     }
 
     // Default Fallback

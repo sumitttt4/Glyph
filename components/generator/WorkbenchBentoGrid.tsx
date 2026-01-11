@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { Copy, Check, Shuffle, RefreshCw, SlidersHorizontal, Share2 } from 'lucide-react';
 import { LogoTweakPanel } from './LogoTweakPanel';
 import { ExportBrandKit } from './ExportBrandKit';
-import { SlideCover, SlideStrategy, SlideLogo, SlideColors, SlideTypography, SlideSocial, SlideOutdoor } from './BrandSlides';
+import { SlideCover, SlideStrategy, SlideLogo, SlideColors, SlideTypography, SlideSocial, SlideOutdoor, SlideMockups, SlidePitchDeck, SlideGuidelines } from './BrandSlides';
 import { LogoComposition } from '../brand/LogoComposition';
 import { LogoConstruction } from '../brand/LogoConstruction';
 import { SafariBrowserMockup } from '../mockups/SafariBrowserMockup';
@@ -58,6 +58,9 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                 <SlideTypography brand={brand} onSwapFont={onSwapFont} onUpdateFont={onUpdateFont} />
                 <SlideSocial brand={brand} />
                 <SlideOutdoor brand={brand} />
+                <SlideMockups brand={brand} />
+                <SlidePitchDeck brand={brand} />
+                <SlideGuidelines brand={brand} />
             </div>
         );
     }

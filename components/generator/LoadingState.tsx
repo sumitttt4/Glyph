@@ -38,7 +38,7 @@ export function LoadingState({ isLoading }: LoadingStateProps) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0 z-50 flex items-center justify-center bg-stone-950"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950"
                 >
                     {/* Subtle gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-stone-900 via-stone-950 to-black" />

@@ -6,44 +6,12 @@ import { THEMES } from '@/lib/themes';
 import { SHAPES } from '@/lib/shapes';
 import { fontPairings } from '@/lib/fonts';
 import { suggestLogoComponentsWithAI_V2 } from '@/lib/brand-generator';
+import { ICONS, getIconsForVibe, getRandomIcon } from '@/lib/icons';
+import { generateBrandStrategy } from '@/lib/strategy-engine';
 
-const STRATEGY_TEMPLATES: Record<string, any> = {
-    minimalist: {
-        mission: "To strip away the non-essential and focus on what truly matters.",
-        vision: "A world where design is invisible and function is paramount.",
-        values: ["Simplicity", "Clarity", "Purpose", "Reduction"],
-        audience: "Design-conscious individuals who value aesthetics and utility.",
-        tone: "Restrained, Quiet, Confident"
-    },
-    tech: {
-        mission: "To accelerate human potential through seamless technology integration.",
-        vision: "Building the digital infrastructure for a decentralized future.",
-        values: ["Innovation", "Speed", "Scale", "Disruption"],
-        audience: "Early adopters, developers, and forward-thinking enterprises.",
-        tone: "Futuristic, Bold, Technical"
-    },
-    nature: {
-        mission: "To reconnect modern living with the rhythms of the natural world.",
-        vision: "A sustainable ecosystem where commerce and nature coexist.",
-        values: ["Sustainability", "Growth", "Organic", "Balance"],
-        audience: "Eco-conscious consumers seeking authenticity.",
-        tone: "Grounded, Organic, Warm"
-    },
-    bold: {
-        mission: "To challenge the status quo and make an undeniable impact.",
-        vision: "A brand landscape where only the brave survive.",
-        values: ["Courage", "Impact", "Loud", "Unapologetic"],
-        audience: "Trendsetters and those who refuse to blend in.",
-        tone: "Loud, Energetic, Provocative"
-    },
-    modern: {
-        mission: "To design simpler, better ways to live and work.",
-        vision: "Elevating the everyday through thoughtful innovation.",
-        values: ["Quality", "Reliability", "Trust", "Design"],
-        audience: "Professionals who appreciate craftsmanship and efficiency.",
-        tone: "Professional, Clean, Trustworthy"
-    }
-};
+// Removed legacy STRATEGY_TEMPLATES in favor of dynamic engine
+
+
 
 export function useBrandGenerator() {
     const [brand, setBrand] = useState<BrandIdentity | null>(null);
@@ -104,12 +72,23 @@ export function useBrandGenerator() {
 
         await minDelay;
 
-        // Fallback: Ensure we always have an icon (Fixes "Font instead of Logo" issue)
+        // Fallback: Use new icon library with vibe-based selection
         if (!logoIcon) {
-            const FALLBACK_ICONS = ['Sparkles', 'Zap', 'Shield', 'Leaf', 'Code2', 'Rocket', 'Layers'];
-            logoIcon = FALLBACK_ICONS[Math.floor(Math.random() * FALLBACK_ICONS.length)];
+            const vibeIcons = getIconsForVibe(vibe);
+            const availableIcons = vibeIcons.filter(icon => !usedIcons.includes(icon.id));
+            const selectedIcon = availableIcons.length > 0
+                ? availableIcons[Math.floor(Math.random() * availableIcons.length)]
+                : getRandomIcon();
+
+            logoIcon = selectedIcon.id;  // Now uses our icon IDs
             logoContainer = 'squircle';
-            logoAssemblerLayout = 'icon_left';
+
+            // Randomly select layout for variety
+            const layouts: Array<'icon_left' | 'icon_right' | 'stacked' | 'badge' | 'monogram'> =
+                ['icon_left', 'stacked', 'badge', 'icon_right'];
+            logoAssemblerLayout = layouts[Math.floor(Math.random() * layouts.length)];
+
+            setUsedIcons(prev => [...prev, selectedIcon.id]);
         }
 
         // 1. SELECT THEME (or override)
@@ -172,7 +151,7 @@ export function useBrandGenerator() {
         }
 
         // Get Strategy Template or default to Modern
-        const strategy = STRATEGY_TEMPLATES[vibe] || STRATEGY_TEMPLATES['modern'];
+        // Strategy is now generated later using the engine
 
         // 3. SELECT LOGO LAYOUT (Generative Engine)
         // With procedural icons, 'generative' layout will now use LogoEngine if icon is present
@@ -185,19 +164,22 @@ export function useBrandGenerator() {
             selectedLayout = 'radial';
         }
 
+        // 4. GENERATE STRATEGY (Premium Engine)
+        const brandStrategy = generateBrandStrategy(name, vibe);
+
         const newBrand: BrandIdentity = {
             id: crypto.randomUUID(),
             vibe,
             name: name.trim() || 'Untitled Brand',
             theme: selectedTheme,
             shape: selectedShape,
-            archetype: options.archetype, // ADDED
+            archetype: options.archetype,
             logoLayout: selectedLayout as any,
             // Procedural Fields
             logoIcon,
             logoContainer,
             logoAssemblerLayout,
-
+            canvasStyle: options.gradient ? 'gradient' : 'solid', // Added canvasStyle
             generationSeed: Date.now() + Math.floor(Math.random() * 100000), // Unique per generation
             font: {
                 id: selectedFont.id,
@@ -208,10 +190,7 @@ export function useBrandGenerator() {
                 bodyName: selectedFont.bodyName,
                 tags: selectedFont.tags
             },
-            strategy: {
-                ...strategy,
-                mission: strategy.mission.replace('To ', `To help ${name.trim()} `).replace('To help Glyph Generated ', 'To ')
-            },
+            strategy: brandStrategy, // Use generated strategy
             createdAt: new Date(),
         };
 

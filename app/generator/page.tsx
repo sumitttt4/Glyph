@@ -138,6 +138,9 @@ export default function GeneratorPage() {
   };
 
   const handleGenerate = useCallback((options: GenerationOptions) => {
+    // Scroll to top to show the loading state and result
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     generateBrand(options.vibe, options.name, {
       color: options.color,
       shape: options.shape,

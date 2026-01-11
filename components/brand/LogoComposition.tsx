@@ -4,6 +4,7 @@ import React, { useId } from 'react';
 import { motion } from 'framer-motion';
 import { BrandIdentity } from '@/lib/data';
 import { SHAPES, Shape, getRandomShape } from '@/lib/shapes';
+import { getIconById } from '@/lib/icons';
 import { AutoLettermark } from './Lettermark';
 import LogoEngine from './LogoEngine';
 import LogoAssembler from './LogoAssembler';
@@ -42,7 +43,13 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
     const shapeIndex1 = Math.floor(seededRandom(seed + 's1') * SHAPES.length);
     const shapeIndex2 = Math.floor(seededRandom(seed + 's2') * SHAPES.length);
     const safeShapes = SHAPES.length > 0 ? SHAPES : [{ id: 'fallback', path: 'M0 0h100v100H0z', name: 'Fallback', viewBox: '0 0 100 100', tags: [], complexity: 'simple' }];
-    const primaryShape = brand.shape || safeShapes[shapeIndex1 % safeShapes.length];
+
+    // Resolve Shape: Check 1) logoIcon (Premium), 2) brand.shape (Explicit), 3) Random Fallback
+    let resolvedShape: any = null;
+    if (brand.logoIcon) {
+        resolvedShape = getIconById(brand.logoIcon);
+    }
+    const primaryShape = resolvedShape || brand.shape || safeShapes[shapeIndex1 % safeShapes.length];
     const secondaryShape = safeShapes[shapeIndex2 % safeShapes.length];
 
     const colors = brand.theme.tokens.light;
@@ -50,14 +57,24 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
     const initial = brand.name.charAt(0).toUpperCase();
 
     // VIEWBOX NORMALIZATION
-    const getShapeScale = (shape: { viewBox?: string }): number => {
-        if (!shape.viewBox) return 3;
-        const parts = shape.viewBox.split(' ');
+    // VIEWBOX NORMALIZATION
+    const getShapeInfo = (shape: { viewBox?: string }) => {
+        const parts = (shape.viewBox || '0 0 24 24').split(' ');
         const width = parseFloat(parts[2]) || 24;
-        return 80 / width;
+        const height = parseFloat(parts[3]) || 24;
+        // Target roughly 80px width, but ensure we don't blow up tiny icons
+        const scaleFactor = 80 / width;
+        return { width, height, scaleFactor };
     };
-    const primaryScale = getShapeScale(primaryShape) * (brand.logoTweaks?.scale || 1);
-    const secondaryScale = getShapeScale(secondaryShape);
+
+    const { width: pWidth, scaleFactor: pScaleFactor } = getShapeInfo(primaryShape);
+    const { width: sWidth, scaleFactor: sScaleFactor } = getShapeInfo(secondaryShape);
+
+    const primaryScale = pScaleFactor * (brand.logoTweaks?.scale || 1);
+    const secondaryScale = sScaleFactor;
+
+    // Center Offsets (Dynamic)
+    const centerOffset = 50 - (pWidth * primaryScale) / 2;
 
     // Tweak Values
     const rotate = brand.logoTweaks?.rotate || 0;
@@ -155,7 +172,7 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
                 </defs>
 
                 {/* Asymmetrical Background Shape */}
-                <g transform={`translate(${50 + offsetX - primaryScale * 12}, ${50 + offsetY - primaryScale * 12}) scale(${primaryScale * 0.8})`}>
+                <g transform={`translate(${centerOffset + offsetX}, ${centerOffset + offsetY}) scale(${primaryScale * 0.8})`}>
                     <path d={primaryShape.path} fill={colors.primary} />
                 </g>
 
@@ -179,7 +196,7 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
                 </g>
 
                 {/* Primary Shape (Main) */}
-                <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
+                <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale})`}>
                     <path d={primaryShape.path} fill={colors.primary} style={{ mixBlendMode: 'multiply' }} />
                 </g>
 
@@ -250,13 +267,18 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
         const accentColor = colors.accent || primaryColor;
 
         // 12 composition styles for maximum variety
-        // 12 composition styles for maximum variety
-        const styles = ['radial', 'grid', 'cluster', 'container', 'spiral', 'wave', 'split', 'diamond', 'corner', 'overlap', 'frame', 'monogram'] as const;
+        // 13 composition styles, now including 'single' for simplicity
+        const styles = ['single', 'radial', 'grid', 'cluster', 'container', 'spiral', 'wave', 'split', 'diamond', 'corner', 'overlap', 'frame', 'monogram'] as const;
 
         let compositionStyle: string = styles[Math.floor(layoutRoll * styles.length)];
 
         // SMART SELECTION LOGIC
-        if (brand.vibe.includes('tech')) {
+        if (brand.vibe.includes('minimal')) {
+            // High chance of single/simple
+            if (layoutRoll > 0.3) compositionStyle = 'single';
+            else compositionStyle = 'container';
+        }
+        else if (brand.vibe.includes('tech')) {
             // Tech-appropriate styles with variety
             const techStyles = ['tech_circuit', 'grid', 'frame', 'diamond', 'container'];
             compositionStyle = techStyles[Math.floor(layoutRoll * techStyles.length)];
@@ -286,13 +308,24 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
                     </g>
 
                     {/* Central Shape */}
-                    <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale}) rotate(${rotate}, 50, 50)`} style={{ transformOrigin: 'center' }}>
+                    <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale}) rotate(${rotate}, ${pWidth / 2}, ${pWidth / 2})`}>
                         <path d={primaryShape.path} fill={primaryColor} />
                     </g>
 
                     {/* Tech Accents */}
                     <g transform="translate(50, 50)" opacity="0.8">
                         <rect x="-40" y="-40" width="80" height="80" rx="20" fill="none" stroke={strokeColor} strokeWidth="1" strokeDasharray="10 5" opacity="0.3" />
+                    </g>
+                </svg>
+            );
+        }
+
+        // 0. SINGLE: The Purest Form (New priority)
+        if (compositionStyle === 'single') {
+            return (
+                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale})`}>
+                        <path d={primaryShape.path} fill={primaryColor} />
                     </g>
                 </svg>
             );
@@ -332,36 +365,39 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             const bgFill = primaryColor;
             const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff';
             const cellFill = isWhite ? 'black' : 'white';
+            const tweakScale = brand.logoTweaks?.scale || 1;
 
             return (
                 <motion.svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                    <motion.rect
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.5, ease: "backOut" }}
-                        x="10" y="10" width="80" height="80" rx="16" fill={bgFill}
-                    />
-                    {Array.from({ length: gridSize * gridSize }).map((_, i) => {
-                        const row = Math.floor(i / gridSize);
-                        const col = i % gridSize;
-                        const isActive = seededRandom(seed + `c${i}`) < 0.4;
-                        if (!isActive) return null;
+                    <motion.g transform={`translate(50, 50) scale(${tweakScale}) translate(-50, -50)`} style={{ transformOrigin: 'center' }}>
+                        <motion.rect
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 0.5, ease: "backOut" }}
+                            x="10" y="10" width="80" height="80" rx="16" fill={bgFill}
+                        />
+                        {Array.from({ length: gridSize * gridSize }).map((_, i) => {
+                            const row = Math.floor(i / gridSize);
+                            const col = i % gridSize;
+                            const isActive = seededRandom(seed + `c${i}`) < 0.4;
+                            if (!isActive) return null;
 
-                        return (
-                            <motion.rect
-                                key={i}
-                                initial={{ opacity: 0, scale: 0 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.2 + (i * 0.1) }}
-                                x={startX + col * cellSize + 2}
-                                y={startY + row * cellSize + 2}
-                                width={cellSize - 4}
-                                height={cellSize - 4}
-                                rx={2}
-                                fill={cellFill}
-                            />
-                        );
-                    })}
+                            return (
+                                <motion.rect
+                                    key={i}
+                                    initial={{ opacity: 0, scale: 0 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: 0.2 + (i * 0.1) }}
+                                    x={startX + col * cellSize + 2}
+                                    y={startY + row * cellSize + 2}
+                                    width={cellSize - 4}
+                                    height={cellSize - 4}
+                                    rx={2}
+                                    fill={cellFill}
+                                />
+                            );
+                        })}
+                    </motion.g>
                 </motion.svg>
             );
         }
@@ -385,18 +421,19 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             );
         }
 
-        // 4. CONTAINER: Shape inside squircle
+        // 4. CONTAINER: Shape inside squircle (True Negative Space)
         if (compositionStyle === 'container') {
-            // Fix for white-on-white: If primaryColor is white (guidelines view), make inner shape black or transparent cut-out
-            const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff' || primaryColor.toLowerCase() === 'white';
-            const innerFill = isWhite ? 'black' : 'white';
-
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                    <rect x="10" y="10" width="80" height="80" rx="18" fill={primaryColor} />
-                    <g transform={`translate(${50 - primaryScale * 10}, ${50 - primaryScale * 10}) scale(${primaryScale * 0.85}) rotate(${rotate}, 50, 50)`} style={{ transformOrigin: 'center' }}>
-                        <path d={primaryShape.path} fill={innerFill} />
-                    </g>
+                    <defs>
+                        <mask id={`mask-container-${uniqueId}`}>
+                            <rect width="100" height="100" fill="white" />
+                            <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale * 0.85}) rotate(${rotate}, ${pWidth / 2}, ${pWidth / 2})`}>
+                                <path d={primaryShape.path} fill="black" />
+                            </g>
+                        </mask>
+                    </defs>
+                    <rect x="10" y="10" width="80" height="80" rx="18" fill={primaryColor} mask={`url(#mask-container-${uniqueId})`} />
                 </svg>
             );
         }
@@ -442,51 +479,57 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             );
         }
 
-        // 7. SPLIT: Two complementary halves
+        // 7. SPLIT: Two complementary halves (True Negative Space)
         if (compositionStyle === 'split') {
-            const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff' || primaryColor.toLowerCase() === 'white';
-            const innerFill = isWhite ? 'black' : 'white';
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                    <rect x="10" y="10" width="80" height="80" rx="16" fill={primaryColor} />
-                    <g transform={`translate(25, 35) scale(${primaryScale * 0.55})`}>
-                        <path d={primaryShape.path} fill={innerFill} />
-                    </g>
-                    <g transform={`translate(55, 45) scale(${primaryScale * 0.55}) rotate(180)`}>
-                        <path d={primaryShape.path} fill={innerFill} opacity="0.5" />
-                    </g>
+                    <defs>
+                        <mask id={`mask-split-${uniqueId}`}>
+                            <rect width="100" height="100" fill="white" />
+                            <g transform={`translate(25, 25) scale(${primaryScale * 0.9})`}>
+                                <path d={primaryShape.path} fill="black" />
+                            </g>
+                        </mask>
+                    </defs>
+                    <rect x="10" y="10" width="80" height="80" rx="40" fill={primaryColor} mask={`url(#mask-split-${uniqueId})`} />
                 </svg>
             );
         }
 
-        // 8. DIAMOND: Rotated container
+        // 8. DIAMOND: Rotated container (True Negative Space)
         if (compositionStyle === 'diamond') {
-            const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff' || primaryColor.toLowerCase() === 'white';
-            const innerFill = isWhite ? 'black' : 'white';
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <mask id={`mask-diamond-${uniqueId}`}>
+                            <rect width="100" height="100" fill="white" />
+                            <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale * 0.7})`}>
+                                <path d={primaryShape.path} fill="black" />
+                            </g>
+                        </mask>
+                    </defs>
                     <g transform="translate(50, 50) rotate(45)">
-                        <rect x="-30" y="-30" width="60" height="60" rx="10" fill={primaryColor} />
-                    </g>
-                    <g transform={`translate(${50 - primaryScale * 8}, ${50 - primaryScale * 8}) scale(${primaryScale * 0.7})`}>
-                        <path d={primaryShape.path} fill={innerFill} />
+                        <rect x="-30" y="-30" width="60" height="60" rx="10" fill={primaryColor} mask={`url(#mask-diamond-${uniqueId})`} />
                     </g>
                 </svg>
             );
         }
 
-        // 9. CORNER: Shape in corner accent
+        // 9. CORNER: Shape in corner accent (True Negative Space)
         if (compositionStyle === 'corner') {
-            const isWhite = primaryColor.toLowerCase() === '#ffffff' || primaryColor.toLowerCase() === '#fff' || primaryColor.toLowerCase() === 'white';
-            const innerFill = isWhite ? 'black' : 'white';
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                    <rect x="10" y="10" width="80" height="80" rx="16" fill={primaryColor} />
-                    <g transform={`translate(22, 22) scale(${primaryScale * 0.9})`}>
-                        <path d={primaryShape.path} fill={innerFill} />
-                    </g>
+                    <defs>
+                        <mask id={`mask-corner-${uniqueId}`}>
+                            <rect width="100" height="100" fill="white" />
+                            <g transform={`translate(22, 22) scale(${primaryScale * 0.9})`}>
+                                <path d={primaryShape.path} fill="black" />
+                            </g>
+                        </mask>
+                    </defs>
+                    <rect x="10" y="10" width="80" height="80" rx="16" fill={primaryColor} mask={`url(#mask-corner-${uniqueId})`} />
                     <g transform={`translate(60, 60) scale(${primaryScale * 0.4})`}>
-                        <path d={primaryShape.path} fill={innerFill} opacity="0.3" />
+                        <path d={primaryShape.path} fill={primaryColor} opacity="0.3" />
                     </g>
                 </svg>
             );
@@ -514,9 +557,14 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
                     <rect x="12" y="12" width="76" height="76" rx="14" fill="none" stroke={primaryColor} strokeWidth="3" />
-                    <g transform={`translate(${50 - primaryScale * 10}, ${50 - primaryScale * 10}) scale(${primaryScale * 0.85}) rotate(${rotate}, 50, 50)`} style={{ transformOrigin: 'center' }}>
-                        <path d={primaryShape.path} fill={primaryColor} />
-                    </g>
+                    return (
+                    <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                        <rect x="12" y="12" width="76" height="76" rx="14" fill="none" stroke={primaryColor} strokeWidth="3" />
+                        <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale * 0.85}) rotate(${rotate}, ${pWidth / 2}, ${pWidth / 2})`}>
+                            <path d={primaryShape.path} fill={primaryColor} />
+                        </g>
+                    </svg>
+                    );
                 </svg>
             );
         }
@@ -541,8 +589,7 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
         return (
             <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
                 <g
-                    transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale}) rotate(${rotate}, 50, 50)`}
-                    style={{ transformOrigin: 'center' }}
+                    transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale}) rotate(${rotate}, ${pWidth / 2}, ${pWidth / 2})`}
                 >
                     <path d={primaryShape.path} fill={primaryColor} />
                 </g>
@@ -564,7 +611,7 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
         <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
             {/* --- SINGLE CLEAN SHAPE (Premium) --- */}
             {genLayout === 'single' && (
-                <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
+                <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale})`}>
                     <path
                         d={primaryShape.path}
                         fill={isOutlined ? 'none' : colors.primary}
@@ -586,7 +633,7 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
                         </mask>
                     </defs>
 
-                    <g transform={`translate(${50 - primaryScale * 12}, ${50 - primaryScale * 12}) scale(${primaryScale})`}>
+                    <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale})`}>
                         <path
                             d={primaryShape.path}
                             fill={colors.primary}
