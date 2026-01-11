@@ -206,14 +206,6 @@ export const ICONS: IconDefinition[] = [
         tags: ['tech', 'modern', 'geometric', 'structure', 'network'],
     },
     {
-        id: 'circle',
-        name: 'Circle',
-        category: 'abstract',
-        path: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z',
-        viewBox: '0 0 24 24',
-        tags: ['unity', 'complete', 'whole', 'infinite', 'simple'],
-    },
-    {
         id: 'triangle',
         name: 'Triangle',
         category: 'abstract',

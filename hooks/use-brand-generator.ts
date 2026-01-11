@@ -135,7 +135,16 @@ export function useBrandGenerator() {
 
         if (options.shape) {
             // Find shape by ID or ID-suffix (since IDs might be like 'geo-hexagon')
-            selectedShape = SHAPES.find(s => s.id === options.shape) || SHAPES[0];
+            let match = SHAPES.find(s => s.id === options.shape);
+
+            // If no ID match, try matching TAGS (e.g. 'futuristic', 'geometric')
+            if (!match) {
+                const tagMatches = SHAPES.filter(s => s.tags.includes(options.shape!.toLowerCase()));
+                if (tagMatches.length > 0) {
+                    match = tagMatches[Math.floor(Math.random() * tagMatches.length)];
+                }
+            }
+            selectedShape = match || SHAPES[0];
         } else {
             const availableShapes = filterContent(SHAPES);
             selectedShape = availableShapes[Math.floor(Math.random() * availableShapes.length)];

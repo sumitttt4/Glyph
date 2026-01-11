@@ -472,6 +472,50 @@ export const SHAPES: Shape[] = [
         path: 'M12 12l8-4c-2 4-4 6-8 4l-4 8c4-2 6-4 4-8l-8-4c4 2 6 4 8-4l4-8c-2 4-4 6-4 8z',
         tags: ['geometric', 'celtic', 'dynamic', 'creative'],
         complexity: 'detailed',
+    },
+
+    // ============================================================
+    // 13. USER REQUESTED VARIATIONS (NEW)
+    // ============================================================
+    {
+        id: 'org-petal-fan',
+        name: 'Petal Fan',
+        viewBox: '0 0 24 24',
+        path: 'M12 12C12 12 8 8 8 5C8 2 11 2 12 5C13 2 16 2 16 5C16 8 12 12 12 12ZM12 12C12 12 16 8 19 8C22 8 22 11 19 12C22 13 22 16 19 16C16 16 12 12 12 12ZM12 12C12 12 16 16 16 19C16 22 13 22 12 19C11 22 8 22 8 19C8 16 12 12 12 12ZM12 12C12 12 8 16 5 16C2 16 2 13 5 12C2 11 2 8 5 8C8 8 12 12 12 12Z',
+        // 4-petal flower radiating from center
+        tags: ['nature', 'organic', 'flower', 'growth', 'soft'],
+        complexity: 'moderate',
+    },
+    {
+        id: 'tech-molecule-ring',
+        name: 'Molecule Ring',
+        viewBox: '0 0 24 24',
+        path: 'M12 4a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm7 5a3 3 0 1 1-3 5.2 3 3 0 0 1 3-5.2zm-2.5 9.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm-11 0a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm-2.5-9.5a3 3 0 1 1 3-5.2 3 3 0 0 1-3 5.2z',
+        // 5 dots in a pentagonal ring
+        tags: ['tech', 'science', 'data', 'molecule', 'modern'],
+        complexity: 'moderate',
+    },
+
+    // ============================================================
+    // 14. CONSTRUCTED LETTERMARKS (FIGMA STYLE)
+    // ============================================================
+    {
+        id: 'letter-f-construct',
+        name: 'Constructed F',
+        viewBox: '0 0 100 100',
+        // Stacked geometry forming an abstract F (Figma-ish)
+        path: 'M10 10h35a15 15 0 0 1 0 30H10a10 10 0 0 1-10-10V20a10 10 0 0 1 10-10zm0 40h20a15 15 0 0 1 0 30H10a10 10 0 0 1-10-10V60a10 10 0 0 1 10-10z M10 80h10a10 10 0 0 1 0 20H15a15 15 0 0 1-15-15v-5h10z',
+        tags: ['letter', 'f', 'creative', 'design', 'modern'],
+        complexity: 'simple',
+    },
+    {
+        id: 'letter-poly-abstract',
+        name: 'Poly Letter',
+        viewBox: '0 0 24 24',
+        // Abstract folding shape that could interpret as P, F, or D
+        path: 'M4 4h10c3 0 6 3 6 6s-3 6-6 6H6v4H2V6c0-1.1.9-2 2-2zm2 8h8c1 0 2-1 2-2s-1-2-2-2H6v4z',
+        tags: ['letter', 'abstract', 'modern', 'bold'],
+        complexity: 'simple',
     }
 ];
 
