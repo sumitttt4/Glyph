@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { UnifiedExportMenu } from '@/components/generator/UnifiedExportMenu';
+import { SocialMediaKit } from '@/components/brand/SocialMediaKit';
+import { ArrowUp, ArrowUpRight as ArrowUpEnd } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { BrandIdentity } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -15,11 +19,15 @@ import { ColorPaletteHorizontal } from './ColorPaletteStrip';
 import { AppIconVariants } from './AppIconVariants';
 import { MockupCreditCard, MockupIDBadge } from '../mockups/MockupMerch';
 import { MockupIPhoneHome } from '../mockups/MockupIPhoneHome';
+
+
 import { Mockup3DCard } from '../mockups/Mockup3DCard';
 import { MockupDevice, MockupBrowser } from '../mockups/MockupDevice';
 import { BrowserBrandPreview } from '../mockups/BrowserBrandPreview';
 import { MonogramMark } from '../brand/MonogramMark';
 import { FontSelector } from './FontSelector';
+
+
 
 interface WorkbenchBentoGridProps {
     brand: BrandIdentity;
@@ -394,7 +402,7 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                                     <p className="text-base leading-relaxed text-stone-600 mb-3">
                                         The quick brown fox jumps over the lazy dog. A good typography system establishes hierarchy and improves readability across all devices.
                                     </p>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-4">
                                         <span className="text-[10px] font-mono text-stone-300">Body • 16px</span>
                                     </div>
                                 </div>
@@ -413,6 +421,29 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                     </div>
                 </div>
 
+            </div>
+
+            <div id="section-guidelines" className="mt-6 md:col-span-12 h-auto min-h-[200px] rounded-[2.5rem] shadow-xl overflow-hidden relative group hover:bg-stone-50 transition-colors bg-white border border-stone-200 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 animate-fade-in-up">
+                <div>
+                    <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-[10px] font-bold text-orange-500 uppercase tracking-[0.2em]">Premium Asset</h3>
+                        <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-[10px] font-bold rounded-full">NEW</span>
+                    </div>
+                    <h2 className="text-3xl font-bold text-stone-900 mb-2">Brand Guidelines</h2>
+                    <p className="text-stone-500 max-w-lg">
+                        Get your complete brand manual. Includes clear space rules, color codes (HEX/CMYK), and typography hierarchy in a print-ready PDF.
+                    </p>
+                </div>
+                <div onClick={() => setViewMode?.('presentation')}>
+                    <Button className="bg-stone-900 text-white rounded-xl h-14 px-8 text-lg hover:scale-105 transition-all shadow-xl gap-3">
+                        View Manual <ArrowUpEnd className="rotate-45" size={20} />
+                    </Button>
+                </div>
+            </div>
+
+            {/* 8. Social Media Kit Preview */}
+            <div id="section-social" className="mt-12">
+                <SocialMediaKit brand={brand} />
             </div>
 
             {/* FONT SELECTOR DIALOG */}

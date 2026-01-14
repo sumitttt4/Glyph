@@ -247,8 +247,9 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
       alert('Favicon SVG downloaded! HTML snippet copied to clipboard.');
     } else if (type === 'social') {
       // Download complete social media kit as ZIP
-      const { downloadSocialMediaKitZip } = await import('@/lib/social-media-kit');
-      await downloadSocialMediaKitZip(brand);
+      // const { downloadSocialMediaKitZip } = await import('@/lib/social-media-kit');
+      // await downloadSocialMediaKitZip(brand);
+      alert('Please use the Social Media Kit section in the workbench to download assets.');
       alert('Social Media Kit downloaded!');
     } else if (type === 'brandbook') {
       try {

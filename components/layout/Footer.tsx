@@ -63,6 +63,17 @@ export function Footer() {
                                     </a>
                                 </li>
                             ))}
+                            <li>
+                                <Link
+                                    href="/design-system"
+                                    className="text-sm font-medium text-orange-400 hover:text-orange-300 transition-colors flex items-center gap-2"
+                                >
+                                    Design System
+                                    <span className="bg-orange-500/20 text-orange-400 text-[10px] px-1.5 py-0.5 rounded-full border border-orange-500/30">
+                                        Internal
+                                    </span>
+                                </Link>
+                            </li>
                         </ul>
                     </div>
 

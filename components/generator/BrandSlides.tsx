@@ -574,10 +574,9 @@ export const SlidePitchDeck = ({ brand, id }: { brand: BrandIdentity, id?: strin
 };
 
 // ==================== 10. BRAND GUIDELINES ====================
-export const SlideGuidelines = ({ brand, id }: { brand: BrandIdentity, id?: string }) => {
-    // Dynamic import to avoid circular dependencies
-    const { BrandGuidelines } = require('@/components/brand/BrandGuidelines');
+import { BrandGuidelines } from '@/components/brand/BrandGuidelines';
 
+export const SlideGuidelines = ({ brand, id }: { brand: BrandIdentity, id?: string }) => {
     return (
         <div id={id} className="w-full min-h-screen bg-stone-100 py-12">
             <BrandGuidelines brand={brand} />

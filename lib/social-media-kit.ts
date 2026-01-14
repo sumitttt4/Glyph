@@ -1,171 +1,202 @@
 /**
  * Social Media Kit Generator
- * 
- * Generates profile pictures and banners for various platforms
- * Uses actual brand shape, not just letters
+ *
+ * Generates branded social media assets in standard platform sizes.
  */
 
-import { BrandIdentity } from './data';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+import { BrandIdentity } from '@/lib/data';
+import { generateComposedLogoSVG } from '@/lib/svg-exporter';
 
-interface SocialAsset {
-    platform: string;
-    type: 'profile' | 'banner' | 'post';
-    width: number;
-    height: number;
-    svg: string;
-    filename: string;
+// Standard social media dimensions
+export const SOCIAL_MEDIA_SIZES = {
+  instagram_post: { width: 1080, height: 1080, label: 'Instagram Post' },
+  instagram_story: { width: 1080, height: 1920, label: 'Instagram Story' },
+  facebook_post: { width: 1200, height: 630, label: 'Facebook Post' },
+  twitter_post: { width: 1200, height: 675, label: 'Twitter/X Post' },
+  linkedin_post: { width: 1200, height: 627, label: 'LinkedIn Post' },
+  youtube_thumbnail: { width: 1280, height: 720, label: 'YouTube Thumbnail' },
+  tiktok: { width: 1080, height: 1920, label: 'TikTok' },
+} as const;
+
+export type SocialMediaPlatform = keyof typeof SOCIAL_MEDIA_SIZES;
+
+export interface SocialMediaAsset {
+  platform: SocialMediaPlatform;
+  svg: string;
+  width: number;
+  height: number;
+  label: string;
 }
 
 /**
- * Get shape scale factor for a target canvas size
+ * Generate an SVG template for a social media platform
  */
-function getShapeScale(viewBox: string, targetSize: number): number {
-    const parts = viewBox.split(' ');
-    const width = parseFloat(parts[2]) || 24;
-    return (targetSize * 0.55) / width; // 55% of target to leave padding
-}
+function generateSocialMediaSVG(
+  brand: BrandIdentity,
+  width: number,
+  height: number,
+  variant: 'light' | 'dark' = 'light'
+): string {
+  const logoSvg = generateComposedLogoSVG(brand, 'color');
+  // Extract the inner content of the logo SVG (without the XML declaration and outer svg tag)
+  const logoContent = logoSvg
+    .replace(/<\?xml[^?]*\?>/g, '')
+    .replace(/<svg[^>]*>/g, '')
+    .replace(/<\/svg>/g, '')
+    .trim();
 
-/**
- * Generate profile picture SVG using brand shape
- */
-function generateProfilePic(brand: BrandIdentity, size: number): string {
-    const colors = brand.theme.tokens.light;
-    const shape = brand.shape;
-    const viewBox = shape.viewBox || '0 0 24 24';
-    const parts = viewBox.split(' ').map(Number);
-    const shapeWidth = parts[2] || 24;
-    const shapeHeight = parts[3] || 24;
-    const scale = getShapeScale(viewBox, size);
-    const offsetX = (size - shapeWidth * scale) / 2;
-    const offsetY = (size - shapeHeight * scale) / 2;
+  const bgColor = variant === 'light'
+    ? brand.theme.tokens.light.bg
+    : brand.theme.tokens.dark?.bg || brand.theme.tokens.light.text;
 
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
-    <rect width="${size}" height="${size}" rx="${size * 0.15}" fill="${colors.primary}"/>
-    <g transform="translate(${offsetX}, ${offsetY}) scale(${scale})">
-        <path d="${shape.path}" fill="white"/>
-    </g>
+  const textColor = variant === 'light'
+    ? brand.theme.tokens.light.text
+    : brand.theme.tokens.dark?.text || brand.theme.tokens.light.bg;
+
+  const primaryColor = brand.theme.tokens.light.primary;
+
+  // Calculate logo size (responsive to canvas)
+  const logoSize = Math.min(width, height) * 0.3;
+  const logoX = (width - logoSize) / 2;
+  const logoY = (height - logoSize) / 2 - (height * 0.05);
+
+  // Text positioning
+  const nameY = logoY + logoSize + 40;
+  const taglineY = nameY + 30;
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
+  <!-- Background -->
+  <rect width="${width}" height="${height}" fill="${bgColor}"/>
+
+  <!-- Logo -->
+  <g transform="translate(${logoX}, ${logoY}) scale(${logoSize / 100})">
+    ${logoContent}
+  </g>
+
+  <!-- Brand Name -->
+  <text
+    x="${width / 2}"
+    y="${nameY}"
+    font-family="${brand.font.heading}, system-ui, sans-serif"
+    font-size="${Math.min(width, height) * 0.06}"
+    font-weight="700"
+    fill="${textColor}"
+    text-anchor="middle"
+  >
+    ${brand.name}
+  </text>
+
+  ${brand.strategy?.tagline ? `
+  <!-- Tagline -->
+  <text
+    x="${width / 2}"
+    y="${taglineY}"
+    font-family="${brand.font.body}, system-ui, sans-serif"
+    font-size="${Math.min(width, height) * 0.03}"
+    fill="${primaryColor}"
+    text-anchor="middle"
+  >
+    ${brand.strategy.tagline}
+  </text>
+  ` : ''}
 </svg>`;
 }
 
 /**
- * Generate banner SVG with brand shape pattern
+ * Generate a complete social media kit for all platforms
  */
-function generateBanner(brand: BrandIdentity, width: number, height: number): string {
-    const colors = brand.theme.tokens.light;
-    const shape = brand.shape;
-    const viewBox = shape.viewBox || '0 0 24 24';
-    const scale = height * 0.4 / 24; // Shape at 40% of banner height
+export function generateSocialMediaKit(brand: BrandIdentity): SocialMediaAsset[] {
+  const assets: SocialMediaAsset[] = [];
 
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
-    <defs>
-        <linearGradient id="banner-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="${colors.primary}"/>
-            <stop offset="100%" stop-color="${colors.accent || colors.primary}"/>
-        </linearGradient>
-    </defs>
-    <rect width="${width}" height="${height}" fill="url(#banner-grad)"/>
-    <!-- Subtle brand pattern -->
-    <g opacity="0.1" transform="translate(${width * 0.75}, ${height * 0.2}) scale(${scale})">
-        <path d="${shape.path}" fill="white"/>
-    </g>
-    <g opacity="0.08" transform="translate(${width * 0.85}, ${height * 0.5}) scale(${scale * 0.7})">
-        <path d="${shape.path}" fill="white"/>
-    </g>
-</svg>`;
+  for (const [platform, size] of Object.entries(SOCIAL_MEDIA_SIZES)) {
+    assets.push({
+      platform: platform as SocialMediaPlatform,
+      svg: generateSocialMediaSVG(brand, size.width, size.height, 'light'),
+      width: size.width,
+      height: size.height,
+      label: size.label,
+    });
+  }
+
+  return assets;
 }
 
 /**
- * Generate complete social media kit
+ * Download a single social media asset as SVG
  */
-export function generateSocialMediaKit(brand: BrandIdentity): SocialAsset[] {
-    const slug = brand.name.toLowerCase().replace(/\s+/g, '-');
+export function downloadSocialAsset(
+  brand: BrandIdentity,
+  platform: SocialMediaPlatform,
+  variant: 'light' | 'dark' = 'light'
+): void {
+  const size = SOCIAL_MEDIA_SIZES[platform];
+  const svg = generateSocialMediaSVG(brand, size.width, size.height, variant);
 
-    return [
-        // Twitter/X
-        { platform: 'Twitter', type: 'profile', width: 400, height: 400, svg: generateProfilePic(brand, 400), filename: `${slug}-twitter-profile.svg` },
-        { platform: 'Twitter', type: 'banner', width: 1500, height: 500, svg: generateBanner(brand, 1500, 500), filename: `${slug}-twitter-banner.svg` },
-
-        // LinkedIn
-        { platform: 'LinkedIn', type: 'profile', width: 400, height: 400, svg: generateProfilePic(brand, 400), filename: `${slug}-linkedin-profile.svg` },
-        { platform: 'LinkedIn', type: 'banner', width: 1584, height: 396, svg: generateBanner(brand, 1584, 396), filename: `${slug}-linkedin-banner.svg` },
-
-        // Instagram
-        { platform: 'Instagram', type: 'profile', width: 320, height: 320, svg: generateProfilePic(brand, 320), filename: `${slug}-instagram-profile.svg` },
-
-        // General square (for various uses)
-        { platform: 'General', type: 'profile', width: 512, height: 512, svg: generateProfilePic(brand, 512), filename: `${slug}-square-512.svg` },
-    ];
-}
-
-/**
- * Download a single social asset as SVG
- */
-export function downloadSocialAsset(asset: SocialAsset, brandName: string): void {
-    const blob = new Blob([asset.svg], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = asset.filename;
-    link.click();
-    URL.revokeObjectURL(url);
+  const blob = new Blob([svg], { type: 'image/svg+xml' });
+  const fileName = `${brand.name.toLowerCase().replace(/\s+/g, '-')}-${platform}-${variant}.svg`;
+  saveAs(blob, fileName);
 }
 
 /**
  * Download complete social media kit as ZIP
  */
 export async function downloadSocialMediaKitZip(brand: BrandIdentity): Promise<void> {
-    const { default: JSZip } = await import('jszip');
-    const { saveAs } = await import('file-saver');
+  const zip = new JSZip();
+  const folderName = brand.name.toLowerCase().replace(/\s+/g, '-');
+  const root = zip.folder(`${folderName}-social-media-kit`);
 
-    const assets = generateSocialMediaKit(brand);
-    const zip = new JSZip();
-    const folderName = brand.name.toLowerCase().replace(/\s+/g, '-') + '-social-kit';
-    const root = zip.folder(folderName);
+  if (!root) {
+    console.error('Failed to create zip folder');
+    return;
+  }
 
-    if (!root) return;
+  // Generate assets for each platform in both light and dark variants
+  for (const [platform, size] of Object.entries(SOCIAL_MEDIA_SIZES)) {
+    const platformFolder = root.folder(platform);
+    if (platformFolder) {
+      // Light variant
+      const lightSvg = generateSocialMediaSVG(brand, size.width, size.height, 'light');
+      platformFolder.file(`${platform}-light.svg`, lightSvg);
 
-    // Organize by platform
-    const twitterFolder = root.folder('twitter');
-    const linkedinFolder = root.folder('linkedin');
-    const instagramFolder = root.folder('instagram');
+      // Dark variant
+      const darkSvg = generateSocialMediaSVG(brand, size.width, size.height, 'dark');
+      platformFolder.file(`${platform}-dark.svg`, darkSvg);
+    }
+  }
 
-    assets.forEach(asset => {
-        const content = asset.svg;
-        const filename = `${asset.type}-${asset.width}x${asset.height}.svg`;
-
-        if (asset.platform === 'Twitter' && twitterFolder) {
-            twitterFolder.file(filename, content);
-        } else if (asset.platform === 'LinkedIn' && linkedinFolder) {
-            linkedinFolder.file(filename, content);
-        } else if (asset.platform === 'Instagram' && instagramFolder) {
-            instagramFolder.file(filename, content);
-        } else {
-            root.file(asset.filename, content);
-        }
-    });
-
-    // Add README
-    const readme = `# ${brand.name} Social Media Kit
+  // Add README
+  const readme = `# ${brand.name} Social Media Kit
+Generated by Glyph (https://glyph.software)
 
 ## Contents
+This kit contains branded templates for major social media platforms.
 
-### Twitter/X
-- profile-400x400.svg - Profile picture
-- banner-1500x500.svg - Header/cover image
+## Platforms Included
+${Object.entries(SOCIAL_MEDIA_SIZES)
+  .map(([platform, size]) => `- ${size.label}: ${size.width}x${size.height}px`)
+  .join('\n')}
 
-### LinkedIn
-- profile-400x400.svg - Profile picture
-- banner-1584x396.svg - Background image
-
-### Instagram
-- profile-320x320.svg - Profile picture
+## Variants
+Each platform includes:
+- Light variant (light background)
+- Dark variant (dark background)
 
 ## Usage
-Upload the appropriate sized SVG files to each platform.
-SVGs can be converted to PNG using any image editor if needed.
-`;
-    root.file('README.txt', readme);
+These SVG templates can be:
+1. Used directly as social media posts
+2. Imported into design tools (Figma, Canva, etc.)
+3. Converted to PNG/JPG using any image editor
 
-    const content = await zip.generateAsync({ type: 'blob' });
-    saveAs(content, `${folderName}.zip`);
+## Fonts
+Primary Font: ${brand.font.heading}
+Body Font: ${brand.font.body}
+`;
+  root.file('README.txt', readme.trim());
+
+  // Generate and download ZIP
+  const content = await zip.generateAsync({ type: 'blob' });
+  saveAs(content, `${folderName}-social-media-kit.zip`);
 }

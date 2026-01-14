@@ -12,6 +12,47 @@ export interface Shape {
     viewBox: string;        // SVG viewBox
     tags: string[];         // For matching with vibes
     complexity: 'simple' | 'moderate' | 'detailed';
+    tier?: 'free' | 'premium';  // Subscription tier access (optional, determined by getShapeTier)
+}
+
+// Free shape IDs - these are available to all users
+const FREE_SHAPE_IDS = [
+    'ref-dynamic-wing', 'ref-sharp-s',
+    'tech-bolt', 'tech-grid-2x2', 'tech-brackets',
+    'org-leaf-single', 'org-drop',
+    'abs-swoosh', 'abs-infinity',
+    'mark-star-4', 'mark-crown',
+    'cont-shield-simple', 'cont-badge-hex',
+    'min-chevron', 'bold-arrow-up', 'bold-diamond',
+    'geo-octagon', 'geo-pentagon', 'geo-cross'
+];
+
+/**
+ * Determine if a shape is free or premium
+ */
+export function getShapeTier(shapeId: string): 'free' | 'premium' {
+    return FREE_SHAPE_IDS.includes(shapeId) ? 'free' : 'premium';
+}
+
+/**
+ * Get all free shapes
+ */
+export function getFreeShapes(): Shape[] {
+    return SHAPES.filter(shape => getShapeTier(shape.id) === 'free');
+}
+
+/**
+ * Get all premium shapes
+ */
+export function getPremiumShapes(): Shape[] {
+    return SHAPES.filter(shape => getShapeTier(shape.id) === 'premium');
+}
+
+/**
+ * Get shapes available to user based on subscription
+ */
+export function getAvailableShapes(isPro: boolean): Shape[] {
+    return isPro ? SHAPES : getFreeShapes();
 }
 
 export const SHAPES: Shape[] = [

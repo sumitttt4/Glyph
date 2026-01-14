@@ -5,16 +5,57 @@ import { motion } from 'framer-motion';
 import { BrandIdentity } from '@/lib/data';
 import { SHAPES, Shape, getRandomShape } from '@/lib/shapes';
 import { getIconById } from '@/lib/icons';
+import { FREE_STYLES, LOGO_STYLES, isStyleFree } from '@/lib/logo-styles';
 import { AutoLettermark } from './Lettermark';
 import LogoEngine from './LogoEngine';
 import LogoAssembler from './LogoAssembler';
 import RadialLogo from './RadialLogo';
 
+// Import premium compositions
+import {
+    GradientLinearComposition,
+    GradientRadialComposition,
+    GradientMeshComposition,
+    DuotoneComposition,
+    IsometricComposition,
+    ShadowDepthComposition,
+    Layered3DComposition,
+    PerspectiveComposition,
+    GlassmorphismComposition,
+    NeonGlowComposition,
+    SoftShadowComposition,
+    BlurGradientComposition,
+    TessellationComposition,
+    HoneycombComposition,
+    KaleidoscopeComposition,
+    GoldenSpiralComposition,
+    OrbitComposition,
+    ExplosionComposition,
+    WaveStackComposition,
+    CornerAccentComposition,
+    SealComposition,
+    LetterFillComposition,
+    BadgeTextComposition,
+} from './compositions';
+
+// All available layout styles
+export type LogoLayoutStyle =
+    | 'default' | 'swiss' | 'bauhaus' | 'minimal_grid' | 'organic_fluid' | 'generative' | 'cut' | 'radial'
+    | 'container' | 'frame' | 'monogram' | 'diamond' | 'grid'
+    | 'gradient_linear' | 'gradient_radial' | 'gradient_mesh' | 'duotone'
+    | 'isometric' | 'shadow_depth' | 'layered_3d' | 'perspective'
+    | 'glassmorphism' | 'neon_glow' | 'soft_shadow' | 'blur_gradient'
+    | 'tessellation' | 'honeycomb' | 'kaleidoscope' | 'spiral_golden'
+    | 'letter_fill' | 'badge_text'
+    | 'orbit' | 'explosion' | 'wave_stack' | 'corner_accent' | 'seal'
+    | 'tech_circuit' | 'cluster' | 'overlap' | 'spiral' | 'wave' | 'split' | 'corner';
+
 interface LogoCompositionProps {
     brand: BrandIdentity;
     className?: string;
-    layout?: 'default' | 'swiss' | 'bauhaus' | 'minimal_grid' | 'organic_fluid' | 'generative' | 'cut' | 'radial';
+    layout?: LogoLayoutStyle;
     overrideColors?: { primary: string; accent?: string; bg?: string };
+    isPro?: boolean; // Enable premium styles
 }
 
 /**
@@ -34,7 +75,7 @@ function seededRandom(seed: string) {
 /**
  * Logo Composition Engine v3 (Parametric)
  */
-export const LogoComposition = ({ brand, className, layout = 'generative', overrideColors }: LogoCompositionProps) => {
+export const LogoComposition = ({ brand, className, layout = 'generative', overrideColors, isPro = false }: LogoCompositionProps) => {
     const uniqueId = useId();
     const seed = brand.id + (brand.name || 'brand') + (brand.generationSeed || brand.id || 'stable');
     const rng = () => seededRandom(seed);
@@ -139,21 +180,112 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
     if (layout === 'radial') {
         return (
             <div className={className}>
-                {/* Radial Logo Component - We wrap in div to match SVG prop expectations mostly, 
-                     but RadialLogo outputs a div tree. 
-                     Usage in SVG contexts might require foreignObject if className is SVG. 
-                     However, LogoComposition is usually used in Div contexts. 
-                     If used in SVG, we need to be careful. 
-                     Looking at usage: It returns SVGs for other layouts.
-                     RadialLogo returns a DIV.
-                     We should wrap it in foreignObject if we are inside an SVG, OR RadialLogo should simply return SVG elements.
-                     The user provided div-based code.
-                     Let's check usage sites.
-                  */}
                 <RadialLogo name={brand.name} color={primaryColor} className="w-full h-full" />
             </div>
         );
     }
+
+    // Common props for premium compositions
+    const accentColor = colors.accent || primaryColor;
+    const compositionProps = {
+        brand,
+        primaryColor,
+        accentColor,
+        centerOffset,
+        primaryScale,
+        primaryShape,
+        uniqueId,
+        className,
+    };
+
+    // =========================================================================
+    // PREMIUM COMPOSITIONS (Pro users only)
+    // =========================================================================
+
+    // Gradient Effects
+    if (layout === 'gradient_linear') {
+        return <GradientLinearComposition {...compositionProps} />;
+    }
+    if (layout === 'gradient_radial') {
+        return <GradientRadialComposition {...compositionProps} />;
+    }
+    if (layout === 'gradient_mesh') {
+        return <GradientMeshComposition {...compositionProps} />;
+    }
+    if (layout === 'duotone') {
+        return <DuotoneComposition {...compositionProps} />;
+    }
+
+    // 3D & Depth Effects
+    if (layout === 'isometric') {
+        return <IsometricComposition {...compositionProps} />;
+    }
+    if (layout === 'shadow_depth') {
+        return <ShadowDepthComposition {...compositionProps} />;
+    }
+    if (layout === 'layered_3d') {
+        return <Layered3DComposition {...compositionProps} />;
+    }
+    if (layout === 'perspective') {
+        return <PerspectiveComposition {...compositionProps} />;
+    }
+
+    // Glass & Modern Effects
+    if (layout === 'glassmorphism') {
+        return <GlassmorphismComposition {...compositionProps} />;
+    }
+    if (layout === 'neon_glow') {
+        return <NeonGlowComposition {...compositionProps} />;
+    }
+    if (layout === 'soft_shadow') {
+        return <SoftShadowComposition {...compositionProps} />;
+    }
+    if (layout === 'blur_gradient') {
+        return <BlurGradientComposition {...compositionProps} />;
+    }
+
+    // Geometric Patterns
+    if (layout === 'tessellation') {
+        return <TessellationComposition {...compositionProps} />;
+    }
+    if (layout === 'honeycomb') {
+        return <HoneycombComposition {...compositionProps} />;
+    }
+    if (layout === 'kaleidoscope') {
+        return <KaleidoscopeComposition {...compositionProps} />;
+    }
+    if (layout === 'spiral_golden') {
+        return <GoldenSpiralComposition {...compositionProps} />;
+    }
+
+    // Typography Mashup
+    if (layout === 'letter_fill') {
+        return <LetterFillComposition {...compositionProps} />;
+    }
+    if (layout === 'badge_text') {
+        return <BadgeTextComposition {...compositionProps} />;
+    }
+
+    // Advanced Compositions
+    if (layout === 'orbit') {
+        return <OrbitComposition {...compositionProps} />;
+    }
+    if (layout === 'explosion') {
+        return <ExplosionComposition {...compositionProps} />;
+    }
+    if (layout === 'wave_stack') {
+        return <WaveStackComposition {...compositionProps} />;
+    }
+    if (layout === 'corner_accent') {
+        return <CornerAccentComposition {...compositionProps} />;
+    }
+    if (layout === 'seal') {
+        return <SealComposition {...compositionProps} />;
+    }
+
+    // =========================================================================
+    // LEGACY LAYOUTS
+    // =========================================================================
 
     // 1. SWISS: Large asymmetrical shape, small tight typography
     if (layout === 'swiss') {
@@ -266,25 +398,24 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
         const primaryColor = overrideColors?.primary || colors.primary;
         const accentColor = colors.accent || primaryColor;
 
-        // 12 composition styles for maximum variety
-        // 13 composition styles, now including 'single' for simplicity
-        const styles = ['single', 'radial', 'grid', 'cluster', 'container', 'spiral', 'wave', 'split', 'diamond', 'corner', 'overlap', 'frame', 'monogram'] as const;
+        // 12 composition styles for maximum variety (removed 'single' - too generic)
+        const styles = ['container', 'grid', 'diamond', 'frame', 'monogram', 'tech_circuit', 'corner', 'split', 'radial', 'cluster', 'overlap', 'spiral', 'wave'] as const;
 
         let compositionStyle: string = styles[Math.floor(layoutRoll * styles.length)];
 
-        // SMART SELECTION LOGIC
+        // SMART SELECTION LOGIC - All styles are designed/premium (no plain shapes)
         if (brand.vibe.includes('minimal')) {
-            // High chance of single/simple
-            if (layoutRoll > 0.3) compositionStyle = 'single';
-            else compositionStyle = 'container';
+            // Clean but designed styles for minimal vibes
+            const minimalStyles = ['container', 'frame', 'diamond', 'split', 'monogram'];
+            compositionStyle = minimalStyles[Math.floor(layoutRoll * minimalStyles.length)];
         }
         else if (brand.vibe.includes('tech')) {
             // Tech-appropriate styles with variety
             const techStyles = ['tech_circuit', 'grid', 'frame', 'diamond', 'container'];
             compositionStyle = techStyles[Math.floor(layoutRoll * techStyles.length)];
         } else if (brand.archetype === 'symbol') {
-            // For symbols, prioritize layouts that show the shape clearly, unless we want the grid
-            const symbolStyles = ['single', 'container', 'frame', 'diamond', 'tech_circuit'];
+            // For symbols, use layouts that showcase the shape in a designed context
+            const symbolStyles = ['container', 'frame', 'diamond', 'tech_circuit', 'corner'];
             compositionStyle = symbolStyles[Math.floor(layoutRoll * symbolStyles.length)];
         }
 
@@ -315,17 +446,6 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
                     {/* Tech Accents */}
                     <g transform="translate(50, 50)" opacity="0.8">
                         <rect x="-40" y="-40" width="80" height="80" rx="20" fill="none" stroke={strokeColor} strokeWidth="1" strokeDasharray="10 5" opacity="0.3" />
-                    </g>
-                </svg>
-            );
-        }
-
-        // 0. SINGLE: The Purest Form (New priority)
-        if (compositionStyle === 'single') {
-            return (
-                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                    <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale})`}>
-                        <path d={primaryShape.path} fill={primaryColor} />
                     </g>
                 </svg>
             );
@@ -585,63 +705,34 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             );
         }
 
-        // Default fallback
+        // Default fallback - use container style (shape cut out of squircle)
         return (
             <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                <g
-                    transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale}) rotate(${rotate}, ${pWidth / 2}, ${pWidth / 2})`}
-                >
-                    <path d={primaryShape.path} fill={primaryColor} />
-                </g>
+                <defs>
+                    <mask id={`mask-fallback-${uniqueId}`}>
+                        <rect width="100" height="100" fill="white" />
+                        <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale * 0.85}) rotate(${rotate}, ${pWidth / 2}, ${pWidth / 2})`}>
+                            <path d={primaryShape.path} fill="black" />
+                        </g>
+                    </mask>
+                </defs>
+                <rect x="10" y="10" width="80" height="80" rx="18" fill={primaryColor} mask={`url(#mask-fallback-${uniqueId})`} />
             </svg>
         );
     }
 
-    // Legacy fallback - also uses premium single-shape layouts only
-    const layoutModeRoll = seededRandom(seed + 'layout');
-    let genLayout = 'single';
-    if (layoutModeRoll > 0.5) genLayout = 'single';
-    else genLayout = 'cut';
-
-    // DECISION: Texture/Fill
-    const textureRoll = seededRandom(seed + 'tex');
-    const isOutlined = textureRoll > 0.75;
-
+    // Legacy fallback - use container layout (negative space)
     return (
         <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-            {/* --- SINGLE CLEAN SHAPE (Premium) --- */}
-            {genLayout === 'single' && (
-                <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale})`}>
-                    <path
-                        d={primaryShape.path}
-                        fill={isOutlined ? 'none' : colors.primary}
-                        stroke={isOutlined ? colors.primary : 'none'}
-                        strokeWidth={isOutlined ? 1.5 : 0}
-                    />
-                </g>
-            )}
-
-            {/* --- CUT / NEGATIVE SPACE LAYOUT (Premium) --- */}
-            {genLayout === 'cut' && (
-                <>
-                    <defs>
-                        <mask id={`mask-cut-${uniqueId}`}>
-                            <rect width="100" height="100" fill="white" />
-                            <g transform={`translate(${50 - secondaryScale * 12}, ${50 - secondaryScale * 12}) scale(${secondaryScale})`}>
-                                <path d={secondaryShape.path} fill="black" />
-                            </g>
-                        </mask>
-                    </defs>
-
-                    <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale})`}>
-                        <path
-                            d={primaryShape.path}
-                            fill={colors.primary}
-                            mask={`url(#mask-cut-${uniqueId})`}
-                        />
+            <defs>
+                <mask id={`mask-legacy-${uniqueId}`}>
+                    <rect width="100" height="100" fill="white" />
+                    <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale * 0.85})`}>
+                        <path d={primaryShape.path} fill="black" />
                     </g>
-                </>
-            )}
+                </mask>
+            </defs>
+            <rect x="10" y="10" width="80" height="80" rx="18" fill={colors.primary} mask={`url(#mask-legacy-${uniqueId})`} />
         </svg>
     );
 };
