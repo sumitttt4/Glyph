@@ -82,65 +82,65 @@ colors: {
                 </div>
             </header>
 
-            {/* Bento Grid - 3x3 Layout */}
-            <main className="max-w-7xl mx-auto px-6 py-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-1 border border-stone-200 rounded-2xl overflow-hidden bg-stone-200">
+            {/* Bento Grid - Responsive Layout */}
+            <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-1 border-0 md:border md:border-stone-200 rounded-none md:rounded-2xl overflow-visible md:overflow-hidden bg-transparent md:bg-stone-200">
                     {/* Row 1 */}
                     {/* A1: Logo + Brand Name */}
-                    <div className="aspect-square md:aspect-auto md:h-64">
+                    <div className="relative h-64 md:h-64 rounded-2xl md:rounded-none overflow-hidden">
                         <LogoCell brand={brand} mode={mode} />
                     </div>
 
                     {/* A2: Business Cards */}
-                    <div className="aspect-square md:aspect-auto md:h-64">
+                    <div className="relative h-64 md:h-64 rounded-2xl md:rounded-none overflow-hidden">
                         <BusinessCardsCell brand={brand} mode={mode} variant="primary" />
                     </div>
 
                     {/* A3: Mug */}
-                    <div className="aspect-square md:aspect-auto md:h-64">
+                    <div className="relative h-64 md:h-64 rounded-2xl md:rounded-none overflow-hidden">
                         <MugCell brand={brand} mode={mode} variant="light" />
                     </div>
 
                     {/* Row 2 */}
                     {/* B1: Icon Variants */}
-                    <div className="aspect-square md:aspect-auto md:h-64">
+                    <div className="relative h-64 md:h-64 rounded-2xl md:rounded-none overflow-hidden">
                         <IconVariantsCell brand={brand} mode={mode} variant="light" />
                     </div>
 
                     {/* B2: Tumbler */}
-                    <div className="aspect-square md:aspect-auto md:h-64">
+                    <div className="relative h-64 md:h-64 rounded-2xl md:rounded-none overflow-hidden">
                         <TumblerCell brand={brand} mode={mode} variant="light" />
                     </div>
 
                     {/* B3: Tote Bag */}
-                    <div className="aspect-square md:aspect-auto md:h-64">
+                    <div className="relative h-64 md:h-64 rounded-2xl md:rounded-none overflow-hidden">
                         <ToteBagCell brand={brand} mode={mode} variant="primary" />
                     </div>
 
                     {/* Row 3 */}
                     {/* C1: T-Shirt */}
-                    <div className="aspect-square md:aspect-auto md:h-64">
+                    <div className="relative h-64 md:h-64 rounded-2xl md:rounded-none overflow-hidden">
                         <TShirtCell brand={brand} mode={mode} variant="primary" />
                     </div>
 
                     {/* C2: Typography */}
-                    <div className="aspect-square md:aspect-auto md:h-64">
+                    <div className="relative h-64 md:h-64 rounded-2xl md:rounded-none overflow-hidden">
                         <TypographyCell brand={brand} mode={mode} variant="primary" />
                     </div>
 
                     {/* C3: Phone */}
-                    <div className="aspect-square md:aspect-auto md:h-64">
+                    <div className="relative h-64 md:h-64 rounded-2xl md:rounded-none overflow-hidden">
                         <PhoneCell brand={brand} mode={mode} variant="light" />
                     </div>
                 </div>
 
                 {/* Palette Strip Below */}
-                <div className="mt-1 border border-stone-200 rounded-2xl overflow-hidden h-24">
+                <div className="mt-4 md:mt-1 border border-stone-200 rounded-2xl overflow-hidden h-24">
                     <PaletteCell brand={brand} mode={mode} />
                 </div>
 
                 {/* Code Cell */}
-                <div className="mt-1 border border-stone-200 rounded-2xl overflow-hidden h-48">
+                <div className="mt-4 md:mt-1 border border-stone-200 rounded-2xl overflow-hidden h-64 md:h-48">
                     <CodeCell brand={brand} mode={mode} />
                 </div>
             </main>

@@ -30,8 +30,8 @@ export function BusinessCardsCell({ brand, mode, variant }: BusinessCardsCellPro
                             zIndex: i,
                             left: '50%',
                             top: '50%',
-                            marginLeft: '-80px',
-                            marginTop: '-48px',
+                            transformOrigin: 'center center',
+                            translate: '-50% -50%',
                         }}
                     >
                         {/* Card Content (only show on top cards) */}
