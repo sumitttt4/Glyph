@@ -10,11 +10,11 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import {
     generateLogos,
-    generateAllArchetypes,
-    generateProfessionalLogos,
+    generateAllAlgorithms,
     quickGenerate,
-    ALL_ARCHETYPES,
-    LogoArchetype,
+    ALL_ALGORITHMS,
+    ALGORITHM_INFO,
+    LogoAlgorithm,
     GeneratedLogo,
     LogoGenerationParams,
     LogoAesthetic,
@@ -36,19 +36,19 @@ const DEMO_BRANDS = [
     { name: 'Vital', color: '#14B8A6', accent: '#06B6D4', industry: 'healthcare' as const, aesthetic: 'friendly-rounded' as const },
 ];
 
-const ARCHETYPES: { id: LogoArchetype; name: string; description: string; category: 'classic' | 'professional' }[] = [
-    // Classic archetypes
-    { id: 'abstract-bars', name: 'Abstract Bars', description: 'Stripe-style gradient bars', category: 'classic' },
-    { id: 'stacked-lines', name: 'Stacked Lines', description: 'Linear-style layered lines', category: 'classic' },
-    { id: 'lettermark', name: 'Lettermark', description: 'Notion/Figma-style monograms', category: 'classic' },
-    { id: 'geometric-symbol', name: 'Geometric Symbol', description: 'Anthropic-style symbols', category: 'classic' },
-    { id: 'negative-space', name: 'Negative Space', description: 'Vercel-style cutouts', category: 'classic' },
-    // New professional archetypes
-    { id: 'flowing-mark', name: 'Flowing Mark', description: 'Organic bezier curves (Airbnb/Nike)', category: 'professional' },
-    { id: 'overlapping-forms', name: 'Overlapping Forms', description: 'Transparent layers (Mastercard)', category: 'professional' },
-    { id: 'symbolic-icon', name: 'Symbolic Icon', description: 'Industry-specific symbols', category: 'professional' },
-    { id: 'wave-pattern', name: 'Wave Pattern', description: 'Audio/frequency waves (Spotify)', category: 'professional' },
-    { id: 'dynamic-lettermark', name: 'Dynamic Lettermark', description: 'Enhanced bezier letters', category: 'professional' },
+const ALGORITHMS_UI: { id: LogoAlgorithm; category: 'classic' | 'professional' }[] = [
+    // Classic
+    { id: 'parallel-bars', category: 'classic' },
+    { id: 'stacked-lines', category: 'classic' },
+    { id: 'letterform-cutout', category: 'classic' },
+    { id: 'sparkle-asterisk', category: 'classic' },
+    { id: 'negative-space', category: 'classic' },
+    // Professional
+    { id: 'arc-swoosh', category: 'professional' },
+    { id: 'overlapping-shapes', category: 'professional' },
+    { id: 'depth-mark', category: 'professional' },
+    { id: 'interlocking-forms', category: 'professional' },
+    { id: 'abstract-monogram', category: 'professional' },
 ];
 
 const INDUSTRIES: { id: IndustryCategory; name: string }[] = [
@@ -77,7 +77,7 @@ export function LogoEngineDemo() {
     const [brandName, setBrandName] = useState('Nexus');
     const [primaryColor, setPrimaryColor] = useState('#6366F1');
     const [accentColor, setAccentColor] = useState('#8B5CF6');
-    const [selectedArchetype, setSelectedArchetype] = useState<LogoArchetype | 'all' | 'professional'>('all');
+    const [selectedAlgorithm, setSelectedAlgorithm] = useState<LogoAlgorithm | 'all' | 'professional'>('all');
     const [industry, setIndustry] = useState<IndustryCategory>('technology');
     const [aesthetic, setAesthetic] = useState<LogoAesthetic>('tech-minimal');
     const [logos, setLogos] = useState<GeneratedLogo[]>([]);
@@ -103,12 +103,17 @@ export function LogoEngineDemo() {
 
                 let generated: GeneratedLogo[];
 
-                if (selectedArchetype === 'all') {
-                    generated = generateAllArchetypes(params);
-                } else if (selectedArchetype === 'professional') {
-                    generated = generateProfessionalLogos(params);
+                if (selectedAlgorithm === 'all') {
+                    generated = generateAllAlgorithms(params);
+                } else if (selectedAlgorithm === 'professional') {
+                    // Generate only professional category
+                    const proAlgos = ALGORITHMS_UI.filter(a => a.category === 'professional').map(a => a.id);
+                    generated = [];
+                    for (const algo of proAlgos) {
+                        generated.push(...generateLogos({ ...params, algorithm: algo, variations: 3 }));
+                    }
                 } else {
-                    generated = generateLogos({ ...params, archetype: selectedArchetype, variations: 4 });
+                    generated = generateLogos({ ...params, algorithm: selectedAlgorithm, variations: 4 });
                 }
 
                 setLogos(generated);
@@ -118,7 +123,7 @@ export function LogoEngineDemo() {
             }
             setIsGenerating(false);
         }, 50);
-    }, [brandName, primaryColor, accentColor, selectedArchetype, industry, aesthetic]);
+    }, [brandName, primaryColor, accentColor, selectedAlgorithm, industry, aesthetic]);
 
     // Generate on mount
     useEffect(() => {
@@ -134,12 +139,12 @@ export function LogoEngineDemo() {
         setAesthetic(preset.aesthetic);
     };
 
-    // Group logos by archetype
-    const logosByArchetype = logos.reduce((acc, logo) => {
-        if (!acc[logo.archetype]) acc[logo.archetype] = [];
-        acc[logo.archetype].push(logo);
+    // Group logos by algorithm
+    const logosByAlgorithm = logos.reduce((acc, logo) => {
+        if (!acc[logo.algorithm]) acc[logo.algorithm] = [];
+        acc[logo.algorithm].push(logo);
         return acc;
-    }, {} as Record<LogoArchetype, GeneratedLogo[]>);
+    }, {} as Record<LogoAlgorithm, GeneratedLogo[]>);
 
     return (
         <div className="min-h-screen bg-gray-50 py-8">
@@ -261,29 +266,29 @@ export function LogoEngineDemo() {
                             </select>
                         </div>
 
-                        {/* Archetype */}
+                        {/* Algorithm Selection */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Logo Style
                             </label>
                             <select
-                                value={selectedArchetype}
-                                onChange={(e) => setSelectedArchetype(e.target.value as LogoArchetype | 'all' | 'professional')}
+                                value={selectedAlgorithm}
+                                onChange={(e) => setSelectedAlgorithm(e.target.value as LogoAlgorithm | 'all' | 'professional')}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                             >
-                                <option value="all">All Styles (20 logos)</option>
+                                <option value="all">All Styles (30+ logos)</option>
                                 <option value="professional">Professional Only (15 logos)</option>
                                 <optgroup label="Classic Styles">
-                                    {ARCHETYPES.filter(a => a.category === 'classic').map((a) => (
+                                    {ALGORITHMS_UI.filter(a => a.category === 'classic').map((a) => (
                                         <option key={a.id} value={a.id}>
-                                            {a.name}
+                                            {ALGORITHM_INFO[a.id].name}
                                         </option>
                                     ))}
                                 </optgroup>
                                 <optgroup label="Professional Styles">
-                                    {ARCHETYPES.filter(a => a.category === 'professional').map((a) => (
+                                    {ALGORITHMS_UI.filter(a => a.category === 'professional').map((a) => (
                                         <option key={a.id} value={a.id}>
-                                            {a.name}
+                                            {ALGORITHM_INFO[a.id].name}
                                         </option>
                                     ))}
                                 </optgroup>
@@ -315,7 +320,7 @@ export function LogoEngineDemo() {
                         disabled={isGenerating}
                         className="mt-4 w-full py-2.5 px-4 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
                     >
-                        {isGenerating ? 'Generating...' : `Generate ${selectedArchetype === 'all' ? '20' : selectedArchetype === 'professional' ? '15' : '4'} Logos`}
+                        {isGenerating ? 'Generating...' : `Generate ${selectedAlgorithm === 'all' ? 'Logs' : selectedAlgorithm === 'professional' ? 'Pro' : '4'} Logos`}
                     </button>
                 </div>
 
@@ -356,14 +361,14 @@ export function LogoEngineDemo() {
                                     />
                                 ) : (
                                     <div className="space-y-6">
-                                        {Object.entries(logosByArchetype).map(([archetype, archLogos]) => (
-                                            <div key={archetype}>
+                                        {Object.entries(logosByAlgorithm).map(([algoId, archLogos]) => (
+                                            <div key={algoId}>
                                                 <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                                                    {ARCHETYPES.find(a => a.id === archetype)?.name || archetype}
+                                                    {ALGORITHM_INFO[algoId as LogoAlgorithm]?.name || algoId}
                                                     <span className="text-xs text-gray-400">
                                                         ({archLogos.length})
                                                     </span>
-                                                    {ARCHETYPES.find(a => a.id === archetype)?.category === 'professional' && (
+                                                    {ALGORITHMS_UI.find(a => a.id === algoId)?.category === 'professional' && (
                                                         <span className="px-1.5 py-0.5 text-xs bg-purple-100 text-purple-700 rounded">
                                                             Pro
                                                         </span>
@@ -375,8 +380,8 @@ export function LogoEngineDemo() {
                                                             key={logo.id}
                                                             onClick={() => setSelectedLogo(logo)}
                                                             className={`w-20 h-20 border-2 rounded-lg cursor-pointer transition-all bg-white flex items-center justify-center ${selectedLogo?.id === logo.id
-                                                                    ? 'border-indigo-500 shadow-md'
-                                                                    : 'border-gray-200 hover:border-gray-300'
+                                                                ? 'border-indigo-500 shadow-md'
+                                                                : 'border-gray-200 hover:border-gray-300'
                                                                 }`}
                                                         >
                                                             <div
@@ -419,7 +424,7 @@ export function LogoEngineDemo() {
                                         <div className="flex justify-between">
                                             <span>Type:</span>
                                             <span className="font-medium">
-                                                {ARCHETYPES.find(a => a.id === selectedLogo.archetype)?.name}
+                                                {ALGORITHM_INFO[selectedLogo.algorithm]?.name}
                                             </span>
                                         </div>
                                         <div className="flex justify-between">
@@ -480,17 +485,17 @@ export function LogoEngineDemo() {
                     <div className="mb-4">
                         <h3 className="text-sm font-medium text-gray-500 mb-3">Classic Styles</h3>
                         <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                            {ARCHETYPES.filter(a => a.category === 'classic').map((archetype) => (
+                            {ALGORITHMS_UI.filter(a => a.category === 'classic').map((item) => (
                                 <div
-                                    key={archetype.id}
-                                    className={`p-3 border rounded-lg cursor-pointer transition-colors ${selectedArchetype === archetype.id
-                                            ? 'border-indigo-500 bg-indigo-50'
-                                            : 'border-gray-200 hover:border-indigo-300'
+                                    key={item.id}
+                                    className={`p-3 border rounded-lg cursor-pointer transition-colors ${selectedAlgorithm === item.id
+                                        ? 'border-indigo-500 bg-indigo-50'
+                                        : 'border-gray-200 hover:border-indigo-300'
                                         }`}
-                                    onClick={() => setSelectedArchetype(archetype.id)}
+                                    onClick={() => setSelectedAlgorithm(item.id)}
                                 >
-                                    <h4 className="font-medium text-gray-900 text-sm">{archetype.name}</h4>
-                                    <p className="text-xs text-gray-500 mt-0.5">{archetype.description}</p>
+                                    <h4 className="font-medium text-gray-900 text-sm">{ALGORITHM_INFO[item.id].name}</h4>
+                                    <p className="text-xs text-gray-500 mt-0.5">{ALGORITHM_INFO[item.id].description}</p>
                                 </div>
                             ))}
                         </div>
@@ -502,17 +507,17 @@ export function LogoEngineDemo() {
                             <span className="px-1.5 py-0.5 text-xs bg-purple-100 text-purple-700 rounded">New</span>
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                            {ARCHETYPES.filter(a => a.category === 'professional').map((archetype) => (
+                            {ALGORITHMS_UI.filter(a => a.category === 'professional').map((item) => (
                                 <div
-                                    key={archetype.id}
-                                    className={`p-3 border rounded-lg cursor-pointer transition-colors ${selectedArchetype === archetype.id
-                                            ? 'border-purple-500 bg-purple-50'
-                                            : 'border-gray-200 hover:border-purple-300'
+                                    key={item.id}
+                                    className={`p-3 border rounded-lg cursor-pointer transition-colors ${selectedAlgorithm === item.id
+                                        ? 'border-purple-500 bg-purple-50'
+                                        : 'border-gray-200 hover:border-purple-300'
                                         }`}
-                                    onClick={() => setSelectedArchetype(archetype.id)}
+                                    onClick={() => setSelectedAlgorithm(item.id)}
                                 >
-                                    <h4 className="font-medium text-gray-900 text-sm">{archetype.name}</h4>
-                                    <p className="text-xs text-gray-500 mt-0.5">{archetype.description}</p>
+                                    <h4 className="font-medium text-gray-900 text-sm">{ALGORITHM_INFO[item.id].name}</h4>
+                                    <p className="text-xs text-gray-500 mt-0.5">{ALGORITHM_INFO[item.id].description}</p>
                                 </div>
                             ))}
                         </div>

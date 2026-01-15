@@ -159,7 +159,7 @@ function generateThickLinePath(
     );
 
     // For thick lines, we create a filled shape rather than stroke
-    const thickness = params.lineThickness * (1 - (index / totalLines) * params.taperAmount || 0);
+    const thickness = params.lineThickness;
 
     // Parse the bezier path and create offset curves
     const expandedPath = createExpandedStrokePath(centerPath, thickness, params);

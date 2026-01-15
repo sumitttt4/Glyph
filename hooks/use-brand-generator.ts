@@ -35,8 +35,8 @@ export function useBrandGenerator() {
         setIsGenerating(true);
 
         // Helper for content filtering
-        const filterContent = <T extends { tags: string[] }>(items: T[]) => {
-            const matches = items.filter(item => item.tags.includes(vibe));
+        const filterContent = <T extends { tags?: string[] }>(items: T[]) => {
+            const matches = items.filter(item => item.tags?.includes(vibe));
             return matches.length > 0 ? matches : items;
         };
 
@@ -139,7 +139,7 @@ export function useBrandGenerator() {
 
             // If no ID match, try matching TAGS (e.g. 'futuristic', 'geometric')
             if (!match) {
-                const tagMatches = SHAPES.filter(s => s.tags.includes(options.shape!.toLowerCase()));
+                const tagMatches = SHAPES.filter(s => s.tags?.includes(options.shape!.toLowerCase()));
                 if (tagMatches.length > 0) {
                     match = tagMatches[Math.floor(Math.random() * tagMatches.length)];
                 }
@@ -280,7 +280,7 @@ export function useBrandGenerator() {
         });
 
         // Variation 2: Same Theme, New Shape
-        const newShape = getDifferent(SHAPES.filter(s => s.tags.includes(baseBrand.vibe) || s.tags.includes('minimalist')), baseBrand.shape.id);
+        const newShape = getDifferent(SHAPES.filter(s => s.tags?.includes(baseBrand.vibe) || s.tags?.includes('minimalist')), baseBrand.shape.id);
         variations.push({
             ...baseBrand,
             id: crypto.randomUUID(),

@@ -35,7 +35,7 @@ export function downloadSvg(logo: GeneratedLogo, filename?: string): void {
 
     const link = document.createElement('a');
     link.href = url;
-    link.download = filename || `${logo.archetype}-v${logo.variant}.svg`;
+    link.download = filename || `${logo.algorithm}-v${logo.variant}.svg`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -119,7 +119,7 @@ export async function downloadPng(
 
     const link = document.createElement('a');
     link.href = url;
-    link.download = filename || `${logo.archetype}-v${logo.variant}-${size}px.png`;
+    link.download = filename || `${logo.algorithm}-v${logo.variant}-${size}px.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -294,7 +294,7 @@ export async function batchExport(
 ): Promise<void> {
     for (let i = 0; i < logos.length; i++) {
         const logo = logos[i];
-        const baseName = `${config.brandName}-${logo.archetype}-v${logo.variant}`;
+        const baseName = `${config.brandName}-${logo.algorithm}-v${logo.variant}`;
 
         if (config.format === 'svg' || config.format === 'both') {
             downloadSvg(logo, `${baseName}.svg`);

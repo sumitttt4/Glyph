@@ -88,7 +88,7 @@ export function LogoPreview({
                     }}
                 >
                     <span className="text-xs text-white pb-2 font-medium">
-                        {logo.archetype}
+                        {logo.algorithm}
                     </span>
                 </div>
             )}
@@ -226,7 +226,7 @@ export function LogoShowcase({
                 <div>
                     <h3 className="text-lg font-semibold">{brandName || 'Logo Preview'}</h3>
                     <p className="text-sm text-gray-500 capitalize">
-                        {logo.archetype.replace('-', ' ')} • Variant {logo.variant}
+                        {logo.algorithm.replace('-', ' ')} • Variant {logo.variant}
                     </p>
                 </div>
             </div>
