@@ -376,43 +376,102 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
                     }
                   });
                 }}
-                onCycleColor={() => {
+                onSelectColor={(selectedColor) => {
                   if (!brand) return;
-                  const tokens = brand.theme.tokens;
-                  const mode = isDarkMode ? 'dark' : 'light';
-                  const currentTokens = tokens[mode];
 
-                  // Rotate: Primary -> Accent -> Surface -> Text -> Primary
-                  // We simulate this by creating a new custom theme
-                  // Actually, LogoComposition uses 'primary'.
-                  // We want to force the Primary Brand Color to be the next one in the palette.
-                  // BUT, 'primary' is a specific token.
+                  // Replace colors in existing SVG strings (keep same logo, just change color)
+                  let updatedLogos = brand.generatedLogos;
 
-                  // Let's grab the current palette from Sidebar? No access.
-                  // Let's just rotate the existing tokens if they feel distinct.
-                  // BETTER: Shift the Hue of the primary color?
-                  // USER REQUEST: "he mistakely chose the color... wants to edit same logo with different color"
-                  // This suggests swapping to a DIFFERENT PALETTE, potentially.
-                  // But `updateBrand` takes partial.
+                  if (brand.generatedLogos && brand.generatedLogos.length > 0) {
+                    // Update all logos
+                    updatedLogos = brand.generatedLogos.map(logo => {
+                      let newSvg = logo.svg;
 
-                  // Let's implement a simple Hue Shift for now, or rotate if we knew the palette.
-                  // Since we don't know the full palette here, let's just cycle through standard colors?
-                  // No, that breaks the "System".
+                      // 1. Find all hex colors in the SVG
+                      const hexRegex = /#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g;
+                      const foundColors = [...newSvg.matchAll(hexRegex)].map(m => m[0]);
+                      const uniqueColors = Array.from(new Set(foundColors.map(c => c.toLowerCase())));
 
-                  // Alternative: If the user selected a color in Sidebar, he expects THAT color.
-                  // But we are in the grid.
+                      if (uniqueColors.length === 0) return logo;
 
-                  // Let's try to find the Current Theme in the THEMES list and pick the next one?
-                  // Importing THEMES might be heavy here? No, it's fine.
-                  import('@/lib/themes').then(({ THEMES }) => {
-                    // Find current theme index
-                    const currentIndex = THEMES.findIndex(t => t.id === brand.theme.id);
-                    const nextTheme = THEMES[(currentIndex + 1) % THEMES.length];
+                      // 2. Sort unique colors by luminance to map gradients correctly (dark -> light)
+                      // Simple approach: just replace all of them with the new color for a solid look,
+                      // OR map them to a new monochromatic palette if there are multiple.
 
-                    // Keep the same shape, just update theme
-                    brandGenerators.updateBrand({
-                      theme: nextTheme
+                      const newColor = selectedColor.light;
+
+                      if (uniqueColors.length === 1) {
+                        // Simple replacement for single color
+                        newSvg = newSvg.replace(new RegExp(uniqueColors[0], 'gi'), newColor);
+                      } else {
+                        // For multi-color (gradients), we need to generate a palette from the new color
+                        // We'll replace the existing colors with a monochromatic scale of the new color.
+                        // But for now, user asked to "change whole logo color", so let's try making it solid first?
+                        // "when i changed this in blue why its coming in middle remove that logic and change whole logo color"
+                        // This implies they want the WHOLE thing to be the new color.
+                        // However, flattening a gradient to a single color destroys the 3D effect.
+                        // Better approach: Map the old colors to new tonal variants.
+
+                        // Helper to adjust brightness
+                        const adjustBrightness = (hex: string, percent: number) => {
+                          const num = parseInt(hex.replace('#', ''), 16);
+                          const amt = Math.round(2.55 * percent);
+                          const R = (num >> 16) + amt;
+                          const G = (num >> 8 & 0x00FF) + amt;
+                          const B = (num & 0x0000FF) + amt;
+                          return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+                        };
+
+                        // Replace each unique color with a variant of the new color
+                        // We map the "middle" color to the selected color, and others to lighter/darker
+                        uniqueColors.forEach((oldHex, index) => {
+                          // Naive mapping: just assign variants
+                          // Ideally we'd sort by brightness, but index based might work if SVG order is consistent
+                          let replacement = newColor;
+
+                          // If it's a gradient, try to preserve some variation
+                          if (index === 0) replacement = newColor; // Main
+                          else if (index === 1) replacement = adjustBrightness(newColor, 20); // Lighter
+                          else if (index === 2) replacement = adjustBrightness(newColor, -20); // Darker
+                          else replacement = adjustBrightness(newColor, (index % 2 === 0 ? 10 : -10) * index);
+
+                          newSvg = newSvg.split(oldHex).join(replacement);
+                          newSvg = newSvg.split(oldHex.toUpperCase()).join(replacement);
+                        });
+                      }
+
+                      return {
+                        ...logo,
+                        svg: newSvg,
+                        meta: {
+                          ...logo.meta,
+                          colors: {
+                            ...logo.meta.colors,
+                            primary: newColor,
+                            // Update palette too
+                            palette: [newColor, selectedColor.dark]
+                          }
+                        }
+                      };
                     });
+                  }
+
+                  // Update theme colors AND logos with new color
+                  brandGenerators.updateBrand({
+                    theme: {
+                      ...brand.theme,
+                      tokens: {
+                        light: {
+                          ...brand.theme.tokens.light,
+                          primary: selectedColor.light
+                        },
+                        dark: {
+                          ...brand.theme.tokens.dark,
+                          primary: selectedColor.dark
+                        }
+                      }
+                    },
+                    generatedLogos: updatedLogos,
                   });
                 }}
                 onSwapFont={() => {

@@ -1,6 +1,6 @@
 /**
  * Glyph Core Data Types
- * 
+ *
  * Re-exports types from intelligence engine modules
  * and defines the central BrandIdentity interface.
  */
@@ -8,8 +8,9 @@
 import { Theme, ThemeTokens } from './themes';
 import { Shape } from './shapes';
 import { FontFamily, FontPairing } from './typography';
+import { GeneratedLogo } from './logo-engine/types';
 
-export type { Theme, ThemeTokens, Shape, FontFamily, FontPairing };
+export type { Theme, ThemeTokens, Shape, FontFamily, FontPairing, GeneratedLogo };
 
 // Font Pair for generated brands (simplified)
 export interface FontPair {
@@ -44,6 +45,11 @@ export interface BrandIdentity {
   };
 
   canvasStyle?: 'solid' | 'gradient' | 'mesh';  // Background style
+
+  // Logo Engine v5 - Premium Generated Logos
+  generatedLogos?: GeneratedLogo[];  // Array of premium bezier-based logos
+  selectedLogoIndex?: number;        // Currently selected logo index
+
   font: {
     id: string;
     name: string;

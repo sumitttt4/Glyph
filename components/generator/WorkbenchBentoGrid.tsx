@@ -36,13 +36,14 @@ interface WorkbenchBentoGridProps {
     onSwapFont?: () => void;
     onUpdateFont?: (font: any) => void;
     onCycleColor?: () => void;
+    onSelectColor?: (color: { light: string; dark: string }) => void;
     onVariations?: () => void;
     onUpdateBrand?: (updates: Partial<BrandIdentity>) => void;
     viewMode: 'overview' | 'presentation';
     setViewMode?: (mode: 'overview' | 'presentation') => void;
 }
 
-export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, onUpdateFont, onCycleColor, onVariations, onUpdateBrand, viewMode, setViewMode }: WorkbenchBentoGridProps) {
+export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, onUpdateFont, onCycleColor, onSelectColor, onVariations, onUpdateBrand, viewMode, setViewMode }: WorkbenchBentoGridProps) {
     // New State for Font Selector & Tweak Panel
     const [isFontSelectorOpen, setIsFontSelectorOpen] = useState(false);
     const [isTweakPanelOpen, setIsTweakPanelOpen] = useState(false);
@@ -61,7 +62,7 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
             <div className="w-full max-w-[1600px] mx-auto p-4 md:p-8 space-y-8 pb-32">
                 <SlideCover brand={brand} />
                 <SlideStrategy brand={brand} />
-                <SlideLogo brand={brand} onCycleColor={onCycleColor} />
+                <SlideLogo brand={brand} onSelectColor={onSelectColor} />
                 <SlideColors brand={brand} />
                 <SlideTypography brand={brand} onSwapFont={onSwapFont} onUpdateFont={onUpdateFont} />
                 <SlideSocial brand={brand} />

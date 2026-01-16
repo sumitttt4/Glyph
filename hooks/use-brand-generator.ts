@@ -8,8 +8,46 @@ import { fontPairings } from '@/lib/fonts';
 import { suggestLogoComponentsWithAI_V2 } from '@/lib/brand-generator';
 import { ICONS, getIconsForVibe, getRandomIcon } from '@/lib/icons';
 import { generateBrandStrategy } from '@/lib/strategy-engine';
+import {
+    generateLogos,
+    LogoCategory,
+    LogoAesthetic,
+    LogoAlgorithm,
+    GeneratedLogo,
+    ALL_ALGORITHMS,
+} from '@/lib/logo-engine';
 
-// Removed legacy STRATEGY_TEMPLATES in favor of dynamic engine
+// Map vibe to LogoCategory for logo engine
+const vibeToCategory: Record<string, LogoCategory> = {
+    'tech': 'technology',
+    'minimalist': 'technology',
+    'bold': 'creative',
+    'nature': 'sustainability',
+    'luxury': 'finance',
+    'modern': 'technology',
+    'playful': 'creative',
+    'professional': 'finance',
+    'creative': 'creative',
+    'corporate': 'finance',
+    'startup': 'technology',
+    'health': 'healthcare',
+    'education': 'education',
+    'ecommerce': 'ecommerce',
+};
+
+// Map vibe to LogoAesthetic
+const vibeToAesthetic: Record<string, LogoAesthetic> = {
+    'tech': 'tech-minimal',
+    'minimalist': 'tech-minimal',
+    'bold': 'bold-geometric',
+    'nature': 'friendly-rounded',
+    'luxury': 'elegant-refined',
+    'modern': 'tech-minimal',
+    'playful': 'friendly-rounded',
+    'professional': 'elegant-refined',
+    'creative': 'bold-geometric',
+    'corporate': 'elegant-refined',
+};
 
 
 
@@ -176,6 +214,27 @@ export function useBrandGenerator() {
         // 4. GENERATE STRATEGY (Premium Engine)
         const brandStrategy = generateBrandStrategy(name, vibe);
 
+        // 5. GENERATE PREMIUM LOGOS (Logo Engine v5)
+        const logoCategory = vibeToCategory[vibe.toLowerCase()] || 'technology';
+        const logoAesthetic = vibeToAesthetic[vibe.toLowerCase()] || 'tech-minimal';
+        const logoPrimaryColor = options.color || aiColor || selectedTheme.tokens.light.primary;
+
+        let generatedLogos: GeneratedLogo[] = [];
+        try {
+            generatedLogos = generateLogos({
+                brandName: name.trim() || 'Brand',
+                primaryColor: logoPrimaryColor,
+                accentColor: selectedTheme.tokens.light.accent || undefined,
+                category: logoCategory,
+                industry: logoCategory,
+                aesthetic: logoAesthetic,
+                variations: 3, // Generate 3 variations
+                minQualityScore: 80,
+            });
+        } catch (e) {
+            console.error('Logo Engine Error:', e);
+        }
+
         const newBrand: BrandIdentity = {
             id: crypto.randomUUID(),
             vibe,
@@ -189,6 +248,9 @@ export function useBrandGenerator() {
             logoContainer,
             logoAssemblerLayout,
             canvasStyle: options.gradient ? 'gradient' : 'solid', // Added canvasStyle
+            // Logo Engine v5 - Premium Generated Logos
+            generatedLogos: generatedLogos.length > 0 ? generatedLogos : undefined,
+            selectedLogoIndex: generatedLogos.length > 0 ? 0 : undefined,
             generationSeed: Date.now() + Math.floor(Math.random() * 100000), // Unique per generation
             font: {
                 id: selectedFont.id,
@@ -258,83 +320,112 @@ export function useBrandGenerator() {
         }
     };
 
-    const generateVariations = async (baseBrand: BrandIdentity) => {
+    const generateVariations = async (baseBrand: BrandIdentity, count: number = 4) => {
         setIsGenerating(true);
         const variations: BrandIdentity[] = [];
 
-        // Helper to get random item different from current
-        const getDifferent = <T extends { id: string }>(items: T[], currentId: string) => {
-            const pool = items.filter(i => i.id !== currentId);
-            return pool[Math.floor(Math.random() * pool.length)] || items[0];
-        };
+        // Get the current algorithm used (if any)
+        const currentAlgorithm = baseBrand.generatedLogos?.[0]?.algorithm;
 
-        // Variation 1: Same Shape & Font, New Color (Theme)
-        const newTheme = getDifferent(THEMES.filter(t => t.tags.includes(baseBrand.vibe)), baseBrand.theme.id);
-        variations.push({
-            ...baseBrand,
-            id: crypto.randomUUID(),
-            theme: newTheme,
-            logoLayout: 'generative',
-            generationSeed: Date.now() + 1,
-            createdAt: new Date()
-        });
+        // Curated algorithm groups for visual variety
+        const algorithmGroups: LogoAlgorithm[][] = [
+            ['starburst', 'orbital-rings', 'flow-gradient'],      // Radial/Organic
+            ['framed-letter', 'monogram-blend'],                   // Lettermarks
+            ['abstract-mark', 'depth-geometry', 'isometric-cube'], // Abstract/3D
+            ['gradient-bars', 'motion-lines'],                     // Linear/Bars
+            ['perfect-triangle', 'circle-overlap'],                // Geometric
+            ['letter-swoosh'],                                     // Dynamic
+        ];
 
-        // Variation 2: Same Theme, New Shape
-        const newShape = getDifferent(SHAPES.filter(s => s.tags?.includes(baseBrand.vibe) || s.tags?.includes('minimalist')), baseBrand.shape.id);
-        variations.push({
-            ...baseBrand,
-            id: crypto.randomUUID(),
-            shape: newShape,
-            logoLayout: 'generative',
-            generationSeed: Date.now() + 2,
-            createdAt: new Date()
-        });
+        // Flatten and filter out current algorithm
+        const availableAlgorithms = ALL_ALGORITHMS.filter(a => a !== currentAlgorithm);
 
-        // Variation 3: Same Theme & Shape, New Font
-        const newFont = getDifferent(fontPairings.filter(f => f.tags.includes(baseBrand.vibe) || f.tags.includes('modern')), baseBrand.font.id);
-        variations.push({
-            ...baseBrand,
-            id: crypto.randomUUID(),
-            font: {
-                id: newFont.id,
-                name: newFont.name,
-                heading: newFont.heading.className,
-                body: newFont.body.className,
-                headingName: newFont.headingName,
-                bodyName: newFont.bodyName,
-                tags: newFont.tags
-            },
-            logoLayout: 'generative',
-            generationSeed: Date.now() + 3,
-            createdAt: new Date()
-        });
+        // Shuffle algorithms for variety
+        const shuffled = [...availableAlgorithms].sort(() => Math.random() - 0.5);
 
-        // Variation 4: Wildcard (Same Vibe, Random Everything)
-        // We use the same generation logic but force specific randoms
-        const randomTheme = THEMES[Math.floor(Math.random() * THEMES.length)];
-        const randomShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-        const randomFont = fontPairings[Math.floor(Math.random() * fontPairings.length)];
+        // Select diverse algorithms (try to pick from different groups)
+        const selectedAlgorithms: LogoAlgorithm[] = [];
+        const usedGroups = new Set<number>();
 
-        variations.push({
-            ...baseBrand,
-            id: crypto.randomUUID(),
-            theme: randomTheme,
-            shape: randomShape,
-            font: {
-                id: randomFont.id,
-                name: randomFont.name,
-                heading: randomFont.heading.className,
-                body: randomFont.body.className,
-                headingName: randomFont.headingName,
-                bodyName: randomFont.bodyName,
-                tags: randomFont.tags
-            },
-            logoLayout: 'generative',
-            generationSeed: Date.now() + 4,
-            createdAt: new Date()
-        });
+        for (const algo of shuffled) {
+            if (selectedAlgorithms.length >= count) break;
 
-        setIsGenerating(false);
+            // Find which group this algorithm belongs to
+            const groupIndex = algorithmGroups.findIndex(group => group.includes(algo));
+
+            // Prefer algorithms from unused groups for maximum variety
+            if (groupIndex === -1 || !usedGroups.has(groupIndex)) {
+                selectedAlgorithms.push(algo);
+                if (groupIndex !== -1) usedGroups.add(groupIndex);
+            }
+        }
+
+        // Fill remaining slots if needed
+        while (selectedAlgorithms.length < count && shuffled.length > selectedAlgorithms.length) {
+            const remaining = shuffled.filter(a => !selectedAlgorithms.includes(a));
+            if (remaining.length > 0) {
+                selectedAlgorithms.push(remaining[0]);
+            } else {
+                break;
+            }
+        }
+
+        // Get brand colors
+        const primaryColor = baseBrand.theme.tokens.light.primary;
+        const accentColor = baseBrand.theme.tokens.light.accent;
+        const logoCategory = vibeToCategory[baseBrand.vibe.toLowerCase()] || 'technology';
+
+        // Generate variations with different logo algorithms
+        for (let i = 0; i < selectedAlgorithms.length; i++) {
+            const algorithm = selectedAlgorithms[i];
+
+            // Generate logo with specific algorithm
+            let generatedLogos: GeneratedLogo[] = [];
+            try {
+                generatedLogos = generateLogos({
+                    brandName: baseBrand.name,
+                    primaryColor,
+                    accentColor,
+                    category: logoCategory,
+                    algorithm, // Use specific algorithm
+                    variations: 1, // One logo per algorithm
+                    minQualityScore: 75,
+                });
+            } catch (e) {
+                console.error(`Logo generation error for ${algorithm}:`, e);
+            }
+
+            // Get varied font (cycle through available fonts)
+            const vibefonts = fontPairings.filter(f =>
+                f.tags.includes(baseBrand.vibe) || f.tags.includes('modern')
+            );
+            const fontIndex = i % vibefonts.length;
+            const variedFont = vibefonts[fontIndex] || fontPairings[i % fontPairings.length];
+
+            variations.push({
+                ...baseBrand,
+                id: crypto.randomUUID(),
+                // Keep same theme/colors
+                theme: baseBrand.theme,
+                // Use the new generated logos
+                generatedLogos: generatedLogos.length > 0 ? generatedLogos : undefined,
+                selectedLogoIndex: 0,
+                // Vary font slightly for secondary differentiation
+                font: {
+                    id: variedFont.id,
+                    name: variedFont.name,
+                    heading: variedFont.heading.className,
+                    body: variedFont.body.className,
+                    headingName: variedFont.headingName,
+                    bodyName: variedFont.bodyName,
+                    tags: variedFont.tags
+                },
+                logoLayout: 'generative',
+                generationSeed: Date.now() + i + 1,
+                createdAt: new Date()
+            });
+        }
+
         setIsGenerating(false);
         return variations;
     };

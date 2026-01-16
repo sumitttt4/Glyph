@@ -1,23 +1,27 @@
 /**
- * Parametric Logo Engine v4
+ * Parametric Logo Engine v5
  *
- * Professional parametric logo generation with infinite unique outputs.
- * 10 base algorithms, each with 20+ adjustable parameters.
- * Brand name as seed for deterministic randomness.
- * Unique hash per output, stored in localStorage.
- * SVG-only output with bezier paths.
+ * Premium parametric logo generation with SHA-256 hash-based uniqueness.
+ * 13 base algorithms inspired by world-class logos.
+ * Brand name + category + timestamp + salt = unique SHA-256 hash.
+ * Hash bits seed 30+ parameters for infinite unique variations.
+ * Quality scoring ensures only premium output (80+ score).
+ * All shapes rendered using bezier paths only.
  *
  * Features:
- * - Parallel Gradient Bars (Stripe-style)
- * - Stacked Motion Lines (Linear-style)
- * - Letterform Cutouts (Notion-style)
- * - Sparkle/Asterisk (Claude-style)
- * - Overlapping Shapes (Figma-style)
- * - Arc Swooshes (Nike-style)
- * - Depth Marks (Raycast-style)
- * - Negative Space (FedEx-style)
- * - Interlocking Forms (Olympic-style)
- * - Abstract Monograms
+ * - Starburst (Claude/Anthropic-style)
+ * - Framed Letter (Notion-style)
+ * - Motion Lines (Linear/Framer-style)
+ * - Gradient Bars (Stripe-style)
+ * - Perfect Triangle (Vercel-style)
+ * - Circle Overlap (Figma-style)
+ * - Depth Geometry (Raycast-style)
+ * - Letter Swoosh (Arc-style)
+ * - Orbital Rings (Planetscale-style)
+ * - Flow Gradient (Loom-style)
+ * - Isometric Cube (Pitch-style)
+ * - Abstract Mark (Supabase-style)
+ * - Monogram Blend (Custom)
  *
  * Plus animation export: Lottie JSON + CSS keyframes
  */
@@ -28,19 +32,27 @@
 
 export type {
     LogoAlgorithm,
-    LogoAesthetic,
+    LogoCategory,
     IndustryCategory,
+    LogoAesthetic,
+    SymmetryType,
     BaseParameters,
-    ParallelBarsParams,
-    StackedLinesParams,
-    LetterformCutoutParams,
-    SparkleAsteriskParams,
-    OverlappingShapesParams,
-    ArcSwooshParams,
-    DepthMarkParams,
-    NegativeSpaceParams,
-    InterlockingFormsParams,
-    AbstractMonogramParams,
+    HashParams,
+    HashDerivedParams,
+    QualityMetrics,
+    StarburstParams,
+    FramedLetterParams,
+    MotionLinesParams,
+    GradientBarsParams,
+    PerfectTriangleParams,
+    CircleOverlapParams,
+    DepthGeometryParams,
+    LetterSwooshParams,
+    OrbitalRingsParams,
+    FlowGradientParams,
+    IsometricCubeParams,
+    AbstractMarkParams,
+    MonogramBlendParams,
     AlgorithmParams,
     LogoGenerationParams,
     GeneratedLogo,
@@ -88,6 +100,17 @@ export {
     easeOutBack,
     generateLogoId,
     calculateComplexity,
+    // New hash-based utilities
+    sha256,
+    generateHashParams,
+    generateHashParamsSync,
+    deriveParamsFromHash,
+    calculateQualityScore,
+    // Bezier utilities
+    createBezierCircle,
+    createBezierEllipse,
+    createBezierRoundedRect,
+    createOrganicShape,
 } from './core/parametric-engine';
 
 export {
@@ -130,54 +153,69 @@ export {
 // ============================================
 
 export {
-    generateParallelBars,
-    generateSingleParallelBars,
-} from './generators/parallel-bars';
+    generateStarburst,
+    generateSingleStarburstPreview,
+} from './generators/starburst';
 
 export {
-    generateStackedLines,
-    generateSingleStackedLines,
-} from './generators/stacked-lines';
+    generateFramedLetter,
+    generateSingleFramedLetterPreview,
+} from './generators/framed-letter';
 
 export {
-    generateLetterformCutout,
-    generateSingleLetterformCutout,
-} from './generators/letterform-cutout';
+    generateMotionLines,
+    generateSingleMotionLinesPreview,
+} from './generators/motion-lines';
 
 export {
-    generateSparkleAsterisk,
-    generateSingleSparkleAsterisk,
-} from './generators/sparkle-asterisk';
+    generateGradientBars,
+    generateSingleGradientBarsPreview,
+} from './generators/gradient-bars';
 
 export {
-    generateOverlappingShapes,
-    generateSingleOverlappingShapes,
-} from './generators/overlapping-shapes';
+    generatePerfectTriangle,
+    generateSinglePerfectTrianglePreview,
+} from './generators/perfect-triangle';
 
 export {
-    generateArcSwoosh,
-    generateSingleArcSwoosh,
-} from './generators/arc-swoosh';
+    generateCircleOverlap,
+    generateSingleCircleOverlapPreview,
+} from './generators/circle-overlap';
 
 export {
-    generateDepthMark,
-    generateSingleDepthMark,
-} from './generators/depth-mark';
+    generateDepthGeometry,
+    generateSingleDepthGeometryPreview,
+} from './generators/depth-geometry';
 
 export {
-    generateNegativeSpace,
-    generateSingleNegativeSpace,
-} from './generators/negative-space';
+    generateLetterSwoosh,
+    generateSingleLetterSwooshPreview,
+} from './generators/letter-swoosh';
 
 export {
-    generateInterlockingForms,
-    generateSingleInterlockingForms,
-} from './generators/interlocking-forms';
+    generateOrbitalRings,
+    generateSingleOrbitalRingsPreview,
+} from './generators/orbital-rings';
 
 export {
-    generateAbstractMonogram,
-    generateSingleAbstractMonogram,
-} from './generators/abstract-monogram';
+    generateFlowGradient,
+    generateSingleFlowGradientPreview,
+} from './generators/flow-gradient';
+
+export {
+    generateIsometricCube,
+    generateSingleIsometricCubePreview,
+} from './generators/isometric-cube';
+
+export {
+    generateAbstractMark,
+    generateSingleAbstractMarkPreview,
+} from './generators/abstract-mark';
+
+export {
+    generateMonogramBlend,
+    generateSingleMonogramBlendPreview,
+} from './generators/monogram-blend';
 
 // ============================================
 // ANIMATION
@@ -197,32 +235,38 @@ export {
 
 import { LogoGenerationParams, GeneratedLogo, LogoAlgorithm, AnimationPreset } from './types';
 import { createSeededRandom } from './core/parametric-engine';
-import { generateParallelBars } from './generators/parallel-bars';
-import { generateStackedLines } from './generators/stacked-lines';
-import { generateLetterformCutout } from './generators/letterform-cutout';
-import { generateSparkleAsterisk } from './generators/sparkle-asterisk';
-import { generateOverlappingShapes } from './generators/overlapping-shapes';
-import { generateArcSwoosh } from './generators/arc-swoosh';
-import { generateDepthMark } from './generators/depth-mark';
-import { generateNegativeSpace } from './generators/negative-space';
-import { generateInterlockingForms } from './generators/interlocking-forms';
-import { generateAbstractMonogram } from './generators/abstract-monogram';
+import { generateStarburst } from './generators/starburst';
+import { generateFramedLetter } from './generators/framed-letter';
+import { generateMotionLines } from './generators/motion-lines';
+import { generateGradientBars } from './generators/gradient-bars';
+import { generatePerfectTriangle } from './generators/perfect-triangle';
+import { generateCircleOverlap } from './generators/circle-overlap';
+import { generateDepthGeometry } from './generators/depth-geometry';
+import { generateLetterSwoosh } from './generators/letter-swoosh';
+import { generateOrbitalRings } from './generators/orbital-rings';
+import { generateFlowGradient } from './generators/flow-gradient';
+import { generateIsometricCube } from './generators/isometric-cube';
+import { generateAbstractMark } from './generators/abstract-mark';
+import { generateMonogramBlend } from './generators/monogram-blend';
 import { generateLogoAnimation } from './animation/animation-export';
 
 /**
  * All available algorithms
  */
 export const ALL_ALGORITHMS: LogoAlgorithm[] = [
-    'parallel-bars',
-    'stacked-lines',
-    'letterform-cutout',
-    'sparkle-asterisk',
-    'overlapping-shapes',
-    'arc-swoosh',
-    'depth-mark',
-    'negative-space',
-    'interlocking-forms',
-    'abstract-monogram',
+    'starburst',
+    'framed-letter',
+    'motion-lines',
+    'gradient-bars',
+    'perfect-triangle',
+    'circle-overlap',
+    'depth-geometry',
+    'letter-swoosh',
+    'orbital-rings',
+    'flow-gradient',
+    'isometric-cube',
+    'abstract-mark',
+    'monogram-blend',
 ];
 
 /**
@@ -233,54 +277,69 @@ export const ALGORITHM_INFO: Record<LogoAlgorithm, {
     description: string;
     inspiration: string;
 }> = {
-    'parallel-bars': {
-        name: 'Parallel Gradient Bars',
-        description: 'Stacked horizontal bars with gradient fills and subtle offsets',
-        inspiration: 'Stripe',
-    },
-    'stacked-lines': {
-        name: 'Stacked Motion Lines',
-        description: 'Layered horizontal lines with motion blur effects',
-        inspiration: 'Linear',
-    },
-    'letterform-cutout': {
-        name: 'Letterform Cutout',
-        description: 'Letter within geometric frame with cutout effects',
-        inspiration: 'Notion',
-    },
-    'sparkle-asterisk': {
-        name: 'Sparkle Asterisk',
-        description: 'Curved arm sparkle with organic bezier curves',
+    'starburst': {
+        name: 'Starburst',
+        description: 'Curved organic arms with rotational symmetry, 6-16 spokes with bezier curves',
         inspiration: 'Claude/Anthropic',
     },
-    'overlapping-shapes': {
-        name: 'Overlapping Shapes',
-        description: 'Transparent layered shapes with blend effects',
-        inspiration: 'Figma/Mastercard',
+    'framed-letter': {
+        name: 'Framed Letter',
+        description: 'Single letter in geometric frame with artistic cutout',
+        inspiration: 'Notion',
     },
-    'arc-swoosh': {
-        name: 'Arc Swoosh',
-        description: 'Dynamic curved swoosh shapes with tapered edges',
-        inspiration: 'Nike',
+    'motion-lines': {
+        name: 'Motion Lines',
+        description: 'Stacked horizontal lines with motion feel and wave effects',
+        inspiration: 'Linear/Framer',
     },
-    'depth-mark': {
-        name: 'Depth Mark',
-        description: '3D depth effect marks with layered extrusion',
+    'gradient-bars': {
+        name: 'Gradient Bars',
+        description: 'Parallel diagonal bars with gradient fills',
+        inspiration: 'Stripe',
+    },
+    'perfect-triangle': {
+        name: 'Perfect Triangle',
+        description: 'Single perfect geometric triangle with precision',
+        inspiration: 'Vercel',
+    },
+    'circle-overlap': {
+        name: 'Circle Overlap',
+        description: 'Overlapping circles with transparency and blend effects',
+        inspiration: 'Figma',
+    },
+    'depth-geometry': {
+        name: 'Depth Geometry',
+        description: 'Abstract geometric shapes with depth and shadow effects',
         inspiration: 'Raycast',
     },
-    'negative-space': {
-        name: 'Negative Space',
-        description: 'Clever negative space reveals and hidden forms',
-        inspiration: 'FedEx/Vercel',
+    'letter-swoosh': {
+        name: 'Letter Swoosh',
+        description: 'Letter with dynamic curved swoosh accent',
+        inspiration: 'Arc',
     },
-    'interlocking-forms': {
-        name: 'Interlocking Forms',
-        description: 'Interconnected shapes that weave through each other',
-        inspiration: 'Olympic Rings',
+    'orbital-rings': {
+        name: 'Orbital Rings',
+        description: 'Intersecting orbital ring paths with 3D depth',
+        inspiration: 'Planetscale',
     },
-    'abstract-monogram': {
-        name: 'Abstract Monogram',
-        description: 'Modern abstract letterform interpretations',
+    'flow-gradient': {
+        name: 'Flow Gradient',
+        description: 'Flowing gradient organic shape with smooth curves',
+        inspiration: 'Loom',
+    },
+    'isometric-cube': {
+        name: 'Isometric Cube',
+        description: '3D isometric cube letterform with depth',
+        inspiration: 'Pitch',
+    },
+    'abstract-mark': {
+        name: 'Abstract Mark',
+        description: 'Abstract angular mark with sharp geometry',
+        inspiration: 'Supabase',
+    },
+    'monogram-blend': {
+        name: 'Monogram Blend',
+        description: 'Two letters intertwined with shared strokes',
         inspiration: 'Contemporary Type',
     },
 };
@@ -295,28 +354,28 @@ function selectAlgorithm(params: LogoGenerationParams): LogoAlgorithm {
     // Industry-based selection
     if (industry === 'technology') {
         const techAlgos: LogoAlgorithm[] = [
-            'parallel-bars', 'stacked-lines', 'depth-mark', 'sparkle-asterisk'
+            'starburst', 'motion-lines', 'depth-geometry', 'abstract-mark', 'isometric-cube'
         ];
         return techAlgos[Math.floor(rng() * techAlgos.length)];
     }
 
     if (industry === 'finance') {
         const financeAlgos: LogoAlgorithm[] = [
-            'letterform-cutout', 'negative-space', 'interlocking-forms', 'abstract-monogram'
+            'framed-letter', 'perfect-triangle', 'gradient-bars', 'monogram-blend'
         ];
         return financeAlgos[Math.floor(rng() * financeAlgos.length)];
     }
 
     if (industry === 'creative') {
         const creativeAlgos: LogoAlgorithm[] = [
-            'sparkle-asterisk', 'overlapping-shapes', 'arc-swoosh', 'abstract-monogram'
+            'starburst', 'circle-overlap', 'letter-swoosh', 'flow-gradient', 'orbital-rings'
         ];
         return creativeAlgos[Math.floor(rng() * creativeAlgos.length)];
     }
 
     if (industry === 'healthcare') {
         const healthAlgos: LogoAlgorithm[] = [
-            'overlapping-shapes', 'sparkle-asterisk', 'interlocking-forms'
+            'circle-overlap', 'starburst', 'flow-gradient', 'orbital-rings'
         ];
         return healthAlgos[Math.floor(rng() * healthAlgos.length)];
     }
@@ -324,28 +383,28 @@ function selectAlgorithm(params: LogoGenerationParams): LogoAlgorithm {
     // Aesthetic-based selection
     if (aesthetic === 'tech-minimal') {
         const minimalAlgos: LogoAlgorithm[] = [
-            'stacked-lines', 'negative-space', 'parallel-bars'
+            'motion-lines', 'perfect-triangle', 'gradient-bars', 'abstract-mark'
         ];
         return minimalAlgos[Math.floor(rng() * minimalAlgos.length)];
     }
 
     if (aesthetic === 'bold-geometric') {
         const boldAlgos: LogoAlgorithm[] = [
-            'depth-mark', 'letterform-cutout', 'interlocking-forms'
+            'depth-geometry', 'isometric-cube', 'framed-letter', 'perfect-triangle'
         ];
         return boldAlgos[Math.floor(rng() * boldAlgos.length)];
     }
 
     if (aesthetic === 'elegant-refined') {
         const elegantAlgos: LogoAlgorithm[] = [
-            'abstract-monogram', 'arc-swoosh', 'letterform-cutout'
+            'monogram-blend', 'framed-letter', 'flow-gradient', 'orbital-rings'
         ];
         return elegantAlgos[Math.floor(rng() * elegantAlgos.length)];
     }
 
     if (aesthetic === 'friendly-rounded') {
         const friendlyAlgos: LogoAlgorithm[] = [
-            'sparkle-asterisk', 'overlapping-shapes', 'arc-swoosh'
+            'starburst', 'circle-overlap', 'flow-gradient', 'letter-swoosh'
         ];
         return friendlyAlgos[Math.floor(rng() * friendlyAlgos.length)];
     }
@@ -360,40 +419,47 @@ function selectAlgorithm(params: LogoGenerationParams): LogoAlgorithm {
  * This is the main entry point for logo generation.
  * Same brand name = same deterministic output.
  * Different brand name = guaranteed different output.
+ * Quality scoring ensures only premium logos (80+) are returned.
  */
 export function generateLogos(params: LogoGenerationParams): GeneratedLogo[] {
     const algorithm = params.algorithm || selectAlgorithm(params);
 
     switch (algorithm) {
-        case 'parallel-bars':
-            return generateParallelBars(params);
-        case 'stacked-lines':
-            return generateStackedLines(params);
-        case 'letterform-cutout':
-            return generateLetterformCutout(params);
-        case 'sparkle-asterisk':
-            return generateSparkleAsterisk(params);
-        case 'overlapping-shapes':
-            return generateOverlappingShapes(params);
-        case 'arc-swoosh':
-            return generateArcSwoosh(params);
-        case 'depth-mark':
-            return generateDepthMark(params);
-        case 'negative-space':
-            return generateNegativeSpace(params);
-        case 'interlocking-forms':
-            return generateInterlockingForms(params);
-        case 'abstract-monogram':
-            return generateAbstractMonogram(params);
+        case 'starburst':
+            return generateStarburst(params);
+        case 'framed-letter':
+            return generateFramedLetter(params);
+        case 'motion-lines':
+            return generateMotionLines(params);
+        case 'gradient-bars':
+            return generateGradientBars(params);
+        case 'perfect-triangle':
+            return generatePerfectTriangle(params);
+        case 'circle-overlap':
+            return generateCircleOverlap(params);
+        case 'depth-geometry':
+            return generateDepthGeometry(params);
+        case 'letter-swoosh':
+            return generateLetterSwoosh(params);
+        case 'orbital-rings':
+            return generateOrbitalRings(params);
+        case 'flow-gradient':
+            return generateFlowGradient(params);
+        case 'isometric-cube':
+            return generateIsometricCube(params);
+        case 'abstract-mark':
+            return generateAbstractMark(params);
+        case 'monogram-blend':
+            return generateMonogramBlend(params);
         default:
-            return generateParallelBars(params);
+            return generateStarburst(params);
     }
 }
 
 /**
  * Generate logos for all algorithms
  *
- * Creates variations across all 10 algorithms for maximum variety.
+ * Creates variations across all 13 algorithms for maximum variety.
  */
 export function generateAllAlgorithms(params: LogoGenerationParams): GeneratedLogo[] {
     const allLogos: GeneratedLogo[] = [];
@@ -448,21 +514,22 @@ export function generateBrandPackage(params: LogoGenerationParams): {
 } {
     return {
         primary: [
-            ...generateLogos({ ...params, algorithm: 'abstract-monogram', variations: 2 }),
-            ...generateLogos({ ...params, algorithm: 'letterform-cutout', variations: 2 }),
+            ...generateLogos({ ...params, algorithm: 'monogram-blend', variations: 2 }),
+            ...generateLogos({ ...params, algorithm: 'framed-letter', variations: 2 }),
         ],
         secondary: [
-            ...generateLogos({ ...params, algorithm: 'sparkle-asterisk', variations: 2 }),
-            ...generateLogos({ ...params, algorithm: 'negative-space', variations: 2 }),
+            ...generateLogos({ ...params, algorithm: 'starburst', variations: 2 }),
+            ...generateLogos({ ...params, algorithm: 'abstract-mark', variations: 2 }),
         ],
         icons: [
-            ...generateLogos({ ...params, algorithm: 'depth-mark', variations: 2 }),
-            ...generateLogos({ ...params, algorithm: 'overlapping-shapes', variations: 2 }),
+            ...generateLogos({ ...params, algorithm: 'depth-geometry', variations: 2 }),
+            ...generateLogos({ ...params, algorithm: 'circle-overlap', variations: 2 }),
+            ...generateLogos({ ...params, algorithm: 'isometric-cube', variations: 2 }),
         ],
         patterns: [
-            ...generateLogos({ ...params, algorithm: 'parallel-bars', variations: 2 }),
-            ...generateLogos({ ...params, algorithm: 'stacked-lines', variations: 2 }),
-            ...generateLogos({ ...params, algorithm: 'arc-swoosh', variations: 2 }),
+            ...generateLogos({ ...params, algorithm: 'gradient-bars', variations: 2 }),
+            ...generateLogos({ ...params, algorithm: 'motion-lines', variations: 2 }),
+            ...generateLogos({ ...params, algorithm: 'orbital-rings', variations: 2 }),
         ],
     };
 }

@@ -73,12 +73,38 @@ function seededRandom(seed: string) {
 }
 
 /**
- * Logo Composition Engine v3 (Parametric)
+ * Logo Composition Engine v5 (Premium Parametric)
+ *
+ * Priority: Logo Engine v5 generated logos > Legacy procedural logos
  */
 export const LogoComposition = ({ brand, className, layout = 'generative', overrideColors, isPro = false }: LogoCompositionProps) => {
     const uniqueId = useId();
     const seed = brand.id + (brand.name || 'brand') + (brand.generationSeed || brand.id || 'stable');
     const rng = () => seededRandom(seed);
+
+    // =========================================================================
+    // LOGO ENGINE V5 - Render premium generated logo if available
+    // =========================================================================
+    if (brand.generatedLogos && brand.generatedLogos.length > 0) {
+        const selectedIndex = brand.selectedLogoIndex ?? 0;
+        const selectedLogo = brand.generatedLogos[selectedIndex];
+
+        if (selectedLogo?.svg) {
+            return (
+                <div
+                    className={className}
+                    dangerouslySetInnerHTML={{ __html: selectedLogo.svg }}
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                />
+            );
+        }
+    }
 
     // Deterministic Shape Selection
     const shapeIndex1 = Math.floor(seededRandom(seed + 's1') * SHAPES.length);

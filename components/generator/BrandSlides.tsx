@@ -126,65 +126,121 @@ export const SlideStrategy = ({ brand, id }: { brand: BrandIdentity, id?: string
 };
 
 // ==================== 3. LOGO CONSTRUCTION ====================
-export const SlideLogo = ({ brand, onCycleColor, id }: { brand: BrandIdentity, onCycleColor?: () => void, id?: string }) => (
-    <SlideLayout
-        brand={brand}
-        title={`Logo Marks for ${brand.name}`}
-        action={
-            <button
-                onClick={onCycleColor}
-                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors border border-white/10 backdrop-blur-md"
-            >
-                <RefreshCw className="w-4 h-4" />
-                Cycle Color
-            </button>
-        }
-        id={id}
-    >
-        <div className="grid grid-cols-4 grid-rows-2 gap-6 h-full">
-            {/* Primary Mark - Bigger */}
-            <div className="col-span-2 row-span-2 bg-white rounded-xl p-8 flex flex-col justify-between text-black relative group">
-                <div className="flex-1 flex items-center justify-center">
-                    <div className="w-48 h-48 relative">
-                        <LogoComposition brand={brand} layout="generative" />
+// ==================== 3. LOGO CONSTRUCTION ====================
+import { ColorPicker } from '@/components/ui/ColorPicker';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Dices } from 'lucide-react';
+
+interface SlideLogoProps {
+    brand: BrandIdentity;
+    onSelectColor?: (color: { light: string; dark: string }) => void;
+    id?: string;
+}
+
+export const SlideLogo = ({ brand, onSelectColor, id }: SlideLogoProps) => {
+    const currentColor = brand.theme.tokens.light.primary;
+
+    const handleRandomColor = () => {
+        const randomHex = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+        // Simple dark variant approximation
+        onSelectColor?.({ light: randomHex, dark: randomHex });
+    };
+
+    return (
+        <SlideLayout
+            brand={brand}
+            title={`Logo Marks for ${brand.name}`}
+            action={
+                <div className="flex items-center gap-2">
+                    {/* Color Picker Dropdown */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button
+                                className="flex items-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors border border-white/10 backdrop-blur-md outline-none focus:ring-2 focus:ring-white/20"
+                            >
+                                <div
+                                    className="w-4 h-4 rounded-full border border-white/30"
+                                    style={{ backgroundColor: currentColor }}
+                                />
+                                <span className="hidden sm:inline">Color</span>
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                            sideOffset={8}
+                            align="end"
+                            className="w-[280px] p-0 bg-stone-900/95 backdrop-blur-xl border-white/10 text-white rounded-2xl shadow-2xl overflow-hidden"
+                        >
+                            <ColorPicker
+                                value={currentColor}
+                                onChange={(color) => {
+                                    onSelectColor?.(color);
+                                }}
+                            />
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    {/* Random Button */}
+                    <button
+                        onClick={handleRandomColor}
+                        className="flex items-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors border border-white/10 backdrop-blur-md"
+                        title="Random Color"
+                    >
+                        <Dices className="w-4 h-4" />
+                        <span className="hidden sm:inline">Random</span>
+                    </button>
+                </div>
+            }
+            id={id}
+        >
+            <div className="grid grid-cols-4 grid-rows-2 gap-6 h-full">
+                {/* Primary Mark - Bigger */}
+                <div className="col-span-2 row-span-2 bg-white rounded-xl p-8 flex flex-col justify-between text-black relative group">
+                    <div className="flex-1 flex items-center justify-center">
+                        <div className="w-48 h-48 relative">
+                            <LogoComposition brand={brand} layout="generative" />
+                        </div>
+                    </div>
+                    <div className="border-t border-black/10 pt-4 mt-4">
+                        <span className="text-xs uppercase font-bold tracking-widest opacity-60">Primary Mark</span>
                     </div>
                 </div>
-                <div className="border-t border-black/10 pt-4 mt-4">
-                    <span className="text-xs uppercase font-bold tracking-widest opacity-60">Primary Mark</span>
-                </div>
-            </div>
 
-            {/* Monotone */}
-            <div className="col-span-1 row-span-1 bg-stone-900 rounded-xl p-6 flex flex-col justify-between text-white border border-white/10">
-                <div className="w-16 h-16 self-center">
-                    <LogoComposition brand={brand} layout="generative" overrideColors={{ primary: '#FFFFFF' }} />
-                </div>
-                <span className="text-[10px] uppercase font-bold tracking-widest opacity-50 text-center">Monotone</span>
-            </div>
-
-            {/* Accent */}
-            <div className="col-span-1 row-span-1 rounded-xl p-6 flex flex-col justify-between text-white" style={{ backgroundColor: brand.theme.tokens.dark.primary }}>
-                <div className="w-16 h-16 self-center">
-                    <LogoComposition brand={brand} layout="generative" overrideColors={{ primary: '#FFFFFF' }} />
-                </div>
-                <span className="text-[10px] uppercase font-bold tracking-widest opacity-80 text-center">Accent</span>
-            </div>
-
-            {/* Clear Space Diagram - Updated Layout */}
-            <div className="col-span-2 row-span-1 border border-white/10 rounded-xl p-6 relative flex items-center justify-center bg-white/5">
-                <div className="absolute top-4 left-4 text-[10px] font-mono text-white/40 uppercase tracking-widest">Clear Space</div>
-                <div className="relative p-6 border border-dashed border-white/20">
-                    <div className="w-16 h-16">
+                {/* Monotone */}
+                <div className="col-span-1 row-span-1 bg-stone-900 rounded-xl p-6 flex flex-col justify-between text-white border border-white/10">
+                    <div className="w-16 h-16 self-center">
                         <LogoComposition brand={brand} layout="generative" overrideColors={{ primary: '#FFFFFF' }} />
                     </div>
-                    {/* Measurement lines */}
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-mono text-white/40">x</div>
-                    <div className="absolute top-1/2 -right-3 -translate-y-1/2 text-[10px] font-mono text-white/40">x</div>
+                    <span className="text-[10px] uppercase font-bold tracking-widest opacity-50 text-center">Monotone</span>
+                </div>
+
+                {/* Accent */}
+                <div className="col-span-1 row-span-1 rounded-xl p-6 flex flex-col justify-between text-white" style={{ backgroundColor: brand.theme.tokens.dark.primary }}>
+                    <div className="w-16 h-16 self-center">
+                        <LogoComposition brand={brand} layout="generative" overrideColors={{ primary: '#FFFFFF' }} />
+                    </div>
+                    <span className="text-[10px] uppercase font-bold tracking-widest opacity-80 text-center">Accent</span>
+                </div>
+
+                {/* Clear Space Diagram */}
+                <div className="col-span-2 row-span-1 border border-white/10 rounded-xl p-6 relative flex items-center justify-center bg-white/5">
+                    <div className="absolute top-4 left-4 text-[10px] font-mono text-white/40 uppercase tracking-widest">Clear Space</div>
+                    <div className="relative p-6 border border-dashed border-white/20">
+                        <div className="w-16 h-16">
+                            <LogoComposition brand={brand} layout="generative" overrideColors={{ primary: '#FFFFFF' }} />
+                        </div>
+                        {/* Measurement lines */}
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-mono text-white/40">x</div>
+                        <div className="absolute top-1/2 -right-3 -translate-y-1/2 text-[10px] font-mono text-white/40">x</div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </SlideLayout>
-);
+        </SlideLayout>
+    );
+};
 
 // ==================== 4. COLOR PALETTE ====================
 // Helper Card - Always shows swatch in contrasting container
