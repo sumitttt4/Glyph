@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import { BrandIdentity } from '@/lib/data';
-import { LogoComposition } from '@/components/brand/LogoComposition';
+import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 import { X, Check, Copy, Shuffle } from 'lucide-react';
 import { getReadableTextColor } from '@/lib/accessibility';
 

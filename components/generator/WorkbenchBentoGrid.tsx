@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { UnifiedExportMenu } from '@/components/generator/UnifiedExportMenu';
-import { SocialMediaKit } from '@/components/brand/SocialMediaKit';
+import { SocialMediaKit } from '@/components/preview/SocialMediaKit';
 import { ArrowUp, ArrowUpRight as ArrowUpEnd } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BrandIdentity } from '@/lib/data';
@@ -12,19 +12,19 @@ import { Copy, Check, Shuffle, RefreshCw, SlidersHorizontal, Share2 } from 'luci
 import { LogoTweakPanel } from './LogoTweakPanel';
 import { ExportBrandKit } from './ExportBrandKit';
 import { SlideCover, SlideStrategy, SlideLogo, SlideColors, SlideTypography, SlideSocial, SlideOutdoor, SlideMockups, SlidePitchDeck, SlideGuidelines } from './BrandSlides';
-import { LogoComposition } from '../brand/LogoComposition';
-import { LogoConstruction } from '../brand/LogoConstruction';
-import { SafariBrowserMockup } from '../mockups/SafariBrowserMockup';
+import { LogoComposition } from '@/components/logo-engine/LogoComposition';
+import { LogoConstruction } from '@/components/logo-engine/LogoConstruction';
+import { SafariBrowserMockup } from '@/components/preview/SafariBrowserMockup';
 import { ColorPaletteHorizontal } from './ColorPaletteStrip';
 import { AppIconVariants } from './AppIconVariants';
-import { MockupCreditCard, MockupIDBadge } from '../mockups/MockupMerch';
-import { MockupIPhoneHome } from '../mockups/MockupIPhoneHome';
+import { MockupCreditCard, MockupIDBadge } from '@/components/preview/MockupMerch';
+import { MockupIPhoneHome } from '@/components/preview/MockupIPhoneHome';
 
 
-import { Mockup3DCard } from '../mockups/Mockup3DCard';
-import { MockupDevice, MockupBrowser } from '../mockups/MockupDevice';
-import { BrowserBrandPreview } from '../mockups/BrowserBrandPreview';
-import { MonogramMark } from '../brand/MonogramMark';
+import { Mockup3DCard } from '@/components/preview/Mockup3DCard';
+import { MockupDevice, MockupBrowser } from '@/components/preview/MockupDevice';
+import { BrowserBrandPreview } from '@/components/preview/BrowserBrandPreview';
+import { MonogramMark } from '@/components/logo-engine/LogoMonogram';
 import { FontSelector } from './FontSelector';
 
 

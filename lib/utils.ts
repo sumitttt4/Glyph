@@ -13,9 +13,9 @@ export function hexToRgb(hex: string): string {
 }
 
 export function hexToCmyk(hex: string): string {
-    let r = parseInt(hex.slice(1, 3), 16);
-    let g = parseInt(hex.slice(3, 5), 16);
-    let b = parseInt(hex.slice(5, 7), 16);
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
 
     if (r === 0 && g === 0 && b === 0) return "0, 0, 0, 100";
 

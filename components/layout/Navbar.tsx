@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { GlyphLogo } from '@/components/brand/GlyphLogo';
+import { GlyphLogo } from '@/components/logo-engine/LogoGlyph';
 
 // ... (existing imports)
 

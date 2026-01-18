@@ -8,15 +8,16 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { THEMES } from '@/lib/themes';
 import { SHAPES } from '@/lib/shapes';
-import { MockupBrowser, MockupDevice } from '@/components/mockups/MockupDevice';
-import { Mockup3DCard } from '@/components/mockups/Mockup3DCard';
+import { MockupBrowser, MockupDevice } from '@/components/preview/MockupDevice';
+import { Mockup3DCard } from '@/components/preview/Mockup3DCard';
 import { Button } from '@/components/ui/button';
 import { FAQ } from '@/components/landing/FAQ';
 import Pricing from '@/components/landing/Pricing';
 import { AuthRescue } from '@/components/auth/AuthRescue';
 import { Suspense } from 'react';
-import { LogoComposition } from '@/components/brand/LogoComposition';
+import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 import HeroAnimation from '@/components/landing/HeroAnimation';
+import { LiveCounter } from '@/components/landing/LiveCounter';
 
 const DEMO_BRAND = {
   id: 'demo',
@@ -115,6 +116,11 @@ export default function LandingPage() {
                   See How It Works
                 </a>
               </div>
+
+              <div className="flex justify-center lg:justify-start mt-6">
+                <LiveCounter />
+              </div>
+
             </div>
 
             {/* Right: The Living Hero Animation */}

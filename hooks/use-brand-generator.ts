@@ -8,6 +8,7 @@ import { fontPairings } from '@/lib/fonts';
 import { suggestLogoComponentsWithAI_V2 } from '@/lib/brand-generator';
 import { ICONS, getIconsForVibe, getRandomIcon } from '@/lib/icons';
 import { generateBrandStrategy } from '@/lib/strategy-engine';
+import { incrementGenerationCount } from '@/app/actions/stats';
 import {
     generateLogos,
     LogoCategory,
@@ -15,7 +16,9 @@ import {
     LogoAlgorithm,
     GeneratedLogo,
     ALL_ALGORITHMS,
-} from '@/lib/logo-engine';
+    SYMBOL_ALGORITHMS,
+    WORDMARK_ALGORITHMS,
+} from '@/components/logo-engine';
 
 // Map vibe to LogoCategory for logo engine
 const vibeToCategory: Record<string, LogoCategory> = {
@@ -64,7 +67,7 @@ export function useBrandGenerator() {
         options: {
             color?: string;
             shape?: string;
-            archetype?: 'symbol' | 'wordmark';
+            archetype?: 'symbol' | 'wordmark' | 'both';
             gradient?: { colors: string[]; angle: number } | null;
             prompt?: string;
             surpriseMe?: boolean
@@ -228,8 +231,9 @@ export function useBrandGenerator() {
                 category: logoCategory,
                 industry: logoCategory,
                 aesthetic: logoAesthetic,
+                archetype: options.archetype, // Pass archetype for algorithm filtering
                 variations: 3, // Generate 3 variations
-                minQualityScore: 80,
+                minQualityScore: 85, // Premium quality threshold
             });
         } catch (e) {
             console.error('Logo Engine Error:', e);
@@ -274,6 +278,9 @@ export function useBrandGenerator() {
         setCurrentIndex(newHistory.length - 1);
 
         setIsGenerating(false);
+
+        // GLOBAL STATS: Increment counter (fire and forget)
+        incrementGenerationCount();
 
         // PERSISTENCE: Save to Supabase (Background)
         // Fire and forget - don't block UI
@@ -326,19 +333,31 @@ export function useBrandGenerator() {
 
         // Get the current algorithm used (if any)
         const currentAlgorithm = baseBrand.generatedLogos?.[0]?.algorithm;
+        const archetype = baseBrand.archetype;
 
         // Curated algorithm groups for visual variety
         const algorithmGroups: LogoAlgorithm[][] = [
-            ['starburst', 'orbital-rings', 'flow-gradient'],      // Radial/Organic
-            ['framed-letter', 'monogram-blend'],                   // Lettermarks
-            ['abstract-mark', 'depth-geometry', 'isometric-cube'], // Abstract/3D
-            ['gradient-bars', 'motion-lines'],                     // Linear/Bars
-            ['perfect-triangle', 'circle-overlap'],                // Geometric
-            ['letter-swoosh'],                                     // Dynamic
+            ['starburst', 'orbital-rings', 'flow-gradient', 'sound-waves', 'infinity-loop'],  // Radial/Organic
+            ['framed-letter', 'monogram-blend', 'letter-gradient', 'box-logo'],               // Lettermarks
+            ['abstract-mark', 'depth-geometry', 'isometric-cube', 'hexagon-tech'],            // Abstract/3D
+            ['gradient-bars', 'motion-lines', 'wave-flow'],                                   // Linear/Bars
+            ['perfect-triangle', 'circle-overlap', 'diamond-gem', 'shield-badge'],            // Geometric
+            ['letter-swoosh', 'arrow-mark', 'lightning-bolt'],                                // Dynamic
+            ['dna-helix', 'orbital-paths', 'fingerprint-id', 'maze-pattern'],                 // Advanced
         ];
 
-        // Flatten and filter out current algorithm
-        const availableAlgorithms = ALL_ALGORITHMS.filter(a => a !== currentAlgorithm);
+        // Select algorithm pool based on archetype
+        let baseAlgorithms: LogoAlgorithm[];
+        if (archetype === 'symbol') {
+            baseAlgorithms = SYMBOL_ALGORITHMS;
+        } else if (archetype === 'wordmark') {
+            baseAlgorithms = WORDMARK_ALGORITHMS;
+        } else {
+            baseAlgorithms = ALL_ALGORITHMS;
+        }
+
+        // Filter out current algorithm
+        const availableAlgorithms = baseAlgorithms.filter(a => a !== currentAlgorithm);
 
         // Shuffle algorithms for variety
         const shuffled = [...availableAlgorithms].sort(() => Math.random() - 0.5);
@@ -388,8 +407,9 @@ export function useBrandGenerator() {
                     accentColor,
                     category: logoCategory,
                     algorithm, // Use specific algorithm
+                    archetype, // Pass archetype for consistency
                     variations: 1, // One logo per algorithm
-                    minQualityScore: 75,
+                    minQualityScore: 85, // Premium quality threshold
                 });
             } catch (e) {
                 console.error(`Logo generation error for ${algorithm}:`, e);

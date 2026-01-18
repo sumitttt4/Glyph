@@ -8,7 +8,7 @@
 import { Theme, ThemeTokens } from './themes';
 import { Shape } from './shapes';
 import { FontFamily, FontPairing } from './typography';
-import { GeneratedLogo } from './logo-engine/types';
+import { GeneratedLogo } from '@/components/logo-engine/types';
 
 export type { Theme, ThemeTokens, Shape, FontFamily, FontPairing, GeneratedLogo };
 
@@ -30,7 +30,7 @@ export interface BrandIdentity {
   // Visual Core
   theme: Theme;
   shape: Shape;
-  archetype?: 'symbol' | 'wordmark'; // New field for logic fork
+  archetype?: 'symbol' | 'wordmark' | 'both'; // Logo type: symbol-only, text-only, or combined
   logoLayout?: 'default' | 'swiss' | 'bauhaus' | 'minimal_grid' | 'organic_fluid' | 'generative' | 'radial';
 
   // Procedural Logo Engine

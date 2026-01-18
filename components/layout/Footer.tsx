@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Github, Twitter, Linkedin } from 'lucide-react';
-import { GlyphLogo } from '@/components/brand/GlyphLogo';
+import { GlyphLogo } from '@/components/logo-engine/LogoGlyph';
 
 // ... (imports remain the same)
 
@@ -8,7 +8,7 @@ const FOOTER_LINKS = {
     product: [
         { label: 'Features', href: '#features' },
         { label: 'Pricing', href: '#pricing' },
-        { label: 'Generator', href: '/generate' },
+        { label: 'Generator', href: '/generator' },
     ],
     // Company section removed
     legal: [

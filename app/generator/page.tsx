@@ -9,10 +9,9 @@ import { ProGateModal } from '@/components/generator/ProGateModal';
 import { useBrandGenerator } from '@/hooks/use-brand-generator';
 import { useSubscription } from '@/hooks/use-subscription';
 import { createClient } from '@/lib/supabase/client';
-import { exportBrandPackage } from '@/lib/export';
-import { generateFaviconPackage } from '@/lib/favicon-generator';
-import { generateSocialMediaKit, downloadSocialAsset } from '@/lib/social-media-kit';
-import { downloadBrandBookPDF } from '@/lib/pdf-generator';
+import { exportBrandPackage } from '@/components/export/ExportPackage';
+import { generateSocialMediaKit, downloadSocialAsset } from '@/components/export/ExportSocial';
+import { downloadBrandBookPDF } from '@/components/export/ExportPDF';
 import { CompareOverlay } from '@/components/generator/CompareOverlay';
 import { RobotEmptyState } from '@/components/generator/RobotEmptyState';
 import { BrandIdentity } from '@/lib/data';
@@ -157,9 +156,9 @@ export default function GeneratorPage() {
     if (!isAuthed) return;
 
     if (type === 'svg') {
-      // Use the composed logo generator that matches the app display
-      const { generateComposedLogoSVG } = await import('@/lib/svg-exporter');
-      const svgContent = generateComposedLogoSVG(brand, 'color');
+      // Use stored logo SVG - ensures exact match with preview
+      const { getStoredLogoSVG } = await import('@/components/logo-engine/renderers/stored-logo-export');
+      const svgContent = getStoredLogoSVG(brand, 'color');
       const blob = new Blob([svgContent], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -233,9 +232,10 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
         alert("Failed to create export package. Please try again.");
       }
     } else if (type === 'favicon') {
-      // Generate and download favicon package
-      const pkg = generateFaviconPackage(brand);
-      const faviconSvg = pkg.files.find(f => f.name === 'favicon.svg')?.content || '';
+      // Generate and download favicon package (use sync version for simplicity)
+      const { generateFaviconPackageSync } = await import('@/components/export/ExportFavicon');
+      const pkg = generateFaviconPackageSync(brand);
+      const faviconSvg = pkg.files.find((f: { name: string }) => f.name === 'favicon.svg')?.content || '';
       const blob = new Blob([faviconSvg], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -247,7 +247,7 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
       alert('Favicon SVG downloaded! HTML snippet copied to clipboard.');
     } else if (type === 'social') {
       // Download complete social media kit as ZIP
-      // const { downloadSocialMediaKitZip } = await import('@/lib/social-media-kit');
+      // const { downloadSocialMediaKitZip } = await import('@/components/export/ExportSocial');
       // await downloadSocialMediaKitZip(brand);
       alert('Please use the Social Media Kit section in the workbench to download assets.');
       alert('Social Media Kit downloaded!');

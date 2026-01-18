@@ -1,7 +1,7 @@
 "use client";
 
 import { BrandIdentity } from '@/lib/data';
-import { LogoComposition } from '@/components/brand/LogoComposition';
+import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 
 interface AppIconVariantsProps {
     brand: BrandIdentity;

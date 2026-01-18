@@ -141,7 +141,7 @@ export default function Pricing() {
                                 </ul>
 
                                 <a
-                                    href="https://checkout.dodopayments.com/buy/pdt_0NVXcrRSqLnWomnnrEIla?quantity=1&redirect_url=https://brand-identity-ivory.vercel.app%2F"
+                                    href="https://checkout.dodopayments.com/buy/pdt_0NVXcrRSqLnWomnnrEIla?quantity=1&redirect_url=https://glyph.software"
                                     className="w-full bg-[#FF4500] hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition-all shadow-lg hover:shadow-orange-200 active:scale-[0.98] flex items-center justify-center gap-2 text-sm md:text-base"
                                 >
                                     Get Lifetime Access

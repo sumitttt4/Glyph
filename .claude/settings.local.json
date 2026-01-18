@@ -11,7 +11,9 @@
       "Bash(npm run build:*)",
       "Bash(timeout:*)",
       "Bash(start http://localhost:3000/logo-engine-demo)",
-      "Bash(start http://localhost:3000/generator)"
+      "Bash(start http://localhost:3000/generator)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)"
     ]
   }
 }

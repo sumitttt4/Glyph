@@ -1,7 +1,7 @@
 import { BrandIdentity } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { Download } from 'lucide-react';
-import { LogoComposition } from '@/components/brand/LogoComposition';
+import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 
 interface LogoCellProps {
     brand: BrandIdentity;

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { BrandIdentity } from '@/lib/data';
-import { LogoComposition } from '@/components/brand/LogoComposition';
+import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 
 export default function HistoryPage() {
     const [brands, setBrands] = useState<any[]>([]);

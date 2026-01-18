@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { BrandIdentity } from '@/lib/data';
 import { LOGO_STYLES, LogoStyle, isStyleFree } from '@/lib/logo-styles';
-import { LogoComposition, LogoLayoutStyle } from '@/components/brand/LogoComposition';
+import { LogoComposition, LogoLayoutStyle } from '@/components/logo-engine/LogoComposition';
 import { ProBadge } from '@/components/ui/ProBadge';
 import { Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';

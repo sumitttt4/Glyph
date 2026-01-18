@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Check, Shuffle } from 'lucide-react';
 import { VibeSelector } from './VibeSelector';
 import { expandBriefWithAI, suggestVibeWithAI, expandVibeWithAI } from '@/lib/brand-generator';
-import { GlyphIcon } from '@/components/brand/GlyphLogo';
+import { GlyphIcon } from '@/components/logo-engine/LogoGlyph';
 
 import { ArchetypeSelector } from './ArchetypeSelector';
 import { BrandContextSelector, INDUSTRIES } from './BrandContextSelector';
