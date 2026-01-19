@@ -18,15 +18,17 @@ import { Suspense } from 'react';
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 import HeroAnimation from '@/components/landing/HeroAnimation';
 import { LiveCounter } from '@/components/landing/LiveCounter';
+import { BrandIdentity } from '@/lib/data';
 
-const DEMO_BRAND = {
+const DEMO_BRAND: BrandIdentity = {
   id: 'demo',
   name: 'Visionary',
   vibe: 'Premium',
-  font: { name: 'Instrument Sans', weights: [400, 700] },
+  font: { id: 'demo-font', name: 'Instrument Sans', heading: 'Instrument Sans', body: 'Inter', tags: ['modern'] },
   theme: THEMES[0], // Architect
   shape: SHAPES[3], // Hexagon
   generationSeed: 12345,
+  createdAt: new Date(),
 };
 
 // Sample data for the "How It Works" bento
@@ -180,7 +182,7 @@ export default function LandingPage() {
                 <div className="col-span-2 row-span-1 bg-white rounded-2xl p-6 flex items-center justify-between overflow-hidden group hover:shadow-lg transition-shadow">
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 relative">
-                      <LogoComposition brand={DEMO_BRAND as any} />
+                      <LogoComposition brand={DEMO_BRAND} />
                     </div>
                     <span className="text-3xl font-bold text-stone-900 tracking-tight">{DEMO_BRAND.name}</span>
                   </div>

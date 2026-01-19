@@ -8,7 +8,7 @@ export default function Pricing() {
 
                 <div className="text-center mb-8 md:mb-12">
                     <h2 className="text-2xl md:text-3xl font-bold text-stone-950 tracking-tight mb-2">Simple, Transparent Pricing.</h2>
-                    <p className="text-stone-500 text-sm md:text-base">Build for free. Pay only when you're ready to ship.</p>
+                    <p className="text-stone-500 text-sm md:text-base">Build for free. Pay only when you&apos;re ready to ship.</p>
                 </div>
 
                 {/* PRICING GRID */}
@@ -35,7 +35,7 @@ export default function Pricing() {
 
                             {/* FREE BODY */}
                             <div className="p-6 flex-1 flex flex-col">
-                                <p className="text-stone-500 text-sm mb-6">Great for exploring ideas. You can generate forever, but can't export.</p>
+                                <p className="text-stone-500 text-sm mb-6">Great for exploring ideas. You can generate forever, but can&apos;t export.</p>
 
                                 <ul className="space-y-3 mb-6 flex-1">
                                     {/* INCLUDED */}

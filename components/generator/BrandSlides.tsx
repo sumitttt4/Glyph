@@ -8,6 +8,7 @@ import { Check, Copy, ExternalLink, ArrowRight, RefreshCw } from 'lucide-react';
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 import { MockupSocial } from '@/components/preview/MockupSocial';
 import { MockupBillboard } from '@/components/preview/MockupBillboard';
+import { MockupBusinessCard, MockupToteBag, MockupSignage } from '@/components/preview/MockupGenerator';
 import { FontSelector } from './FontSelector';
 
 // ... (SlideLayout remains same)
@@ -516,9 +517,6 @@ export const SlideOutdoor = ({ brand, id }: { brand: BrandIdentity, id?: string 
 
 // ==================== 8. MERCH & MOCKUPS (PREMIUM) ====================
 export const SlideMockups = ({ brand, id }: { brand: BrandIdentity, id?: string }) => {
-    // Dynamic import to avoid circular dep issues if any
-    const { MockupBusinessCard, MockupToteBag, MockupSignage } = require('@/components/preview/MockupGenerator');
-
     return (
         <SlideLayout brand={brand} id={id} title={`Brand Application for ${brand.name}`}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">

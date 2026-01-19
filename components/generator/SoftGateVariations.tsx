@@ -93,7 +93,7 @@ export function SoftGateVariations({ onUnlock }: SoftGateVariationsProps) {
 
                     <p className="text-[10px] text-stone-400 mt-4 flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-green-500/50 block" />
-                        No password required. We'll also email you these styles.
+                        No password required. We&apos;ll also email you these styles.
                     </p>
                 </div>
             </div>
