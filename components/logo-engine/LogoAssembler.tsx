@@ -51,68 +51,38 @@ export default function LogoAssembler({
     const isGhost = shape === 'ghost';
     const isDiamond = shape === 'diamond';
 
-    // Render the Icon Part - supports both custom SVG and Lucide
-    const IconMark = ({ size = 24, forceColor }: { size?: number, forceColor?: string }) => (
-        <div
-            className={cn(
-                "flex items-center justify-center transition-all duration-300",
-                shape !== 'ghost' && (ASSEMBLER_SHAPES[shape] || 'rounded-xl'),
-                shape === 'ghost' && "rounded-xl border-2",
-                isDiamond && "rotate-45"
-            )}
-            style={{
-                backgroundColor: isGhost ? 'transparent' : primaryColor,
-                borderColor: isGhost ? primaryColor : 'transparent',
-                padding: size * 0.5,
-                width: size * 2,
-                height: size * 2,
-            }}
-        >
-            <div className={cn(isDiamond && "-rotate-45")}>
-                {customIcon ? (
-                    // Render custom SVG from our library
-                    <svg
-                        width={size}
-                        height={size}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke={forceColor || (isGhost ? primaryColor : 'white')}
-                        strokeWidth={2.5}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <path d={customIcon.path} />
-                    </svg>
-                ) : (
-                    // Fallback to Lucide icon
-                    <LucideIcon
-                        size={size}
-                        strokeWidth={2.5}
-                        color={forceColor || (isGhost ? primaryColor : 'white')}
-                    />
-                )}
-            </div>
-        </div>
-    );
-
-    // Render the Text Part
-    const Wordmark = () => (
-        <span
-            className="font-bold text-xl tracking-tight text-current"
-            style={{ fontFamily: fontFamily || 'inherit' }}
-        >
-            {brandName}
-        </span>
-    );
-
     // --- THE LAYOUT SWITCHER ---
+
+    const iconElementProps = {
+        size: 24, // base size
+        strokeWidth: 2.5,
+        customIcon,
+        LucideIcon,
+        isGhost,
+        primaryColor
+    };
+
+    const iconMarkProps = {
+        shape,
+        primaryColor,
+        isGhost,
+        isDiamond,
+        customIcon,
+        LucideIcon,
+        size: 24
+    };
+
+    const wordMarkProps = {
+        brandName,
+        fontFamily
+    };
 
     // 1. Classic (Icon Left)
     if (layout === 'icon_left') {
         return (
             <div className={cn("flex items-center", className)} style={{ gap: `${gap}px` }}>
-                <IconMark />
-                <Wordmark />
+                <IconMark {...iconMarkProps} />
+                <Wordmark {...wordMarkProps} />
             </div>
         );
     }
@@ -121,8 +91,8 @@ export default function LogoAssembler({
     if (layout === 'icon_right') {
         return (
             <div className={cn("flex items-center flex-row-reverse", className)} style={{ gap: `${gap}px` }}>
-                <IconMark />
-                <Wordmark />
+                <IconMark {...iconMarkProps} />
+                <Wordmark {...wordMarkProps} />
             </div>
         );
     }
@@ -131,32 +101,11 @@ export default function LogoAssembler({
     if (layout === 'stacked') {
         return (
             <div className={cn("flex flex-col items-center text-center", className)} style={{ gap: `${gap}px` }}>
-                <IconMark size={32} />
-                <Wordmark />
+                <IconMark {...iconMarkProps} size={32} />
+                <Wordmark {...wordMarkProps} />
             </div>
         );
     }
-
-    // Helper to render just the raw icon (Custom or Lucide)
-    const IconElement = ({ size, color, strokeWidth = 2.5 }: { size: number, color?: string, strokeWidth?: number }) => {
-        if (customIcon) {
-            return (
-                <svg
-                    width={size}
-                    height={size}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke={color || (isGhost ? primaryColor : 'white')}
-                    strokeWidth={strokeWidth}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                >
-                    <path d={customIcon.path} />
-                </svg>
-            );
-        }
-        return <LucideIcon size={size} color={color || (isGhost ? primaryColor : 'white')} strokeWidth={strokeWidth} />;
-    };
 
     // 3. Badge (Tiny, Pill shape for container)
     if (layout === 'badge') {
@@ -172,7 +121,7 @@ export default function LogoAssembler({
                     className="p-1.5 bg-white rounded-full shadow-sm flex items-center justify-center"
                     style={{ color: primaryColor }}
                 >
-                    <IconElement size={14} strokeWidth={2.5} />
+                    <IconElement {...iconElementProps} size={14} strokeWidth={2.5} />
                 </div>
                 <span
                     className="text-sm font-bold uppercase tracking-widest opacity-80"
@@ -199,7 +148,7 @@ export default function LogoAssembler({
                     {brandName.charAt(0)}
                 </span>
                 <div className="absolute -bottom-2 -right-2 bg-white p-1.5 rounded-full border-2 border-white shadow-sm">
-                    <IconElement size={16} color={primaryColor} strokeWidth={3} />
+                    <IconElement {...iconElementProps} size={16} color={primaryColor} strokeWidth={3} />
                 </div>
             </div>
         )
@@ -209,7 +158,7 @@ export default function LogoAssembler({
     if (layout === 'icon_only') {
         return (
             <div className={cn("flex items-center justify-center", className)}>
-                <IconElement size={32} strokeWidth={2.5} />
+                <IconElement {...iconElementProps} size={32} strokeWidth={2.5} />
             </div>
         );
     }
@@ -217,8 +166,110 @@ export default function LogoAssembler({
     // Default Fallback
     return (
         <div className={cn("flex items-center gap-3", className)}>
-            <IconMark />
-            <Wordmark />
+            <IconMark {...iconMarkProps} />
+            <Wordmark {...wordMarkProps} />
         </div>
     );
 }
+
+// ============================================================================
+// SUB-COMPONENTS (Moved outside to fix React Compiler errors)
+// ============================================================================
+
+interface IconElementProps {
+    size: number;
+    color?: string;
+    strokeWidth?: number;
+    customIcon: any;
+    LucideIcon: any;
+    isGhost: boolean;
+    primaryColor: string;
+}
+
+const IconElement = ({ size, color, strokeWidth = 2.5, customIcon, LucideIcon, isGhost, primaryColor }: IconElementProps) => {
+    if (customIcon) {
+        return (
+            <svg
+                width={size}
+                height={size}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={color || (isGhost ? primaryColor : 'white')}
+                strokeWidth={strokeWidth}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            >
+                <path d={customIcon.path} />
+            </svg>
+        );
+    }
+    return <LucideIcon size={size} color={color || (isGhost ? primaryColor : 'white')} strokeWidth={strokeWidth} />;
+};
+
+interface IconMarkProps {
+    size?: number;
+    forceColor?: string;
+    shape: string;
+    primaryColor: string;
+    isGhost: boolean;
+    isDiamond: boolean;
+    customIcon: any;
+    LucideIcon: any;
+}
+
+const IconMark = ({ size = 24, forceColor, shape, primaryColor, isGhost, isDiamond, customIcon, LucideIcon }: IconMarkProps) => (
+    <div
+        className={cn(
+            "flex items-center justify-center transition-all duration-300",
+            shape !== 'ghost' && (ASSEMBLER_SHAPES[shape] || 'rounded-xl'),
+            shape === 'ghost' && "rounded-xl border-2",
+            isDiamond && "rotate-45"
+        )}
+        style={{
+            backgroundColor: isGhost ? 'transparent' : primaryColor,
+            borderColor: isGhost ? primaryColor : 'transparent',
+            padding: size * 0.5,
+            width: size * 2,
+            height: size * 2,
+        }}
+    >
+        <div className={cn(isDiamond && "-rotate-45")}>
+            {customIcon ? (
+                // Render custom SVG from our library
+                <svg
+                    width={size}
+                    height={size}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke={forceColor || (isGhost ? primaryColor : 'white')}
+                    strokeWidth={2.5}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                >
+                    <path d={customIcon.path} />
+                </svg>
+            ) : (
+                // Fallback to Lucide icon
+                <LucideIcon
+                    size={size}
+                    strokeWidth={2.5}
+                    color={forceColor || (isGhost ? primaryColor : 'white')}
+                />
+            )}
+        </div>
+    </div>
+);
+
+interface WordmarkProps {
+    brandName: string;
+    fontFamily?: string;
+}
+
+const Wordmark = ({ brandName, fontFamily }: WordmarkProps) => (
+    <span
+        className="font-bold text-xl tracking-tight text-current"
+        style={{ fontFamily: fontFamily || 'inherit' }}
+    >
+        {brandName}
+    </span>
+);

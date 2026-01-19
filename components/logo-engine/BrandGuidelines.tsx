@@ -37,7 +37,7 @@ export function BrandGuidelines({ brand }: BrandGuidelinesProps) {
                 backgroundColor: '#ffffff',
                 logging: false,
                 windowWidth: 1200, // Simulate desktop viewport
-            } as any);
+            } as unknown as Record<string, unknown>);
 
             // Reset width
             element.style.width = '';

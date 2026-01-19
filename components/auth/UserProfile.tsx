@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { getSubscriptionStatus, getPlanDisplayInfo } from '@/lib/subscription';
@@ -74,9 +75,11 @@ export default function UserProfile() {
                 className="flex items-center gap-2 px-3 py-2 h-10 border border-stone-200 rounded-full bg-white shadow-sm text-sm font-medium text-stone-700 hover:border-stone-400 transition-all"
             >
                 <div className="w-6 h-6 rounded-full overflow-hidden ring-2 ring-stone-100">
-                    <img
+                    <Image
                         src={getAvatarUrl('guest')}
                         alt="Guest"
+                        width={24}
+                        height={24}
                         className="w-full h-full"
                     />
                 </div>
@@ -106,9 +109,11 @@ export default function UserProfile() {
                 {/* Cool DiceBear Avatar */}
                 <div className="relative">
                     <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-stone-200 group-hover:ring-stone-300 transition-all shadow-sm">
-                        <img
+                        <Image
                             src={avatarUrl}
                             alt={user.user_metadata?.full_name || 'User'}
+                            width={36}
+                            height={36}
                             className="w-full h-full object-cover"
                         />
                     </div>
@@ -155,9 +160,11 @@ export default function UserProfile() {
                             <div className="flex items-center gap-3">
                                 <div className="relative">
                                     <div className="w-14 h-14 rounded-full overflow-hidden ring-2 ring-white shadow-lg">
-                                        <img
+                                        <Image
                                             src={avatarUrl}
                                             alt={user.user_metadata?.full_name || 'User'}
+                                            width={56}
+                                            height={56}
                                             className="w-full h-full object-cover"
                                         />
                                     </div>

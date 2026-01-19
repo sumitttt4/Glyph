@@ -2,9 +2,8 @@
 
 import { useState } from 'react';
 import { BrandIdentity } from '@/lib/data';
-import { cn, hexToRgb, hexToCmyk } from '@/lib/utils';
-import { motion } from 'framer-motion';
-import { Check, Copy, ExternalLink, ArrowRight, RefreshCw } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Check, Copy, RefreshCw } from 'lucide-react';
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 import { MockupSocial } from '@/components/preview/MockupSocial';
 import { MockupBillboard } from '@/components/preview/MockupBillboard';
@@ -344,7 +343,7 @@ export const SlideColors = ({ brand, id }: { brand: BrandIdentity, id?: string }
 import { FontConfig } from '@/lib/fonts';
 
 // ==================== 5. TYPOGRAPHY ====================
-export const SlideTypography = ({ brand, onSwapFont, onUpdateFont, id }: { brand: BrandIdentity, onSwapFont?: () => void, onUpdateFont?: (font: FontConfig) => void, id?: string }) => {
+export const SlideTypography = ({ brand, onUpdateFont, id }: { brand: BrandIdentity, onUpdateFont?: (font: FontConfig) => void, id?: string }) => {
     const [isFontSelectorOpen, setIsFontSelectorOpen] = useState(false);
 
     // Type Scale Data matching our PDF export logic

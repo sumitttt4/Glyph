@@ -20,8 +20,9 @@ export function LoadingState({ isLoading }: LoadingStateProps) {
 
     useEffect(() => {
         if (!isLoading) {
-            setMessageIndex(0);
-            return;
+            // Reset after exit animation completes to avoid sync state update warning
+            const timer = setTimeout(() => setMessageIndex(0), 500);
+            return () => clearTimeout(timer);
         }
 
         const interval = setInterval(() => {

@@ -65,7 +65,7 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                 <SlideStrategy brand={brand} />
                 <SlideLogo brand={brand} onSelectColor={onSelectColor} />
                 <SlideColors brand={brand} />
-                <SlideTypography brand={brand} onSwapFont={onSwapFont} onUpdateFont={onUpdateFont} />
+                <SlideTypography brand={brand} onUpdateFont={onUpdateFont} />
                 <SlideSocial brand={brand} />
                 <SlideOutdoor brand={brand} />
                 <SlideMockups brand={brand} />
@@ -144,50 +144,7 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                             </div>
 
                             {/* Actions overlay */}
-                            <div
-                                className="flex bg-white/10 backdrop-blur-md rounded-2xl p-1 border border-white/20"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); onShuffleLogo?.(); }}
-                                    className="p-2 hover:bg-white/20 rounded-xl transition-all text-white/80 hover:text-white"
-                                    title="Shuffle Selection"
-                                >
-                                    <RefreshCw className="w-4 h-4" />
-                                </button>
-                                {onUpdateBrand && (
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setIsTweakPanelOpen(!isTweakPanelOpen);
-                                        }}
-                                        className={cn(
-                                            "p-2 hover:bg-white/20 rounded-xl transition-all text-white/80 hover:text-white border-l border-white/10",
-                                            isTweakPanelOpen && "bg-white/20 text-white"
-                                        )}
-                                        title="Fine Tune"
-                                    >
-                                        <SlidersHorizontal className="w-4 h-4" />
-                                    </button>
-                                )}
-                                {onVariations && (
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); onVariations(); }}
-                                        className="p-2 hover:bg-white/20 rounded-xl transition-all text-white/80 hover:text-white flex items-center gap-2 px-3 border-l border-white/10"
-                                        title="Explore Variations"
-                                    >
-                                        <Shuffle className="w-4 h-4" />
-                                        <span className="text-[10px] font-bold uppercase tracking-wider">Variations</span>
-                                    </button>
-                                )}
 
-                                <div className="border-l border-white/10 pl-1 ml-1">
-                                    <ExportBrandKit
-                                        brand={brand}
-                                        className="bg-transparent text-white/80 hover:text-white hover:bg-white/20 rounded-xl shadow-none p-2 h-auto text-[0px] w-auto border-none"
-                                    />
-                                </div>
-                            </div>
                         </div>
 
                         {/* Centerpiece - Lettermark Logo */}

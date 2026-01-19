@@ -38,8 +38,9 @@ export default function PrivacyPage() {
                 <section>
                     <h2 className="text-2xl font-semibold mb-4 text-stone-900">4. Third-Party Services</h2>
                     <p>
-                        We may use third-party services (such as authentication providers like Supabase or analytics tools) that collect, monitor, and analyze this type of information in order to increase our Service's functionality. These third-party service providers have their own privacy policies addressing how they use such information.
+                        We may use third-party services (such as authentication providers like Supabase or analytics tools) that collect, monitor, and analyze this type of information in order to increase our Service&apos;s functionality. These third-party service providers have their own privacy policies addressing how they use such information.
                     </p>
+
                 </section>
 
                 <section>

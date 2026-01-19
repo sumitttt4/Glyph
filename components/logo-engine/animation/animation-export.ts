@@ -335,7 +335,7 @@ function createDrawPathLayer(
                                 { t: staggerDelay + drawDuration, s: [100] },
                             ],
                         },
-                    } as any,
+                    },
                     { ty: 'tr', nm: 'Transform' },
                 ],
             },

@@ -25,14 +25,24 @@ export default function PalettePreview({ primaryColor, className }: PalettePrevi
         setTimeout(() => setCopiedToken(null), 1500);
     };
 
-    const TokenRow = ({ label, value, mode }: { label: string; value: string; mode: 'light' | 'dark' }) => {
+    // Standalone component to satisfy React Compiler
+    interface TokenRowProps {
+        label: string;
+        value: string;
+        mode: 'light' | 'dark';
+        borderColor: string;
+        onCopy: (value: string, label: string) => void;
+        copiedToken: string | null;
+    }
+
+    const TokenRow = ({ label, value, mode, borderColor, onCopy, copiedToken }: TokenRowProps) => {
         const bgStyle = mode === 'light'
-            ? { backgroundColor: 'rgba(255,255,255,0.5)', borderColor: light.border }
-            : { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: dark.border };
+            ? { backgroundColor: 'rgba(255,255,255,0.5)', borderColor: borderColor }
+            : { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: borderColor };
 
         return (
             <button
-                onClick={() => copyToken(value, `${mode}-${label}`)}
+                onClick={() => onCopy(value, `${mode}-${label}`)}
                 className="flex items-center justify-between p-2 rounded border text-left hover:scale-[1.02] transition-transform w-full"
                 style={bgStyle}
             >
@@ -99,9 +109,9 @@ export default function PalettePreview({ primaryColor, className }: PalettePrevi
                 {/* Token List */}
                 <div className="mt-auto space-y-1.5">
                     <div className="text-[9px] font-mono mb-2 opacity-40 uppercase tracking-wider">Generated Tokens</div>
-                    <TokenRow label="--brand" value={light.brand} mode="light" />
-                    <TokenRow label="--surface" value={light.surface} mode="light" />
-                    <TokenRow label="--accent" value={light.accent} mode="light" />
+                    <TokenRow label="--brand" value={light.brand} mode="light" borderColor={light.border} onCopy={copyToken} copiedToken={copiedToken} />
+                    <TokenRow label="--surface" value={light.surface} mode="light" borderColor={light.border} onCopy={copyToken} copiedToken={copiedToken} />
+                    <TokenRow label="--accent" value={light.accent} mode="light" borderColor={light.border} onCopy={copyToken} copiedToken={copiedToken} />
                 </div>
             </div>
 
@@ -147,9 +157,9 @@ export default function PalettePreview({ primaryColor, className }: PalettePrevi
                 {/* Token List */}
                 <div className="mt-auto space-y-1.5">
                     <div className="text-[9px] font-mono mb-2 opacity-40 uppercase tracking-wider">Adapted Tokens</div>
-                    <TokenRow label="--brand" value={dark.brand} mode="dark" />
-                    <TokenRow label="--surface" value={dark.surface} mode="dark" />
-                    <TokenRow label="--accent" value={dark.accent} mode="dark" />
+                    <TokenRow label="--brand" value={dark.brand} mode="dark" borderColor={dark.border} onCopy={copyToken} copiedToken={copiedToken} />
+                    <TokenRow label="--surface" value={dark.surface} mode="dark" borderColor={dark.border} onCopy={copyToken} copiedToken={copiedToken} />
+                    <TokenRow label="--accent" value={dark.accent} mode="dark" borderColor={dark.border} onCopy={copyToken} copiedToken={copiedToken} />
                 </div>
             </div>
 

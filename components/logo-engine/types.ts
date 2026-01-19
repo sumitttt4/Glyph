@@ -1043,6 +1043,8 @@ export interface LottieShape {
     c?: { a: 0 | 1; k: number[] };
     o?: LottieKeyframe;
     w?: LottieKeyframe;
+    s?: LottieKeyframe; // Start for Trim Paths
+    e?: LottieKeyframe; // End for Trim Paths
 }
 
 export interface CSSAnimation {

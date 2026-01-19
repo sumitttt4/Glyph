@@ -2,15 +2,13 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Sparkles, Zap, Layers, Palette, Layout, Type, ShieldCheck, Download, Check, Code } from 'lucide-react';
+
+import { ArrowRight, Zap, Palette, Download, Check, Code } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { THEMES } from '@/lib/themes';
 import { SHAPES } from '@/lib/shapes';
-import { MockupBrowser, MockupDevice } from '@/components/preview/MockupDevice';
-import { Mockup3DCard } from '@/components/preview/Mockup3DCard';
-import { Button } from '@/components/ui/button';
+
 import { FAQ } from '@/components/landing/FAQ';
 import Pricing from '@/components/landing/Pricing';
 import { AuthRescue } from '@/components/auth/AuthRescue';

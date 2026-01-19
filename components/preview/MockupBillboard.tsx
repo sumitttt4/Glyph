@@ -87,10 +87,23 @@ export const MockupBillboard = ({ brand, className, variant = 'metro' }: MockupB
 
                             <div className="text-right">
                                 <h2
-                                    className={cn("text-7xl font-black uppercase tracking-tighter", brand.font.heading)}
+                                    className={cn("text-5xl md:text-6xl font-black uppercase tracking-tighter leading-none text-right max-w-xl ml-auto", brand.font.heading)}
                                     style={{ color: fg }}
                                 >
-                                    BOLDLY <br /> <span style={{ color: accent }}>FORWARD</span>
+                                    {(() => {
+                                        const text = brand.strategy?.tagline || "Future Forward";
+                                        const words = text.split(" ");
+                                        if (words.length === 1) {
+                                            return <span style={{ color: accent }}>{words[0]}</span>;
+                                        }
+                                        const lastWord = words.pop();
+                                        const firstPart = words.join(" ");
+                                        return (
+                                            <>
+                                                {firstPart} <br /> <span style={{ color: accent }}>{lastWord}</span>
+                                            </>
+                                        );
+                                    })()}
                                 </h2>
                             </div>
                         </div>
