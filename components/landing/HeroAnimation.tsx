@@ -7,7 +7,7 @@ import { SHAPES } from '@/lib/shapes';
 import { cn } from "@/lib/utils";
 import { ArrowUpRight, BarChart3, Wallet, Send, Plus, CreditCard } from "lucide-react";
 
-// 1. PREMIUM BRAND DEMOS (Reused from previous step)
+// 1. PREMIUM BRAND DEMOS
 const DEMO_BRANDS: BrandIdentity[] = [
     {
         id: "demo-2",
@@ -95,7 +95,7 @@ const DEMO_BRANDS: BrandIdentity[] = [
 export default function HeroAnimation() {
     const [index, setIndex] = useState(0);
 
-    // Cycle every 5 seconds for a slower, more deliberate showcase
+    // Cycle every 5 seconds
     useEffect(() => {
         const timer = setInterval(() => {
             setIndex((prev) => (prev + 1) % DEMO_BRANDS.length);
@@ -115,216 +115,212 @@ export default function HeroAnimation() {
     };
 
     return (
-        <div className="w-full max-w-5xl mx-auto p-4 md:p-8">
-            <div className="relative w-full aspect-[4/3] md:aspect-[2/1] rounded-3xl overflow-hidden shadow-2xl bg-stone-950/50 backdrop-blur-xl border border-white/10">
-                {/* Background Texture - Technical Dot Matrix */}
-                <div
-                    className="absolute inset-0 opacity-20"
-                    style={{
-                        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
-                        backgroundSize: '24px 24px'
-                    }}
-                />
+        <div className="w-full max-w-6xl mx-auto p-4 md:p-8">
+            <div className="relative w-full aspect-[4/3] md:aspect-[16/9] rounded-3xl overflow-hidden shadow-2xl bg-[#0C0A09] border border-white/10 flex flex-col">
+                {/* Window Header */}
+                <div className="h-10 bg-[#0C0A09] border-b border-white/10 flex items-center px-4 justify-between shrink-0">
+                    <div className="flex gap-2">
+                        <div className="w-3 h-3 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center text-[8px]" />
+                        <div className="w-3 h-3 rounded-full bg-yellow-500/20 text-yellow-500 flex items-center justify-center text-[8px]" />
+                        <div className="w-3 h-3 rounded-full bg-green-500/20 text-green-500 flex items-center justify-center text-[8px]" />
+                    </div>
+                    <div className="flex bg-[#1C1917] px-8 py-1 rounded-md text-[10px] text-stone-400 font-mono border border-white/5">
+                        glyph-engine-v2.tsx
+                    </div>
+                    <div className="w-10 opacity-0" /> {/* Spacer */}
+                </div>
 
-                <div className="absolute inset-0 p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                {/* Main Workspace */}
+                <div className="flex-1 flex overflow-hidden">
 
-                    {/* TILE A (Left): The Application */}
-                    <div className="relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 group flex items-center justify-center">
-                        {/* Title Badge */}
-                        <div className="absolute top-4 left-4 z-20 px-3 py-1 bg-black/40 backdrop-blur rounded-full border border-white/10">
-                            <span className="text-[10px] font-mono text-white/70 uppercase tracking-widest">The Application</span>
-                        </div>
+                    {/* LEFT: The Application (Canvas) */}
+                    <div className="flex-1 bg-[#12100E] relative flex items-center justify-center overflow-hidden border-r border-white/5">
+                        {/* Background Grid */}
+                        <div
+                            className="absolute inset-0 opacity-10"
+                            style={{
+                                backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
+                                backgroundSize: '24px 24px'
+                            }}
+                        />
 
+                        {/* Device Mockup */}
                         <AnimatePresence mode="popLayout">
                             <motion.div
                                 key={brand.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ duration: 0.6, ease: "circOut" }}
-                                className="w-[280px] h-[540px] bg-white rounded-[32px] shadow-2xl overflow-hidden relative border-[6px]"
-                                style={{ borderColor: isNaN(parseInt(brand.theme.tokens.light.border.replace('#', ''), 16)) ? '#000' : brand.theme.tokens.light.border }}
+                                transition={{ duration: 0.5, ease: "circOut" }}
+                                className="relative w-[300px] h-[580px] bg-white rounded-[36px] shadow-2xl overflow-hidden border-[8px] sm:scale-100 scale-75"
+                                style={{ borderColor: brand.theme.tokens.light.border === '#f5d0fe' ? '#1a1a1a' : '#1a1a1a' }} // Always dark bezel
                             >
-                                {/* Mobile App UI Mockup */}
                                 <div className="h-full w-full bg-white flex flex-col" style={{ backgroundColor: tokens.bg, color: tokens.text }}>
-
-                                    {/* App Header */}
-                                    <div className="pt-10 pb-4 px-6 flex justify-between items-center bg-white/50 backdrop-blur-sm sticky top-0 z-10">
-                                        <div className="w-8 h-8">
-                                            <LogoComposition brand={brand} />
-                                        </div>
-                                        <div className="w-8 h-8 rounded-full bg-stone-100 overflow-hidden border border-stone-200">
-                                            <div className="w-full h-full bg-stone-300" />
-                                        </div>
+                                    {/* Simulated Phone Top Bar */}
+                                    <div className="h-8 flex justify-center items-end pb-1">
+                                        <div className="w-20 h-4 bg-black rounded-full" />
                                     </div>
 
                                     {/* App Content */}
-                                    <div className="flex-1 overflow-hidden px-6 space-y-6">
-                                        {/* Greeting */}
-                                        <div className="space-y-1">
-                                            <p className="text-sm opacity-60" style={{ fontFamily: brand.font.body }}>Good Morning,</p>
-                                            <h2 className="text-2xl font-bold" style={{ fontFamily: brand.font.heading }}>Alex Carter</h2>
+                                    <div className="flex-1 flex flex-col overflow-hidden">
+                                        {/* Header */}
+                                        <div className="px-6 py-4 flex justify-between items-center">
+                                            <div className="w-8 h-8">
+                                                <LogoComposition brand={brand} />
+                                            </div>
+                                            <div className="w-8 h-8 rounded-full bg-stone-100 border border-stone-200" />
                                         </div>
 
-                                        {/* Balance Card */}
-                                        <div className="p-6 rounded-2xl shadow-lg relative overflow-hidden" style={{ backgroundColor: tokens.primary, color: '#fff' }}>
-                                            <div className="relative z-10">
-                                                <p className="text-xs opacity-80 mb-1 font-medium tracking-wide">TOTAL BALANCE</p>
-                                                <h3 className="text-3xl font-bold mb-4" style={{ fontFamily: brand.font.heading }}>$24,562.00</h3>
-                                                <div className="flex gap-4">
-                                                    <div className="px-3 py-1.5 rounded-lg bg-white/20 backdrop-blur text-xs font-bold flex items-center gap-1">
-                                                        <Plus size={12} /> Add
+                                        {/* Dynamic UI */}
+                                        <div className="px-6 space-y-6">
+                                            <div>
+                                                <h2 className="text-2xl font-bold leading-tight" style={{ fontFamily: brand.font.heading }}>
+                                                    Design<br />Intelligence
+                                                </h2>
+                                            </div>
+
+                                            {/* Primary Card */}
+                                            <div className="p-6 rounded-2xl shadow-lg relative overflow-hidden"
+                                                style={{ backgroundColor: tokens.primary, color: '#fff' }}>
+                                                <div className="relative z-10 space-y-4">
+                                                    <div className="flex justify-between items-start">
+                                                        <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur" />
+                                                        <span className="text-xs font-mono opacity-80">001</span>
                                                     </div>
-                                                    <div className="px-3 py-1.5 rounded-lg bg-white/20 backdrop-blur text-xs font-bold flex items-center gap-1">
-                                                        <Send size={12} /> Send
+                                                    <div className="space-y-1">
+                                                        <div className="text-lg font-bold">System Active</div>
+                                                        <div className="text-xs opacity-70">Parametric Generation</div>
+                                                    </div>
+                                                </div>
+                                                <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
+                                            </div>
+
+                                            {/* List Items */}
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-3 p-3 rounded-xl border border-black/5" style={{ backgroundColor: tokens.surface }}>
+                                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold" style={{ backgroundColor: hexToRgba(tokens.primary, 0.1), color: tokens.primary }}>Aa</div>
+                                                    <div className="flex-1">
+                                                        <div className="text-sm font-bold">{brand.font.name}</div>
+                                                        <div className="text-[10px] opacity-50">Typography</div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-3 p-3 rounded-xl border border-black/5" style={{ backgroundColor: tokens.surface }}>
+                                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold" style={{ backgroundColor: hexToRgba(tokens.primary, 0.1), color: tokens.primary }}>
+                                                        <div className="w-4 h-4 rounded-full" style={{ backgroundColor: tokens.primary }} />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="text-sm font-bold">Palette System</div>
+                                                        <div className="text-[10px] opacity-50">Color Tokens</div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            {/* Decorative Circles */}
-                                            <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
-                                            <div className="absolute -left-4 -bottom-4 w-24 h-24 rounded-full bg-black/10 blur-xl" />
                                         </div>
 
-                                        {/* Actions Grid */}
-                                        <div className="grid grid-cols-4 gap-4">
-                                            {[BarChart3, Wallet, CreditCard, ArrowUpRight].map((Icon, i) => (
-                                                <div key={i} className="flex flex-col items-center gap-2">
-                                                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm"
-                                                        style={{ backgroundColor: tokens.surface, color: tokens.primary }}>
-                                                        <Icon size={20} />
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        {/* Recent List */}
-                                        <div className="space-y-4">
-                                            <div className="flex justify-between items-center">
-                                                <h4 className="font-bold text-sm" style={{ fontFamily: brand.font.body }}>Recent Activity</h4>
-                                                <span className="text-xs font-bold opacity-50" style={{ color: tokens.primary }}>See All</span>
+                                        {/* Bottom Nav */}
+                                        <div className="mt-auto h-20 border-t flex justify-around items-center px-4" style={{ borderColor: tokens.border, backgroundColor: tokens.bg }}>
+                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: tokens.surface, color: tokens.primary }}>
+                                                <div className="w-4 h-4 rounded-full bg-current" />
                                             </div>
-                                            {[1, 2].map((item) => (
-                                                <div key={item} className="flex items-center justify-between p-3 rounded-xl border border-stone-100/50" style={{ backgroundColor: tokens.surface }}>
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs" style={{ backgroundColor: hexToRgba(tokens.primary, 0.1), color: tokens.primary }}>
-                                                            NF
-                                                        </div>
-                                                        <div>
-                                                            <div className="text-sm font-bold">Netflix</div>
-                                                            <div className="text-[10px] opacity-50">Subscription</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="text-sm font-bold opacity-80">-$14.99</div>
-                                                </div>
-                                            ))}
+                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center opacity-30">
+                                                <div className="w-4 h-4 rounded-md border-2 border-current" />
+                                            </div>
+                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center opacity-30">
+                                                <div className="w-4 h-4 rounded-full border-2 border-current" />
+                                            </div>
                                         </div>
+
                                     </div>
-
-                                    {/* Nav Bar */}
-                                    <div className="h-16 border-t flex justify-around items-center bg-white/90 backdrop-blur" style={{ borderColor: tokens.border }}>
-                                        <div className="w-12 h-1 rounded-full bg-stone-900 mx-auto mb-2 opacity-20" />
+                                    {/* Home Indicator */}
+                                    <div className="h-5 flex justify-center pb-2">
+                                        <div className="w-32 h-1 bg-black/20 rounded-full" />
                                     </div>
                                 </div>
                             </motion.div>
                         </AnimatePresence>
                     </div>
 
-                    <div className="flex flex-col gap-4 md:gap-6">
-                        {/* TILE B (Top Right): The DNA */}
-                        <div className="flex-1 relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 p-6 flex flex-col">
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="px-3 py-1 bg-black/40 backdrop-blur rounded-full border border-white/10">
-                                    <span className="text-[10px] font-mono text-white/70 uppercase tracking-widest">The DNA</span>
+                    {/* RIGHT: Properties Panel (Sidebar) */}
+                    <div className="w-[320px] bg-[#0C0A09] border-l border-white/5 flex flex-col hidden md:flex">
+                        {/* Panel Header */}
+                        <div className="h-10 border-b border-white/5 flex items-center px-4 text-[10px] font-mono text-stone-500 uppercase tracking-wider">
+                            Properties
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto p-6 space-y-8">
+
+                            {/* Section: Identity */}
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-mono text-stone-600 uppercase tracking-wider">Identity</label>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center border border-white/10">
+                                        <div className="w-8 h-8">
+                                            <LogoComposition brand={brand} />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{brand.name}</div>
+                                        <div className="text-stone-500 text-xs">v2.0 • {brand.vibe}</div>
+                                    </div>
                                 </div>
-                                <AnimatePresence mode="popLayout">
-                                    <motion.span
-                                        key={brand.font.name}
-                                        initial={{ opacity: 0, x: 10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        className="text-white/50 text-xs font-mono"
-                                    >
-                                        {brand.font.name}
-                                    </motion.span>
-                                </AnimatePresence>
                             </div>
 
-                            <div className="flex-1 flex gap-6 items-center">
-                                <AnimatePresence mode="popLayout">
-                                    <motion.div
-                                        key={brand.id}
-                                        initial={{ opacity: 0, scale: 0.8 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.8 }}
-                                        transition={{ duration: 0.4 }}
-                                        className="w-24 h-24 bg-white/80 backdrop-blur rounded-xl flex items-center justify-center p-4 shadow-lg"
-                                    >
-                                        <LogoComposition brand={brand} />
-                                    </motion.div>
-                                </AnimatePresence>
-
-                                <div className="flex-1 grid grid-cols-3 gap-3">
-                                    {[tokens.primary, tokens.surface, tokens.text, tokens.accent, tokens.muted, tokens.bg].map((color, i) => (
-                                        <AnimatePresence key={i} mode="wait">
-                                            <motion.div
-                                                key={color}
-                                                initial={{ opacity: 0, scale: 0.5 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                transition={{ delay: i * 0.05 }}
-                                                className="aspect-square rounded-full border border-white/10 shadow-sm relative group"
-                                                style={{ backgroundColor: color }}
-                                            >
-                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <div className="text-[8px] font-mono text-white mix-blend-difference">{color}</div>
-                                                </div>
-                                            </motion.div>
-                                        </AnimatePresence>
+                            {/* Section: Colors */}
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-mono text-stone-600 uppercase tracking-wider">Palette</label>
+                                <div className="grid grid-cols-5 gap-2">
+                                    {[tokens.primary, tokens.accent, tokens.surface, tokens.bg, tokens.text, tokens.muted, tokens.border].filter(Boolean).slice(0, 10).map((c, i) => (
+                                        <motion.div
+                                            key={`${brand.id}-${i}`}
+                                            className="aspect-square rounded-full border border-white/10 relative group cursor-pointer"
+                                            style={{ backgroundColor: c }}
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            transition={{ delay: i * 0.05 }}
+                                        >
+                                            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-black px-2 py-1 rounded text-[10px] text-white opacity-0 group-hover:opacity-100 whitespace-nowrap z-10 pointer-events-none">
+                                                {c}
+                                            </div>
+                                        </motion.div>
                                     ))}
                                 </div>
                             </div>
-                        </div>
 
-                        {/* TILE C (Bottom Right): The Engineering */}
-                        <div className="flex-1 relative overflow-hidden rounded-2xl bg-[#09090b] border border-white/10 flex flex-col">
-                            <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
-                                <div className="flex gap-1.5">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center text-[6px]">●</div>
-                                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20 text-yellow-500 flex items-center justify-center text-[6px]">●</div>
-                                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/20 text-green-500 flex items-center justify-center text-[6px]">●</div>
+                            {/* Section: Typography */}
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-mono text-stone-600 uppercase tracking-wider">Typography</label>
+                                <div className="space-y-2">
+                                    <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                                        <div className="text-xs text-stone-400 mb-1">Heading</div>
+                                        <div className="text-white text-lg" style={{ fontFamily: brand.font.heading }}>{brand.font.name}</div>
+                                    </div>
+                                    <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                                        <div className="text-xs text-stone-400 mb-1">Body</div>
+                                        <div className="text-white text-sm" style={{ fontFamily: brand.font.body }}>{brand.font.body}</div>
+                                    </div>
                                 </div>
-                                <span className="text-[10px] font-mono text-stone-500">tailwind.config.js</span>
                             </div>
 
-                            <div className="flex-1 p-4 font-mono text-[10px] md:text-xs leading-relaxed text-stone-400 overflow-hidden relative">
-                                <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={brand.id}
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        transition={{ duration: 0.3 }}
-                                    >
-                                        <div className="absolute left-0 top-0 bottom-0 w-8 border-r border-white/5 bg-white/[0.02] flex flex-col items-end pr-2 pt-4 text-stone-700 select-none">
-                                            {[1, 2, 3, 4, 5, 6, 7].map(n => <div key={n} className="h-5">{n}</div>)}
-                                        </div>
-                                        <div className="pl-6 pt-0">
-                                            <span className="text-purple-400">module</span>.<span className="text-blue-400">exports</span> = {'{'} <br />
-                                            &nbsp;&nbsp;<span className="text-sky-400">theme</span>: {'{'} <br />
-                                            &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-sky-400">extend</span>: {'{'} <br />
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-sky-400">colors</span>: {'{'} <br />
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-emerald-400">brand</span>: {'{'} <br />
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-orange-300">500</span>: <span className="text-yellow-300">'{tokens.primary}'</span>, <span className="text-stone-600">// Primary</span><br />
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-orange-300">600</span>: <span className="text-yellow-300">'{tokens.accent}'</span>, <span className="text-stone-600">// Hover</span><br />
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{'}'} <br />
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{'}'} <br />
-                                            &nbsp;&nbsp;&nbsp;&nbsp;{'}'} <br />
-                                            &nbsp;&nbsp;{'}'} <br />
-                                            {'}'}
-                                        </div>
-                                    </motion.div>
-                                </AnimatePresence>
+                            {/* Section: Code Snippet */}
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-mono text-stone-600 uppercase tracking-wider">Export</label>
+                                <div className="bg-[#050505] rounded-lg p-3 text-[10px] font-mono text-stone-400 border border-white/5 overflow-hidden">
+                                    <div className="flex gap-2 mb-2 border-b border-white/5 pb-2">
+                                        <span className="text-xs text-white">theme.ts</span>
+                                    </div>
+                                    <div className="opacity-70">
+                                        <span className="text-purple-400">export</span> <span className="text-blue-400">const</span> theme = {'{'} <br />
+                                        &nbsp;&nbsp;colors: {'{'} <br />
+                                        &nbsp;&nbsp;&nbsp;&nbsp;primary: <span className="text-yellow-300">'{tokens.primary}'</span>,<br />
+                                        &nbsp;&nbsp;&nbsp;&nbsp;bg: <span className="text-yellow-300">'{tokens.bg}'</span>,<br />
+                                        &nbsp;&nbsp;{'}'} <br />
+                                        {'}'}
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
