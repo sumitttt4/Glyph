@@ -11,7 +11,7 @@ export default function TermsPage() {
                 <section>
                     <h2 className="text-2xl font-semibold mb-4 text-stone-900">1. Introduction</h2>
                     <p>
-                        Welcome to Glyph ("Company", "we", "our", "us"). By accessing or using our website, services, and tools (collectively, the "Services"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please do not use our Services.
+                        Welcome to Glyph (&quot;Company&quot;, &quot;we&quot;, &quot;our&quot;, &quot;us&quot;). By accessing or using our website, services, and tools (collectively, the &quot;Services&quot;), you agree to be bound by these Terms of Service (&quot;Terms&quot;). If you do not agree to these Terms, please do not use our Services.
                     </p>
                 </section>
 
@@ -43,7 +43,7 @@ export default function TermsPage() {
                 <section>
                     <h2 className="text-2xl font-semibold mb-4 text-stone-900">4. Disclaimer of Warranties</h2>
                     <p>
-                        The Services are provided "as is" without warranties of any kind, either express or implied. We do not warrant that the Services will be uninterrupted or error-free.
+                        The Services are provided &quot;as is&quot; without warranties of any kind, either express or implied. We do not warrant that the Services will be uninterrupted or error-free.
                     </p>
                 </section>
 

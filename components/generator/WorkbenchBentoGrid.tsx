@@ -26,6 +26,7 @@ import { MockupDevice, MockupBrowser } from '@/components/preview/MockupDevice';
 import { BrowserBrandPreview } from '@/components/preview/BrowserBrandPreview';
 import { MonogramMark } from '@/components/logo-engine/LogoMonogram';
 import { FontSelector } from './FontSelector';
+import { FontConfig } from '@/lib/fonts';
 
 
 
@@ -34,7 +35,7 @@ interface WorkbenchBentoGridProps {
     isDark: boolean;
     onShuffleLogo?: () => void;
     onSwapFont?: () => void;
-    onUpdateFont?: (font: any) => void;
+    onUpdateFont?: (font: FontConfig) => void;
     onCycleColor?: () => void;
     onSelectColor?: (color: { light: string; dark: string }) => void;
     onVariations?: () => void;

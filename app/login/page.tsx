@@ -27,8 +27,8 @@ export default function LoginPage() {
                 },
             });
             if (error) throw error;
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
             setIsLoading(false);
         }
     };
@@ -57,8 +57,8 @@ export default function LoginPage() {
 
             if (error) throw error;
             setMessage('Magic link sent! Check your email to log in.');
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
             setIsLoading(false);
         }

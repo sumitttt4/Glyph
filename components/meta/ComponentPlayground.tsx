@@ -4,11 +4,14 @@ import React, { useState } from 'react';
 import { Check, Copy, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+type PropValue = string | boolean;
+type PropsState = Record<string, PropValue>;
+
 interface PropConfig {
     name: string;
     type: 'select' | 'boolean' | 'text';
     options?: string[]; // For select
-    defaultValue?: any;
+    defaultValue?: PropValue;
 }
 
 interface ComponentPlaygroundProps {
@@ -17,9 +20,9 @@ interface ComponentPlaygroundProps {
     componentName: string; // e.g. "Button"
     propConfig: PropConfig[];
     // Function that takes current props and returns the React Node
-    renderComponent: (props: any) => React.ReactNode;
+    renderComponent: (props: PropsState) => React.ReactNode;
     // Function that takes current props and returns the code string
-    generateCode: (props: any) => string;
+    generateCode: (props: PropsState) => string;
 }
 
 export function ComponentPlayground({
@@ -31,10 +34,12 @@ export function ComponentPlayground({
     generateCode
 }: ComponentPlaygroundProps) {
     // Initialize state with default values
-    const [props, setProps] = useState<any>(() => {
-        const defaults: any = {};
+    const [props, setProps] = useState<PropsState>(() => {
+        const defaults: PropsState = {};
         propConfig.forEach(config => {
-            defaults[config.name] = config.defaultValue;
+            if (config.defaultValue !== undefined) {
+                defaults[config.name] = config.defaultValue;
+            }
         });
         return defaults;
     });
@@ -42,8 +47,8 @@ export function ComponentPlayground({
     const [isCopied, setIsCopied] = useState(false);
     const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
 
-    const handlePropChange = (name: string, value: any) => {
-        setProps((prev: any) => ({ ...prev, [name]: value }));
+    const handlePropChange = (name: string, value: PropValue) => {
+        setProps((prev: PropsState) => ({ ...prev, [name]: value }));
     };
 
     const copyToClipboard = () => {
@@ -113,8 +118,12 @@ export function ComponentPlayground({
                         <span className="text-xs font-bold text-stone-400 uppercase tracking-wider">Configuration</span>
                         <button
                             onClick={() => {
-                                const defaults: any = {};
-                                propConfig.forEach(config => defaults[config.name] = config.defaultValue);
+                                const defaults: PropsState = {};
+                                propConfig.forEach(config => {
+                                    if (config.defaultValue !== undefined) {
+                                        defaults[config.name] = config.defaultValue;
+                                    }
+                                });
                                 setProps(defaults);
                             }}
                             className="p-1 text-stone-400 hover:text-orange-500 transition-colors"
@@ -158,7 +167,7 @@ export function ComponentPlayground({
                                         )}>
                                             <input
                                                 type="checkbox"
-                                                checked={props[config.name]}
+                                                checked={props[config.name] === true}
                                                 onChange={(e) => handlePropChange(config.name, e.target.checked)}
                                                 className="opacity-0 absolute w-full h-full cursor-pointer"
                                             />
@@ -176,7 +185,7 @@ export function ComponentPlayground({
                                 {config.type === 'text' && (
                                     <input
                                         type="text"
-                                        value={props[config.name]}
+                                        value={String(props[config.name] ?? '')}
                                         onChange={(e) => handlePropChange(config.name, e.target.value)}
                                         className="w-full px-3 py-2 text-xs border border-stone-200 rounded-lg focus:outline-none focus:border-orange-500/50 focus:ring-2 focus:ring-orange-500/10 transition-all"
                                     />

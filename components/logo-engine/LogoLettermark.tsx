@@ -310,7 +310,7 @@ export const Lettermark = ({ brand, className = '', variant = 'geometric', color
 /**
  * Auto-select variant based on vibe with more variety
  */
-export const AutoLettermark = ({ brand, className, colors }: { brand: BrandIdentity; className?: string; colors?: any }) => {
+export const AutoLettermark = ({ brand, className, colors }: { brand: BrandIdentity; className?: string; colors?: { primary: string; accent?: string; bg?: string } }) => {
     const seed = brand.id + (brand.generationSeed || 0);
     const variantRoll = seededRandom(seed + 'variant');
 

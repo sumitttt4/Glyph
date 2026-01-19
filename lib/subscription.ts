@@ -1,3 +1,5 @@
+import { SupabaseClient } from '@supabase/supabase-js';
+
 /**
  * Subscription and Tier Management
  * 
@@ -66,7 +68,7 @@ export function getSubscriptionStatus(
  * This is used to check if a user has paid via Dodo Payments
  */
 export async function fetchProStatusFromDB(
-    supabaseClient: any,
+    supabaseClient: SupabaseClient,
     email: string | null | undefined
 ): Promise<boolean> {
     if (!email) return false;

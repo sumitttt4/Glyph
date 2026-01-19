@@ -11,7 +11,7 @@ export default function PrivacyPage() {
                 <section>
                     <h2 className="text-2xl font-semibold mb-4 text-stone-900">1. Information We Collect</h2>
                     <p>
-                        We collect information you provide directly to us when you create an account, generate a brand, or communicate with us. This may include your email address, project names, and generation preferences ("vibe", "prompt").
+                        We collect information you provide directly to us when you create an account, generate a brand, or communicate with us. This may include your email address, project names, and generation preferences (&quot;vibe&quot;, &quot;prompt&quot;).
                     </p>
                 </section>
 

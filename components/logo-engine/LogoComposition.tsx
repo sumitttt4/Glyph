@@ -4,7 +4,7 @@ import React, { useId } from 'react';
 import { motion } from 'framer-motion';
 import { BrandIdentity } from '@/lib/data';
 import { SHAPES, Shape, getRandomShape } from '@/lib/shapes';
-import { getIconById } from '@/lib/icons';
+import { getIconById, IconDefinition } from '@/lib/icons';
 import { FREE_STYLES, LOGO_STYLES, isStyleFree } from '@/lib/logo-styles';
 import { AutoLettermark } from './LogoLettermark';
 import LogoEngine from './LogoEngine';
@@ -112,9 +112,19 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
     const safeShapes = SHAPES.length > 0 ? SHAPES : [{ id: 'fallback', path: 'M0 0h100v100H0z', name: 'Fallback', viewBox: '0 0 100 100', tags: [], complexity: 'simple' }];
 
     // Resolve Shape: Check 1) logoIcon (Premium), 2) brand.shape (Explicit), 3) Random Fallback
-    let resolvedShape: any = null;
+    // Normalize IconDefinition to Shape by ensuring viewBox is always defined
+    let resolvedShape: Shape | null = null;
     if (brand.logoIcon) {
-        resolvedShape = getIconById(brand.logoIcon);
+        const icon = getIconById(brand.logoIcon);
+        if (icon) {
+            resolvedShape = {
+                id: icon.id,
+                name: icon.name,
+                path: icon.path,
+                viewBox: icon.viewBox || '0 0 24 24',
+                tags: icon.tags,
+            };
+        }
     }
     const primaryShape = resolvedShape || brand.shape || safeShapes[shapeIndex1 % safeShapes.length];
     const secondaryShape = safeShapes[shapeIndex2 % safeShapes.length];

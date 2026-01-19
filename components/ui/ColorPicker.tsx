@@ -122,10 +122,16 @@ export function ColorPicker({ value, onChange, onClose, className }: ColorPicker
     const boxRef = useRef<HTMLDivElement>(null);
     const hueRef = useRef<HTMLDivElement>(null);
 
-    // Update HSV when value prop changes
+    // Update HSV when value prop changes (only if it differs from current)
     useEffect(() => {
         const newHsv = hexToHsv(value);
-        setHsv(newHsv);
+        // Only update if the values actually changed to avoid infinite loops
+        setHsv(prev => {
+            if (prev.h === newHsv.h && prev.s === newHsv.s && prev.v === newHsv.v) {
+                return prev;
+            }
+            return newHsv;
+        });
     }, [value]);
 
     const handleColorChange = useCallback((newHsv: { h: number; s: number; v: number }) => {

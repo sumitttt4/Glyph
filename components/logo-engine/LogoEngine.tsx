@@ -35,7 +35,7 @@ export default function LogoEngine({
 }: LogoEngineProps) {
 
     // Dynamic Icon Retrieval
-    // @ts-ignore - We are dynamically accessing the library
+    // @ts-expect-error - We are dynamically accessing the library
     const LucideIcon = Icons[iconName] || Icons.Sparkles; // Fallback to Sparkles if not found
 
     // If diamond, we need to counter-rotate the icon

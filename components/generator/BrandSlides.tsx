@@ -340,8 +340,10 @@ export const SlideColors = ({ brand, id }: { brand: BrandIdentity, id?: string }
     );
 };
 
+import { FontConfig } from '@/lib/fonts';
+
 // ==================== 5. TYPOGRAPHY ====================
-export const SlideTypography = ({ brand, onSwapFont, onUpdateFont, id }: { brand: BrandIdentity, onSwapFont?: () => void, onUpdateFont?: (font: any) => void, id?: string }) => {
+export const SlideTypography = ({ brand, onSwapFont, onUpdateFont, id }: { brand: BrandIdentity, onSwapFont?: () => void, onUpdateFont?: (font: FontConfig) => void, id?: string }) => {
     const [isFontSelectorOpen, setIsFontSelectorOpen] = useState(false);
 
     // Type Scale Data matching our PDF export logic

@@ -13,7 +13,8 @@
       "Bash(start http://localhost:3000/logo-engine-demo)",
       "Bash(start http://localhost:3000/generator)",
       "Bash(dir:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(git push:*)"
     ]
   }
 }

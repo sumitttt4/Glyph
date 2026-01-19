@@ -78,11 +78,17 @@ export const sourceCode = Source_Code_Pro({ subsets: ['latin'] });
 export const anonymous = Anonymous_Pro({ weight: ['400', '700'], subsets: ['latin'] });
 
 
+// NextFont type from next/font
+interface NextFont {
+    className: string;
+    style: { fontFamily: string; fontWeight?: number; fontStyle?: string };
+}
+
 export interface FontConfig {
     id: string;
     name: string;
-    heading: any; // NextFont
-    body: any; // NextFont
+    heading: NextFont;
+    body: NextFont;
     headingName: string;
     bodyName: string;
     tags: string[];

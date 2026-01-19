@@ -6,8 +6,15 @@ import { createClient } from '@/lib/supabase/client';
 import { BrandIdentity } from '@/lib/data';
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 
+interface BrandRecord {
+    id: string;
+    user_id: string;
+    identity: BrandIdentity;
+    created_at: string;
+}
+
 export default function HistoryPage() {
-    const [brands, setBrands] = useState<any[]>([]);
+    const [brands, setBrands] = useState<BrandRecord[]>([]);
     const [loading, setLoading] = useState(true);
     const supabase = createClient();
 

@@ -45,7 +45,7 @@ export default function LogoAssembler({
     const customIcon = getIconById(iconName);
 
     // Fallback to Lucide if not a custom icon
-    // @ts-ignore - Dynamic access
+    // @ts-expect-error - Dynamic access
     const LucideIcon = Icons[iconName] || Icons.Sparkles;
 
     const isGhost = shape === 'ghost';

@@ -15,7 +15,6 @@ const DEMO_BRANDS: BrandIdentity[] = [
         vibe: "Tech",
         generationSeed: 12345,
         createdAt: new Date(),
-        // @ts-ignore - Simplification for demo
         font: {
             id: 'tech',
             name: 'Inter',
@@ -43,7 +42,6 @@ const DEMO_BRANDS: BrandIdentity[] = [
         vibe: "Elegant",
         generationSeed: 12345,
         createdAt: new Date(),
-        // @ts-ignore - Simplification for demo
         font: {
             id: 'luxury',
             name: 'Instrument Serif',
@@ -71,7 +69,6 @@ const DEMO_BRANDS: BrandIdentity[] = [
         vibe: "Bold",
         generationSeed: 12345,
         createdAt: new Date(),
-        // @ts-ignore - Simplification for demo
         font: {
             id: 'bold',
             name: 'Montserrat',
@@ -99,7 +96,6 @@ const DEMO_BRANDS: BrandIdentity[] = [
         vibe: "Minimal",
         generationSeed: 12345,
         createdAt: new Date(),
-        // @ts-ignore - Simplification for demo
         font: {
             id: 'minimal',
             name: 'Manrope',
@@ -127,7 +123,6 @@ const DEMO_BRANDS: BrandIdentity[] = [
         vibe: "Nature",
         generationSeed: 12345,
         createdAt: new Date(),
-        // @ts-ignore - Simplification for demo
         font: {
             id: 'nature',
             name: 'Outfit',
