@@ -5,7 +5,7 @@ import { LogoComposition } from "@/components/logo-engine/LogoComposition";
 import { BrandIdentity } from '@/lib/data';
 import { SHAPES } from '@/lib/shapes';
 import { cn } from "@/lib/utils";
-import { ArrowUpRight, BarChart3, Wallet, Send, Plus, CreditCard } from "lucide-react";
+import { ArrowUpRight, BarChart3, Wallet, CreditCard } from "lucide-react";
 
 // 1. PREMIUM BRAND DEMOS
 const DEMO_BRANDS: BrandIdentity[] = [
@@ -115,209 +115,221 @@ export default function HeroAnimation() {
     };
 
     return (
-        <div className="w-full max-w-6xl mx-auto p-4 md:p-8">
-            <div className="relative w-full aspect-[4/3] md:aspect-[16/9] rounded-3xl overflow-hidden shadow-2xl bg-[#0C0A09] border border-white/10 flex flex-col">
+        <div className="w-full max-w-7xl mx-auto p-4 md:p-8">
+            <div className="relative w-full h-[600px] md:h-auto md:aspect-[16/8] rounded-3xl overflow-hidden shadow-2xl bg-[#0C0A09] border border-white/10 flex flex-col">
                 {/* Window Header */}
-                <div className="h-10 bg-[#0C0A09] border-b border-white/10 flex items-center px-4 justify-between shrink-0">
+                <div className="h-10 bg-[#0C0A09] border-b border-white/10 flex items-center px-4 justify-between shrink-0 z-20 relative">
                     <div className="flex gap-2">
                         <div className="w-3 h-3 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center text-[8px]" />
                         <div className="w-3 h-3 rounded-full bg-yellow-500/20 text-yellow-500 flex items-center justify-center text-[8px]" />
                         <div className="w-3 h-3 rounded-full bg-green-500/20 text-green-500 flex items-center justify-center text-[8px]" />
                     </div>
-                    <div className="flex bg-[#1C1917] px-8 py-1 rounded-md text-[10px] text-stone-400 font-mono border border-white/5">
+                    <div className="flex bg-[#1C1917] px-6 py-1 rounded-md text-[10px] text-stone-400 font-mono border border-white/5">
                         glyph-engine-v2.tsx
                     </div>
                     <div className="w-10 opacity-0" /> {/* Spacer */}
                 </div>
 
                 {/* Main Workspace */}
-                <div className="flex-1 flex overflow-hidden">
+                <div className="flex-1 flex overflow-hidden relative bg-[#12100E]">
+                    {/* Background Grid */}
+                    <div
+                        className="absolute inset-0 opacity-10"
+                        style={{
+                            backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
+                            backgroundSize: '24px 24px'
+                        }}
+                    />
 
-                    {/* LEFT: The Application (Canvas) */}
-                    <div className="flex-1 bg-[#12100E] relative flex items-center justify-center overflow-hidden border-r border-white/5">
-                        {/* Background Grid */}
-                        <div
-                            className="absolute inset-0 opacity-10"
-                            style={{
-                                backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
-                                backgroundSize: '24px 24px'
-                            }}
-                        />
+                    {/* Container for Devices */}
+                    <div className="flex-1 flex items-center justify-center gap-8 md:gap-12 px-8 scale-[0.85] md:scale-100 origin-center">
 
-                        {/* Device Mockup */}
+                        {/* LEFT: Phone Mockup */}
                         <AnimatePresence mode="popLayout">
                             <motion.div
-                                key={brand.id}
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
+                                key={`phone-${brand.id}`}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
                                 transition={{ duration: 0.5, ease: "circOut" }}
-                                className="relative w-[300px] h-[580px] bg-white rounded-[36px] shadow-2xl overflow-hidden border-[8px] sm:scale-100 scale-75"
-                                style={{ borderColor: brand.theme.tokens.light.border === '#f5d0fe' ? '#1a1a1a' : '#1a1a1a' }} // Always dark bezel
+                                className="relative w-[280px] h-[580px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[8px] z-10 shrink-0"
+                                style={{ borderColor: '#1a1a1a' }}
                             >
                                 <div className="h-full w-full bg-white flex flex-col" style={{ backgroundColor: tokens.bg, color: tokens.text }}>
-                                    {/* Simulated Phone Top Bar */}
-                                    <div className="h-8 flex justify-center items-end pb-1">
+                                    {/* Status Bar */}
+                                    <div className="h-7 flex justify-center items-end pb-1 shrink-0">
                                         <div className="w-20 h-4 bg-black rounded-full" />
                                     </div>
 
-                                    {/* App Content */}
-                                    <div className="flex-1 flex flex-col overflow-hidden">
-                                        {/* Header */}
-                                        <div className="px-6 py-4 flex justify-between items-center">
-                                            <div className="w-8 h-8">
-                                                <LogoComposition brand={brand} />
-                                            </div>
-                                            <div className="w-8 h-8 rounded-full bg-stone-100 border border-stone-200" />
+                                    {/* App Header */}
+                                    <div className="px-5 py-3 flex justify-between items-center shrink-0">
+                                        <div className="w-8 h-8">
+                                            <LogoComposition brand={brand} />
                                         </div>
-
-                                        {/* Dynamic UI */}
-                                        <div className="px-6 space-y-6">
-                                            <div>
-                                                <h2 className="text-2xl font-bold leading-tight" style={{ fontFamily: brand.font.heading }}>
-                                                    Design<br />Intelligence
-                                                </h2>
-                                            </div>
-
-                                            {/* Primary Card */}
-                                            <div className="p-6 rounded-2xl shadow-lg relative overflow-hidden"
-                                                style={{ backgroundColor: tokens.primary, color: '#fff' }}>
-                                                <div className="relative z-10 space-y-4">
-                                                    <div className="flex justify-between items-start">
-                                                        <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur" />
-                                                        <span className="text-xs font-mono opacity-80">001</span>
-                                                    </div>
-                                                    <div className="space-y-1">
-                                                        <div className="text-lg font-bold">System Active</div>
-                                                        <div className="text-xs opacity-70">Parametric Generation</div>
-                                                    </div>
-                                                </div>
-                                                <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
-                                            </div>
-
-                                            {/* List Items */}
-                                            <div className="space-y-3">
-                                                <div className="flex items-center gap-3 p-3 rounded-xl border border-black/5" style={{ backgroundColor: tokens.surface }}>
-                                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold" style={{ backgroundColor: hexToRgba(tokens.primary, 0.1), color: tokens.primary }}>Aa</div>
-                                                    <div className="flex-1">
-                                                        <div className="text-sm font-bold">{brand.font.name}</div>
-                                                        <div className="text-[10px] opacity-50">Typography</div>
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center gap-3 p-3 rounded-xl border border-black/5" style={{ backgroundColor: tokens.surface }}>
-                                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold" style={{ backgroundColor: hexToRgba(tokens.primary, 0.1), color: tokens.primary }}>
-                                                        <div className="w-4 h-4 rounded-full" style={{ backgroundColor: tokens.primary }} />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <div className="text-sm font-bold">Palette System</div>
-                                                        <div className="text-[10px] opacity-50">Color Tokens</div>
-                                                    </div>
-                                                </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center">
+                                                <div className="w-4 h-4 border-2 border-current rounded-full opacity-50" />
                                             </div>
                                         </div>
-
-                                        {/* Bottom Nav */}
-                                        <div className="mt-auto h-20 border-t flex justify-around items-center px-4" style={{ borderColor: tokens.border, backgroundColor: tokens.bg }}>
-                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: tokens.surface, color: tokens.primary }}>
-                                                <div className="w-4 h-4 rounded-full bg-current" />
-                                            </div>
-                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center opacity-30">
-                                                <div className="w-4 h-4 rounded-md border-2 border-current" />
-                                            </div>
-                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center opacity-30">
-                                                <div className="w-4 h-4 rounded-full border-2 border-current" />
-                                            </div>
-                                        </div>
-
                                     </div>
+
+                                    {/* App Content */}
+                                    <div className="flex-1 flex flex-col px-5 space-y-6 overflow-hidden">
+
+                                        {/* Greeting & Balance */}
+                                        <div className="space-y-1">
+                                            <h2 className="text-sm opacity-60">Total Balance</h2>
+                                            <div className="text-3xl font-bold" style={{ fontFamily: brand.font.heading }}>$124,500.00</div>
+                                            <div className="flex items-center gap-1 text-xs text-green-600 font-medium">
+                                                <ArrowUpRight className="w-3 h-3" />
+                                                <span>+12.5%</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Main Card */}
+                                        <div className="p-5 rounded-2xl shadow-lg relative overflow-hidden shrink-0"
+                                            style={{ backgroundColor: tokens.primary, color: '#fff' }}>
+                                            <div className="relative z-10 flex flex-col h-28 justify-between">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="w-8 h-5 rounded bg-white/30" /> {/* Chip */}
+                                                    <div className="text-lg font-bold italic opacity-80">VISA</div>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <div className="text-sm font-mono opacity-80">•••• •••• •••• 4242</div>
+                                                    <div className="flex justify-between text-[10px] opacity-70">
+                                                        <span>Sumit Sharma</span>
+                                                        <span>12/28</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
+                                        </div>
+
+                                        {/* Recent Activity List */}
+                                        <div className="space-y-3">
+                                            <div className="text-xs font-bold opacity-50 uppercase tracking-wider">Recent</div>
+                                            {[1, 2, 3].map((_, i) => (
+                                                <div key={i} className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center shrink-0">
+                                                        <Wallet className="w-4 h-4 opacity-50" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="text-sm font-bold truncate">Stripe Payment</div>
+                                                        <div className="text-[10px] opacity-50">Software Service</div>
+                                                    </div>
+                                                    <div className="text-sm font-medium">-$29.00</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Bottom Tab Bar */}
+                                    <div className="h-16 border-t flex justify-around items-center px-2 shrink-0" style={{ borderColor: tokens.border }}>
+                                        <div className="p-2 rounded-xl" style={{ backgroundColor: hexToRgba(tokens.primary, 0.1) }}>
+                                            <BarChart3 className="w-5 h-5" style={{ color: tokens.primary }} />
+                                        </div>
+                                        <div className="p-2 opacity-30"><Wallet className="w-5 h-5" /></div>
+                                        <div className="p-2 opacity-30"><CreditCard className="w-5 h-5" /></div>
+                                        <div className="p-2 opacity-30"><div className="w-5 h-5 rounded-full bg-current" /></div>
+                                    </div>
+
                                     {/* Home Indicator */}
-                                    <div className="h-5 flex justify-center pb-2">
-                                        <div className="w-32 h-1 bg-black/20 rounded-full" />
+                                    <div className="h-4 flex justify-center pb-1.5 shrink-0">
+                                        <div className="w-28 h-1 bg-black/20 rounded-full" />
                                     </div>
                                 </div>
                             </motion.div>
                         </AnimatePresence>
-                    </div>
 
-                    {/* RIGHT: Properties Panel (Sidebar) */}
-                    <div className="w-[320px] bg-[#0C0A09] border-l border-white/5 flex flex-col hidden md:flex">
-                        {/* Panel Header */}
-                        <div className="h-10 border-b border-white/5 flex items-center px-4 text-[10px] font-mono text-stone-500 uppercase tracking-wider">
-                            Properties
-                        </div>
+                        {/* RIGHT: Macbook Mockup */}
+                        <div className="hidden md:block relative w-[600px] aspect-[16/10]">
+                            <AnimatePresence mode="popLayout">
+                                <motion.div
+                                    key={`laptop-${brand.id}`}
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: 20 }}
+                                    transition={{ duration: 0.5, ease: "circOut" }}
+                                    className="w-full h-full"
+                                >
+                                    {/* Macbook Body */}
+                                    <div className="w-full h-full bg-[#1a1a1a] rounded-t-xl border-[4px] border-[#2a2a2a] border-b-0 relative overflow-hidden flex flex-col shadow-2xl">
+                                        {/* Screen Content */}
+                                        <div className="flex-1 bg-white flex overflow-hidden" style={{ backgroundColor: tokens.bg }}>
 
-                        <div className="flex-1 overflow-y-auto p-6 space-y-8">
-
-                            {/* Section: Identity */}
-                            <div className="space-y-3">
-                                <label className="text-[10px] font-mono text-stone-600 uppercase tracking-wider">Identity</label>
-                                <div className="flex items-center gap-3">
-                                    <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center border border-white/10">
-                                        <div className="w-8 h-8">
-                                            <LogoComposition brand={brand} />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{brand.name}</div>
-                                        <div className="text-stone-500 text-xs">v2.0 • {brand.vibe}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Section: Colors */}
-                            <div className="space-y-3">
-                                <label className="text-[10px] font-mono text-stone-600 uppercase tracking-wider">Palette</label>
-                                <div className="grid grid-cols-5 gap-2">
-                                    {[tokens.primary, tokens.accent, tokens.surface, tokens.bg, tokens.text, tokens.muted, tokens.border].filter(Boolean).slice(0, 10).map((c, i) => (
-                                        <motion.div
-                                            key={`${brand.id}-${i}`}
-                                            className="aspect-square rounded-full border border-white/10 relative group cursor-pointer"
-                                            style={{ backgroundColor: c }}
-                                            initial={{ scale: 0 }}
-                                            animate={{ scale: 1 }}
-                                            transition={{ delay: i * 0.05 }}
-                                        >
-                                            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-black px-2 py-1 rounded text-[10px] text-white opacity-0 group-hover:opacity-100 whitespace-nowrap z-10 pointer-events-none">
-                                                {c}
+                                            {/* Web Sidebar */}
+                                            <div className="w-48 h-full border-r flex flex-col p-4 bg-black/5" style={{ borderColor: tokens.border }}>
+                                                <div className="flex items-center gap-2 mb-8">
+                                                    <div className="w-6 h-6">
+                                                        <LogoComposition brand={brand} />
+                                                    </div>
+                                                    <div className="font-bold text-sm" style={{ color: tokens.text }}>{brand.name}</div>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    {['Dashboard', 'Analytics', 'Customers', 'Settings'].map((item, i) => (
+                                                        <div key={item}
+                                                            className={`text-xs px-3 py-2 rounded-lg font-medium cursor-pointer ${i === 0 ? 'bg-white shadow-sm' : 'opacity-60 hover:opacity-100'}`}
+                                                            style={{ color: tokens.text, backgroundColor: i === 0 ? tokens.surface : 'transparent' }}
+                                                        >
+                                                            {item}
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </div>
 
-                            {/* Section: Typography */}
-                            <div className="space-y-3">
-                                <label className="text-[10px] font-mono text-stone-600 uppercase tracking-wider">Typography</label>
-                                <div className="space-y-2">
-                                    <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                                        <div className="text-xs text-stone-400 mb-1">Heading</div>
-                                        <div className="text-white text-lg" style={{ fontFamily: brand.font.heading }}>{brand.font.name}</div>
-                                    </div>
-                                    <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                                        <div className="text-xs text-stone-400 mb-1">Body</div>
-                                        <div className="text-white text-sm" style={{ fontFamily: brand.font.body }}>{brand.font.body}</div>
-                                    </div>
-                                </div>
-                            </div>
+                                            {/* Web Main Content */}
+                                            <div className="flex-1 p-6 overflow-hidden flex flex-col gap-6" style={{ color: tokens.text }}>
+                                                {/* Header */}
+                                                <div className="flex justify-between items-center">
+                                                    <h1 className="text-xl font-bold" style={{ fontFamily: brand.font.heading }}>Overview</h1>
+                                                    <div className="flex gap-2">
+                                                        <div className="px-3 py-1.5 rounded-md text-xs font-medium border border-current opacity-30">Export</div>
+                                                        <div className="px-3 py-1.5 rounded-md text-xs font-medium text-white" style={{ backgroundColor: tokens.primary }}>New Report</div>
+                                                    </div>
+                                                </div>
 
-                            {/* Section: Code Snippet */}
-                            <div className="space-y-3">
-                                <label className="text-[10px] font-mono text-stone-600 uppercase tracking-wider">Export</label>
-                                <div className="bg-[#050505] rounded-lg p-3 text-[10px] font-mono text-stone-400 border border-white/5 overflow-hidden">
-                                    <div className="flex gap-2 mb-2 border-b border-white/5 pb-2">
-                                        <span className="text-xs text-white">theme.ts</span>
-                                    </div>
-                                    <div className="opacity-70">
-                                        <span className="text-purple-400">export</span> <span className="text-blue-400">const</span> theme = {'{'} <br />
-                                        &nbsp;&nbsp;colors: {'{'} <br />
-                                        &nbsp;&nbsp;&nbsp;&nbsp;primary: <span className="text-yellow-300">'{tokens.primary}'</span>,<br />
-                                        &nbsp;&nbsp;&nbsp;&nbsp;bg: <span className="text-yellow-300">'{tokens.bg}'</span>,<br />
-                                        &nbsp;&nbsp;{'}'} <br />
-                                        {'}'}
-                                    </div>
-                                </div>
-                            </div>
+                                                {/* Stats Row */}
+                                                <div className="grid grid-cols-3 gap-4">
+                                                    {[
+                                                        { label: 'Revenue', value: '$45,231', trend: '+20%' },
+                                                        { label: 'Users', value: '12,500', trend: '+12%' },
+                                                        { label: 'Active', value: '1,200', trend: '+5%' }
+                                                    ].map((stat, i) => (
+                                                        <div key={i} className="p-4 rounded-xl border bg-white/50" style={{ borderColor: tokens.border }}>
+                                                            <div className="text-[10px] opacity-60 uppercase font-bold tracking-wider">{stat.label}</div>
+                                                            <div className="text-2xl font-bold mt-1" style={{ fontFamily: brand.font.heading }}>{stat.value}</div>
+                                                            <div className="text-xs text-green-600 font-medium mt-1">{stat.trend}</div>
+                                                        </div>
+                                                    ))}
+                                                </div>
 
+                                                {/* Chart Area */}
+                                                <div className="flex-1 rounded-xl border bg-white/50 p-4 border-dashed flex items-end gap-2" style={{ borderColor: tokens.border }}>
+                                                    {/* Simulated Bar Chart */}
+                                                    {[40, 65, 45, 80, 55, 90, 70, 85, 60, 75, 50, 95].map((h, i) => (
+                                                        <motion.div
+                                                            key={i}
+                                                            className="flex-1 rounded-t-sm opacity-80 hover:opacity-100 transition-opacity"
+                                                            style={{ backgroundColor: tokens.primary, height: `${h}%` }}
+                                                            initial={{ height: 0 }}
+                                                            animate={{ height: `${h}%` }}
+                                                            transition={{ delay: 0.2 + (i * 0.05), duration: 0.5 }}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Camera Notch Area */}
+                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-4 w-32 bg-[#1a1a1a] rounded-b-xl" />
+                                    </div>
+
+                                    {/* Macbook Base (Keyboard Area) */}
+                                    <div className="w-[110%] -ml-[5%] h-3 bg-[#2a2a2a] rounded-b-xl rounded-t-sm shadow-xl mx-auto relative">
+                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-[#3a3a3a] rounded-b-md" /> {/* Trackpad Notch */}
+                                    </div>
+                                </motion.div>
+                            </AnimatePresence>
                         </div>
                     </div>
 
