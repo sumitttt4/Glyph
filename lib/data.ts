@@ -8,9 +8,26 @@
 import { Theme, ThemeTokens } from './themes';
 import { Shape } from './shapes';
 import { FontFamily, FontPairing } from './typography';
-import { GeneratedLogo } from '@/components/logo-engine/types';
+import {
+  GeneratedLogo,
+  LogoVariationType,
+  LogoVariation,
+  LogoVariations,
+  GeneratedLogoWithVariations,
+} from '@/components/logo-engine/types';
 
-export type { Theme, ThemeTokens, Shape, FontFamily, FontPairing, GeneratedLogo };
+export type {
+  Theme,
+  ThemeTokens,
+  Shape,
+  FontFamily,
+  FontPairing,
+  GeneratedLogo,
+  LogoVariationType,
+  LogoVariation,
+  LogoVariations,
+  GeneratedLogoWithVariations,
+};
 
 // Font Pair for generated brands (simplified)
 export interface FontPair {

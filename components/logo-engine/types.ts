@@ -1138,6 +1138,52 @@ export interface LogoHashRecord {
     svg?: string;
 }
 
+// ============================================
+// LOGO VARIATIONS SYSTEM
+// ============================================
+
+/**
+ * Logo variation types for brand identity system
+ * Each brand generates 6 standard variations
+ */
+export type LogoVariationType =
+    | 'horizontal'    // Icon left, wordmark right
+    | 'stacked'       // Icon top, wordmark below
+    | 'icon-only'     // Symbol without text
+    | 'wordmark-only' // Text without symbol
+    | 'dark'          // For light backgrounds (dark logo)
+    | 'light';        // For dark backgrounds (light logo)
+
+/**
+ * Individual logo variation with SVG and metadata
+ */
+export interface LogoVariation {
+    type: LogoVariationType;
+    svg: string;
+    viewBox: string;
+    description: string;
+    recommended: string;  // e.g., "Use on light backgrounds", "Use for favicons"
+}
+
+/**
+ * Complete set of logo variations for a brand
+ */
+export interface LogoVariations {
+    horizontal: LogoVariation;
+    stacked: LogoVariation;
+    iconOnly: LogoVariation;
+    wordmarkOnly: LogoVariation;
+    dark: LogoVariation;
+    light: LogoVariation;
+}
+
+/**
+ * Extended GeneratedLogo with variations support
+ */
+export interface GeneratedLogoWithVariations extends GeneratedLogo {
+    variations?: LogoVariations;
+}
+
 export interface LogoStorageState {
     generatedHashes: Set<string>;
     logoRecords: Map<string, LogoHashRecord>;

@@ -72,6 +72,11 @@ export type {
     GoldenRatioGrid,
     LogoHashRecord,
     LogoStorageState,
+    // Logo Variations System
+    LogoVariationType,
+    LogoVariation,
+    LogoVariations,
+    GeneratedLogoWithVariations,
 } from './types';
 
 // ============================================
@@ -354,6 +359,20 @@ export {
     generateLogoAnimation,
     exportAnimationPackage,
 } from './animation/animation-export';
+
+// ============================================
+// LOGO VARIATIONS
+// ============================================
+
+export {
+    generateLogoVariations,
+    generateAllLogoVariations,
+    getLogoVariation,
+    VARIATION_TYPES,
+    VARIATION_INFO,
+    LogoVariationsPreview,
+    LogoVariationSelector,
+} from './variations';
 
 // ============================================
 // UNIFIED API

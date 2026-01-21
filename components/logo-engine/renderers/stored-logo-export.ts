@@ -3,10 +3,19 @@
  *
  * CRITICAL: All exports must use the stored SVG from brand.generatedLogos[selectedLogoIndex].svg
  * Never regenerate logos - this ensures exports match the preview exactly.
+ *
+ * Supports 6 logo variations:
+ * - Horizontal lockup (icon left, wordmark right)
+ * - Stacked lockup (icon top, wordmark below)
+ * - Icon only (symbol without text)
+ * - Wordmark only (text without symbol)
+ * - Dark version (for light backgrounds)
+ * - Light version (for dark backgrounds)
  */
 
 import { BrandIdentity, GeneratedLogo } from '@/lib/data';
 import { generateComposedLogoSVG, SVGVariant } from '@/components/export/ExportSVG';
+import { LogoVariationType, LogoVariations } from '@/components/logo-engine/types';
 
 // ============================================
 // CORE EXPORT FUNCTIONS
@@ -291,4 +300,102 @@ export function generateStoredWordmarkSVG(
  */
 export function generateStoredFaviconSVG(brand: BrandIdentity): string {
     return getStoredLogoSVG(brand, 'color');
+}
+
+// ============================================
+// LOGO VARIATIONS EXPORT
+// ============================================
+
+/**
+ * Get all logo variations for export
+ * Returns all 6 standard variations if available
+ */
+export function getLogoVariationsForExport(brand: BrandIdentity): {
+    horizontal: string | null;
+    stacked: string | null;
+    iconOnly: string | null;
+    wordmarkOnly: string | null;
+    dark: string | null;
+    light: string | null;
+} {
+    const selectedLogo = getSelectedLogo(brand);
+    const variations = (selectedLogo as any)?.variations as LogoVariations | undefined;
+
+    if (!variations) {
+        // Fallback: generate basic variations from the base logo
+        const baseSvg = getStoredLogoSVG(brand, 'color');
+        return {
+            horizontal: generateStoredWordmarkSVG(brand, 'color'),
+            stacked: null, // Would need wordmark SVG generation with stacked layout
+            iconOnly: baseSvg,
+            wordmarkOnly: null, // Would need pure wordmark generation
+            dark: recolorSVG(baseSvg, 'black'),
+            light: recolorSVG(baseSvg, 'white'),
+        };
+    }
+
+    return {
+        horizontal: variations.horizontal?.svg || null,
+        stacked: variations.stacked?.svg || null,
+        iconOnly: variations.iconOnly?.svg || null,
+        wordmarkOnly: variations.wordmarkOnly?.svg || null,
+        dark: variations.dark?.svg || null,
+        light: variations.light?.svg || null,
+    };
+}
+
+/**
+ * Get a specific variation SVG for export
+ */
+export function getLogoVariationSVG(
+    brand: BrandIdentity,
+    variationType: LogoVariationType
+): string | null {
+    const variations = getLogoVariationsForExport(brand);
+
+    switch (variationType) {
+        case 'horizontal':
+            return variations.horizontal;
+        case 'stacked':
+            return variations.stacked;
+        case 'icon-only':
+            return variations.iconOnly;
+        case 'wordmark-only':
+            return variations.wordmarkOnly;
+        case 'dark':
+            return variations.dark;
+        case 'light':
+            return variations.light;
+        default:
+            return null;
+    }
+}
+
+/**
+ * Export all variations as a map of filename to SVG content
+ */
+export function exportAllVariations(brand: BrandIdentity): Map<string, string> {
+    const variations = getLogoVariationsForExport(brand);
+    const result = new Map<string, string>();
+
+    if (variations.horizontal) {
+        result.set('logo-horizontal.svg', variations.horizontal);
+    }
+    if (variations.stacked) {
+        result.set('logo-stacked.svg', variations.stacked);
+    }
+    if (variations.iconOnly) {
+        result.set('logo-icon-only.svg', variations.iconOnly);
+    }
+    if (variations.wordmarkOnly) {
+        result.set('logo-wordmark-only.svg', variations.wordmarkOnly);
+    }
+    if (variations.dark) {
+        result.set('logo-dark.svg', variations.dark);
+    }
+    if (variations.light) {
+        result.set('logo-light.svg', variations.light);
+    }
+
+    return result;
 }

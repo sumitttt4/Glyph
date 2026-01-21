@@ -18,6 +18,7 @@ import {
     ALL_ALGORITHMS,
     SYMBOL_ALGORITHMS,
     WORDMARK_ALGORITHMS,
+    generateAllLogoVariations,
 } from '@/components/logo-engine';
 
 // Map vibe to LogoCategory for logo engine
@@ -235,6 +236,24 @@ export function useBrandGenerator() {
                 variations: 3, // Generate 3 variations
                 minQualityScore: 85, // Premium quality threshold
             });
+
+            // Generate all 6 variations for each logo (horizontal, stacked, icon-only, wordmark-only, dark, light)
+            if (generatedLogos.length > 0) {
+                const tempBrandForVariations = {
+                    name: name.trim() || 'Brand',
+                    theme: selectedTheme,
+                    font: {
+                        id: selectedFont.id,
+                        name: selectedFont.name,
+                        heading: selectedFont.heading.className,
+                        body: selectedFont.body.className,
+                        headingName: selectedFont.headingName,
+                        bodyName: selectedFont.bodyName,
+                        tags: selectedFont.tags
+                    },
+                } as any;
+                generatedLogos = generateAllLogoVariations(generatedLogos, tempBrandForVariations);
+            }
         } catch (e) {
             console.error('Logo Engine Error:', e);
         }
@@ -411,6 +430,11 @@ export function useBrandGenerator() {
                     variations: 1, // One logo per algorithm
                     minQualityScore: 85, // Premium quality threshold
                 });
+
+                // Generate all 6 variations for each logo
+                if (generatedLogos.length > 0) {
+                    generatedLogos = generateAllLogoVariations(generatedLogos, baseBrand);
+                }
             } catch (e) {
                 console.error(`Logo generation error for ${algorithm}:`, e);
             }
