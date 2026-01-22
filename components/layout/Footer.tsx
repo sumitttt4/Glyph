@@ -42,7 +42,7 @@ const itemVariants = {
         y: 0,
         transition: {
             duration: 0.5,
-            ease: "easeOut",
+            ease: [0.25, 0.46, 0.45, 0.94] as const,
         },
     },
 };
@@ -54,7 +54,7 @@ const socialVariants = {
         scale: 1,
         transition: {
             duration: 0.3,
-            ease: "backOut",
+            ease: [0.34, 1.56, 0.64, 1] as const,
         },
     },
 };
@@ -73,8 +73,8 @@ export function Footer() {
                     {/* Brand Column */}
                     <motion.div className="col-span-1 md:col-span-2" variants={itemVariants}>
                         <motion.div
-                            className="bg-white/5 p-4 rounded-2xl border border-white/10 inline-block mb-4"
-                            whileHover={{ scale: 1.02, borderColor: "rgba(255,255,255,0.2)" }}
+                            className="bg-white/5 p-4 rounded-2xl border border-white/10 hover:border-white/20 inline-block mb-4 transition-colors"
+                            whileHover={{ scale: 1.02 }}
                             transition={{ duration: 0.2 }}
                         >
                             <GlyphLogo className="scale-90 text-white [&>span]:text-white" />
