@@ -1,60 +1,42 @@
 "use client";
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { useState, useEffect, Suspense } from 'react';
+import { Check, Sparkles, Play } from 'lucide-react';
 
-import { ArrowRight, Zap, Palette, Download, Check, Code } from 'lucide-react';
+// Components
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
+import { AuthRescue } from '@/components/auth/AuthRescue';
+import HeroAnimation from '@/components/landing/HeroAnimation'; // Original was default
+import { LiveCounter } from '@/components/landing/LiveCounter';
+import Pricing from '@/components/landing/Pricing'; // Original was default
+import { FAQ } from '@/components/landing/FAQ';
+
+import { LogoComposition } from '@/components/logo-engine/LogoComposition';
+
+// New Components
+import { ProcessPipeline } from '@/components/landing/ProcessPipeline';
+import { TokenEngine } from '@/components/landing/TokenEngine';
+import { AssetPayload } from '@/components/landing/AssetPayload';
+import { ComparisonTable } from '@/components/landing/ComparisonTable';
+
+// Data
 import { THEMES } from '@/lib/themes';
 import { SHAPES } from '@/lib/shapes';
-
-import { FAQ } from '@/components/landing/FAQ';
-import Pricing from '@/components/landing/Pricing';
-import { AuthRescue } from '@/components/auth/AuthRescue';
-import { Suspense } from 'react';
-import { LogoComposition } from '@/components/logo-engine/LogoComposition';
-import HeroAnimation from '@/components/landing/HeroAnimation';
-import { LiveCounter } from '@/components/landing/LiveCounter';
 import { BrandIdentity } from '@/lib/data';
 
 const DEMO_BRAND: BrandIdentity = {
   id: 'demo',
-  name: 'Visionary',
+  name: 'Glyph',
   vibe: 'Premium',
   font: { id: 'demo-font', name: 'Instrument Sans', heading: 'Instrument Sans', body: 'Inter', tags: ['modern'] },
   theme: THEMES[0], // Architect
-  shape: SHAPES[3], // Hexagon
+  shape: SHAPES[6], // Glyph Custom
   generationSeed: 12345,
   createdAt: new Date(),
 };
-
-// Sample data for the "How It Works" bento
-const EXAMPLE_THEME = THEMES[0]; // "Architect"
-const EXAMPLE_SHAPE = SHAPES[3]; // Hexagon
-
-const FEATURES = [
-  {
-    icon: Zap,
-    title: 'Instant Generation',
-    description: 'Get a complete brand system in under 3 seconds. No waiting for AI to "think".',
-  },
-  {
-    icon: Palette,
-    title: 'Dual-Mode Tokens',
-    description: 'Every brand includes both Light and Dark mode color tokens, ready for production.',
-  },
-  {
-    icon: Code,
-    title: 'Developer-First Export',
-    description: 'Export directly to Tailwind CSS config. Copy, paste, ship.',
-  },
-  {
-    icon: Download,
-    title: 'SVG Assets',
-    description: 'Download your logo as a clean, scalable SVG file.',
-  },
-];
 
 export default function LandingPage() {
   const [demoIndex, setDemoIndex] = useState(0);
@@ -66,19 +48,14 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const demoThemes = [THEMES[0], THEMES[1], THEMES[2]];
-  const demoShapes = [SHAPES[3], SHAPES[2], SHAPES[0]];
-  const currentDemoTheme = demoThemes[demoIndex % demoThemes.length];
-  const currentDemoShape = demoShapes[demoIndex % demoShapes.length];
-
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-950 font-sans">
+    <div className="min-h-screen bg-white text-stone-950 font-sans">
       <Suspense fallback={null}>
         <AuthRescue />
       </Suspense>
       <Navbar />
 
-      {/* ==================== HERO SECTION ==================== */}
+      {/* ==================== 1. HERO SECTION ==================== */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
         {/* Background Grid */}
         <div
@@ -94,7 +71,7 @@ export default function LandingPage() {
 
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
                 The Design Engineer <br className="hidden sm:block" />
-                for <span className="font-editorial text-stone-400">Startups</span>.
+                for <span className="font-editorial text-stone-400">your Startup</span>.
               </h1>
 
               <p className="text-lg md:text-xl text-stone-600 max-w-xl mx-auto lg:mx-0 leading-relaxed mb-10">
@@ -102,39 +79,46 @@ export default function LandingPage() {
                 No hallucinations, just design logic.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <div className="flex flex-wrap gap-4 justify-center lg:justify-start mt-8">
                 <Link
                   href="/generator"
-                  className="inline-flex items-center justify-center h-10 px-6 rounded-full bg-stone-950 text-white text-sm font-semibold hover:bg-stone-800 transition-all shadow-lg hover:shadow-xl active:scale-95"
+                  className="flex items-center gap-2 h-12 px-6 rounded-full bg-[#f97316] hover:bg-[#ea580c] text-white font-semibold transition-all shadow-lg active:scale-95 hover:shadow-orange-500/25"
                 >
-                  Start Generating
+                  <Sparkles className="w-4 h-4 fill-white animate-pulse" />
+                  <span>Start Generating</span>
                 </Link>
+
                 <a
                   href="#how-it-works"
-                  className="inline-flex items-center justify-center gap-2 h-10 px-6 rounded-full border border-stone-200 bg-white text-stone-600 text-sm font-medium hover:border-stone-950 hover:text-stone-950 transition-all"
+                  className="flex items-center gap-2 h-12 px-6 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-900 font-medium transition-all"
                 >
-                  See How It Works
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>Watch Demo</span>
                 </a>
-              </div>
-
-              <div className="flex justify-center lg:justify-start mt-6">
-                <LiveCounter />
               </div>
 
             </div>
 
             {/* Right: The Living Hero Animation */}
             <div className="flex justify-center items-center mt-8 lg:mt-0">
+              {/* Note: HeroAnimation was default export in original file */}
+              {/* @ts-ignore - Assuming HeroAnimation follows correct export from previous file check */}
               <HeroAnimation />
             </div>
           </div>
         </div>
       </section>
 
+      {/* ==================== 2. HOW IT WORKS (The Logic) ==================== */}
+      <div id="how-it-works">
+        <ProcessPipeline />
+      </div>
 
+      {/* ==================== 3. THE TOKEN ENGINE (The Technical Flex) ==================== */}
+      <TokenEngine />
 
-      {/* ==================== SHOWCASE SECTION - The "Bridge" ==================== */}
-      <section id="how-it-works" className="py-24 bg-stone-50 overflow-hidden">
+      {/* ==================== 4. SHOWCASE SECTION (The Vibe) ==================== */}
+      <section className="py-24 bg-white overflow-hidden">
         <div className="max-w-[95%] xl:max-w-7xl mx-auto">
           {/* Dark Container - The Bridge */}
           <div className="bg-stone-950 text-white rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-16 overflow-hidden relative">
@@ -169,58 +153,43 @@ export default function LandingPage() {
                 </ul>
 
                 <Link href="/generator" className="inline-flex items-center gap-2 text-white font-bold hover:underline underline-offset-4 decoration-[#FF4500]">
-                  Try the Demo <ArrowRight className="w-4 h-4" />
+                  Try the Demo
                 </Link>
               </div>
 
               {/* Brand Identity Bento Grid */}
-              <div className="hidden lg:grid grid-cols-3 grid-rows-3 gap-3 h-[480px]">
+              <div className="hidden lg:grid grid-cols-7 grid-rows-3 gap-3 h-[480px]">
 
                 {/* Logo Block - Large */}
-                <div className="col-span-2 row-span-1 bg-white rounded-2xl p-6 flex items-center justify-between overflow-hidden group hover:shadow-lg transition-shadow">
+                <div className="col-span-4 row-span-1 bg-white rounded-2xl p-6 flex items-center justify-between overflow-hidden group hover:shadow-lg transition-shadow">
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 relative">
-                      <LogoComposition brand={DEMO_BRAND} />
+                      <Image
+                        src="/glyph_logo_new.png"
+                        alt="Glyph Logo"
+                        fill
+                        className="object-contain"
+                      />
                     </div>
                     <span className="text-3xl font-bold text-stone-900 tracking-tight">{DEMO_BRAND.name}</span>
                   </div>
                   <div className="text-xs text-stone-400 font-mono uppercase">Logo</div>
                 </div>
 
-                {/* Phone Mockup - Tall */}
-                <div className="col-span-1 row-span-2 bg-stone-100 rounded-2xl overflow-hidden relative group hover:shadow-lg transition-shadow">
-                  <div className="absolute inset-0 flex items-center justify-center p-4">
-                    <div className="w-full max-w-[180px] bg-stone-800 rounded-[2rem] p-2 shadow-xl">
-                      {/* Phone Frame */}
-                      <div className="bg-white rounded-[1.5rem] overflow-hidden aspect-[9/19]">
-                        {/* Status Bar */}
-                        <div className="h-6 bg-stone-100 flex items-center justify-center">
-                          <div className="w-16 h-1 bg-stone-300 rounded-full"></div>
-                        </div>
-                        {/* App Content */}
-                        <div className="p-3 space-y-2">
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-lg bg-[#FF4500] flex items-center justify-center">
-                              <svg viewBox="0 0 24 24" className="w-3 h-3 fill-white">
-                                <path d={DEMO_BRAND.shape.path} />
-                              </svg>
-                            </div>
-                            <span className="text-[8px] font-bold text-stone-900">{DEMO_BRAND.name}</span>
-                          </div>
-                          <div className="h-16 rounded-lg" style={{ backgroundColor: DEMO_BRAND.theme.tokens.light.primary }}></div>
-                          <div className="space-y-1">
-                            <div className="h-2 w-3/4 bg-stone-200 rounded"></div>
-                            <div className="h-2 w-1/2 bg-stone-100 rounded"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="absolute bottom-3 right-3 text-xs text-stone-400 font-mono uppercase">Mobile</div>
+                {/* Billboard / Outdoor Mockup */}
+                <div className="col-span-3 row-span-3 bg-stone-100 rounded-2xl overflow-hidden relative group hover:shadow-lg transition-shadow">
+                  <Image
+                    src="/glyph_billboard_final.png"
+                    alt="Outdoor Billboard Campaign"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                  <div className="absolute bottom-3 right-3 text-xs text-white/80 font-mono uppercase bg-black/20 backdrop-blur-sm px-2 py-0.5 rounded-full">Campaign</div>
                 </div>
 
                 {/* Typography Block */}
-                <div className="col-span-1 row-span-1 rounded-2xl p-5 overflow-hidden group hover:shadow-lg transition-shadow" style={{ backgroundColor: DEMO_BRAND.theme.tokens.light.primary }}>
+                <div className="col-span-2 row-span-1 rounded-2xl p-5 overflow-hidden group hover:shadow-lg transition-shadow" style={{ backgroundColor: DEMO_BRAND.theme.tokens.light.primary }}>
                   <div className="text-white">
                     <div className="text-[10px] font-mono uppercase opacity-70 mb-2">Typography</div>
                     <div className="text-4xl font-bold tracking-tight opacity-30">Aa</div>
@@ -233,7 +202,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Color Palette Block */}
-                <div className="col-span-1 row-span-1 bg-white rounded-2xl p-4 overflow-hidden group hover:shadow-lg transition-shadow">
+                <div className="col-span-2 row-span-1 bg-white rounded-2xl p-4 overflow-hidden group hover:shadow-lg transition-shadow">
                   <div className="text-[10px] text-stone-400 font-mono uppercase mb-3">Palette</div>
                   <div className="flex gap-1.5 h-full pb-6">
                     <div className="flex-1 rounded-lg" style={{ backgroundColor: DEMO_BRAND.theme.tokens.light.primary }}></div>
@@ -243,36 +212,16 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Business Card Block */}
-                <div className="col-span-2 row-span-1 bg-stone-100 rounded-2xl p-4 overflow-hidden relative group hover:shadow-lg transition-shadow">
-                  <div className="absolute top-3 right-3 text-xs text-stone-400 font-mono uppercase">Card</div>
-                  <div className="flex items-center justify-center h-full gap-4">
-                    {/* Card Front */}
-                    <div className="w-40 h-24 rounded-lg shadow-lg transform -rotate-6 hover:rotate-0 transition-transform" style={{ backgroundColor: DEMO_BRAND.theme.tokens.light.primary }}>
-                      <div className="p-3 flex items-center gap-2">
-                        <div className="w-6 h-6 rounded bg-white/20 flex items-center justify-center">
-                          <svg viewBox="0 0 24 24" className="w-3 h-3 fill-white">
-                            <path d={DEMO_BRAND.shape.path} />
-                          </svg>
-                        </div>
-                        <span className="text-[10px] font-bold text-white">{DEMO_BRAND.name}</span>
-                      </div>
-                    </div>
-                    {/* Card Back */}
-                    <div className="w-40 h-24 bg-white rounded-lg shadow-lg transform rotate-3 hover:rotate-0 transition-transform p-3">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-5 h-5 rounded" style={{ backgroundColor: DEMO_BRAND.theme.tokens.light.primary }}>
-                          <svg viewBox="0 0 24 24" className="w-full h-full p-1 fill-white">
-                            <path d={DEMO_BRAND.shape.path} />
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <div className="h-1.5 w-2/3 bg-stone-200 rounded"></div>
-                        <div className="h-1.5 w-1/2 bg-stone-100 rounded"></div>
-                      </div>
-                    </div>
-                  </div>
+                {/* Merchandise Mockup Block */}
+                <div className="col-span-4 row-span-1 bg-stone-100 rounded-2xl overflow-hidden relative group hover:shadow-lg transition-shadow">
+                  <Image
+                    src="/glyph_merch_final.png"
+                    alt="Brand Apparel"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                  <div className="absolute top-3 right-3 text-xs text-white/80 font-mono uppercase bg-black/20 backdrop-blur-sm px-2 py-0.5 rounded-full">Apparel</div>
                 </div>
 
               </div>
@@ -281,10 +230,18 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ==================== PRICING SECTION ==================== */}
+      {/* ==================== 5. THE PAYLOAD (The Value) ==================== */}
+      <AssetPayload />
+
+      {/* ==================== 6. COMPARISON (The Anchor) ==================== */}
+      <ComparisonTable />
+
+
+
+      {/* ==================== 8. PRICING SECTION ==================== */}
       <Pricing />
 
-      {/* ==================== FAQ SECTION ==================== */}
+      {/* ==================== 9. FAQ SECTION (The Defense) ==================== */}
       <FAQ />
 
       <Footer />
