@@ -105,58 +105,109 @@ export interface HashParams {
 }
 
 export interface HashDerivedParams {
-    // Element counts (from hash bits 0-15)
-    elementCount: number;        // 6-20 elements
-    layerCount: number;          // 1-5 layers
+    // === STRUCTURAL PARAMETERS (major visual impact) ===
+    // Element counts (from hash bits 0-15) - WIDER range for more variety
+    elementCount: number;        // 4-24 elements
+    layerCount: number;          // 1-7 layers
 
-    // Rotation & angles (from hash bits 16-31)
+    // Rotation & angles (from hash bits 16-31) - FULL range
     rotationOffset: number;      // 0-360 degrees
-    angleSpread: number;         // 0-90 degrees
+    angleSpread: number;         // 15-180 degrees
 
-    // Curve properties (from hash bits 32-47)
-    curveTension: number;        // 0.3-0.9
-    curveAmplitude: number;      // 0-50
+    // Curve properties (from hash bits 32-47) - WIDER range
+    curveTension: number;        // 0.1-1.0
+    curveAmplitude: number;      // 5-80
 
     // Taper & stroke (from hash bits 48-63)
-    taperRatio: number;          // 0.2-0.8
-    strokeWidth: number;         // 1-12
+    taperRatio: number;          // 0.1-0.95
+    strokeWidth: number;         // 0.5-18
 
-    // Spacing & scale (from hash bits 64-79)
-    spacingFactor: number;       // 0.5-2.0
-    scaleFactor: number;         // 0.7-1.3
+    // Spacing & scale (from hash bits 64-79) - WIDER range
+    spacingFactor: number;       // 0.3-3.0
+    scaleFactor: number;         // 0.5-1.8
 
     // Symmetry & style (from hash bits 80-95)
     symmetryType: SymmetryType;
-    styleVariant: number;        // 0-7
+    styleVariant: number;        // 0-15
 
     // Color placement (from hash bits 96-111)
-    colorPlacement: number;      // 0-7 placement variants
+    colorPlacement: number;      // 0-11 placement variants
     gradientAngle: number;       // 0-360
 
-    // Organic variation (from hash bits 112-127)
+    // Organic variation (from hash bits 112-127) - HIGHER potential
     organicAmount: number;       // 0-1
-    jitterAmount: number;        // 0-10
+    jitterAmount: number;        // 0-15
 
-    // Additional params (from hash bits 128-255)
-    armWidth: number;            // 2-15
-    armLength: number;           // 20-50
-    centerRadius: number;        // 0-15
-    spiralAmount: number;        // 0-0.5
-    bulgeAmount: number;         // 0-0.5
-    cornerRadius: number;        // 0-30
-    depthOffset: number;         // 2-20
+    // === ARM/ELEMENT PARAMETERS ===
+    armWidth: number;            // 1.5-22
+    armLength: number;           // 15-65
+    centerRadius: number;        // 0-25
+    spiralAmount: number;        // 0-0.8
+    bulgeAmount: number;         // 0-0.7
+    cornerRadius: number;        // 0-40
+    depthOffset: number;         // 1-30
     perspectiveStrength: number; // 0-1
     letterWeight: number;        // 100-900
     cutDepth: number;            // 0-1
-    overlapAmount: number;       // 0.2-0.8
-    ringThickness: number;       // 2-12
+    overlapAmount: number;       // 0.1-0.9
+    ringThickness: number;       // 1-18
     flowIntensity: number;       // 0-1
-    extrusionDepth: number;      // 5-25
+    extrusionDepth: number;      // 3-35
+
+    // === NEW PARAMETERS (55+ total) ===
+    // Segment parameters
+    segmentCount: number;        // 3-16
+    segmentSpacing: number;      // 2-30
+    segmentCurve: number;        // 0-1
+
+    // Shape modifiers
+    innerRadius: number;         // 0-0.6
+    outerRadius: number;         // 0.7-1.0
+    pointiness: number;          // 0-1
+    roundness: number;           // 0-1
+    skewX: number;               // -0.3-0.3
+    skewY: number;               // -0.3-0.3
+
+    // Complexity modifiers
+    subdivisions: number;        // 1-6
+    nestingLevel: number;        // 1-4
+    branchCount: number;         // 0-5
+    branchAngle: number;         // 15-90
+    branchLength: number;        // 0.3-0.8
+
+    // Fill/stroke variations
+    fillStrokeRatio: number;     // 0-1
+    strokeDashRatio: number;     // 0-1
+
+    // Transformation parameters
+    waveFrequency: number;       // 0-5
+    waveAmplitude: number;       // 0-20
+    noiseScale: number;          // 0.01-0.5
+    turbulence: number;          // 0-1
+
+    // Position modifiers
+    offsetX: number;             // -10-10
+    offsetY: number;             // -10-10
+    anchorPoint: number;         // 0-1
+
+    // Visual weight distribution
+    weightDistribution: number;  // 0-1
+    densityCenter: number;       // 0.2-0.8
+    densityEdge: number;         // 0.2-0.8
 }
 
 // ============================================
 // QUALITY SCORING
 // ============================================
+
+/**
+ * Rejection reason for quality filtering
+ */
+export interface RejectionReason {
+    reason: string;
+    value: number;
+    threshold: number;
+}
 
 export interface QualityMetrics {
     score: number;               // 0-100 overall score
@@ -165,6 +216,7 @@ export interface QualityMetrics {
     complexity: number;          // 0-100 optimal complexity score
     goldenRatioAdherence: number;// 0-100 golden ratio usage
     uniqueness: number;          // 0-100 distinctiveness
+    rejections?: RejectionReason[]; // List of rejection reasons if below threshold
 }
 
 // ============================================

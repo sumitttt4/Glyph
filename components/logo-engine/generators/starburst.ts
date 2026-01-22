@@ -335,51 +335,114 @@ function generateSingleStarburst(
     return { logo, quality };
 }
 
+// ============================================
+// FILTERING CONSTANTS
+// ============================================
+
+const CANDIDATES_PER_GENERATION = 10; // Generate 10 candidates
+const TOP_LOGOS_TO_SHOW = 5;          // Show top 5 to user
+const MIN_QUALITY_SCORE = 75;         // Reject logos below this threshold
+const DEBUG_REJECTED_LOGOS = true;    // Log rejected logos to console
+
 /**
  * Generate starburst logos with quality filtering
- * Generates 5 candidates internally, returns best that meets threshold
+ * ENHANCED: Generates 10 candidates internally, filters by quality, shows top 5
+ * Logs rejected logos to console for debugging
  */
 export function generateStarburst(params: LogoGenerationParams): GeneratedLogo[] {
     const {
         brandName,
-        variations = 3,
-        minQualityScore = 80,
+        minQualityScore = MIN_QUALITY_SCORE,
         category = 'technology',
     } = params;
 
-    const logos: GeneratedLogo[] = [];
-    const candidatesPerVariation = 5;
+    // Generate all candidates
+    const allCandidates: Array<{ logo: GeneratedLogo; quality: QualityMetrics }> = [];
+    const rejectedLogos: Array<{ logo: GeneratedLogo; quality: QualityMetrics; reasons: string[] }> = [];
 
-    for (let v = 0; v < variations; v++) {
-        let bestCandidate: GeneratedLogo | null = null;
-        let bestScore = 0;
+    console.log(`[Starburst Generator] Generating ${CANDIDATES_PER_GENERATION} candidates for "${brandName}"...`);
 
-        // Generate multiple candidates and pick the best
-        for (let c = 0; c < candidatesPerVariation; c++) {
-            const hashParams = generateHashParamsSync(brandName, category);
-            const { logo, quality } = generateSingleStarburst(params, hashParams, v);
+    for (let c = 0; c < CANDIDATES_PER_GENERATION; c++) {
+        // Generate unique hash for each candidate (ensures different outputs)
+        const hashParams = generateHashParamsSync(brandName, category);
+        const { logo, quality } = generateSingleStarburst(params, hashParams, c);
 
-            if (quality.score > bestScore) {
-                bestScore = quality.score;
-                bestCandidate = logo;
-            }
-
-            // If we found one that meets threshold, use it
-            if (quality.score >= minQualityScore) {
-                break;
-            }
+        // Check if it meets quality threshold
+        if (quality.score >= minQualityScore) {
+            allCandidates.push({ logo, quality });
+        } else {
+            // Log rejected logos for debugging
+            const reasons = quality.rejections?.map(r => r.reason) || [`Score too low: ${quality.score}`];
+            rejectedLogos.push({ logo, quality, reasons });
         }
+    }
 
-        if (bestCandidate) {
+    // Log rejected logos if debugging is enabled
+    if (DEBUG_REJECTED_LOGOS && rejectedLogos.length > 0) {
+        console.log(`[Starburst Generator] Rejected ${rejectedLogos.length} logos:`);
+        rejectedLogos.forEach((rejected, idx) => {
+            console.log(`  ${idx + 1}. Score: ${rejected.quality.score}/100 - Reasons: ${rejected.reasons.join(', ')}`);
+            if (rejected.quality.rejections) {
+                rejected.quality.rejections.forEach(r => {
+                    console.log(`      - ${r.reason}: ${r.value.toFixed(1)} (threshold: ${r.threshold})`);
+                });
+            }
+        });
+    }
+
+    // Sort by quality score descending
+    allCandidates.sort((a, b) => b.quality.score - a.quality.score);
+
+    // Take top N logos
+    const topCandidates = allCandidates.slice(0, TOP_LOGOS_TO_SHOW);
+
+    console.log(`[Starburst Generator] Returning ${topCandidates.length} logos (from ${allCandidates.length} that passed quality threshold)`);
+    if (topCandidates.length > 0) {
+        console.log(`  Quality scores: ${topCandidates.map(c => c.quality.score).join(', ')}`);
+    }
+
+    // Store hashes and build final array
+    const logos: GeneratedLogo[] = [];
+    topCandidates.forEach(({ logo, quality }, index) => {
+        // Update variant number for final output
+        const finalLogo: GeneratedLogo = {
+            ...logo,
+            variant: index + 1,
+        };
+
+        storeHash({
+            hash: finalLogo.hash,
+            brandName,
+            algorithm: 'starburst',
+            variant: index,
+            createdAt: Date.now(),
+            qualityScore: quality.score,
+        });
+
+        logos.push(finalLogo);
+    });
+
+    // If we didn't get enough logos, generate more with relaxed threshold
+    if (logos.length < TOP_LOGOS_TO_SHOW && allCandidates.length < TOP_LOGOS_TO_SHOW) {
+        console.log(`[Starburst Generator] Not enough quality logos, adding best rejected ones...`);
+        // Sort rejected by score descending and add the best ones
+        rejectedLogos.sort((a, b) => b.quality.score - a.quality.score);
+        const needed = TOP_LOGOS_TO_SHOW - logos.length;
+        for (let i = 0; i < Math.min(needed, rejectedLogos.length); i++) {
+            const { logo, quality } = rejectedLogos[i];
+            const finalLogo: GeneratedLogo = {
+                ...logo,
+                variant: logos.length + 1,
+            };
             storeHash({
-                hash: bestCandidate.hash,
+                hash: finalLogo.hash,
                 brandName,
                 algorithm: 'starburst',
-                variant: v,
+                variant: logos.length,
                 createdAt: Date.now(),
-                qualityScore: bestScore,
+                qualityScore: quality.score,
             });
-            logos.push(bestCandidate);
+            logos.push(finalLogo);
         }
     }
 

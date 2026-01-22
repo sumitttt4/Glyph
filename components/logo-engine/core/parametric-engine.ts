@@ -28,8 +28,10 @@ export const SQRT3 = 1.7320508075688772;
 
 const STORAGE_KEY = 'premium-logo-engine-hashes';
 const MAX_STORED_HASHES = 1000;
-const MIN_QUALITY_SCORE = 85;
-const CANDIDATES_PER_GENERATION = 5;
+const MIN_QUALITY_SCORE = 75;
+const CANDIDATES_PER_GENERATION = 10; // Generate 10, filter to top 5
+const TOP_LOGOS_TO_SHOW = 5;
+const DEBUG_REJECTED_LOGOS = true; // Log rejected logos to console
 
 // ============================================
 // SHA-256 HASH GENERATION
@@ -137,15 +139,25 @@ function sha256Fallback(message: string): string {
 
 /**
  * Generate unique hash parameters for logo generation
+ * ENHANCED: Combines brand name + category + aesthetic + timestamp + multiple random values
+ * Each component significantly alters the output for maximum uniqueness
  */
 export async function generateHashParams(
     brandName: string,
     category: LogoCategory,
-    existingSalt?: string
+    existingSalt?: string,
+    aesthetic?: string
 ): Promise<HashParams> {
     const timestamp = Date.now();
     const salt = existingSalt || generateSalt();
-    const input = `${brandName.toLowerCase().trim()}|${category}|${timestamp}|${salt}`;
+    // Add multiple random factors to ensure uniqueness
+    const random1 = Math.random().toString(36).substring(2, 15);
+    const random2 = Math.random().toString(36).substring(2, 15);
+    const micro = performance?.now?.() || Math.random() * 1000000;
+    // Create a rich input that ensures different names = completely different structures
+    const nameHash = cyrb53Hash(brandName.toLowerCase().trim());
+    const aestheticKey = aesthetic || category;
+    const input = `${brandName.toLowerCase().trim()}|${nameHash}|${category}|${aestheticKey}|${timestamp}|${micro}|${salt}|${random1}|${random2}`;
     const hashHex = await sha256(input);
 
     return {
@@ -159,15 +171,24 @@ export async function generateHashParams(
 
 /**
  * Synchronous version for SSR compatibility
+ * ENHANCED: Same multi-factor uniqueness as async version
  */
 export function generateHashParamsSync(
     brandName: string,
     category: LogoCategory,
-    existingSalt?: string
+    existingSalt?: string,
+    aesthetic?: string
 ): HashParams {
     const timestamp = Date.now();
     const salt = existingSalt || generateSalt();
-    const input = `${brandName.toLowerCase().trim()}|${category}|${timestamp}|${salt}`;
+    // Add multiple random factors to ensure uniqueness
+    const random1 = Math.random().toString(36).substring(2, 15);
+    const random2 = Math.random().toString(36).substring(2, 15);
+    const micro = typeof performance !== 'undefined' ? performance.now() : Math.random() * 1000000;
+    // Create a rich input that ensures different names = completely different structures
+    const nameHash = cyrb53Hash(brandName.toLowerCase().trim());
+    const aestheticKey = aesthetic || category;
+    const input = `${brandName.toLowerCase().trim()}|${nameHash}|${category}|${aestheticKey}|${timestamp}|${micro}|${salt}|${random1}|${random2}`;
     const hashHex = sha256Fallback(input);
 
     return {
@@ -203,57 +224,107 @@ function extractFromHash(hashHex: string, startBit: number, numBits: number, min
 }
 
 /**
- * Derive 30+ parameters from SHA-256 hash
+ * Derive 55+ parameters from SHA-256 hash
+ * ENHANCED: Wider ranges, more parameters, each significantly affects visual output
+ * Small seed change = visually different logo
  */
 export function deriveParamsFromHash(hashHex: string): HashDerivedParams {
+    // Use different bit positions and combine for more variation
+    const h1 = hashHex.slice(0, 16);
+    const h2 = hashHex.slice(16, 32);
+    const h3 = hashHex.slice(32, 48);
+    const h4 = hashHex.slice(48, 64);
+
     return {
-        // Element counts (bits 0-15)
-        elementCount: Math.round(extractFromHash(hashHex, 0, 8, 6, 20)),
-        layerCount: Math.round(extractFromHash(hashHex, 8, 8, 1, 5)),
+        // === STRUCTURAL PARAMETERS (major visual impact) ===
+        // Element counts - WIDER range for more variety (bits 0-15)
+        elementCount: Math.round(extractFromHash(hashHex, 0, 8, 4, 24)),
+        layerCount: Math.round(extractFromHash(hashHex, 8, 8, 1, 7)),
 
-        // Rotation & angles (bits 16-31)
+        // Rotation & angles - FULL range (bits 16-31)
         rotationOffset: extractFromHash(hashHex, 16, 8, 0, 360),
-        angleSpread: extractFromHash(hashHex, 24, 8, 0, 90),
+        angleSpread: extractFromHash(hashHex, 24, 8, 15, 180),
 
-        // Curve properties (bits 32-47)
-        curveTension: extractFromHash(hashHex, 32, 8, 0.3, 0.9),
-        curveAmplitude: extractFromHash(hashHex, 40, 8, 0, 50),
+        // Curve properties - WIDER range (bits 32-47)
+        curveTension: extractFromHash(hashHex, 32, 8, 0.1, 1.0),
+        curveAmplitude: extractFromHash(hashHex, 40, 8, 5, 80),
 
         // Taper & stroke (bits 48-63)
-        taperRatio: extractFromHash(hashHex, 48, 8, 0.2, 0.8),
-        strokeWidth: extractFromHash(hashHex, 56, 8, 1, 12),
+        taperRatio: extractFromHash(hashHex, 48, 8, 0.1, 0.95),
+        strokeWidth: extractFromHash(hashHex, 56, 8, 0.5, 18),
 
-        // Spacing & scale (bits 64-79)
-        spacingFactor: extractFromHash(hashHex, 64, 8, 0.5, 2.0),
-        scaleFactor: extractFromHash(hashHex, 72, 8, 0.7, 1.3),
+        // Spacing & scale - WIDER range (bits 64-79)
+        spacingFactor: extractFromHash(hashHex, 64, 8, 0.3, 3.0),
+        scaleFactor: extractFromHash(hashHex, 72, 8, 0.5, 1.8),
 
         // Symmetry & style (bits 80-95)
         symmetryType: SYMMETRY_TYPES[Math.floor(extractFromHash(hashHex, 80, 8, 0, 7.99))],
-        styleVariant: Math.floor(extractFromHash(hashHex, 88, 8, 0, 7.99)),
+        styleVariant: Math.floor(extractFromHash(hashHex, 88, 8, 0, 15.99)),
 
         // Color placement (bits 96-111)
-        colorPlacement: Math.floor(extractFromHash(hashHex, 96, 8, 0, 7.99)),
+        colorPlacement: Math.floor(extractFromHash(hashHex, 96, 8, 0, 11.99)),
         gradientAngle: extractFromHash(hashHex, 104, 8, 0, 360),
 
-        // Organic variation (bits 112-127)
+        // Organic variation - HIGHER potential (bits 112-127)
         organicAmount: extractFromHash(hashHex, 112, 8, 0, 1),
-        jitterAmount: extractFromHash(hashHex, 120, 8, 0, 10),
+        jitterAmount: extractFromHash(hashHex, 120, 8, 0, 15),
 
-        // Additional params (bits 128-255)
-        armWidth: extractFromHash(hashHex, 128, 8, 2, 15),
-        armLength: extractFromHash(hashHex, 136, 8, 20, 50),
-        centerRadius: extractFromHash(hashHex, 144, 8, 0, 15),
-        spiralAmount: extractFromHash(hashHex, 152, 8, 0, 0.5),
-        bulgeAmount: extractFromHash(hashHex, 160, 8, 0, 0.5),
-        cornerRadius: extractFromHash(hashHex, 168, 8, 0, 30),
-        depthOffset: extractFromHash(hashHex, 176, 8, 2, 20),
+        // === ARM/ELEMENT PARAMETERS ===
+        armWidth: extractFromHash(hashHex, 128, 8, 1.5, 22),
+        armLength: extractFromHash(hashHex, 136, 8, 15, 65),
+        centerRadius: extractFromHash(hashHex, 144, 8, 0, 25),
+        spiralAmount: extractFromHash(hashHex, 152, 8, 0, 0.8),
+        bulgeAmount: extractFromHash(hashHex, 160, 8, 0, 0.7),
+        cornerRadius: extractFromHash(hashHex, 168, 8, 0, 40),
+        depthOffset: extractFromHash(hashHex, 176, 8, 1, 30),
         perspectiveStrength: extractFromHash(hashHex, 184, 8, 0, 1),
         letterWeight: Math.round(extractFromHash(hashHex, 192, 8, 100, 900)),
         cutDepth: extractFromHash(hashHex, 200, 8, 0, 1),
-        overlapAmount: extractFromHash(hashHex, 208, 8, 0.2, 0.8),
-        ringThickness: extractFromHash(hashHex, 216, 8, 2, 12),
+        overlapAmount: extractFromHash(hashHex, 208, 8, 0.1, 0.9),
+        ringThickness: extractFromHash(hashHex, 216, 8, 1, 18),
         flowIntensity: extractFromHash(hashHex, 224, 8, 0, 1),
-        extrusionDepth: extractFromHash(hashHex, 232, 8, 5, 25),
+        extrusionDepth: extractFromHash(hashHex, 232, 8, 3, 35),
+
+        // === NEW PARAMETERS (50+ total) ===
+        // Segment parameters (different parts of hash for variation)
+        segmentCount: Math.round(extractFromHash(h2, 0, 8, 3, 16)),
+        segmentSpacing: extractFromHash(h2, 8, 8, 2, 30),
+        segmentCurve: extractFromHash(h2, 16, 8, 0, 1),
+
+        // Shape modifiers
+        innerRadius: extractFromHash(h2, 24, 8, 0, 0.6),
+        outerRadius: extractFromHash(h2, 32, 8, 0.7, 1.0),
+        pointiness: extractFromHash(h2, 40, 8, 0, 1),
+        roundness: extractFromHash(h2, 48, 8, 0, 1),
+        skewX: extractFromHash(h2, 56, 8, -0.3, 0.3),
+        skewY: extractFromHash(h3, 0, 8, -0.3, 0.3),
+
+        // Complexity modifiers
+        subdivisions: Math.round(extractFromHash(h3, 8, 8, 1, 6)),
+        nestingLevel: Math.round(extractFromHash(h3, 16, 8, 1, 4)),
+        branchCount: Math.round(extractFromHash(h3, 24, 8, 0, 5)),
+        branchAngle: extractFromHash(h3, 32, 8, 15, 90),
+        branchLength: extractFromHash(h3, 40, 8, 0.3, 0.8),
+
+        // Fill/stroke variations
+        fillStrokeRatio: extractFromHash(h3, 48, 8, 0, 1),
+        strokeDashRatio: extractFromHash(h3, 56, 8, 0, 1),
+
+        // Transformation parameters
+        waveFrequency: extractFromHash(h4, 0, 8, 0, 5),
+        waveAmplitude: extractFromHash(h4, 8, 8, 0, 20),
+        noiseScale: extractFromHash(h4, 16, 8, 0.01, 0.5),
+        turbulence: extractFromHash(h4, 24, 8, 0, 1),
+
+        // Position modifiers
+        offsetX: extractFromHash(h4, 32, 8, -10, 10),
+        offsetY: extractFromHash(h4, 40, 8, -10, 10),
+        anchorPoint: extractFromHash(h4, 48, 8, 0, 1),
+
+        // Visual weight distribution
+        weightDistribution: extractFromHash(h4, 56, 8, 0, 1),
+        densityCenter: extractFromHash(h1, 4, 8, 0.2, 0.8),
+        densityEdge: extractFromHash(h1, 12, 8, 0.2, 0.8),
     };
 }
 
@@ -262,23 +333,88 @@ export function deriveParamsFromHash(hashHex: string): HashDerivedParams {
 // ============================================
 
 /**
+ * Rejection reasons for logging
+ */
+export interface RejectionReason {
+    reason: string;
+    value: number;
+    threshold: number;
+}
+
+/**
  * Calculate quality score for a generated logo
+ * ENHANCED: Strict rejection criteria with detailed logging
  */
 export function calculateQualityScore(svgString: string, params: HashDerivedParams): QualityMetrics {
-    const pathSmoothness = calculatePathSmoothness(svgString);
+    const rejections: RejectionReason[] = [];
+
+    // Check hard rejection criteria first
+    const pathElements = (svgString.match(/<path/gi) || []).length;
+    const pathCommands = (svgString.match(/[MLCQSAZ]/gi) || []).length;
+
+    // REJECTION: Less than 3 path elements (too simple)
+    if (pathElements < 3) {
+        rejections.push({ reason: 'Too few path elements', value: pathElements, threshold: 3 });
+    }
+
+    // REJECTION: Too few commands (just a circle/square)
+    if (pathCommands < 8) {
+        rejections.push({ reason: 'Too few path commands (basic shape)', value: pathCommands, threshold: 8 });
+    }
+
+    // Check for elements touching edges (assuming 100x100 viewbox)
+    const edgeTouchingScore = checkEdgeTouching(svgString);
+    if (edgeTouchingScore < 50) {
+        rejections.push({ reason: 'Elements touching edges', value: edgeTouchingScore, threshold: 50 });
+    }
+
+    // Check visual weight balance
     const visualBalance = calculateVisualBalance(svgString);
+    if (visualBalance < 40) {
+        rejections.push({ reason: 'Unbalanced visual weight', value: visualBalance, threshold: 40 });
+    }
+
+    // Check proportions
+    const proportionScore = checkProportions(svgString);
+    if (proportionScore < 50) {
+        rejections.push({ reason: 'Awkward proportions', value: proportionScore, threshold: 50 });
+    }
+
+    // Calculate component scores
+    const pathSmoothness = calculatePathSmoothness(svgString);
     const complexity = calculateOptimalComplexity(svgString);
     const goldenRatioAdherence = calculateGoldenRatioScore(params);
     const uniqueness = calculateUniquenessScore(params);
 
     // Weighted average for overall score
-    const score = Math.round(
-        pathSmoothness * 0.2 +
+    let score = Math.round(
+        pathSmoothness * 0.15 +
         visualBalance * 0.25 +
-        complexity * 0.2 +
-        goldenRatioAdherence * 0.15 +
-        uniqueness * 0.2
+        complexity * 0.20 +
+        goldenRatioAdherence * 0.10 +
+        uniqueness * 0.15 +
+        edgeTouchingScore * 0.05 +
+        proportionScore * 0.10
     );
+
+    // Apply rejection penalties
+    if (rejections.length > 0) {
+        // Each rejection reduces score significantly
+        score = Math.max(0, score - (rejections.length * 20));
+
+        // Log rejected logos for debugging
+        if (DEBUG_REJECTED_LOGOS) {
+            console.log('[Logo Rejected]', {
+                score,
+                rejections,
+                pathElements,
+                pathCommands,
+                visualBalance,
+                proportionScore,
+                edgeTouchingScore,
+            });
+        }
+    }
 
     return {
         score,
@@ -287,7 +423,106 @@ export function calculateQualityScore(svgString: string, params: HashDerivedPara
         complexity,
         goldenRatioAdherence,
         uniqueness,
+        rejections,
     };
+}
+
+/**
+ * Check if elements are touching the edges of the viewbox
+ * Returns 0-100 (100 = no edge touching, 0 = lots of edge touching)
+ */
+function checkEdgeTouching(svgString: string): number {
+    // Extract coordinates
+    const coordRegex = /[\d.-]+/g;
+    const coords: number[] = [];
+    let match;
+
+    // Find all numeric values that could be coordinates
+    const pathMatches = svgString.match(/d="[^"]+"/gi) || [];
+    for (const pathMatch of pathMatches) {
+        while ((match = coordRegex.exec(pathMatch)) !== null) {
+            const val = parseFloat(match[0]);
+            if (!isNaN(val) && val !== 0 && val !== 100) {
+                coords.push(val);
+            }
+        }
+    }
+
+    if (coords.length === 0) return 70; // Default
+
+    // Check how many coordinates are near edges (0-5 or 95-100)
+    const edgeThreshold = 5;
+    let edgeCount = 0;
+
+    for (const coord of coords) {
+        if (coord < edgeThreshold || coord > (100 - edgeThreshold)) {
+            edgeCount++;
+        }
+    }
+
+    const edgeRatio = edgeCount / coords.length;
+    return Math.round(Math.max(0, 100 - (edgeRatio * 200)));
+}
+
+/**
+ * Check if proportions are reasonable (not too tall/wide/skewed)
+ * Returns 0-100
+ */
+function checkProportions(svgString: string): number {
+    // Extract coordinate bounds
+    const coordRegex = /[\d.-]+[\s,]+[\d.-]+/g;
+    const xs: number[] = [];
+    const ys: number[] = [];
+    let match;
+
+    while ((match = coordRegex.exec(svgString)) !== null) {
+        const parts = match[0].split(/[\s,]+/).map(Number);
+        if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+            xs.push(parts[0]);
+            ys.push(parts[1]);
+        }
+    }
+
+    if (xs.length < 3 || ys.length < 3) return 60; // Default for simple shapes
+
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+
+    const width = maxX - minX;
+    const height = maxY - minY;
+
+    if (width < 1 || height < 1) return 30; // Degenerate
+
+    const aspectRatio = width / height;
+
+    // Ideal aspect ratio is around 1:1 (or golden ratio)
+    let score = 100;
+
+    // Penalize extreme aspect ratios
+    if (aspectRatio > 3 || aspectRatio < 0.33) {
+        score -= 50;
+    } else if (aspectRatio > 2 || aspectRatio < 0.5) {
+        score -= 25;
+    } else if (aspectRatio > 1.5 || aspectRatio < 0.67) {
+        score -= 10;
+    }
+
+    // Bonus for golden ratio adherence
+    if (Math.abs(aspectRatio - PHI) < 0.1 || Math.abs(aspectRatio - PHI_INVERSE) < 0.1) {
+        score += 10;
+    }
+
+    // Penalize if logo doesn't fill enough of the viewbox
+    const coverage = (width * height) / (100 * 100);
+    if (coverage < 0.15) {
+        score -= 30;
+    } else if (coverage < 0.25) {
+        score -= 15;
+    }
+
+    return Math.max(0, Math.min(100, score));
 }
 
 /**
