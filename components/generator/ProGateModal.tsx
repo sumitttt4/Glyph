@@ -89,7 +89,7 @@ export function ProGateModal({ isOpen, onClose, featureName = "Full Package Expo
 
                                 {/* CTA */}
                                 <a
-                                    href="https://checkout.dodopayments.com/buy/pdt_0NVXcrRSqLnWomnnrEIla?quantity=1&redirect_url=https://brand-identity-ivory.vercel.app%2Fgenerator"
+                                    href="https://checkout.dodopayments.com/buy/pdt_0NVXcrRSqLnWomnnrEIla?quantity=1&redirect_url=https://glyph.sumitsharmaa.me/generator"
                                     className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-stone-900 hover:bg-stone-800 text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
                                 >
                                     <Package className="w-4 h-4" />
