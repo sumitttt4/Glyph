@@ -6,7 +6,7 @@ import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Download, Loader2 } from 'lucide-react';
-
+import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
 interface BrandGuidelinesProps {
@@ -27,42 +27,45 @@ export function BrandGuidelines({ brand }: BrandGuidelinesProps) {
         setIsExporting(true);
 
         try {
-            const { toPng } = await import('html-to-image');
             const element = printRef.current;
+            // Force desktop width for capture
+            element.style.width = '1200px';
 
-            // Generate PNG using html-to-image
-            const imgData = await toPng(element, {
-                cacheBust: true,
+            const canvas = await html2canvas(element, {
+                scale: 2, // Higher resolution
+                useCORS: true,
                 backgroundColor: '#ffffff',
-                pixelRatio: 2, // Higher resolution
-                // Fix for possible font loading issues or specific element sizing
-                width: 1200, // Force width for desktop view
-                style: {
-                    width: '1200px', // Ensure layout renders at 1200px
-                    height: 'auto'
-                }
-            });
+                logging: false,
+                windowWidth: 1200, // Simulate desktop viewport
+            } as unknown as Record<string, unknown>);
 
+            // Reset width
+            element.style.width = '';
+
+            const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
-
-            // Load image to get dimensions
-            const img = new window.Image();
-            img.src = imgData;
-            await new Promise((resolve) => { img.onload = resolve; });
-
-            const imgWidth = img.width;
-            const imgHeight = img.height;
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+            const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
 
             // Calculate height of the image on the PDF
             const imgHeightOnPdf = imgHeight * (pdfWidth / imgWidth);
 
+            // Add image. If it's taller than one page, we might need multi-page logic, 
+            // but for now we scale to fit width and let it paginate naturally or just simple single page scroll capture
+            // For a single long strip, we usually want to split it. 
+            // BUT, for simplicity in v1, let's create a "Long Sheet" PDF or just capture the view port.
+            // A better approach for "Guidelines" is actually individual A4 pages.
+            // Let's stick to the current "One Long Scroll" rendered as a single PDF page for now (simplest MVP), 
+            // OR fit-to-width and allow multiple pages if needed.
+
+            // Current strategy: Fit to width, potentially spanning pages.
             pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeightOnPdf);
             pdf.save(`${brand.name.replace(/\s+/g, '_')}_Brand_Guidelines.pdf`);
         } catch (error) {
             console.error("PDF Export failed", error);
-            alert("Export failed due to browser compatibility. Please try a different browser or screenshot.");
         } finally {
             setIsExporting(false);
         }

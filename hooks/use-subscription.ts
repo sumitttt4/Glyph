@@ -27,18 +27,6 @@ export function useSubscription(): SubscriptionState & { checkProStatus: () => P
         const supabase = createClient();
 
         try {
-            // 1. Check cookies for bypass first
-            const hasAdminBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
-            if (hasAdminBypass) {
-                setState({
-                    isPro: true,
-                    isAdmin: true,
-                    isLoading: false,
-                    email: 'sumitsharma9128@gmail.com', // Mock email
-                });
-                return;
-            }
-
             // Get current user
             const { data: { user } } = await supabase.auth.getUser();
 

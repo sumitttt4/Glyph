@@ -35,20 +35,19 @@ export function getSubscriptionStatus(
     email: string | null | undefined,
     generationsUsed: number = 0
 ): SubscriptionStatus {
-    const normalizedEmail = email?.toLowerCase().trim();
-    if (!normalizedEmail) {
+    if (!email) {
         return {
             plan: 'free',
             isPro: false,
             isAdmin: false,
             generationsUsed: 0,
             generationsRemaining: FREE_GENERATIONS_LIMIT,
-            canGenerate: true,
+            canGenerate: true, // Allow generation, will prompt login
         };
     }
 
-    const isAdmin = ADMIN_EMAILS.includes(normalizedEmail);
-    const isPro = isAdmin || PRO_EMAILS.includes(normalizedEmail);
+    const isAdmin = ADMIN_EMAILS.includes(email);
+    const isPro = isAdmin || PRO_EMAILS.includes(email);
 
     const plan: UserPlan = isAdmin ? 'admin' : isPro ? 'pro' : 'free';
     const generationsRemaining = isPro ? Infinity : Math.max(0, FREE_GENERATIONS_LIMIT - generationsUsed);
@@ -73,10 +72,9 @@ export async function fetchProStatusFromDB(
     email: string | null | undefined
 ): Promise<boolean> {
     if (!email) return false;
-    const normalizedEmail = email.toLowerCase().trim();
 
     // Check if admin email first
-    if (ADMIN_EMAILS.includes(normalizedEmail)) return true;
+    if (ADMIN_EMAILS.includes(email)) return true;
 
     try {
         const { data, error } = await supabaseClient

@@ -5,7 +5,7 @@ import { BrandIdentity } from '@/lib/data';
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 import { Button } from '@/components/ui/button';
 import { Download, Loader2 } from 'lucide-react';
-
+import html2canvas from 'html2canvas';
 
 interface SocialMediaKitProps {
     brand: BrandIdentity;
@@ -20,7 +20,6 @@ export function SocialMediaKit({ brand }: SocialMediaKitProps) {
         setIsExporting(true);
 
         try {
-            const { toPng } = await import('html-to-image');
             // Find all asset containers
             const nodes = assetsRef.current.querySelectorAll('.asset-container');
             const files: { name: string; blob: Blob }[] = [];
@@ -30,14 +29,13 @@ export function SocialMediaKit({ brand }: SocialMediaKitProps) {
                 const node = nodes[i] as HTMLElement;
                 const name = node.getAttribute('data-name') || `asset-${i}`;
 
-                const dataUrl = await toPng(node, {
-                    cacheBust: true,
-                    pixelRatio: 2, // 2x retina
-                    // backgroundColor defaults to transparent if undefined
-                });
+                const canvas = await html2canvas(node, {
+                    scale: 2, // 2x retina
+                    useCORS: true,
+                    backgroundColor: null, // Transparent if set in node
+                } as any);
 
-                const res = await fetch(dataUrl);
-                const blob = await res.blob();
+                const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'));
                 if (blob) files.push({ name, blob });
             }
 
@@ -47,6 +45,10 @@ export function SocialMediaKit({ brand }: SocialMediaKitProps) {
             // I'll stick to downloading individually or move this logic to the main ExportBrandKit later.
             // For this component, let's just do a "Download Individual" on click for now, 
             // OR simply render the UI for the main Exporter to capture.
+
+            // To be safe and compliant with the "Unified Menu" goal, 
+            // this component should mostly be for *Previewing* and the *Export Menu* will handle the heavy lifting.
+            // But let's add a simple "Download This Asset" button on each preview.
 
         } catch (e) {
             console.error("Export failed", e);
@@ -59,20 +61,11 @@ export function SocialMediaKit({ brand }: SocialMediaKitProps) {
         const node = document.getElementById(id);
         if (!node) return;
 
-        try {
-            const { toPng } = await import('html-to-image');
-            const dataUrl = await toPng(node, {
-                cacheBust: true,
-                pixelRatio: 2,
-            });
-            const link = document.createElement('a');
-            link.download = `${fileName}.png`;
-            link.href = dataUrl;
-            link.click();
-        } catch (e) {
-            console.error("Download failed", e);
-            alert("Download failed due to browser compatibility.");
-        }
+        const canvas = await html2canvas(node, { scale: 2 } as any);
+        const link = document.createElement('a');
+        link.download = `${fileName}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
     };
 
     return (

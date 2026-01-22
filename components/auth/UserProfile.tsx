@@ -35,22 +35,6 @@ export default function UserProfile() {
     useEffect(() => {
         const getUser = async () => {
             try {
-                // Check for admin bypass cookie
-                const hasBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
-                if (hasBypass) {
-                    setUser({
-                        id: 'admin-bypass',
-                        email: 'sumitsharma9128@gmail.com',
-                        user_metadata: { full_name: 'Sumit Sharma' },
-                        app_metadata: {},
-                        aud: 'authenticated',
-                        created_at: new Date().toISOString(),
-                        role: 'authenticated'
-                    } as User);
-                    setLoading(false);
-                    return;
-                }
-
                 const { data: { user } } = await supabase.auth.getUser();
                 setUser(user);
             } catch (e) {
@@ -62,20 +46,14 @@ export default function UserProfile() {
         getUser();
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            // Only update if not in bypass mode
-            const hasBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
-            if (!hasBypass) {
-                setUser(session?.user ?? null);
-            }
+            setUser(session?.user ?? null);
         });
         return () => subscription.unsubscribe();
     }, [supabase]);
 
     const handleSignOut = async () => {
-        // Clear bypass cookie
-        document.cookie = "admin-bypass=; path=/; max-age=0";
         await supabase.auth.signOut();
-        window.location.href = '/';
+        window.location.reload();
     };
 
     const handleLogin = () => {

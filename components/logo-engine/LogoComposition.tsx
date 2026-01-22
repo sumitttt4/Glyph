@@ -56,7 +56,6 @@ interface LogoCompositionProps {
     layout?: LogoLayoutStyle;
     overrideColors?: { primary: string; accent?: string; bg?: string };
     isPro?: boolean; // Enable premium styles
-    isStatic?: boolean; // Disable animations for history/export
 }
 
 /**
@@ -78,7 +77,7 @@ function seededRandom(seed: string) {
  *
  * Priority: Logo Engine v5 generated logos > Legacy procedural logos
  */
-export const LogoComposition = ({ brand, className, layout = 'generative', overrideColors, isPro = false, isStatic = false }: LogoCompositionProps) => {
+export const LogoComposition = ({ brand, className, layout = 'generative', overrideColors, isPro = false }: LogoCompositionProps) => {
     const uniqueId = useId();
     const seed = brand.id + (brand.name || 'brand') + (brand.generationSeed || brand.id || 'stable');
     const rng = () => seededRandom(seed);
@@ -91,15 +90,13 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
         const selectedLogo = brand.generatedLogos[selectedIndex];
 
         if (selectedLogo?.svg) {
-            // Inject width/height 100% into the SVG string to ensure it fits the container
-            // This is a simple string replacement ensuring the top-level svg string has these attributes or we rely on CSS
-            const svgContent = selectedLogo.svg.replace('<svg', '<svg width="100%" height="100%" preserveAspectRatio="xMidYMid meet"');
-
             return (
                 <div
                     className={className}
-                    dangerouslySetInnerHTML={{ __html: svgContent }}
+                    dangerouslySetInnerHTML={{ __html: selectedLogo.svg }}
                     style={{
+                        width: '100%',
+                        height: '100%',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -132,9 +129,9 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
     const primaryShape = resolvedShape || brand.shape || safeShapes[shapeIndex1 % safeShapes.length];
     const secondaryShape = safeShapes[shapeIndex2 % safeShapes.length];
 
-    const colors = brand.theme?.tokens?.light || { primary: '#000000', bg: '#ffffff', text: '#000000' };
+    const colors = brand.theme.tokens.light;
     const primaryColor = overrideColors?.primary || colors.primary;
-    const initial = brand.name ? brand.name.charAt(0).toUpperCase() : 'B';
+    const initial = brand.name.charAt(0).toUpperCase();
 
     // VIEWBOX NORMALIZATION
     // VIEWBOX NORMALIZATION
@@ -182,26 +179,6 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             tracking = '0.2em';
             textTransform = 'uppercase';
             fontWeight = '300';
-        }
-
-        if (isStatic) {
-            return (
-                <svg viewBox="0 0 200 60" className={className} xmlns="http://www.w3.org/2000/svg">
-                    <text
-                        x="100"
-                        y="38"
-                        fontSize="24"
-                        fontFamily={fontFamily}
-                        fontWeight={fontWeight}
-                        letterSpacing={tracking}
-                        textAnchor="middle"
-                        fill={primaryColor}
-                        style={{ textTransform: textTransform as any }}
-                    >
-                        {brand.name}
-                    </text>
-                </svg>
-            );
         }
 
         return (
@@ -613,27 +590,6 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
                         </mask>
                     </defs>
                     <rect x="10" y="10" width="80" height="80" rx="18" fill={primaryColor} mask={`url(#mask-container-${uniqueId})`} />
-                </svg>
-            );
-        }
-
-        // 0. GENERATIVE: High-end complex geometry
-        if (compositionStyle === 'generative') {
-            if (primaryShape.id === 'glyph-custom') {
-                return (
-                    <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                        <g transform="translate(50, 50) scale(4.4) translate(-12, -12)">
-                            <path d={primaryShape.path} fill={primaryColor} />
-                        </g>
-                    </svg>
-                );
-            }
-
-            return (
-                <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                    <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale}) rotate(${rotate}, ${pWidth / 2}, ${pWidth / 2})`}>
-                        <path d={primaryShape.path} fill={primaryColor} />
-                    </g>
                 </svg>
             );
         }

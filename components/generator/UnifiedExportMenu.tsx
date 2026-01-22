@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
-
+import html2canvas from 'html2canvas';
 
 // Dynamically import the Heavy components effectively if needed, 
 // for now we trigger downloads via logic or redirect to 'view' mode which is cleaner.

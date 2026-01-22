@@ -55,13 +55,6 @@ export const SHAPES: Shape[] = [
         path: 'M13 2L3 14H12L11 22L21 10H12L13 2Z',
         tags: ['energy', 'dynamic'],
     },
-    {
-        id: 'glyph-custom',
-        name: 'Glyph',
-        viewBox: '0 0 24 24',
-        path: 'M12 2L2 12h5v10h10v-5l5-5H12z M7 12l5-5 5 5-5 5-5-5z',
-        tags: ['brand', 'logo'],
-    },
 ];
 
 export function getRandomShape(): Shape {

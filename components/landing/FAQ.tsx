@@ -2,20 +2,20 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 const FAQS = [
     {
-        question: "Do I own the copyright?",
-        answer: "Yes. You own 100% of the intellectual property. The Founder Pass grants full commercial rights for your startup, client work, or resale. No attribution required."
+        question: "What makes Glyph different?",
+        answer: "Glyph isn't a template picker. It's a parametric design engine that generates complete brand systems — logo, colors, typography, and production-ready code. Every output follows real design principles."
     },
     {
-        question: "Is this an AI wrapper?",
-        answer: "No. Glyph is a geometric construction engine. We use parametric design algorithms to build logos on strict grids, ensuring every output is mathematically balanced, not hallucinated."
+        question: "Can I use this commercially?",
+        answer: "Yes. The Founder Pass grants full commercial rights. Use it for your startup, client work, or resale. No attribution required."
     },
     {
-        question: "Can I export code?",
-        answer: "Yes. You get a production-ready React codebase with a fully configured Tailwind CSS theme file (tokens.ts), plus the raw SVG and PNG assets."
+        question: "What do I get with the export?",
+        answer: "SVG vectors, PNG assets, Tailwind CSS config, and JSON design tokens. Everything you need to start building immediately."
     }
 ];
 
@@ -23,30 +23,27 @@ export function FAQ() {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     return (
-        <section id="faq" className="py-24 bg-white border-t border-stone-200">
-            <div className="max-w-3xl mx-auto px-6 lg:px-8">
-                <div className="mb-16 text-center">
-                    <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-stone-950">
-                        The Defense
-                    </h2>
-                    <p className="mt-4 text-stone-600">Common questions from engineers.</p>
-                </div>
+        <section id="faq" className="py-16 md:py-24 bg-white border-t border-stone-200">
+            <div className="max-w-3xl mx-auto px-4 md:px-6 lg:px-8">
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-center mb-10 md:mb-16">
+                    Frequently Asked Questions
+                </h2>
 
-                <div className="space-y-4">
+                <div className="space-y-3 md:space-y-4">
                     {FAQS.map((faq, idx) => (
                         <div
                             key={idx}
-                            className="group border border-stone-950 rounded-lg overflow-hidden bg-white hover:bg-stone-50 transition-colors"
+                            className="border border-stone-200 rounded-xl md:rounded-2xl overflow-hidden bg-stone-50 transition-colors hover:border-stone-300"
                         >
                             <button
                                 onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
-                                className="w-full flex items-center justify-between p-6 text-left"
+                                className="w-full flex items-center justify-between p-4 md:p-6 text-left"
                             >
-                                <span className="font-bold text-lg text-stone-950 pr-8">
+                                <span className="font-bold text-base md:text-lg text-stone-900 pr-4 md:pr-8">
                                     {faq.question}
                                 </span>
-                                <span className="shrink-0 text-stone-950">
-                                    {openIndex === idx ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                                <span className={`transition-transform duration-300 shrink-0 ${openIndex === idx ? 'rotate-45' : 'rotate-0'}`}>
+                                    <Plus className="w-5 h-5 md:w-6 md:h-6 text-stone-400" />
                                 </span>
                             </button>
 
@@ -56,9 +53,9 @@ export function FAQ() {
                                         initial={{ height: 0, opacity: 0 }}
                                         animate={{ height: "auto", opacity: 1 }}
                                         exit={{ height: 0, opacity: 0 }}
-                                        transition={{ duration: 0.2 }}
+                                        transition={{ duration: 0.3, ease: "easeInOut" }}
                                     >
-                                        <div className="px-6 pb-6 pt-0 text-stone-600 leading-relaxed max-w-2xl">
+                                        <div className="px-6 pb-6 pt-0 text-stone-600 leading-relaxed">
                                             {faq.answer}
                                         </div>
                                     </motion.div>

@@ -18,27 +18,8 @@ export default function HistoryPage() {
     const [loading, setLoading] = useState(true);
     const supabase = createClient();
 
-    const handleLoadBrand = (brand: BrandIdentity) => {
-        // Save to temporary storage for the generator to pick up
-        localStorage.setItem('glyph_recover_brand', JSON.stringify(brand));
-        window.location.href = '/generator';
-    };
-
     useEffect(() => {
         const fetchBrands = async () => {
-            // Check for admin bypass
-            const hasBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
-
-            if (hasBypass) {
-                // Load from local storage
-                const savedHistory = localStorage.getItem('glyph_admin_history');
-                if (savedHistory) {
-                    setBrands(JSON.parse(savedHistory));
-                }
-                setLoading(false);
-                return;
-            }
-
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
                 // If not logged in, redirect to login
@@ -105,7 +86,7 @@ export default function HistoryPage() {
                         </div>
                         <h3 className="text-xl font-bold text-stone-900 mb-2">No generations yet</h3>
                         <p className="text-stone-500 mb-8 max-w-sm mx-auto">Your generated brand identities will appear here. Start creating to build your archive.</p>
-                        <Link href="/generator" className="px-6 py-3 bg-stone-900 text-white font-semibold rounded-xl hover:bg-black transition-all hover:shadow-lg hover:-translate-y-0.5 inline-flex items-center gap-2">
+                        <Link href="/" className="px-6 py-3 bg-stone-900 text-white font-semibold rounded-xl hover:bg-black transition-all hover:shadow-lg hover:-translate-y-0.5 inline-flex items-center gap-2">
                             <span>Start Generating</span>
                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                         </Link>
@@ -128,15 +109,12 @@ export default function HistoryPage() {
                                         />
 
                                         <div className="transform group-hover:scale-110 transition-transform duration-500 ease-out">
-                                            <LogoComposition brand={identity} className="w-32 h-32" isStatic={true} />
+                                            <LogoComposition brand={identity} className="w-32 h-32" />
                                         </div>
 
                                         {/* Quick Actions Overlay */}
                                         <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[1px]">
-                                            <button
-                                                onClick={() => handleLoadBrand(identity)}
-                                                className="px-4 py-2 bg-white rounded-lg shadow-sm font-semibold text-xs text-stone-900 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-stone-50"
-                                            >
+                                            <button className="px-4 py-2 bg-white rounded-lg shadow-sm font-semibold text-xs text-stone-900 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                                                 Load Brand
                                             </button>
                                         </div>
@@ -159,5 +137,5 @@ export default function HistoryPage() {
                 )}
             </main>
         </div>
-    );
+    )
 }

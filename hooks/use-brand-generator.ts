@@ -322,28 +322,10 @@ export function useBrandGenerator() {
         // GLOBAL STATS: Increment counter (fire and forget)
         incrementGenerationCount();
 
-        // PERSISTENCE: Save to Supabase (Background) or LocalStorage (Bypass)
+        // PERSISTENCE: Save to Supabase (Background)
         // Fire and forget - don't block UI
         (async () => {
             try {
-                // Check for Admin Bypass
-                const hasBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
-
-                if (hasBypass) {
-                    const savedHistory = localStorage.getItem('glyph_admin_history');
-                    const historyItems = savedHistory ? JSON.parse(savedHistory) : [];
-                    const newHistoryItem = {
-                        id: crypto.randomUUID(), // distinct ID for the record
-                        user_id: 'admin-bypass',
-                        identity: newBrand,
-                        brand_name: name,
-                        created_at: new Date().toISOString()
-                    };
-                    localStorage.setItem('glyph_admin_history', JSON.stringify([newHistoryItem, ...historyItems]));
-                    console.log('Brand persisted to LocalStorage (Admin Bypass)');
-                    return;
-                }
-
                 const { createClient } = await import('@/lib/supabase/client');
                 const supabase = createClient();
                 const { data: { user } } = await supabase.auth.getUser();

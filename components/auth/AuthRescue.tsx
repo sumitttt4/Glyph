@@ -12,8 +12,8 @@ export function AuthRescue() {
         if (code) {
             console.log("Captured auth code on landing page, redirecting to callback...");
             // Forward to the callback handler
-            // Use window.location.href for full page navigation to ensure cookies are set correctly
-            window.location.href = `/auth/callback?code=${code}&next=/generator`;
+            // We append next=/generator to ensure flow continues correctly
+            router.push(`/auth/callback?code=${code}&next=/generator`);
         }
     }, [searchParams, router]);
 
