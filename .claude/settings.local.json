@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx next build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(npm run build:*)",
+      "Bash(timeout:*)",
+      "Bash(start http://localhost:3000/logo-engine-demo)",
+      "Bash(start http://localhost:3000/generator)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(git push:*)"
+    ]
+  }
+}

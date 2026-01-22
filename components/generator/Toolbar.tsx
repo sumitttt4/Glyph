@@ -1,0 +1,219 @@
+"use client";
+
+import { useState } from 'react';
+import { Sun, Moon, Download, ChevronDown, FileCode, Image, Package, Code2, Share2, Link, Copy, Check, ChevronLeft, ChevronRight, Shuffle, RefreshCw } from 'lucide-react';
+import UserProfile from '@/components/auth/UserProfile';
+
+interface ToolbarProps {
+    isDark: boolean;
+    toggleDark: () => void;
+    onExport?: (type: string) => void;
+    viewMode: 'overview' | 'presentation';
+    setViewMode: (mode: 'overview' | 'presentation') => void;
+    // History Props
+    canUndo?: boolean;
+    canRedo?: boolean;
+    onUndo?: () => void;
+    onRedo?: () => void;
+    currentHistoryIndex?: number;
+    totalHistory?: number;
+    // Compare Props
+    onAddToCompare?: () => void;
+    onOpenCompare?: () => void;
+    compareCount?: number;
+    onVariations?: () => void;
+    isGenerating?: boolean;
+}
+
+export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, canUndo, canRedo, onUndo, onRedo, currentHistoryIndex, totalHistory, onAddToCompare, onOpenCompare, compareCount = 0, onVariations, isGenerating }: ToolbarProps) {
+    const [showExport, setShowExport] = useState(false);
+    const [showShare, setShowShare] = useState(false);
+    const [copied, setCopied] = useState(false);
+
+    const exportOptions = [
+        { id: 'tailwind', label: 'Tailwind Config', icon: FileCode, desc: 'CSS variables & tokens' },
+        { id: 'svg', label: 'SVG Logo', icon: Image, desc: 'Vector format' },
+        { id: 'favicon', label: 'Favicon Package', icon: Image, desc: 'All favicon sizes' },
+        { id: 'social', label: 'Social Media Kit', icon: Share2, desc: 'Profile pics & banners' },
+        { id: 'brandbook', label: 'Brand Guidelines', icon: FileCode, desc: 'PDF-ready Brand Book' },
+        { id: 'react', label: 'React Component', icon: Code2, desc: 'Copy-paste ready' },
+        { id: 'all', label: 'Full Package', icon: Package, desc: 'ZIP with all assets' },
+    ];
+
+    const handleShare = () => {
+        // Generate a share link (in production this would save to DB)
+        const shareUrl = `${window.location.origin}/share/${Date.now().toString(36)}`;
+        navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    return (
+        <div className="flex items-center gap-2 md:gap-3">
+            {/* History Controls - Hidden on mobile */}
+            {(onUndo && onRedo) && (
+                <div className="hidden md:flex border border-stone-200 rounded-lg p-0.5 bg-white shadow-sm h-10 mr-2 items-center">
+                    <button
+                        onClick={onUndo}
+                        disabled={!canUndo}
+                        className="w-9 h-full flex items-center justify-center text-stone-500 hover:text-stone-900 disabled:opacity-30 disabled:hover:text-stone-500 transition-colors border-r border-stone-100"
+                        title="Previous Brand"
+                    >
+                        <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <div className="px-3 text-[10px] font-mono font-medium text-stone-400 select-none">
+                        {currentHistoryIndex} / {totalHistory}
+                    </div>
+                    <button
+                        onClick={onRedo}
+                        disabled={!canRedo}
+                        className="w-9 h-full flex items-center justify-center text-stone-500 hover:text-stone-900 disabled:opacity-30 disabled:hover:text-stone-500 transition-colors border-l border-stone-100"
+                        title="Next Brand"
+                    >
+                        <ChevronRight className="w-4 h-4" />
+                    </button>
+                </div>
+            )}
+
+            {/* View Mode Toggle - Compact on mobile */}
+            <div className="flex border border-stone-200 rounded-lg p-0.5 bg-white shadow-sm md:mr-2 h-9 md:h-10">
+                <button
+                    onClick={() => setViewMode('overview')}
+                    className={`px-2 md:px-4 text-[10px] md:text-xs font-semibold rounded-md transition-all ${viewMode === 'overview' ? 'bg-stone-950 text-white shadow-sm' : 'text-stone-500 hover:text-stone-950'}`}
+                >
+                    Overview
+                </button>
+                <button
+                    onClick={() => setViewMode('presentation')}
+                    className={`px-2 md:px-4 text-[10px] md:text-xs font-semibold rounded-md transition-all ${viewMode === 'presentation' ? 'bg-stone-950 text-white shadow-sm' : 'text-stone-500 hover:text-stone-950'}`}
+                >
+                    Guidelines
+                </button>
+            </div>
+
+            {/* Apple-Style Dark Mode Toggle */}
+            <div
+                className="relative w-16 h-8 rounded-full cursor-pointer transition-colors duration-300 shadow-inner"
+                style={{
+                    backgroundColor: isDark ? '#1d1d1f' : '#e5e5ea',
+                }}
+                onClick={toggleDark}
+            >
+                {/* Sun Icon */}
+                <Sun
+                    className={`absolute left-1.5 top-1.5 w-5 h-5 text-amber-500 transition-opacity duration-300 ${isDark ? 'opacity-30' : 'opacity-100'}`}
+                />
+                {/* Moon Icon */}
+                <Moon
+                    className={`absolute right-1.5 top-1.5 w-5 h-5 text-indigo-300 transition-opacity duration-300 ${isDark ? 'opacity-100' : 'opacity-30'}`}
+                />
+                {/* Sliding Knob */}
+                <div
+                    className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-md transition-all duration-300 ease-in-out ${isDark ? 'left-9' : 'left-1'}`}
+                    style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
+                />
+            </div>
+
+            {/* Share Button - Hidden on mobile */}
+            <div className="relative hidden md:block">
+                <button
+                    onClick={() => setShowShare(!showShare)}
+                    className="flex items-center gap-2 p-2.5 border border-stone-200 rounded-full bg-white shadow-sm text-stone-700 hover:border-stone-400 transition-all"
+                    title="Share"
+                >
+                    <Share2 className="w-4 h-4" />
+                </button>
+
+                {showShare && (
+                    <div className="absolute top-full right-0 mt-2 w-64 bg-white border border-stone-200 rounded-xl shadow-xl overflow-hidden z-50 p-4">
+                        <div className="text-sm font-semibold text-stone-900 mb-2">Share Preview</div>
+                        <p className="text-xs text-stone-500 mb-3">Generate a public link to share your brand with clients.</p>
+                        <button
+                            onClick={handleShare}
+                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-stone-900 text-white rounded-lg text-sm font-medium hover:bg-stone-800 transition-colors"
+                        >
+                            {copied ? <Check className="w-4 h-4" /> : <Link className="w-4 h-4" />}
+                            {copied ? 'Link Copied!' : 'Copy Share Link'}
+                        </button>
+                    </div>
+                )}
+            </div>
+
+            {/* Compare Controls */}
+            {onAddToCompare && onOpenCompare && (
+                <div className="flex items-center gap-2 mr-2">
+                    <button
+                        onClick={onVariations}
+                        disabled={!onVariations || isGenerating}
+                        className="hidden md:flex items-center gap-2 px-3 py-2 h-9 md:h-10 border border-stone-200 rounded-full bg-white shadow-sm text-xs font-semibold hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50 transition-all disabled:opacity-50"
+                        title="Generate Variations"
+                    >
+                        {isGenerating ? (
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                            <Shuffle className="w-3.5 h-3.5" />
+                        )}
+                        <span>{isGenerating ? 'Thinking...' : 'Variations'}</span>
+                    </button>
+
+                    <button
+                        onClick={onAddToCompare}
+                        className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 border border-stone-200 rounded-full bg-white shadow-sm text-stone-500 hover:text-orange-600 hover:border-orange-200 transition-all"
+                        title="Add to Comparison"
+                    >
+                        <span className="text-xl font-light leading-none mb-0.5">+</span>
+                    </button>
+                    {compareCount > 0 && (
+                        <button
+                            onClick={onOpenCompare}
+                            className="flex items-center gap-2 px-3 py-2 h-9 md:h-10 bg-stone-900 text-white rounded-full shadow-sm text-xs font-semibold hover:bg-stone-800 transition-all animate-in fade-in zoom-in duration-200"
+                        >
+                            Compare
+                            <span className="bg-white/20 px-1.5 py-0.5 rounded-full text-[10px]">{compareCount}</span>
+                        </button>
+                    )}
+                </div>
+            )}
+
+            {/* Export Dropdown - Compact on mobile */}
+            <div className="relative">
+                <button
+                    onClick={() => setShowExport(!showExport)}
+                    className="flex items-center gap-1 md:gap-2 px-2.5 md:px-4 py-2 border border-stone-200 rounded-full bg-white shadow-sm text-sm font-medium text-stone-700 hover:border-stone-400 transition-all h-9 md:h-10"
+                >
+                    <Download className="w-4 h-4" />
+                    <span className="hidden md:inline">Export</span>
+                    <ChevronDown className={`w-3 h-3 transition-transform ${showExport ? 'rotate-180' : ''}`} />
+                </button>
+
+                {showExport && (
+                    <div className="absolute top-full right-0 mt-2 w-56 bg-white border border-stone-200 rounded-xl shadow-xl overflow-hidden z-50">
+                        {exportOptions.map((option) => (
+                            <button
+                                key={option.id}
+                                onClick={() => {
+                                    onExport?.(option.id);
+                                    setShowExport(false);
+                                }}
+                                className="w-full px-4 py-3 text-left hover:bg-stone-50 flex items-center gap-3 transition-colors group"
+                            >
+                                <div className="w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center group-hover:bg-stone-200 transition-colors">
+                                    <option.icon className="w-4 h-4 text-stone-600" />
+                                </div>
+                                <div>
+                                    <div className="text-sm font-medium text-stone-900">{option.label}</div>
+                                    <div className="text-[10px] text-stone-400">{option.desc}</div>
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* Profile Menu */}
+            <div className="pl-2 border-l border-stone-200">
+                <UserProfile />
+            </div>
+        </div>
+    );
+}
