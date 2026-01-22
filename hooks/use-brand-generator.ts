@@ -192,8 +192,23 @@ export function useBrandGenerator() {
             selectedShape = availableShapes[Math.floor(Math.random() * availableShapes.length)];
         }
 
+        // Font selection with category-based matching
         const availableFonts = filterContent(fontPairings);
         let selectedFont = availableFonts[Math.floor(Math.random() * availableFonts.length)];
+
+        // Try to match fonts by category/vibe
+        const vibeCategory = vibe.toLowerCase();
+        const categoryFonts = availableFonts.filter(f =>
+            f.categories?.some(c => vibeCategory.includes(c)) ||
+            f.tags.some(t => vibeCategory.includes(t))
+        );
+        if (categoryFonts.length > 0) {
+            // Prefer recommended fonts within category
+            const recommended = categoryFonts.filter(f => f.recommended);
+            selectedFont = recommended.length > 0
+                ? recommended[Math.floor(Math.random() * recommended.length)]
+                : categoryFonts[Math.floor(Math.random() * categoryFonts.length)];
+        }
 
         // AI Font Override
         if (aiFont) {
@@ -247,9 +262,12 @@ export function useBrandGenerator() {
                         name: selectedFont.name,
                         heading: selectedFont.heading.className,
                         body: selectedFont.body.className,
+                        mono: selectedFont.mono?.className,
                         headingName: selectedFont.headingName,
                         bodyName: selectedFont.bodyName,
-                        tags: selectedFont.tags
+                        monoName: selectedFont.monoName,
+                        tags: selectedFont.tags,
+                        weights: selectedFont.weights,
                     },
                 } as any;
                 generatedLogos = generateAllLogoVariations(generatedLogos, tempBrandForVariations);
@@ -280,9 +298,12 @@ export function useBrandGenerator() {
                 name: selectedFont.name,
                 heading: selectedFont.heading.className,
                 body: selectedFont.body.className,
+                mono: selectedFont.mono?.className,
                 headingName: selectedFont.headingName,
                 bodyName: selectedFont.bodyName,
-                tags: selectedFont.tags
+                monoName: selectedFont.monoName,
+                tags: selectedFont.tags,
+                weights: selectedFont.weights,
             },
             strategy: brandStrategy, // Use generated strategy
             createdAt: new Date(),
@@ -460,9 +481,12 @@ export function useBrandGenerator() {
                     name: variedFont.name,
                     heading: variedFont.heading.className,
                     body: variedFont.body.className,
+                    mono: variedFont.mono?.className,
                     headingName: variedFont.headingName,
                     bodyName: variedFont.bodyName,
-                    tags: variedFont.tags
+                    monoName: variedFont.monoName,
+                    tags: variedFont.tags,
+                    weights: variedFont.weights,
                 },
                 logoLayout: 'generative',
                 generationSeed: Date.now() + i + 1,

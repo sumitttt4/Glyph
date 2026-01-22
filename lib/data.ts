@@ -72,9 +72,16 @@ export interface BrandIdentity {
     name: string;
     heading: string;  // CSS class or font family
     body: string;     // CSS class or font family
+    mono?: string;    // CSS class or font family for code/technical
     headingName?: string; // Human readable
     bodyName?: string; // Human readable
+    monoName?: string; // Human readable mono font name
     tags: string[];
+    weights?: {
+      heading: number[];
+      body: number[];
+      mono?: number[];
+    };
   };
 
 
