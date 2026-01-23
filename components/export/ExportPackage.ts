@@ -4,6 +4,9 @@
  * Generates a complete ZIP package with all brand assets.
  * All exports pull from stored state—never regenerate.
  * Selected logo variation is marked as "primary" in exports.
+ *
+ * CRITICAL: Uses global export state store.
+ * Before calling exportBrandPackage(), ensure setExportState() has been called.
  */
 
 import JSZip from 'jszip';
@@ -21,6 +24,20 @@ import {
 import { generateAllMockups } from '@/components/export/ExportMockups';
 import { generateTypographyExport, generateTypographyJSON } from '@/components/export/ExportTypography';
 import { generateBrandBookPDF } from '@/components/export/ExportPDF';
+import {
+    hasValidExportState,
+    validateExportState,
+    getExportMetadata,
+    setExportState,
+} from '@/lib/export-state';
+
+// Debug logging
+const DEBUG_EXPORTS = true;
+function logExport(action: string, data?: Record<string, unknown>) {
+    if (DEBUG_EXPORTS) {
+        console.log(`[ExportPackage] ${action}`, data ? data : '');
+    }
+}
 
 // ============================================
 // SVG TO PNG CONVERSION
@@ -241,6 +258,29 @@ function generateSocialSVG(brand: BrandIdentity, size: SocialSize): string {
 // ============================================
 
 export async function exportBrandPackage(brand: BrandIdentity) {
+    // ========================================================================
+    // VALIDATION: Ensure export state exists
+    // ========================================================================
+    logExport('Starting brand package export', { brandName: brand.name, brandId: brand.id });
+
+    // If no export state, set it from brand data
+    if (!hasValidExportState()) {
+        logExport('WARNING: No export state set, initializing from brand data');
+        const selectedLogo = getSelectedLogo(brand);
+        const storedSvg = selectedLogo?.svg || '';
+        if (storedSvg) {
+            setExportState(brand, storedSvg, selectedLogo);
+        } else {
+            logExport('ERROR: No stored SVG found in brand data');
+        }
+    }
+
+    // Log export metadata
+    const metadata = getExportMetadata();
+    if (metadata) {
+        logExport('Exporting brand ID: ' + metadata.brandId, metadata);
+    }
+
     const zip = new JSZip();
     const folderName = brand.name.toLowerCase().replace(/\s+/g, '-');
     const root = zip.folder(folderName);
@@ -256,6 +296,13 @@ export async function exportBrandPackage(brand: BrandIdentity) {
     // Get selected logo info for "primary" marking
     const selectedLogo = getSelectedLogo(brand);
     const selectedLogoIndex = brand.selectedLogoIndex ?? 0;
+
+    logExport('Selected logo info', {
+        index: selectedLogoIndex,
+        id: selectedLogo?.id,
+        algorithm: selectedLogo?.algorithm,
+        hasSvg: !!selectedLogo?.svg,
+    });
 
     // ========================================================================
     // 1. /logos FOLDER - All 6 variations as SVG + PNG @1x, @2x, @3x

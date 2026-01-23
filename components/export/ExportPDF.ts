@@ -3,6 +3,9 @@
  *
  * Comprehensive 20+ page brand guideline PDF following professional design standards.
  * Based on Holly Ventures style guide structure.
+ *
+ * CRITICAL: All logo exports use getStoredLogoSVG() which pulls from global export state.
+ * Never regenerates logos - always uses what was displayed in preview.
  */
 
 import { jsPDF } from 'jspdf';
@@ -12,6 +15,15 @@ import {
     getLogoVariationsForExport,
     recolorSVG,
 } from '@/components/logo-engine/renderers/stored-logo-export';
+import { hasValidExportState, validateExportState, getExportMetadata } from '@/lib/export-state';
+
+// Debug logging
+const DEBUG = true;
+function logPDF(action: string, data?: Record<string, unknown>) {
+    if (DEBUG) {
+        console.log(`[ExportPDF] ${action}`, data ? data : '');
+    }
+}
 
 // ============================================
 // TYPES
@@ -45,8 +57,20 @@ interface CMYK {
 
 /**
  * Generate a comprehensive brand guidelines PDF (20+ pages)
+ * USES STORED STATE - never regenerates logos
  */
 export async function generateBrandBookPDF(brand: BrandIdentity): Promise<Blob> {
+    // Log export state
+    logPDF('Starting PDF generation', {
+        brandName: brand.name,
+        hasExportState: hasValidExportState(),
+    });
+
+    const metadata = getExportMetadata();
+    if (metadata) {
+        logPDF('Exporting brand ID: ' + metadata.brandId, metadata);
+    }
+
     const colors = brand.theme.tokens.light;
     const darkColors = brand.theme.tokens.dark;
     const doc = new jsPDF({
