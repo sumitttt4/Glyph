@@ -130,29 +130,29 @@ export default function LandingPage() {
                             <div>
 
                                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6">
-                                    Visualize your startup in <br className="hidden md:block" /> <span className="text-[#FF4500]">High Fidelity</span>.
+                                    See It Before You Ship It.
                                 </h2>
                                 <p className="text-stone-400 text-lg mb-8 leading-relaxed">
-                                    Stop guessing how your color palette looks on a mobile device or a business card. Glyph renders real-time 3D mockups of your brand identity system.
+                                    Don&apos;t guess. See exactly how your brand looks on real-world merchandise, social media, and landing pages instantly.
                                 </p>
 
                                 <ul className="space-y-4 mb-10">
                                     <li className="flex items-center gap-3 text-stone-300">
                                         <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-500"><Check className="w-3.5 h-3.5" /></div>
-                                        Instant Mobile & Web Previews
+                                        Real-Time Contextual Previews
                                     </li>
                                     <li className="flex items-center gap-3 text-stone-300">
                                         <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-500"><Check className="w-3.5 h-3.5" /></div>
-                                        Automatic Social Media Assets
+                                        Instant Social & Marketing Kit
                                     </li>
                                     <li className="flex items-center gap-3 text-stone-300">
                                         <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-500"><Check className="w-3.5 h-3.5" /></div>
-                                        Vector-Perfect Logo Export
+                                        Production-Ready SVG & Code
                                     </li>
                                 </ul>
 
                                 <Link href="/generator" className="inline-flex items-center gap-2 text-white font-bold hover:underline underline-offset-4 decoration-[#FF4500]">
-                                    Try the Demo
+                                    Visualize My Brand
                                 </Link>
                             </div>
 
