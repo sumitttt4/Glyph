@@ -1,181 +1,373 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Link from 'next/link';
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogoComposition } from "@/components/logo-engine/LogoComposition";
-import { BrandIdentity } from "@/lib/data";
-import { SHAPES } from "@/lib/shapes";
-import { Sparkles, Play, Type, Ban as PaletteIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-// 1. DATA
-const DEMO_BRANDS: BrandIdentity[] = [
+// Import logo generators
+import { generateStarburst } from "@/components/logo-engine/generators/starburst";
+import { generateAbstractMark } from "@/components/logo-engine/generators/abstract-mark";
+import { generateFramedLetter } from "@/components/logo-engine/generators/framed-letter";
+import { generateMonogramBlend } from "@/components/logo-engine/generators/monogram-blend";
+import { generateCircleOverlap } from "@/components/logo-engine/generators/circle-overlap";
+import { generateHexagonTech } from "@/components/logo-engine/generators/hexagon-tech";
+import { GeneratedLogo } from "@/components/logo-engine/types";
+
+// ============================================
+// SHOWCASE BRAND DEFINITIONS
+// ============================================
+
+interface ShowcaseBrand {
+    name: string;
+    tagline: string;
+    category: 'technology' | 'creative' | 'finance' | 'healthcare' | 'ecommerce' | 'general';
+    primaryColor: string;
+    accentColor: string;
+    bgColor: string;
+    textColor: string;
+    headingFont: string;
+    bodyFont: string;
+    algorithm: 'starburst' | 'abstract-mark' | 'framed-letter' | 'monogram-blend' | 'circle-overlap' | 'hexagon-tech';
+}
+
+const SHOWCASE_BRANDS: ShowcaseBrand[] = [
     {
-        id: "demo-2",
-        name: "Velvet",
-        vibe: "Elegant",
-        generationSeed: 12345,
-        createdAt: new Date(),
-        font: { id: 'luxury', name: 'Instrument Serif', heading: 'Instrument Serif', body: 'DM Sans', tags: ['luxury'] },
-        theme: {
-            id: 'luxury', name: 'Luxury', description: 'Luxury', tags: ['luxury'],
-            tokens: {
-                light: { bg: '#fdf4ff', surface: '#fae8ff', text: '#4a044e', primary: '#d946ef', accent: '#f0abfc', border: '#f5d0fe', muted: '#a855f7' },
-                dark: { bg: '#2e1065', surface: '#4c1d95', text: '#faf5ff', primary: '#d8b4fe', accent: '#c084fc', border: '#5b21b6', muted: '#a78bfa' }
-            }
-        },
-        shape: SHAPES[5],
-        logoAssemblerLayout: 'icon_left',
-        selectedLogoIndex: 0
+        name: "Nexus",
+        tagline: "Connected Intelligence",
+        category: "technology",
+        primaryColor: "#6366f1",
+        accentColor: "#818cf8",
+        bgColor: "#0f0f23",
+        textColor: "#e0e0ff",
+        headingFont: "'Inter', system-ui, sans-serif",
+        bodyFont: "'Inter', system-ui, sans-serif",
+        algorithm: "starburst",
     },
     {
-        id: "demo-1", // Lumina
-        name: "Lumina",
-        vibe: "Tech",
-        generationSeed: 12345,
-        createdAt: new Date(),
-        font: { id: 'tech', name: 'Inter', heading: 'Inter', body: 'Inter', tags: ['tech'] },
-        theme: {
-            id: 'tech', name: 'Tech', description: 'Tech', tags: ['tech'],
-            tokens: {
-                light: { bg: '#ffffff', surface: '#f4f4f5', text: '#18181b', primary: '#0ea5e9', accent: '#38bdf8', border: '#e4e4e7', muted: '#71717a' },
-                dark: { bg: '#09090b', surface: '#18181b', text: '#fafafa', primary: '#38bdf8', accent: '#0ea5e9', border: '#27272a', muted: '#a1a1aa' }
-            }
-        },
-        shape: SHAPES[3],
-        logoAssemblerLayout: 'stacked',
-        selectedLogoIndex: 0
+        name: "Prism",
+        tagline: "Creative Studio",
+        category: "creative",
+        primaryColor: "#f43f5e",
+        accentColor: "#fb7185",
+        bgColor: "#1a0a0e",
+        textColor: "#ffeef1",
+        headingFont: "'Syne', system-ui, sans-serif",
+        bodyFont: "'DM Sans', system-ui, sans-serif",
+        algorithm: "abstract-mark",
     },
     {
-        id: "demo-3",
-        name: "Forge",
-        vibe: "Bold",
-        generationSeed: 12345,
-        createdAt: new Date(),
-        font: { id: 'bold', name: 'Montserrat', heading: 'Space Grotesk', body: 'Inter', tags: ['bold'] },
-        theme: {
-            id: 'industrial', name: 'Industrial', description: 'Industrial', tags: ['industrial'],
-            tokens: {
-                light: { bg: '#f5f5f4', surface: '#e7e5e4', text: '#0c0a09', primary: '#ea580c', accent: '#f97316', border: '#d6d3d1', muted: '#78716c' },
-                dark: { bg: '#1c1917', surface: '#292524', text: '#fafaf9', primary: '#f97316', accent: '#ea580c', border: '#44403c', muted: '#a8a29e' }
-            }
-        },
-        shape: SHAPES[1],
-        logoAssemblerLayout: 'stacked',
-        selectedLogoIndex: 0
-    }
+        name: "Vertex",
+        tagline: "Financial Platform",
+        category: "finance",
+        primaryColor: "#10b981",
+        accentColor: "#34d399",
+        bgColor: "#0a1a14",
+        textColor: "#d1fae5",
+        headingFont: "'Space Grotesk', system-ui, sans-serif",
+        bodyFont: "'Inter', system-ui, sans-serif",
+        algorithm: "framed-letter",
+    },
+    {
+        name: "Aurora",
+        tagline: "Design System",
+        category: "creative",
+        primaryColor: "#8b5cf6",
+        accentColor: "#a78bfa",
+        bgColor: "#120f1c",
+        textColor: "#ede9fe",
+        headingFont: "'Outfit', system-ui, sans-serif",
+        bodyFont: "'Inter', system-ui, sans-serif",
+        algorithm: "monogram-blend",
+    },
+    {
+        name: "Orbit",
+        tagline: "Cloud Infrastructure",
+        category: "technology",
+        primaryColor: "#0ea5e9",
+        accentColor: "#38bdf8",
+        bgColor: "#0c1929",
+        textColor: "#e0f2fe",
+        headingFont: "'Manrope', system-ui, sans-serif",
+        bodyFont: "'Inter', system-ui, sans-serif",
+        algorithm: "circle-overlap",
+    },
+    {
+        name: "Hexa",
+        tagline: "Blockchain Solutions",
+        category: "technology",
+        primaryColor: "#f59e0b",
+        accentColor: "#fbbf24",
+        bgColor: "#1a1408",
+        textColor: "#fef3c7",
+        headingFont: "'Space Grotesk', system-ui, sans-serif",
+        bodyFont: "'Inter', system-ui, sans-serif",
+        algorithm: "hexagon-tech",
+    },
 ];
+
+// ============================================
+// LOGO GENERATION
+// ============================================
+
+function generateLogoForBrand(brand: ShowcaseBrand): GeneratedLogo | null {
+    try {
+        const params = {
+            brandName: brand.name,
+            primaryColor: brand.primaryColor,
+            accentColor: brand.accentColor,
+            category: brand.category,
+            variations: 1,
+            minQualityScore: 60, // Lower threshold for showcase
+        };
+
+        let logos: GeneratedLogo[] = [];
+
+        switch (brand.algorithm) {
+            case 'starburst':
+                logos = generateStarburst(params);
+                break;
+            case 'abstract-mark':
+                logos = generateAbstractMark(params);
+                break;
+            case 'framed-letter':
+                logos = generateFramedLetter(params);
+                break;
+            case 'monogram-blend':
+                logos = generateMonogramBlend(params);
+                break;
+            case 'circle-overlap':
+                logos = generateCircleOverlap(params);
+                break;
+            case 'hexagon-tech':
+                logos = generateHexagonTech(params);
+                break;
+            default:
+                logos = generateStarburst(params);
+        }
+
+        return logos[0] || null;
+    } catch (error) {
+        console.error(`Failed to generate logo for ${brand.name}:`, error);
+        return null;
+    }
+}
+
+// ============================================
+// HERO ANIMATION COMPONENT
+// ============================================
 
 export default function HeroAnimation() {
     const [index, setIndex] = useState(0);
+    const [isClient, setIsClient] = useState(false);
 
-    // Cycle brands
+    // Generate logos once on client mount
+    const generatedLogos = useMemo(() => {
+        if (!isClient) return [];
+        return SHOWCASE_BRANDS.map(brand => ({
+            brand,
+            logo: generateLogoForBrand(brand),
+        }));
+    }, [isClient]);
+
+    // Set client flag after mount
     useEffect(() => {
-        const timer = setInterval(() => {
-            setIndex((prev) => (prev + 1) % DEMO_BRANDS.length);
-        }, 5000);
-        return () => clearInterval(timer);
+        setIsClient(true);
     }, []);
 
-    const brand = DEMO_BRANDS[index];
-    const tokens = brand.theme.tokens.light;
+    // Cycle every 3 seconds
+    useEffect(() => {
+        if (!isClient) return;
+        const timer = setInterval(() => {
+            setIndex((prev) => (prev + 1) % SHOWCASE_BRANDS.length);
+        }, 3000);
+        return () => clearInterval(timer);
+    }, [isClient]);
 
-    return (
-        <div className="w-full max-w-7xl mx-auto p-4 md:p-8">
-            {/* CONTAINER: Free Canvas (No Box) */}
-            <div className="relative w-full h-[420px] flex flex-col items-center justify-center">
+    const currentBrand = SHOWCASE_BRANDS[index];
+    const currentLogo = generatedLogos[index]?.logo;
 
-                {/* Background: Faint Glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-stone-200/40 rounded-full blur-[100px] pointer-events-none mix-blend-multiply" />
+    // Helper for hex to rgba
+    const hexToRgba = (hex: string, alpha: number) => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    };
 
-
-                {/* === SCENE: FLOATING ELEMENTS === */}
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={brand.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="relative w-full h-full"
-                    >
-                        {/* ELEMENT A: Hero Logo (Center Top) */}
-                        <motion.div
-                            initial={{ y: 20, scale: 0.9, opacity: 0 }}
-                            animate={{ y: 0, scale: 1, opacity: 1 }}
-                            transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.1 }}
-                            className="absolute top-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 group z-10"
-                        >
-                            <div className="w-24 h-24 md:w-32 md:h-32 rounded-3xl flex items-center justify-center shadow-2xl border border-stone-200 bg-white transition-colors duration-700">
-                                <div className="w-12 h-12 md:w-16 md:h-16" style={{ color: tokens.primary }}>
-                                    <LogoComposition brand={brand} />
-                                </div>
-                            </div>
-                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 backdrop-blur-sm px-4 py-1 rounded-full"
-                                style={{ fontFamily: brand.font.heading }}>
-                                {brand.name}
-                            </h1>
-                        </motion.div>
-
-
-                        {/* ELEMENT B: Color DNA (Right Floating) */}
-                        <motion.div
-                            initial={{ x: 50, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1, y: [0, -10, 0] }}
-                            transition={{
-                                x: { duration: 0.5, delay: 0.3 },
-                                y: { repeat: Infinity, duration: 6, ease: "easeInOut" } // Bobbing
-                            }}
-                            className="absolute right-4 md:right-16 top-1/3 p-4 rounded-2xl bg-white/80 backdrop-blur-md border border-stone-200 flex flex-col gap-3 shadow-2xl"
-                        >
-                            <div className="flex items-center gap-2 mb-1">
-                                <PaletteIcon className="w-3 h-3 text-stone-400" />
-                                <span className="text-[10px] font-mono uppercase text-stone-400 tracking-wider">Color DNA</span>
-                            </div>
-                            <div className="flex flex-col gap-2">
-                                <ColorPill color={tokens.primary} label="Primary" />
-                                <ColorPill color={tokens.text} label="Surface" />
-                                <ColorPill color={tokens.accent || tokens.primary} label="Accent" />
-                            </div>
-                        </motion.div>
-
-
-                        {/* ELEMENT C: Typography Spec (Left Floating) */}
-                        <motion.div
-                            initial={{ x: -50, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1, y: [0, 8, 0] }}
-                            transition={{
-                                x: { duration: 0.5, delay: 0.2 },
-                                y: { repeat: Infinity, duration: 7, ease: "easeInOut" } // Bobbing inverse
-                            }}
-                            className="absolute left-4 md:left-16 top-1/3 p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-stone-200 flex flex-col gap-1 shadow-2xl min-w-[160px]"
-                        >
-                            <div className="flex items-center gap-2 mb-2">
-                                <Type className="w-3 h-3 text-stone-400" />
-                                <span className="text-[10px] font-mono uppercase text-stone-400 tracking-wider">Typography</span>
-                            </div>
-                            <div className="text-4xl text-stone-900 font-medium pl-1">Aa</div>
-                            <div className="text-sm text-stone-600 font-medium border-t border-stone-100 pt-2 mt-1">
-                                {brand.font.name}
-                            </div>
-                            <div className="text-[10px] text-stone-400">Regular / Medium / Bold</div>
-                        </motion.div>
-
-                    </motion.div>
-                </AnimatePresence>
-
+    // Show loading state on server/initial render
+    if (!isClient || generatedLogos.length === 0) {
+        return (
+            <div className="w-full max-w-6xl mx-auto p-4 md:p-8">
+                <div className="relative w-full aspect-[16/9] rounded-3xl overflow-hidden bg-[#0C0A09] border border-white/10 flex items-center justify-center">
+                    <div className="w-8 h-8 border-2 border-white/20 border-t-white/80 rounded-full animate-spin" />
+                </div>
             </div>
-        </div>
-    );
-}
+        );
+    }
 
-// Small Helper Component for Color Bars
-function ColorPill({ color, label }: { color: string, label: string }) {
     return (
-        <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg shadow-sm" style={{ backgroundColor: color }} />
-            <div className="flex flex-col">
-                <span className="text-[10px] font-mono text-stone-400 uppercase">{color}</span>
-                <span className="text-[10px] text-stone-600">{label}</span>
+        <div className="w-full max-w-6xl mx-auto p-4 md:p-8">
+            <div className="relative w-full aspect-[16/9] rounded-3xl overflow-hidden shadow-2xl bg-[#0C0A09] border border-white/10">
+                {/* Background Grid */}
+                <div
+                    className="absolute inset-0 opacity-[0.03]"
+                    style={{
+                        backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
+                        backgroundSize: '32px 32px'
+                    }}
+                />
+
+                {/* Main Content */}
+                <div className="absolute inset-0 flex items-center justify-center p-8 md:p-16">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={`showcase-${index}`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5, ease: "easeInOut" }}
+                            className="flex flex-col md:flex-row items-center gap-8 md:gap-16 w-full max-w-4xl"
+                        >
+                            {/* Left Side: Logo with Float Animation */}
+                            <motion.div
+                                className="relative"
+                                animate={{
+                                    y: [0, -8, 0],
+                                }}
+                                transition={{
+                                    duration: 4,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                }}
+                            >
+                                {/* Glow Effect */}
+                                <div
+                                    className="absolute inset-0 blur-3xl opacity-30 scale-150"
+                                    style={{ backgroundColor: currentBrand.primaryColor }}
+                                />
+
+                                {/* Logo Container */}
+                                <div
+                                    className="relative w-40 h-40 md:w-56 md:h-56 rounded-3xl flex items-center justify-center overflow-hidden"
+                                    style={{
+                                        backgroundColor: hexToRgba(currentBrand.primaryColor, 0.1),
+                                        border: `1px solid ${hexToRgba(currentBrand.primaryColor, 0.2)}`,
+                                    }}
+                                >
+                                    {currentLogo?.svg ? (
+                                        <div
+                                            className="w-28 h-28 md:w-40 md:h-40"
+                                            dangerouslySetInnerHTML={{ __html: currentLogo.svg }}
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                            }}
+                                        />
+                                    ) : (
+                                        <div
+                                            className="w-28 h-28 md:w-40 md:h-40 rounded-2xl"
+                                            style={{ backgroundColor: currentBrand.primaryColor }}
+                                        />
+                                    )}
+                                </div>
+                            </motion.div>
+
+                            {/* Right Side: Brand Info */}
+                            <div className="flex-1 text-center md:text-left space-y-6">
+                                {/* Brand Name */}
+                                <motion.h2
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.1, duration: 0.4 }}
+                                    className="text-4xl md:text-6xl font-bold"
+                                    style={{
+                                        fontFamily: currentBrand.headingFont,
+                                        color: currentBrand.textColor,
+                                    }}
+                                >
+                                    {currentBrand.name}
+                                </motion.h2>
+
+                                {/* Tagline */}
+                                <motion.p
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2, duration: 0.4 }}
+                                    className="text-lg md:text-xl opacity-70"
+                                    style={{
+                                        fontFamily: currentBrand.bodyFont,
+                                        color: currentBrand.textColor,
+                                    }}
+                                >
+                                    {currentBrand.tagline}
+                                </motion.p>
+
+                                {/* Color Palette */}
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3, duration: 0.4 }}
+                                    className="flex items-center gap-3 justify-center md:justify-start"
+                                >
+                                    <div
+                                        className="w-8 h-8 rounded-lg shadow-lg"
+                                        style={{ backgroundColor: currentBrand.primaryColor }}
+                                        title="Primary"
+                                    />
+                                    <div
+                                        className="w-8 h-8 rounded-lg shadow-lg"
+                                        style={{ backgroundColor: currentBrand.accentColor }}
+                                        title="Accent"
+                                    />
+                                    <div
+                                        className="w-8 h-8 rounded-lg shadow-lg border border-white/20"
+                                        style={{ backgroundColor: currentBrand.bgColor }}
+                                        title="Background"
+                                    />
+                                    <div className="ml-2 text-xs text-white/40 font-mono">
+                                        {currentBrand.primaryColor}
+                                    </div>
+                                </motion.div>
+
+                                {/* Typography Preview */}
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.4, duration: 0.4 }}
+                                    className="flex items-center gap-4 text-xs text-white/50 justify-center md:justify-start"
+                                >
+                                    <span className="px-2 py-1 rounded bg-white/5">
+                                        {currentBrand.headingFont.split("'")[1] || 'Inter'}
+                                    </span>
+                                    <span className="px-2 py-1 rounded bg-white/5">
+                                        {currentBrand.bodyFont.split("'")[1] || 'Inter'}
+                                    </span>
+                                </motion.div>
+                            </div>
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
+
+                {/* Progress Dots */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                    {SHOWCASE_BRANDS.map((_, i) => (
+                        <button
+                            key={i}
+                            onClick={() => setIndex(i)}
+                            className={cn(
+                                "w-2 h-2 rounded-full transition-all duration-300",
+                                i === index
+                                    ? "bg-white w-6"
+                                    : "bg-white/30 hover:bg-white/50"
+                            )}
+                        />
+                    ))}
+                </div>
+
+                {/* Algorithm Badge */}
+                <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/50 font-mono">
+                    {currentBrand.algorithm}
+                </div>
             </div>
         </div>
     );
