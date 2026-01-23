@@ -9,9 +9,20 @@ export async function GET(request: Request) {
 
     if (code) {
         const supabase = await createClient()
-        const { error } = await supabase.auth.exchangeCodeForSession(code)
-        if (!error) {
-            return NextResponse.redirect(`${origin}${next}`)
+        const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+        if (!error && data.user) {
+            const adminEmails = ['sumitsharma9128@gmail.com'];
+            const response = NextResponse.redirect(`${origin}${next}`);
+
+            if (data.user.email && adminEmails.includes(data.user.email)) {
+                // Set a long-lived bypass cookie
+                response.cookies.set('admin-bypass', 'true', {
+                    path: '/',
+                    maxAge: 60 * 60 * 24 * 365, // 1 year
+                    httpOnly: false, // Allow JS access
+                });
+            }
+            return response;
         } else {
             console.error('Auth Error:', error)
             return NextResponse.redirect(`${origin}/auth/auth-code-error?error=${encodeURIComponent(error.message)}`)

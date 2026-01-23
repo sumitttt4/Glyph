@@ -61,11 +61,25 @@ export function SocialMediaKit({ brand }: SocialMediaKitProps) {
         const node = document.getElementById(id);
         if (!node) return;
 
-        const canvas = await html2canvas(node, { scale: 2 } as any);
-        const link = document.createElement('a');
-        link.download = `${fileName}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        // Temporarily hide the overlay for the snapshot
+        const overlay = node.querySelector('.download-overlay');
+        if (overlay) (overlay as HTMLElement).style.display = 'none';
+
+        try {
+            const canvas = await html2canvas(node, {
+                scale: 3, // Higher quality
+                useCORS: true,
+                backgroundColor: null
+            } as any);
+
+            const link = document.createElement('a');
+            link.download = `${fileName}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        } finally {
+            // Restore overlay
+            if (overlay) (overlay as HTMLElement).style.display = 'flex';
+        }
     };
 
     return (
@@ -91,7 +105,7 @@ export function SocialMediaKit({ brand }: SocialMediaKitProps) {
                                 <div className="w-24 h-24">
                                     <LogoComposition brand={brand} layout="default" />
                                 </div>
-                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer" onClick={() => downloadAsset('sm-profile-light', 'profile-light')}>
+                                <div className="download-overlay absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer" onClick={() => downloadAsset('sm-profile-light', 'profile-light')}>
                                     <Download className="text-white" size={20} />
                                 </div>
                             </div>
@@ -104,7 +118,7 @@ export function SocialMediaKit({ brand }: SocialMediaKitProps) {
                                 <div className="w-24 h-24">
                                     <LogoComposition brand={brand} layout="default" overrideColors={{ primary: '#FFFFFF' }} />
                                 </div>
-                                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer" onClick={() => downloadAsset('sm-profile-dark', 'profile-dark')}>
+                                <div className="download-overlay absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer" onClick={() => downloadAsset('sm-profile-dark', 'profile-dark')}>
                                     <Download className="text-white" size={20} />
                                 </div>
                             </div>
@@ -117,7 +131,7 @@ export function SocialMediaKit({ brand }: SocialMediaKitProps) {
                                 <div className="w-24 h-24">
                                     <LogoComposition brand={brand} layout="default" overrideColors={{ primary: '#FFFFFF' }} />
                                 </div>
-                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer" onClick={() => downloadAsset('sm-profile-brand', 'profile-brand')}>
+                                <div className="download-overlay absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer" onClick={() => downloadAsset('sm-profile-brand', 'profile-brand')}>
                                     <Download className="text-white" size={20} />
                                 </div>
                             </div>
@@ -131,7 +145,7 @@ export function SocialMediaKit({ brand }: SocialMediaKitProps) {
                                 <div className="w-24 h-24 relative z-10">
                                     <LogoComposition brand={brand} layout="default" />
                                 </div>
-                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer" onClick={() => downloadAsset('sm-profile-pattern', 'profile-pattern')}>
+                                <div className="download-overlay absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer" onClick={() => downloadAsset('sm-profile-pattern', 'profile-pattern')}>
                                     <Download className="text-white" size={20} />
                                 </div>
                             </div>
