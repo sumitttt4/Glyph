@@ -24,9 +24,9 @@ const MOCKUPS: MockupConfig[] = [
         image: '/assets/tshirt-blank.png',
         logoStyle: {
             position: 'absolute',
-            top: '30%',
-            left: '32%',
-            width: '36%',
+            top: '28%',
+            left: '38%',
+            width: '24%',
             height: 'auto',
             transform: 'rotate(-2deg)',
             mixBlendMode: 'multiply',
@@ -39,11 +39,11 @@ const MOCKUPS: MockupConfig[] = [
         image: '/assets/cup-blank.png',
         logoStyle: {
             position: 'absolute',
-            top: '40%',
-            left: '28%',
-            width: '40%',
+            top: '42%',
+            left: '36%',
+            width: '28%',
             height: 'auto',
-            transform: 'rotate(-5deg) skewX(5deg) skewY(2deg)',
+            transform: 'rotate(-6deg) skewX(2deg)',
             mixBlendMode: 'multiply',
             opacity: 0.85,
         }
@@ -54,11 +54,11 @@ const MOCKUPS: MockupConfig[] = [
         image: '/assets/poster-blank.png',
         logoStyle: {
             position: 'absolute',
-            top: '30%',
-            left: '25%',
-            width: '50%',
+            top: '28%',
+            left: '39%',
+            width: '24%',
             height: 'auto',
-            transform: 'perspective(500px) rotateY(0deg)', // Subtle perspective if needed
+            transform: 'perspective(500px) rotateY(-2deg)',
             mixBlendMode: 'multiply',
             opacity: 0.95,
         }
@@ -69,11 +69,11 @@ const MOCKUPS: MockupConfig[] = [
         image: '/assets/card-blank.png',
         logoStyle: {
             position: 'absolute',
-            top: '35%',
-            left: '35%',
-            width: '45%',
+            top: '48%',
+            left: '42%',
+            width: '25%',
             height: 'auto',
-            transform: 'rotate(-32deg) skewX(10deg) skewY(-5deg)', // Adjusted for the specific card stack angle
+            transform: 'rotate(-33deg) skewX(12deg) skewY(-4deg)',
             mixBlendMode: 'multiply',
             opacity: 0.9,
         }
