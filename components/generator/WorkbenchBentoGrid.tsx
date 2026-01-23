@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { UnifiedExportMenu } from '@/components/generator/UnifiedExportMenu';
 import { SocialMediaKit } from '@/components/preview/SocialMediaKit';
@@ -85,6 +86,36 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
         setCopiedHex(text);
         setTimeout(() => setCopiedHex(null), 1500);
     };
+
+    // Generate robust Data URL for the logo
+    // Generate robust Data URL for the logo
+    const logoDataUrl = React.useMemo(() => {
+        if (typeof window === 'undefined') return '';
+        try {
+            const rawMarkup = ReactDOMServer.renderToStaticMarkup(<LogoComposition brand={brand} />);
+
+            // Extract the SVG element if it's wrapped in a div
+            const svgMatch = rawMarkup.match(/<svg[\s\S]*?<\/svg>/);
+            let svgString = svgMatch ? svgMatch[0] : rawMarkup;
+
+            // If we still don't have an SVG tag (e.g. radial logo might be pure canvas/divs?), 
+            // fallback or handle it. But most are SVGs.
+            if (!svgString.includes('<svg')) {
+                return '';
+            }
+
+            // Ensure namespace exists for valid XML
+            const finalSvg = svgString.includes('xmlns')
+                ? svgString
+                : svgString.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+
+            // Encode to Base64 to avoid URL malformation with special chars
+            return `data:image/svg+xml;base64,${window.btoa(unescape(encodeURIComponent(finalSvg)))}`;
+        } catch (e) {
+            console.error("SVG Generation Failed", e);
+            return '';
+        }
+    }, [brand]);
 
     return (
         <div className="w-full max-w-[1600px] mx-auto p-4 md:p-8">
@@ -408,11 +439,7 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                     <h2 className="text-xl font-bold text-stone-900">Real-World Application</h2>
                 </div>
                 <MockupGallery
-                    logoUrl={`data:image/svg+xml;utf8,${encodeURIComponent(
-                        ReactDOMServer.renderToStaticMarkup(
-                            <LogoComposition brand={brand} />
-                        )
-                    )}`}
+                    logoUrl={logoDataUrl}
                     primaryColor={tokens.primary}
                 />
             </div>
