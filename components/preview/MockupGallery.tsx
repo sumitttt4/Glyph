@@ -54,9 +54,9 @@ const MOCKUPS: MockupConfig[] = [
         image: '/assets/poster-blank.png',
         logoStyle: {
             position: 'absolute',
-            top: '28%',
-            left: '39%',
-            width: '24%',
+            top: '32%',
+            left: '28%',
+            width: '45%',
             height: 'auto',
             transform: 'perspective(500px) rotateY(-2deg)',
             mixBlendMode: 'multiply',
@@ -69,11 +69,11 @@ const MOCKUPS: MockupConfig[] = [
         image: '/assets/card-blank.png',
         logoStyle: {
             position: 'absolute',
-            top: '48%',
-            left: '42%',
-            width: '25%',
+            top: '35%',
+            left: '45%',
+            width: '35%',
             height: 'auto',
-            transform: 'rotate(-33deg) skewX(12deg) skewY(-4deg)',
+            transform: 'rotate(-35deg) skewX(5deg) skewY(-5deg)',
             mixBlendMode: 'multiply',
             opacity: 0.9,
         }
