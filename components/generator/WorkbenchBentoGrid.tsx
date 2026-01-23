@@ -27,6 +27,8 @@ import { BrowserBrandPreview } from '@/components/preview/BrowserBrandPreview';
 import { MonogramMark } from '@/components/logo-engine/LogoMonogram';
 import { FontSelector } from './FontSelector';
 import { FontConfig } from '@/lib/fonts';
+import ReactDOMServer from 'react-dom/server';
+import { MockupGallery } from '@/components/preview/MockupGallery';
 
 
 
@@ -398,6 +400,21 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                         View Manual <ArrowUpEnd className="rotate-45" size={20} />
                     </Button>
                 </div>
+            </div>
+
+            {/* 7.5 Real-World Mockups */}
+            <div className="mt-12 md:col-span-12">
+                <div className="flex items-center gap-2 mb-6 px-2">
+                    <h2 className="text-xl font-bold text-stone-900">Real-World Application</h2>
+                </div>
+                <MockupGallery
+                    logoUrl={`data:image/svg+xml;utf8,${encodeURIComponent(
+                        ReactDOMServer.renderToStaticMarkup(
+                            <LogoComposition brand={brand} />
+                        )
+                    )}`}
+                    primaryColor={tokens.primary}
+                />
             </div>
 
             {/* 8. Social Media Kit Preview */}
