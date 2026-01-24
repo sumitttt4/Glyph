@@ -3,12 +3,24 @@
  *
  * Generates branded social media assets in standard platform sizes.
  * Uses stored logo SVG to ensure exports match preview exactly.
+ *
+ * CRITICAL: All exports use getStoredLogoSVG() which pulls from global export state.
+ * Never regenerates logos - always uses what was displayed in preview.
  */
 
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { BrandIdentity } from '@/lib/data';
 import { getStoredLogoSVG } from '@/components/logo-engine/renderers/stored-logo-export';
+import { hasValidExportState, validateExportState } from '@/lib/export-state';
+
+// Debug logging
+const DEBUG = true;
+function logSocial(action: string, data?: Record<string, unknown>) {
+    if (DEBUG) {
+        console.log(`[ExportSocial] ${action}`, data ? data : '');
+    }
+}
 
 // Standard social media dimensions (2024 specs)
 export const SOCIAL_MEDIA_SIZES = {
@@ -60,6 +72,7 @@ export interface SocialMediaAsset {
 
 /**
  * Generate an SVG template for a social media platform
+ * USES STORED SVG - never regenerates
  */
 function generateSocialMediaSVG(
   brand: BrandIdentity,
@@ -67,6 +80,13 @@ function generateSocialMediaSVG(
   height: number,
   variant: 'light' | 'dark' = 'light'
 ): string {
+  logSocial('Generating social SVG', {
+    brandName: brand.name,
+    dimensions: `${width}x${height}`,
+    variant,
+    hasExportState: hasValidExportState(),
+  });
+
   // Use stored logo SVG - ensures exact match with preview
   const logoSvg = getStoredLogoSVG(brand, 'color');
   // Extract the inner content of the logo SVG (without the XML declaration and outer svg tag)

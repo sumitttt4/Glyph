@@ -3,10 +3,22 @@
  *
  * Generates favicon assets from stored logo SVG (ensures exact match with preview).
  * Includes proper .ico generation with embedded sizes.
+ *
+ * CRITICAL: Uses stored SVG via getStoredLogoSVG() which pulls from global export state.
+ * Never regenerates logos - always uses what was displayed in preview.
  */
 
 import { BrandIdentity } from '@/lib/data';
 import { getStoredLogoSVG } from '@/components/logo-engine/renderers/stored-logo-export';
+import { hasValidExportState, validateExportState } from '@/lib/export-state';
+
+// Debug logging
+const DEBUG = true;
+function logFavicon(action: string, data?: Record<string, unknown>) {
+    if (DEBUG) {
+        console.log(`[ExportFavicon] ${action}`, data ? data : '');
+    }
+}
 
 // ============================================
 // FAVICON SVG GENERATION
@@ -14,9 +26,16 @@ import { getStoredLogoSVG } from '@/components/logo-engine/renderers/stored-logo
 
 /**
  * Generate SVG favicon from stored logo
+ * USES STORED SVG - never regenerates
  */
 export function generateFaviconSVG(brand: BrandIdentity, size: number = 32): string {
-    // Get the stored logo SVG
+    logFavicon('Generating favicon', {
+        brandName: brand.name,
+        size,
+        hasExportState: hasValidExportState(),
+    });
+
+    // Get the stored logo SVG (uses global export state if available)
     const logoSvg = getStoredLogoSVG(brand, 'color');
 
     // Extract viewBox from stored logo

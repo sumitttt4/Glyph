@@ -7,10 +7,22 @@
  * - Notion (Markdown with logo, colors, fonts)
  * - Framer (Component code)
  * - Webflow (CSS variables + SVG embed)
+ *
+ * CRITICAL: All exports use getStoredLogoSVG() which pulls from global export state.
+ * Never regenerates logos - always uses what was displayed in preview.
  */
 
 import { BrandIdentity } from '@/lib/data';
 import { getStoredLogoSVG } from '@/components/logo-engine/renderers/stored-logo-export';
+import { hasValidExportState, getExportMetadata } from '@/lib/export-state';
+
+// Debug logging
+const DEBUG = true;
+function logCopy(action: string, data?: Record<string, unknown>) {
+    if (DEBUG) {
+        console.log(`[CopyIntegrations] ${action}`, data ? data : '');
+    }
+}
 
 // ============================================
 // UTILITY FUNCTIONS
@@ -1008,12 +1020,27 @@ export async function copyToClipboard(text: string): Promise<boolean> {
 
 /**
  * Get integration data for a specific target
+ * USES STORED STATE - never regenerates logos
  */
 export function getIntegrationExport(
     brand: BrandIdentity,
     integration: IntegrationType,
     subType?: VSCodeExportType
 ): string {
+    // Log export state
+    const metadata = getExportMetadata();
+    logCopy('Getting integration export', {
+        brandName: brand.name,
+        integration,
+        subType,
+        hasExportState: hasValidExportState(),
+        exportId: metadata?.exportId,
+    });
+
+    if (metadata) {
+        logCopy('Exporting brand ID: ' + metadata.brandId);
+    }
+
     switch (integration) {
         case 'figma':
             return generateFigmaExport(brand).clipboard;
