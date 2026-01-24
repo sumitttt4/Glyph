@@ -27,6 +27,7 @@ import { BrowserBrandPreview } from '@/components/preview/BrowserBrandPreview';
 import { MonogramMark } from '@/components/logo-engine/LogoMonogram';
 import { FontSelector } from './FontSelector';
 import { FontConfig } from '@/lib/fonts';
+import { BrandMockups } from '@/components/preview/BrandMockups';
 
 
 
@@ -403,6 +404,15 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
             {/* 8. Social Media Kit Preview */}
             <div id="section-social" className="mt-12">
                 <SocialMediaKit brand={brand} />
+            </div>
+
+            {/* 9. Real-World Mockups - 3D View with Download */}
+            <div id="section-mockups" className="mt-12">
+                <div className="mb-6">
+                    <h3 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-2">Real-World Application</h3>
+                    <p className="text-stone-500 font-mono text-xs tracking-tight">Click any mockup for 3D view • Download as PNG</p>
+                </div>
+                <BrandMockups brand={brand} showCarousel={true} className="bg-white rounded-[2.5rem] p-6 shadow-xl border border-stone-200" />
             </div>
 
             {/* FONT SELECTOR DIALOG */}
