@@ -25,7 +25,8 @@ export async function GET(request: Request) {
             return response;
         } else {
             console.error('Auth Error:', error)
-            return NextResponse.redirect(`${origin}/auth/auth-code-error?error=${encodeURIComponent(error.message)}`)
+            const errorMessage = error?.message || 'Authentication failed'
+            return NextResponse.redirect(`${origin}/auth/auth-code-error?error=${encodeURIComponent(errorMessage)}`)
         }
     }
 
