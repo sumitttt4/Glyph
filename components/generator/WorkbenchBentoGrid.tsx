@@ -26,7 +26,6 @@ import { BrowserBrandPreview } from '@/components/preview/BrowserBrandPreview';
 import { MonogramMark } from '@/components/logo-engine/LogoMonogram';
 import { FontSelector } from './FontSelector';
 import { FontConfig } from '@/lib/fonts';
-import { MockupGallery } from '@/components/preview/MockupGallery';
 
 interface WorkbenchBentoGridProps {
     brand: BrandIdentity;
@@ -359,6 +358,7 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
 
                 <FontSelector isOpen={isFontSelectorOpen} onClose={() => setIsFontSelectorOpen(false)} currentFontId={brand.font.id} onSelect={(font) => { onUpdateFont?.(font); }} />
             </div>
+
         </div>
     );
 }
