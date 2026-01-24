@@ -759,12 +759,20 @@ ${folderName}/
 │   └── *@1x.png, *@2x.png, *@3x.png  # PNG at multiple resolutions
 │
 ├── mockups/                  # Brand application mockups
-│   ├── mockup-business-card.png
-│   ├── mockup-linkedin-banner.png
-│   ├── mockup-website-header.png
-│   ├── mockup-mobile-app.png
-│   ├── mockup-poster.png
-│   └── mockup-letterhead.png
+│   ├── mockup-business-card.png      # 3D business card
+│   ├── mockup-linkedin-banner.png    # LinkedIn profile banner
+│   ├── mockup-website-header.png     # Browser mockup
+│   ├── mockup-mobile-app.png         # iPhone mockup
+│   ├── mockup-poster.png             # Large format poster
+│   ├── mockup-letterhead.png         # A4 document
+│   ├── mockup-billboard.png          # Outdoor advertising
+│   ├── mockup-phone-screen.png       # App interface
+│   ├── mockup-laptop-screen.png      # MacBook display
+│   ├── mockup-storefront-sign.png    # Store signage
+│   ├── mockup-packaging-box.png      # Product packaging
+│   ├── mockup-hoodie.png             # Apparel mockup
+│   ├── mockup-tote-bag.png           # Canvas tote bag
+│   └── mockup-coffee-cup.png         # Ceramic mug
 │
 ├── typography/               # Font files and specimens
 │   ├── fonts.css             # CSS with Google Fonts imports
