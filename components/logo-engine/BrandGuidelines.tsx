@@ -23,24 +23,43 @@ export function BrandGuidelines({ brand }: BrandGuidelinesProps) {
     const [isExporting, setIsExporting] = useState(false);
 
     const handleDownloadPDF = async () => {
-        if (!printRef.current) return;
+        if (!printRef.current) {
+            alert('Unable to capture content. Please try again.');
+            return;
+        }
         setIsExporting(true);
 
         try {
             const element = printRef.current;
             // Force desktop width for capture
+            const originalWidth = element.style.width;
             element.style.width = '1200px';
+
+            // Wait a moment for any lazy-loaded content
+            await new Promise(r => setTimeout(r, 500));
 
             const canvas = await html2canvas(element, {
                 scale: 2, // Higher resolution
                 useCORS: true,
+                allowTaint: true, // Allow cross-origin images
                 backgroundColor: '#ffffff',
                 logging: false,
                 windowWidth: 1200, // Simulate desktop viewport
+                onclone: (clonedDoc: Document) => {
+                    // Ensure cloned element is visible
+                    const clonedElement = clonedDoc.querySelector('[data-pdf-content]');
+                    if (clonedElement) {
+                        (clonedElement as HTMLElement).style.width = '1200px';
+                    }
+                }
             } as unknown as Record<string, unknown>);
 
             // Reset width
-            element.style.width = '';
+            element.style.width = originalWidth;
+
+            if (!canvas || canvas.width === 0 || canvas.height === 0) {
+                throw new Error('Failed to capture content');
+            }
 
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
@@ -48,24 +67,28 @@ export function BrandGuidelines({ brand }: BrandGuidelinesProps) {
             const pdfHeight = pdf.internal.pageSize.getHeight();
             const imgWidth = canvas.width;
             const imgHeight = canvas.height;
-            const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
 
             // Calculate height of the image on the PDF
             const imgHeightOnPdf = imgHeight * (pdfWidth / imgWidth);
 
-            // Add image. If it's taller than one page, we might need multi-page logic, 
-            // but for now we scale to fit width and let it paginate naturally or just simple single page scroll capture
-            // For a single long strip, we usually want to split it. 
-            // BUT, for simplicity in v1, let's create a "Long Sheet" PDF or just capture the view port.
-            // A better approach for "Guidelines" is actually individual A4 pages.
-            // Let's stick to the current "One Long Scroll" rendered as a single PDF page for now (simplest MVP), 
-            // OR fit-to-width and allow multiple pages if needed.
+            // Handle multi-page if content is longer than one page
+            let position = 0;
+            let heightLeft = imgHeightOnPdf;
 
-            // Current strategy: Fit to width, potentially spanning pages.
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeightOnPdf);
-            pdf.save(`${brand.name.replace(/\s+/g, '_')}_Brand_Guidelines.pdf`);
+            pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeightOnPdf);
+            heightLeft -= pdfHeight;
+
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeightOnPdf;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeightOnPdf);
+                heightLeft -= pdfHeight;
+            }
+
+            pdf.save(`${brand.name.replace(/\\s+/g, '_')}_Brand_Guidelines.pdf`);
         } catch (error) {
             console.error("PDF Export failed", error);
+            alert('PDF generation failed. Please try again or use your browser\'s print function (Ctrl+P).');
         } finally {
             setIsExporting(false);
         }

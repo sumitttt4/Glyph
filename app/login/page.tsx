@@ -26,9 +26,12 @@ export default function LoginPage() {
         try {
             // DEVELOPER BACKDOOR
             // Sets a cookie to bypass middleware checks
-            if (email === 'sumitsharma9128@gmail.com') {
-                document.cookie = "admin-bypass=true; path=/; max-age=31536000"; // 1 year
-                router.push('/generator');
+            if (email.toLowerCase() === 'sumitsharma9128@gmail.com') {
+                // Set cookie with explicit domain for production
+                document.cookie = "admin-bypass=true; path=/; max-age=31536000; SameSite=Lax";
+                // Use window.location for full page reload to ensure cookie is read
+                await new Promise(r => setTimeout(r, 100)); // Small delay to ensure cookie is set
+                window.location.href = '/generator';
                 return;
             }
 

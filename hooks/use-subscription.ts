@@ -24,6 +24,17 @@ export function useSubscription(): SubscriptionState & { checkProStatus: () => P
     });
 
     const checkProStatus = useCallback(async () => {
+        // ADMIN BYPASS: Check cookie first
+        if (typeof document !== 'undefined' && /admin-bypass=true/.test(document.cookie)) {
+            setState({
+                isPro: true,
+                isAdmin: true,
+                isLoading: false,
+                email: 'sumitsharma9128@gmail.com',
+            });
+            return;
+        }
+
         const supabase = createClient();
 
         try {
