@@ -701,8 +701,8 @@ export function BrandMockups({
                                 key={key}
                                 onClick={() => setSelectedCategory(key)}
                                 className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${selectedCategory === key
-                                        ? 'bg-white dark:bg-gray-700 shadow-sm'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
+                                    ? 'bg-white dark:bg-gray-700 shadow-sm'
+                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
                                     }`}
                             >
                                 {label}
@@ -738,8 +738,8 @@ export function BrandMockups({
                                 key={type}
                                 whileHover={{ scale: 1.02 }}
                                 className={`relative rounded-xl border-2 transition-all overflow-hidden group ${isSelected
-                                        ? 'border-blue-500 ring-2 ring-blue-500/20'
-                                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                                    ? 'border-blue-500 ring-2 ring-blue-500/20'
+                                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
                                     }`}
                             >
                                 <button
@@ -784,7 +784,7 @@ export function BrandMockups({
                     isOpen={modalOpen}
                     onClose={() => setModalOpen(false)}
                     mockupType={selectedMockup}
-                    brandName={brand.name}
+                    brand={brand}
                 >
                     {renderMockup(selectedMockup, brand)}
                 </Mockup3DModal>
@@ -803,8 +803,8 @@ export function BrandMockups({
                             key={key}
                             onClick={() => setSelectedCategory(key)}
                             className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${selectedCategory === key
-                                    ? 'bg-white dark:bg-gray-700 shadow-sm'
-                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
+                                ? 'bg-white dark:bg-gray-700 shadow-sm'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
                                 }`}
                         >
                             {label}
@@ -838,8 +838,8 @@ export function BrandMockups({
                             key={type}
                             onClick={() => handleMockupSelect(type)}
                             className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 ${isSelected
-                                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                                 }`}
                         >
                             <span>{info.icon}</span>
@@ -858,7 +858,8 @@ export function BrandMockups({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.2 }}
-                        className="aspect-[16/10] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-xl overflow-hidden relative group"
+                        className="aspect-[16/10] rounded-xl overflow-hidden relative group shadow-2xl"
+                        style={{ background: brand.theme.tokens.dark.bg }}
                     >
                         {renderMockup(selectedMockup, brand)}
 
@@ -904,7 +905,7 @@ export function BrandMockups({
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
                 mockupType={selectedMockup}
-                brandName={brand.name}
+                brand={brand}
             >
                 {renderMockup(selectedMockup, brand)}
             </Mockup3DModal>

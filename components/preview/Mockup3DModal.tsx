@@ -4,12 +4,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download, RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
 import { MockupType, MOCKUP_METADATA, downloadMockupAsPng } from '@/lib/mockup-state';
+import { BrandIdentity } from '@/lib/data';
 
 interface Mockup3DModalProps {
     isOpen: boolean;
     onClose: () => void;
     mockupType: MockupType;
-    brandName: string;
+    brand: BrandIdentity; // Changed form brandName to brand
     children: React.ReactNode;
 }
 
@@ -20,7 +21,7 @@ export function Mockup3DModal({
     isOpen,
     onClose,
     mockupType,
-    brandName,
+    brand,
     children,
 }: Mockup3DModalProps) {
     const [rotation, setRotation] = useState({ x: 15, y: -15 });
@@ -31,6 +32,7 @@ export function Mockup3DModal({
     const lastPosition = useRef({ x: 0, y: 0 });
 
     const metadata = MOCKUP_METADATA[mockupType];
+    const tokens = brand.theme.tokens;
 
     // Reset on open
     useEffect(() => {
@@ -81,7 +83,7 @@ export function Mockup3DModal({
     const handleDownload = async () => {
         setIsDownloading(true);
         try {
-            await downloadMockupAsPng(mockupType, brandName);
+            await downloadMockupAsPng(mockupType, brand.name);
         } catch (error) {
             console.error('Download failed:', error);
         }
@@ -114,7 +116,8 @@ export function Mockup3DModal({
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.9, opacity: 0 }}
-                        className="relative w-full max-w-4xl mx-4 bg-gradient-to-br from-gray-900 to-gray-950 rounded-2xl overflow-hidden shadow-2xl"
+                        className="relative w-full max-w-6xl mx-4 rounded-2xl overflow-hidden shadow-2xl"
+                        style={{ background: tokens.dark.bg }}
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
