@@ -78,6 +78,10 @@ export default function UserProfile() {
 
         const supabase = createClient();
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            // CRITICAL FIX: Don't let Supabase overwrite Admin Bypass
+            // If the cookie exists, ignore 'null' sessions from Supabase
+            if (/admin-bypass=true/.test(document.cookie)) return;
+
             setUser(session?.user ?? null);
         });
         return () => subscription.unsubscribe();
