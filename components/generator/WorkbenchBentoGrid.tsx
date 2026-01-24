@@ -353,7 +353,7 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                 </div>
 
                 {/* 8. Social Media Kit */}
-                <div id="section-social" className="mt-12">
+                <div id="section-social" className="md:col-span-12 mt-12">
                     <SocialMediaKit brand={brand} />
                 </div>
 
