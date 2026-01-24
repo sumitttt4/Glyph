@@ -700,11 +700,10 @@ export function BrandMockups({
                             <button
                                 key={key}
                                 onClick={() => setSelectedCategory(key)}
-                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-                                    selectedCategory === key
+                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${selectedCategory === key
                                         ? 'bg-white dark:bg-gray-700 shadow-sm'
                                         : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
-                                }`}
+                                    }`}
                             >
                                 {label}
                             </button>
@@ -738,11 +737,10 @@ export function BrandMockups({
                             <motion.div
                                 key={type}
                                 whileHover={{ scale: 1.02 }}
-                                className={`relative rounded-xl border-2 transition-all overflow-hidden group ${
-                                    isSelected
+                                className={`relative rounded-xl border-2 transition-all overflow-hidden group ${isSelected
                                         ? 'border-blue-500 ring-2 ring-blue-500/20'
                                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                                }`}
+                                    }`}
                             >
                                 <button
                                     onClick={() => handleMockupSelect(type)}
@@ -774,7 +772,7 @@ export function BrandMockups({
 
                                 {/* Label */}
                                 <div className="p-2 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
-                                    <span className="text-xs font-medium">{info.icon} {info.name}</span>
+                                    <span className="text-xs font-medium">{info.name}</span>
                                 </div>
                             </motion.div>
                         );
@@ -804,11 +802,10 @@ export function BrandMockups({
                         <button
                             key={key}
                             onClick={() => setSelectedCategory(key)}
-                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-                                selectedCategory === key
+                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${selectedCategory === key
                                     ? 'bg-white dark:bg-gray-700 shadow-sm'
                                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
-                            }`}
+                                }`}
                         >
                             {label}
                         </button>
@@ -840,11 +837,10 @@ export function BrandMockups({
                         <button
                             key={type}
                             onClick={() => handleMockupSelect(type)}
-                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 ${
-                                isSelected
+                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 ${isSelected
                                     ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
                                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                            }`}
+                                }`}
                         >
                             <span>{info.icon}</span>
                             <span className="hidden sm:inline">{info.name}</span>

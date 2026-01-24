@@ -59,7 +59,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
 }> = {
     'business-card': {
         name: 'Business Card',
-        icon: '💳',
+        icon: '',
         description: '3D angled card with shadow',
         category: 'print',
         width: 800,
@@ -67,7 +67,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     },
     'linkedin-banner': {
         name: 'LinkedIn Banner',
-        icon: '🔗',
+        icon: '',
         description: 'Professional profile banner',
         category: 'digital',
         width: 1584,
@@ -75,7 +75,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     },
     'website-header': {
         name: 'Website Header',
-        icon: '🌐',
+        icon: '',
         description: 'Browser frame with navigation',
         category: 'digital',
         width: 1200,
@@ -83,7 +83,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     },
     'mobile-app': {
         name: 'Mobile App',
-        icon: '📱',
+        icon: '',
         description: 'iPhone with splash screen',
         category: 'digital',
         width: 500,
@@ -91,7 +91,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     },
     'poster': {
         name: 'Poster',
-        icon: '🖼️',
+        icon: '',
         description: 'Large format display',
         category: 'print',
         width: 600,
@@ -99,7 +99,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     },
     'letterhead': {
         name: 'Letterhead',
-        icon: '📄',
+        icon: '',
         description: 'A4 document template',
         category: 'print',
         width: 595,
@@ -107,7 +107,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     },
     'billboard': {
         name: 'Billboard',
-        icon: '🏙️',
+        icon: '',
         description: 'Outdoor advertising display',
         category: 'signage',
         width: 1200,
@@ -115,7 +115,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     },
     'phone-screen': {
         name: 'Phone Screen',
-        icon: '📲',
+        icon: '',
         description: 'App interface mockup',
         category: 'digital',
         width: 390,
@@ -123,7 +123,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     },
     'laptop-screen': {
         name: 'Laptop Screen',
-        icon: '💻',
+        icon: '',
         description: 'MacBook Pro display',
         category: 'digital',
         width: 1440,
@@ -131,7 +131,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     },
     'storefront-sign': {
         name: 'Storefront Sign',
-        icon: '🏪',
+        icon: '',
         description: 'Illuminated store signage',
         category: 'signage',
         width: 1000,
@@ -139,7 +139,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     },
     'packaging-box': {
         name: 'Packaging Box',
-        icon: '📦',
+        icon: '',
         description: 'Product packaging design',
         category: 'print',
         width: 800,
@@ -147,7 +147,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     },
     'hoodie': {
         name: 'Hoodie',
-        icon: '🧥',
+        icon: '',
         description: 'Apparel mockup',
         category: 'merchandise',
         width: 800,
@@ -155,7 +155,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     },
     'tote-bag': {
         name: 'Tote Bag',
-        icon: '👜',
+        icon: '',
         description: 'Canvas tote bag',
         category: 'merchandise',
         width: 700,
@@ -163,7 +163,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     },
     'coffee-cup': {
         name: 'Coffee Cup',
-        icon: '☕',
+        icon: '',
         description: 'Ceramic mug mockup',
         category: 'merchandise',
         width: 600,
