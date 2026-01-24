@@ -157,12 +157,12 @@ export default function LandingPage() {
                             </div>
 
                             {/* Brand Identity Bento Grid */}
-                            <div className="hidden lg:grid grid-cols-7 grid-rows-3 gap-3 h-[480px]">
+                            <div className="grid grid-cols-2 lg:grid-cols-7 auto-rows-min lg:grid-rows-3 gap-3 h-auto lg:h-[480px] mt-8 lg:mt-0">
 
                                 {/* Logo Block - Large */}
-                                <div className="col-span-4 row-span-1 bg-white rounded-2xl p-6 flex items-center justify-between overflow-hidden group hover:shadow-lg transition-shadow">
+                                <div className="col-span-2 lg:col-span-4 row-span-1 bg-white rounded-2xl p-6 flex items-center justify-between overflow-hidden group hover:shadow-lg transition-shadow h-24 lg:h-auto">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-14 h-14 relative">
+                                        <div className="w-10 h-10 lg:w-14 lg:h-14 relative">
                                             <Image
                                                 src="/glyph_logo_new.png"
                                                 alt="Glyph Logo"
@@ -170,13 +170,13 @@ export default function LandingPage() {
                                                 className="object-contain"
                                             />
                                         </div>
-                                        <span className="text-3xl font-bold text-stone-900 tracking-tight">{DEMO_BRAND.name}</span>
+                                        <span className="text-2xl lg:text-3xl font-bold text-stone-900 tracking-tight">{DEMO_BRAND.name}</span>
                                     </div>
                                     <div className="text-xs text-stone-400 font-mono uppercase">Logo</div>
                                 </div>
 
                                 {/* Billboard / Outdoor Mockup */}
-                                <div className="col-span-3 row-span-3 bg-stone-100 rounded-2xl overflow-hidden relative group hover:shadow-lg transition-shadow">
+                                <div className="col-span-2 lg:col-span-3 row-span-3 bg-stone-100 rounded-2xl overflow-hidden relative group hover:shadow-lg transition-shadow aspect-[3/4] lg:aspect-auto">
                                     <Image
                                         src="/glyph_billboard_final.png"
                                         alt="Outdoor Billboard Campaign"
@@ -188,7 +188,7 @@ export default function LandingPage() {
                                 </div>
 
                                 {/* Typography Block */}
-                                <div className="col-span-2 row-span-1 rounded-2xl p-5 overflow-hidden group hover:shadow-lg transition-shadow" style={{ backgroundColor: DEMO_BRAND.theme.tokens.light.primary }}>
+                                <div className="col-span-1 lg:col-span-2 row-span-1 rounded-2xl p-5 overflow-hidden group hover:shadow-lg transition-shadow aspect-square lg:aspect-auto" style={{ backgroundColor: DEMO_BRAND.theme.tokens.light.primary }}>
                                     <div className="text-white">
                                         <div className="text-[10px] font-mono uppercase opacity-70 mb-2">Typography</div>
                                         <div className="text-4xl font-bold tracking-tight opacity-30">Aa</div>
@@ -201,7 +201,7 @@ export default function LandingPage() {
                                 </div>
 
                                 {/* Color Palette Block */}
-                                <div className="col-span-2 row-span-1 bg-white rounded-2xl p-4 overflow-hidden group hover:shadow-lg transition-shadow">
+                                <div className="col-span-1 lg:col-span-2 row-span-1 bg-white rounded-2xl p-4 overflow-hidden group hover:shadow-lg transition-shadow aspect-square lg:aspect-auto">
                                     <div className="text-[10px] text-stone-400 font-mono uppercase mb-3">Palette</div>
                                     <div className="flex gap-1.5 h-full pb-6">
                                         <div className="flex-1 rounded-lg" style={{ backgroundColor: DEMO_BRAND.theme.tokens.light.primary }}></div>
@@ -212,7 +212,7 @@ export default function LandingPage() {
                                 </div>
 
                                 {/* Merchandise Mockup Block */}
-                                <div className="col-span-4 row-span-1 bg-stone-100 rounded-2xl overflow-hidden relative group hover:shadow-lg transition-shadow">
+                                <div className="col-span-2 lg:col-span-4 row-span-1 bg-stone-100 rounded-2xl overflow-hidden relative group hover:shadow-lg transition-shadow h-48 lg:h-auto">
                                     <Image
                                         src="/glyph_merch_final.png"
                                         alt="Brand Apparel"
