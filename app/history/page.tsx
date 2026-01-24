@@ -16,34 +16,40 @@ interface BrandRecord {
 export default function HistoryPage() {
     const [brands, setBrands] = useState<BrandRecord[]>([]);
     const [loading, setLoading] = useState(true);
-    const supabase = createClient();
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchBrands = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                // If not logged in, redirect to login
-                window.location.href = '/login';
-                return;
-            }
+            try {
+                const supabase = createClient();
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) {
+                    // If not logged in, redirect to login
+                    window.location.href = '/login?next=/history';
+                    return;
+                }
 
-            const { data, error } = await supabase
-                .from('brands')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false });
+                const { data, error: fetchError } = await supabase
+                    .from('brands')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false });
 
-            if (error) {
-                console.error('Error fetching history:', error);
+                if (fetchError) {
+                    console.error('Error fetching history:', fetchError);
+                    setError('Failed to load your generation history. Please try again.');
+                } else if (data) {
+                    setBrands(data);
+                }
+            } catch (e) {
+                console.error('History fetch error:', e);
+                setError('Something went wrong. Please refresh the page.');
+            } finally {
+                setLoading(false);
             }
-
-            if (data) {
-                setBrands(data);
-            }
-            setLoading(false);
         };
         fetchBrands();
-    }, [supabase]);
+    }, []);
 
     if (loading) {
         return (
@@ -62,7 +68,7 @@ export default function HistoryPage() {
             <header className="bg-white border-b border-stone-200 sticky top-0 z-30">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-6">
-                        <Link href="/" className="text-sm font-semibold text-stone-600 hover:text-stone-900 flex items-center gap-2 group transition-colors">
+                        <Link href="/generator" className="text-sm font-semibold text-stone-600 hover:text-stone-900 flex items-center gap-2 group transition-colors">
                             <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
                             Back to Generator
                         </Link>
@@ -79,14 +85,29 @@ export default function HistoryPage() {
             </header>
 
             <main className="max-w-7xl mx-auto px-6 py-8">
-                {brands.length === 0 ? (
+                {error ? (
+                    <div className="text-center py-32 animate-in fade-in duration-500">
+                        <div className="w-20 h-20 bg-red-50 border border-red-200 rounded-full mx-auto mb-6 flex items-center justify-center shadow-sm">
+                            <svg className="w-8 h-8 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        </div>
+                        <h3 className="text-xl font-bold text-stone-900 mb-2">Error Loading History</h3>
+                        <p className="text-stone-500 mb-8 max-w-sm mx-auto">{error}</p>
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="px-6 py-3 bg-stone-900 text-white font-semibold rounded-xl hover:bg-black transition-all hover:shadow-lg hover:-translate-y-0.5 inline-flex items-center gap-2"
+                        >
+                            <span>Try Again</span>
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" /></svg>
+                        </button>
+                    </div>
+                ) : brands.length === 0 ? (
                     <div className="text-center py-32 animate-in fade-in duration-500">
                         <div className="w-20 h-20 bg-stone-100 border border-stone-200 rounded-full mx-auto mb-6 flex items-center justify-center shadow-sm">
                             <svg className="w-8 h-8 text-stone-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>
                         </div>
                         <h3 className="text-xl font-bold text-stone-900 mb-2">No generations yet</h3>
                         <p className="text-stone-500 mb-8 max-w-sm mx-auto">Your generated brand identities will appear here. Start creating to build your archive.</p>
-                        <Link href="/" className="px-6 py-3 bg-stone-900 text-white font-semibold rounded-xl hover:bg-black transition-all hover:shadow-lg hover:-translate-y-0.5 inline-flex items-center gap-2">
+                        <Link href="/generator" className="px-6 py-3 bg-stone-900 text-white font-semibold rounded-xl hover:bg-black transition-all hover:shadow-lg hover:-translate-y-0.5 inline-flex items-center gap-2">
                             <span>Start Generating</span>
                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                         </Link>

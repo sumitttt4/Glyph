@@ -7,9 +7,11 @@ interface ProGateModalProps {
     isOpen: boolean;
     onClose: () => void;
     featureName?: string;
+    title?: string;
+    description?: string;
 }
 
-export function ProGateModal({ isOpen, onClose, featureName = "Full Package Export" }: ProGateModalProps) {
+export function ProGateModal({ isOpen, onClose, featureName = "Full Package Export", title, description }: ProGateModalProps) {
     if (!isOpen) return null;
 
     const proFeatures = [
@@ -63,10 +65,10 @@ export function ProGateModal({ isOpen, onClose, featureName = "Full Package Expo
                                 </div>
 
                                 <h2 className="text-2xl font-bold text-white mb-1">
-                                    Unlock {featureName}
+                                    {title || `Unlock ${featureName}`}
                                 </h2>
                                 <p className="text-white/80 text-sm">
-                                    Get production-ready assets for your brand.
+                                    {description || "Get production-ready assets for your brand."}
                                 </p>
                             </div>
 
@@ -93,7 +95,7 @@ export function ProGateModal({ isOpen, onClose, featureName = "Full Package Expo
                                     className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-stone-900 hover:bg-stone-800 text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
                                 >
                                     <Package className="w-4 h-4" />
-                                    Get Founder Pass — $19
+                                    Get Founder Pass — $49
                                 </a>
 
                                 <p className="text-center text-xs text-stone-400 mt-3">

@@ -713,14 +713,9 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             return (
                 <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
                     <rect x="12" y="12" width="76" height="76" rx="14" fill="none" stroke={primaryColor} strokeWidth="3" />
-                    return (
-                    <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
-                        <rect x="12" y="12" width="76" height="76" rx="14" fill="none" stroke={primaryColor} strokeWidth="3" />
-                        <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale * 0.85}) rotate(${rotate}, ${pWidth / 2}, ${pWidth / 2})`}>
-                            <path d={primaryShape.path} fill={primaryColor} />
-                        </g>
-                    </svg>
-                    );
+                    <g transform={`translate(${centerOffset}, ${centerOffset}) scale(${primaryScale * 0.85}) rotate(${rotate}, ${pWidth / 2}, ${pWidth / 2})`}>
+                        <path d={primaryShape.path} fill={primaryColor} />
+                    </g>
                 </svg>
             );
         }

@@ -11,11 +11,30 @@
  * - Wordmark only (text without symbol)
  * - Dark version (for light backgrounds)
  * - Light version (for dark backgrounds)
+ *
+ * INTEGRATION: Uses global export state store for all exports.
+ * When hasValidExportState() returns true, exports pull from stored state.
  */
 
 import { BrandIdentity, GeneratedLogo } from '@/lib/data';
 import { generateComposedLogoSVG, SVGVariant } from '@/components/export/ExportSVG';
 import { LogoVariationType, LogoVariations } from '@/components/logo-engine/types';
+import {
+    hasValidExportState,
+    getStoredSvgForExport,
+    getStoredVariation,
+    getAllVariationsFromStored,
+    generateWordmarkFromStored,
+    getExportState,
+} from '@/lib/export-state';
+
+// Debug logging
+const DEBUG = true;
+function logExport(action: string, data?: Record<string, unknown>) {
+    if (DEBUG) {
+        console.log(`[StoredLogoExport] ${action}`, data ? data : '');
+    }
+}
 
 // ============================================
 // CORE EXPORT FUNCTIONS
@@ -25,19 +44,46 @@ import { LogoVariationType, LogoVariations } from '@/components/logo-engine/type
  * Get the exact stored logo SVG - this is the ONLY function that should be used for exports
  *
  * Priority:
- * 1. Use stored SVG from generatedLogos[selectedLogoIndex] (premium logos)
- * 2. Fall back to legacy generateComposedLogoSVG only for old brands without generatedLogos
+ * 1. FIRST: Check global export state (set when logo renders in preview)
+ * 2. SECOND: Use stored SVG from generatedLogos[selectedLogoIndex] (premium logos)
+ * 3. LAST: Fall back to legacy generateComposedLogoSVG only for old brands without generatedLogos
+ *
+ * NEVER regenerate if stored state exists - ensures exports match preview exactly.
  */
 export function getStoredLogoSVG(
     brand: BrandIdentity,
     variant: SVGVariant = 'color'
 ): string {
-    // Check for premium generated logos first
+    // PRIORITY 1: Check global export state first
+    if (hasValidExportState()) {
+        const exportState = getExportState();
+        logExport('Using global export state', {
+            brandId: exportState?.brandId,
+            exportId: exportState?.id,
+            variant,
+        });
+
+        try {
+            return getStoredSvgForExport(variant);
+        } catch (e) {
+            logExport('Global state read failed, falling back to brand data', { error: String(e) });
+        }
+    }
+
+    // PRIORITY 2: Check for premium generated logos
     if (brand.generatedLogos && brand.generatedLogos.length > 0) {
         const selectedIndex = brand.selectedLogoIndex ?? 0;
         const selectedLogo = brand.generatedLogos[selectedIndex];
 
         if (selectedLogo?.svg) {
+            logExport('Using brand.generatedLogos', {
+                brandName: brand.name,
+                selectedIndex,
+                logoId: selectedLogo.id,
+                algorithm: selectedLogo.algorithm,
+                variant,
+            });
+
             // For color variant, return the exact stored SVG
             if (variant === 'color') {
                 return selectedLogo.svg;
@@ -48,7 +94,12 @@ export function getStoredLogoSVG(
         }
     }
 
-    // Fallback to legacy generation ONLY for old brands without generatedLogos
+    // PRIORITY 3: Fallback to legacy generation ONLY for old brands without generatedLogos
+    logExport('WARNING: Falling back to legacy generation', {
+        brandName: brand.name,
+        reason: 'No stored logos found',
+        variant,
+    });
     return generateComposedLogoSVG(brand, variant);
 }
 
@@ -237,11 +288,20 @@ function darkenColor(hex: string, percent: number): string {
 
 /**
  * Generate wordmark SVG using stored logo + brand name
+ * USES STORED STATE - never regenerates the logo
  */
 export function generateStoredWordmarkSVG(
     brand: BrandIdentity,
     variant: SVGVariant = 'color'
 ): string {
+    // PRIORITY: Use global export state if available
+    if (hasValidExportState()) {
+        logExport('Generating wordmark from global export state', { variant });
+        return generateWordmarkFromStored(variant);
+    }
+
+    logExport('Generating wordmark from brand data', { brandName: brand.name, variant });
+
     const logoSvg = getStoredLogoSVG(brand, variant);
 
     // Extract viewBox from logo
@@ -309,6 +369,7 @@ export function generateStoredFaviconSVG(brand: BrandIdentity): string {
 /**
  * Get all logo variations for export
  * Returns all 6 standard variations if available
+ * USES STORED STATE - never regenerates logos
  */
 export function getLogoVariationsForExport(brand: BrandIdentity): {
     horizontal: string | null;
@@ -318,11 +379,20 @@ export function getLogoVariationsForExport(brand: BrandIdentity): {
     dark: string | null;
     light: string | null;
 } {
+    // PRIORITY: Use global export state if available
+    if (hasValidExportState()) {
+        logExport('Getting variations from global export state');
+        return getAllVariationsFromStored();
+    }
+
+    logExport('Getting variations from brand data', { brandName: brand.name });
+
     const selectedLogo = getSelectedLogo(brand);
     const variations = (selectedLogo as any)?.variations as LogoVariations | undefined;
 
     if (!variations) {
-        // Fallback: generate basic variations from the base logo
+        logExport('No pre-stored variations, generating from stored base SVG');
+        // Generate from stored base SVG - NOT regenerating the logo itself
         const baseSvg = getStoredLogoSVG(brand, 'color');
         return {
             horizontal: generateStoredWordmarkSVG(brand, 'color'),
@@ -333,6 +403,12 @@ export function getLogoVariationsForExport(brand: BrandIdentity): {
             light: recolorSVG(baseSvg, 'white'),
         };
     }
+
+    logExport('Using pre-stored variations', {
+        hasHorizontal: !!variations.horizontal?.svg,
+        hasStacked: !!variations.stacked?.svg,
+        hasIconOnly: !!variations.iconOnly?.svg,
+    });
 
     return {
         horizontal: variations.horizontal?.svg || null,

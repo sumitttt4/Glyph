@@ -19,8 +19,8 @@ export function ProcessPipeline() {
         {
             id: "input",
             icon: Terminal,
-            title: "Define Parameters",
-            desc: "Input your brand vibe, preferred shapes, and semantic constraints.",
+            title: "Input Your Vibe",
+            desc: "Describe your product and audience. Glyph translates your words into design constraints.",
             // Custom visual for step 1
             visual: (isActive: boolean) => (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -39,8 +39,8 @@ export function ProcessPipeline() {
         {
             id: "construct",
             icon: Grid3x3,
-            title: "Construct Geometry",
-            desc: "The engine builds your logo on a strict mathematical grid.",
+            title: "Generate the System",
+            desc: "The AI constructs logos, palettes, and typography rules on a mathematical grid.",
             visual: (isActive: boolean) => (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     {isActive && (
@@ -57,8 +57,8 @@ export function ProcessPipeline() {
         {
             id: "export",
             icon: PackageCheck,
-            title: "Export System",
-            desc: "Receive a compiled react codebase with tailored design tokens.",
+            title: "Export to Production",
+            desc: "Download your brand as a React codebase with Tailwind config and vector assets.",
             visual: (isActive: boolean) => (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     {isActive && (
@@ -80,10 +80,10 @@ export function ProcessPipeline() {
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
                 <div className="mb-16 md:text-center max-w-2xl mx-auto">
                     <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-stone-950 mb-4">
-                        The Logic
+                        From Idea to Codebase in 3 Steps.
                     </h2>
                     <p className="text-lg text-stone-600">
-                        From raw inputs to production-ready assets in three executable steps.
+                        Stop tweaking pixels. Describe your startup, and let the engine build the rest.
                     </p>
                 </div>
 

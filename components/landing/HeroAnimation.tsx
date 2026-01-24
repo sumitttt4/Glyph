@@ -196,8 +196,8 @@ export default function HeroAnimation() {
     // Show loading state on server/initial render
     if (!isClient || generatedLogos.length === 0) {
         return (
-            <div className="w-full max-w-6xl mx-auto p-4 md:p-8">
-                <div className="relative w-full aspect-[16/9] rounded-3xl overflow-hidden bg-[#0C0A09] border border-white/10 flex items-center justify-center">
+            <div className="w-full max-w-5xl mx-auto p-4 md:p-6">
+                <div className="relative w-full min-h-[400px] md:min-h-[450px] rounded-2xl overflow-hidden bg-[#0C0A09] border border-white/10 flex items-center justify-center shadow-2xl">
                     <div className="w-8 h-8 border-2 border-white/20 border-t-white/80 rounded-full animate-spin" />
                 </div>
             </div>
@@ -205,8 +205,8 @@ export default function HeroAnimation() {
     }
 
     return (
-        <div className="w-full max-w-6xl mx-auto p-4 md:p-8">
-            <div className="relative w-full aspect-[16/9] rounded-3xl overflow-hidden shadow-2xl bg-[#0C0A09] border border-white/10">
+        <div className="w-full max-w-5xl mx-auto p-4 md:p-6">
+            <div className="relative w-full min-h-[400px] md:min-h-[450px] rounded-2xl overflow-hidden shadow-2xl bg-[#0C0A09] border border-white/10">
                 {/* Background Grid */}
                 <div
                     className="absolute inset-0 opacity-[0.03]"
@@ -217,7 +217,7 @@ export default function HeroAnimation() {
                 />
 
                 {/* Main Content */}
-                <div className="absolute inset-0 flex items-center justify-center p-8 md:p-16">
+                <div className="absolute inset-0 flex items-center justify-center p-6 md:p-10 lg:p-12">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={`showcase-${index}`}
@@ -225,13 +225,13 @@ export default function HeroAnimation() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.5, ease: "easeInOut" }}
-                            className="flex flex-col md:flex-row items-center gap-8 md:gap-16 w-full max-w-4xl"
+                            className="flex flex-col md:flex-row items-center gap-6 md:gap-10 w-full max-w-3xl"
                         >
                             {/* Left Side: Logo with Float Animation */}
                             <motion.div
-                                className="relative"
+                                className="relative flex-shrink-0"
                                 animate={{
-                                    y: [0, -8, 0],
+                                    y: [0, -6, 0],
                                 }}
                                 transition={{
                                     duration: 4,
@@ -241,21 +241,22 @@ export default function HeroAnimation() {
                             >
                                 {/* Glow Effect */}
                                 <div
-                                    className="absolute inset-0 blur-3xl opacity-30 scale-150"
+                                    className="absolute inset-0 blur-2xl opacity-25 scale-125"
                                     style={{ backgroundColor: currentBrand.primaryColor }}
                                 />
 
                                 {/* Logo Container */}
                                 <div
-                                    className="relative w-40 h-40 md:w-56 md:h-56 rounded-3xl flex items-center justify-center overflow-hidden"
+                                    className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-2xl flex items-center justify-center overflow-hidden shadow-lg"
                                     style={{
                                         backgroundColor: hexToRgba(currentBrand.primaryColor, 0.1),
-                                        border: `1px solid ${hexToRgba(currentBrand.primaryColor, 0.2)}`,
+                                        border: `1px solid ${hexToRgba(currentBrand.primaryColor, 0.25)}`,
+                                        boxShadow: `0 8px 32px ${hexToRgba(currentBrand.primaryColor, 0.15)}`,
                                     }}
                                 >
                                     {currentLogo?.svg ? (
                                         <div
-                                            className="w-28 h-28 md:w-40 md:h-40"
+                                            className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28"
                                             dangerouslySetInnerHTML={{ __html: currentLogo.svg }}
                                             style={{
                                                 display: 'flex',
@@ -265,7 +266,7 @@ export default function HeroAnimation() {
                                         />
                                     ) : (
                                         <div
-                                            className="w-28 h-28 md:w-40 md:h-40 rounded-2xl"
+                                            className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-xl"
                                             style={{ backgroundColor: currentBrand.primaryColor }}
                                         />
                                     )}
@@ -273,13 +274,13 @@ export default function HeroAnimation() {
                             </motion.div>
 
                             {/* Right Side: Brand Info */}
-                            <div className="flex-1 text-center md:text-left space-y-6">
+                            <div className="flex-1 min-w-0 text-center md:text-left space-y-4 md:space-y-5">
                                 {/* Brand Name */}
                                 <motion.h2
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.1, duration: 0.4 }}
-                                    className="text-4xl md:text-6xl font-bold"
+                                    className="text-3xl sm:text-4xl md:text-5xl font-bold truncate"
                                     style={{
                                         fontFamily: currentBrand.headingFont,
                                         color: currentBrand.textColor,
@@ -293,7 +294,7 @@ export default function HeroAnimation() {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.2, duration: 0.4 }}
-                                    className="text-lg md:text-xl opacity-70"
+                                    className="text-base md:text-lg opacity-70 truncate"
                                     style={{
                                         fontFamily: currentBrand.bodyFont,
                                         color: currentBrand.textColor,
@@ -307,26 +308,26 @@ export default function HeroAnimation() {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.3, duration: 0.4 }}
-                                    className="flex items-center gap-3 justify-center md:justify-start"
+                                    className="flex items-center gap-2 md:gap-3 justify-center md:justify-start flex-wrap"
                                 >
                                     <div
-                                        className="w-8 h-8 rounded-lg shadow-lg"
+                                        className="w-6 h-6 md:w-7 md:h-7 rounded-md shadow-md"
                                         style={{ backgroundColor: currentBrand.primaryColor }}
                                         title="Primary"
                                     />
                                     <div
-                                        className="w-8 h-8 rounded-lg shadow-lg"
+                                        className="w-6 h-6 md:w-7 md:h-7 rounded-md shadow-md"
                                         style={{ backgroundColor: currentBrand.accentColor }}
                                         title="Accent"
                                     />
                                     <div
-                                        className="w-8 h-8 rounded-lg shadow-lg border border-white/20"
+                                        className="w-6 h-6 md:w-7 md:h-7 rounded-md shadow-md border border-white/20"
                                         style={{ backgroundColor: currentBrand.bgColor }}
                                         title="Background"
                                     />
-                                    <div className="ml-2 text-xs text-white/40 font-mono">
+                                    <span className="ml-1 text-[10px] md:text-xs text-white/40 font-mono">
                                         {currentBrand.primaryColor}
-                                    </div>
+                                    </span>
                                 </motion.div>
 
                                 {/* Typography Preview */}
@@ -334,12 +335,12 @@ export default function HeroAnimation() {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.4, duration: 0.4 }}
-                                    className="flex items-center gap-4 text-xs text-white/50 justify-center md:justify-start"
+                                    className="flex items-center gap-2 md:gap-3 text-[10px] md:text-xs text-white/50 justify-center md:justify-start flex-wrap"
                                 >
-                                    <span className="px-2 py-1 rounded bg-white/5">
+                                    <span className="px-2 py-1 rounded bg-white/5 border border-white/5">
                                         {currentBrand.headingFont.split("'")[1] || 'Inter'}
                                     </span>
-                                    <span className="px-2 py-1 rounded bg-white/5">
+                                    <span className="px-2 py-1 rounded bg-white/5 border border-white/5">
                                         {currentBrand.bodyFont.split("'")[1] || 'Inter'}
                                     </span>
                                 </motion.div>
@@ -349,23 +350,23 @@ export default function HeroAnimation() {
                 </div>
 
                 {/* Progress Dots */}
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                <div className="absolute bottom-4 md:bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 md:gap-2">
                     {SHOWCASE_BRANDS.map((_, i) => (
                         <button
                             key={i}
                             onClick={() => setIndex(i)}
                             className={cn(
-                                "w-2 h-2 rounded-full transition-all duration-300",
+                                "h-1.5 md:h-2 rounded-full transition-all duration-300",
                                 i === index
-                                    ? "bg-white w-6"
-                                    : "bg-white/30 hover:bg-white/50"
+                                    ? "bg-white w-4 md:w-6"
+                                    : "w-1.5 md:w-2 bg-white/30 hover:bg-white/50"
                             )}
                         />
                     ))}
                 </div>
 
                 {/* Algorithm Badge */}
-                <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/50 font-mono">
+                <div className="absolute top-3 right-3 md:top-4 md:right-4 px-2 md:px-3 py-1 md:py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-xs text-white/50 font-mono">
                     {currentBrand.algorithm}
                 </div>
             </div>

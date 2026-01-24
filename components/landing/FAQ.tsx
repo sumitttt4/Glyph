@@ -27,7 +27,7 @@ export function FAQ() {
             <div className="max-w-3xl mx-auto px-6 lg:px-8">
                 <div className="mb-16 text-center">
                     <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-stone-950">
-                        The Defense
+                        Frequently Asked Questions
                     </h2>
                     <p className="mt-4 text-stone-600">Common questions from engineers.</p>
                 </div>

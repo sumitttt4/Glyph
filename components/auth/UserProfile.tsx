@@ -16,25 +16,55 @@ export default function UserProfile() {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
-    const supabase = createClient();
+    const [isAdminBypass, setIsAdminBypass] = useState(false);
 
     // Get subscription status
     const subscriptionStatus = useMemo(() => {
+        // If admin bypass cookie is set, treat as admin
+        if (isAdminBypass) {
+            return {
+                plan: 'admin' as const,
+                isPro: true,
+                isAdmin: true,
+                generationsUsed: 0,
+                generationsRemaining: Infinity,
+                canGenerate: true,
+            };
+        }
         return getSubscriptionStatus(user?.email);
-    }, [user?.email]);
+    }, [user?.email, isAdminBypass]);
 
     const { isAdmin, isPro, plan } = subscriptionStatus;
     const planInfo = getPlanDisplayInfo(plan);
 
     // Generate avatar URL based on user email (consistent per user)
     const avatarUrl = useMemo(() => {
+        if (isAdminBypass) return getAvatarUrl('sumitsharma9128@gmail.com');
         if (!user?.email) return getAvatarUrl('guest');
         return getAvatarUrl(user.email);
-    }, [user?.email]);
+    }, [user?.email, isAdminBypass]);
 
     useEffect(() => {
         const getUser = async () => {
             try {
+                // Check for admin bypass cookie first
+                const hasAdminBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
+                if (hasAdminBypass) {
+                    setIsAdminBypass(true);
+                    // Create a pseudo-user for display purposes
+                    setUser({
+                        id: 'admin-bypass',
+                        email: 'sumitsharma9128@gmail.com',
+                        user_metadata: { full_name: 'Sumit Sharma' },
+                        app_metadata: {},
+                        aud: 'authenticated',
+                        created_at: new Date().toISOString(),
+                    } as unknown as User);
+                    setLoading(false);
+                    return;
+                }
+
+                const supabase = createClient();
                 const { data: { user } } = await supabase.auth.getUser();
                 setUser(user);
             } catch (e) {
@@ -45,13 +75,17 @@ export default function UserProfile() {
         };
         getUser();
 
+        const supabase = createClient();
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null);
         });
         return () => subscription.unsubscribe();
-    }, [supabase]);
+    }, []);
 
     const handleSignOut = async () => {
+        // Clear admin bypass cookie
+        document.cookie = 'admin-bypass=; path=/; max-age=0';
+        const supabase = createClient();
         await supabase.auth.signOut();
         window.location.reload();
     };

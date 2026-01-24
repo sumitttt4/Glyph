@@ -19,22 +19,22 @@ export function TokenEngine() {
                             <span className="text-stone-950 underline decoration-[#FF4500] underline-offset-4">code review</span>.
                         </h2>
                         <p className="text-lg text-stone-600 mb-8 leading-relaxed">
-                            Glyph doesn't just pick pretty colors. It calculates semantic token pairs, ensuring accessible contrast ratios and systematic scaling for light and dark modes.
+                            Glyph generates accessible, semantic color palettes that scale automatically for light and dark modes. No more guessing if your text is readable.
                         </p>
 
                         <div className="flex flex-col gap-4">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-stone-100 rounded-lg flex items-center justify-center border border-stone-200 font-mono text-xs font-bold text-stone-950">Aa</div>
                                 <div>
-                                    <div className="font-bold text-stone-950">WCAG 2.1 Compliant</div>
-                                    <div className="text-sm text-stone-500">Auto-checked contrast ratios</div>
+                                    <div className="font-bold text-stone-950">Accessibility Built-In</div>
+                                    <div className="text-sm text-stone-500">Auto-checked contrast ratios so you never fail an audit.</div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-stone-100 rounded-lg flex items-center justify-center border border-stone-200 font-mono text-xs font-bold text-stone-950">{ }</div>
                                 <div>
-                                    <div className="font-bold text-stone-950">Semantic Aliasing</div>
-                                    <div className="text-init text-stone-500">primary-500, surface-200 naming</div>
+                                    <div className="font-bold text-stone-950">Ready for Dark Mode</div>
+                                    <div className="text-sm text-stone-500">Primary, surface, and border tokens mapped automatically.</div>
                                 </div>
                             </div>
                         </div>

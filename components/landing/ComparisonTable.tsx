@@ -38,7 +38,7 @@ export function ComparisonTable() {
             <div className="max-w-4xl mx-auto px-6 lg:px-8">
                 <div className="mb-16 text-center">
                     <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-stone-950">
-                        The Anchor
+                        Why Founders Choose Glyph
                     </h2>
                     <p className="mt-4 text-stone-600">Why startups choose algorithms over agencies.</p>
                 </div>

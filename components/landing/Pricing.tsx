@@ -113,8 +113,8 @@ export default function Pricing() {
                                     <p className="text-stone-400 text-[10px] md:text-xs font-mono">EARLY ACCESS LICENSE</p>
                                 </div>
                                 <div className="relative z-10 text-right pt-2 md:pt-0">
-                                    <span className="block text-xl md:text-2xl font-bold text-orange-500">$19</span>
-                                    <span className="text-stone-500 text-[10px] md:text-xs line-through decoration-red-500">$49</span>
+                                    <span className="block text-xl md:text-2xl font-bold text-orange-500">$49</span>
+                                    <span className="text-stone-500 text-[10px] md:text-xs line-through decoration-red-500">$99</span>
                                 </div>
                             </div>
 
@@ -129,7 +129,8 @@ export default function Pricing() {
                                         "Export Tailwind CSS Config",
                                         "SVG & PNG Asset Pack",
                                         "React Component Code",
-                                        "Priority Support"
+                                        "Priority Support",
+                                        "30-Day Money-Back Guarantee"
                                     ].map((feature) => (
                                         <li key={feature} className="flex items-center gap-3 text-stone-700">
                                             <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center shrink-0">

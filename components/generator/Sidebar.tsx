@@ -108,8 +108,35 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
         }
     }, []);
 
+    // Generation Limit State
+    const [generationCount, setGenerationCount] = useState(0);
+
+    useEffect(() => {
+        const count = parseInt(localStorage.getItem('glyph_generation_count') || '0');
+        setGenerationCount(count);
+    }, []);
+
     const handleGenerate = async () => {
         if (!isValid) return;
+
+        // CHECK LIMIT
+        // Bypass if admin-bypass cookie exists
+        const hasAdminBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
+
+        if (!hasAdminBypass && generationCount >= 3) {
+            // Block action
+            if (confirm("Free preview limit reached. Unlock the Founder Pass to continue generating unlimited brands.\n\nClick OK to upgrade now.")) {
+                window.location.href = "/#pricing"; // Redirect to pricing section
+            }
+            return;
+        }
+
+        // Increment count
+        if (!hasAdminBypass) {
+            const newCount = generationCount + 1;
+            setGenerationCount(newCount);
+            localStorage.setItem('glyph_generation_count', newCount.toString());
+        }
 
         // PLG: Allow everyone to generate (Investment phase)
         // Login is only required for "Guidelines" and "Export" (Conversion phase)
