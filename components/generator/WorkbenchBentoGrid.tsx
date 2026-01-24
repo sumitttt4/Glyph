@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { UnifiedExportMenu } from '@/components/generator/UnifiedExportMenu';
 import { SocialMediaKit } from '@/components/preview/SocialMediaKit';
+import { BrandMockups } from '@/components/preview/BrandMockups';
 // Force rebuild
 import { ArrowUp, ArrowUpRight as ArrowUpEnd } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -346,9 +347,8 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                     <div className="flex items-center gap-2 mb-6 px-2">
                         <h2 className="text-xl font-bold text-stone-900">Real-World Application</h2>
                     </div>
-                    <MockupGallery
-                        logoUrl={logoDataUrl}
-                        primaryColor={tokens.primary}
+                    <BrandMockups
+                        brand={brand}
                     />
                 </div>
 
