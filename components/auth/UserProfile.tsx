@@ -48,7 +48,8 @@ export default function UserProfile() {
         const getUser = async () => {
             try {
                 // Check for admin bypass cookie first
-                const hasAdminBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
+                // Check for admin bypass cookie first
+                const hasAdminBypass = /admin-bypass=true/.test(document.cookie);
                 if (hasAdminBypass) {
                     setIsAdminBypass(true);
                     // Create a pseudo-user for display purposes
