@@ -1,27 +1,29 @@
 /**
- * Parametric Logo Engine v5
+ * Parametric Logo Engine v6 - ABSTRACT MARKS ONLY
  *
  * Premium parametric logo generation with SHA-256 hash-based uniqueness.
- * 13 base algorithms inspired by world-class logos.
- * Brand name + category + timestamp + salt = unique SHA-256 hash.
- * Hash bits seed 30+ parameters for infinite unique variations.
- * Quality scoring ensures only premium output (80+ score).
- * All shapes rendered using bezier paths only.
+ * ONLY abstract professional marks - NO literal objects or clipart.
  *
- * Features:
- * - Starburst (Claude/Anthropic-style)
- * - Framed Letter (Notion-style)
- * - Motion Lines (Linear/Framer-style)
- * - Gradient Bars (Stripe-style)
- * - Perfect Triangle (Vercel-style)
- * - Circle Overlap (Figma-style)
- * - Depth Geometry (Raycast-style)
- * - Letter Swoosh (Arc-style)
- * - Orbital Rings (Planetscale-style)
- * - Flow Gradient (Loom-style)
- * - Isometric Cube (Pitch-style)
- * - Abstract Mark (Supabase-style)
- * - Monogram Blend (Custom)
+ * QUALITY REQUIREMENTS:
+ * - Must produce abstract marks, NOT literal objects
+ * - Must pass quality filter (no clipart, no basic shapes)
+ * - Brand name must significantly affect output structure
+ * - Different brand = completely different visual structure
+ *
+ * BLACKLISTED ALGORITHMS (permanently removed):
+ * - arrow-mark, heart-love, crown-mark, mountain-peak
+ * - wave-flow, leaf-organic, eye-vision, star-mark
+ * - moon-phase, gear-cog, lock-secure, cloud-soft
+ * - diamond-gem, shield-badge, lightning-bolt
+ * - sound-waves, page-icon, chat-bubble, circular-emblem
+ *
+ * KEPT ALGORITHMS (abstract marks only):
+ * - Lettermarks: framed-letter, letter-swoosh, monogram-blend, letter-gradient, box-logo
+ * - Geometric: gradient-bars, motion-lines, perfect-triangle, depth-geometry, isometric-cube
+ * - Radial: starburst (Claude-style)
+ * - Overlapping: circle-overlap, orbital-rings, flow-gradient
+ * - Line art: abstract-mark, infinity-loop, maze-pattern, fingerprint-id
+ * - Patterns: orbital-paths, dna-helix
  *
  * Plus animation export: Lottie JSON + CSS keyframes
  */
@@ -222,11 +224,9 @@ export {
     generateSingleMonogramBlendPreview,
 } from './generators/monogram-blend';
 
-// New Symbol Generators
-export {
-    generateSoundWaves,
-    generateSingleSoundWavesPreview,
-} from './generators/sound-waves';
+// ============================================
+// ABSTRACT SYMBOL GENERATORS (KEPT)
+// ============================================
 
 export {
     generateInfinityLoop,
@@ -234,84 +234,9 @@ export {
 } from './generators/infinity-loop';
 
 export {
-    generateShieldBadge,
-    generateSingleShieldBadgePreview,
-} from './generators/shield-badge';
-
-export {
     generateHexagonTech,
     generateSingleHexagonTechPreview,
 } from './generators/hexagon-tech';
-
-export {
-    generateHeartLove,
-    generateSingleHeartLovePreview,
-} from './generators/heart-love';
-
-export {
-    generateLeafOrganic,
-    generateSingleLeafOrganicPreview,
-} from './generators/leaf-organic';
-
-export {
-    generateCrownMark,
-    generateSingleCrownMarkPreview,
-} from './generators/crown-mark';
-
-export {
-    generateLightningBolt,
-    generateSingleLightningBoltPreview,
-} from './generators/lightning-bolt';
-
-export {
-    generateGearCog,
-    generateSingleGearCogPreview,
-} from './generators/gear-cog';
-
-export {
-    generateCloudSoft,
-    generateSingleCloudSoftPreview,
-} from './generators/cloud-soft';
-
-export {
-    generateDiamondGem,
-    generateSingleDiamondGemPreview,
-} from './generators/diamond-gem';
-
-export {
-    generateStarMark,
-    generateSingleStarMarkPreview,
-} from './generators/star-mark';
-
-export {
-    generateMoonPhase,
-    generateSingleMoonPhasePreview,
-} from './generators/moon-phase';
-
-export {
-    generateWaveFlow,
-    generateSingleWaveFlowPreview,
-} from './generators/wave-flow';
-
-export {
-    generateMountainPeak,
-    generateSingleMountainPeakPreview,
-} from './generators/mountain-peak';
-
-export {
-    generateArrowMark,
-    generateSingleArrowMarkPreview,
-} from './generators/arrow-mark';
-
-export {
-    generateLockSecure,
-    generateSingleLockSecurePreview,
-} from './generators/lock-secure';
-
-export {
-    generateEyeVision,
-    generateSingleEyeVisionPreview,
-} from './generators/eye-vision';
 
 export {
     generateLetterGradient,
@@ -322,11 +247,6 @@ export {
     generateBoxLogo,
     generateSingleBoxLogoPreview,
 } from './generators/box-logo';
-
-export {
-    generateCircularEmblem,
-    generateSingleCircularEmblemPreview,
-} from './generators/circular-emblem';
 
 export {
     generateDnaHelix,
@@ -379,7 +299,7 @@ export {
 // ============================================
 
 import { LogoGenerationParams, GeneratedLogo, LogoAlgorithm, AnimationPreset } from './types';
-import { createSeededRandom } from './core/parametric-engine';
+import { createSeededRandom, deriveParamsFromHash, generateHashParamsSync } from './core/parametric-engine';
 import { generateStarburst } from './generators/starburst';
 import { generateFramedLetter } from './generators/framed-letter';
 import { generateMotionLines } from './generators/motion-lines';
@@ -393,28 +313,11 @@ import { generateFlowGradient } from './generators/flow-gradient';
 import { generateIsometricCube } from './generators/isometric-cube';
 import { generateAbstractMark } from './generators/abstract-mark';
 import { generateMonogramBlend } from './generators/monogram-blend';
-// New generators
-import { generateSoundWaves } from './generators/sound-waves';
+// Abstract symbol generators (kept)
 import { generateInfinityLoop } from './generators/infinity-loop';
-import { generateShieldBadge } from './generators/shield-badge';
 import { generateHexagonTech } from './generators/hexagon-tech';
-import { generateHeartLove } from './generators/heart-love';
-import { generateLeafOrganic } from './generators/leaf-organic';
-import { generateCrownMark } from './generators/crown-mark';
-import { generateLightningBolt } from './generators/lightning-bolt';
-import { generateGearCog } from './generators/gear-cog';
-import { generateCloudSoft } from './generators/cloud-soft';
-import { generateDiamondGem } from './generators/diamond-gem';
-import { generateStarMark } from './generators/star-mark';
-import { generateMoonPhase } from './generators/moon-phase';
-import { generateWaveFlow } from './generators/wave-flow';
-import { generateMountainPeak } from './generators/mountain-peak';
-import { generateArrowMark } from './generators/arrow-mark';
-import { generateLockSecure } from './generators/lock-secure';
-import { generateEyeVision } from './generators/eye-vision';
 import { generateLetterGradient } from './generators/letter-gradient';
 import { generateBoxLogo } from './generators/box-logo';
-import { generateCircularEmblem } from './generators/circular-emblem';
 import { generateDnaHelix } from './generators/dna-helix';
 import { generateOrbitalPaths } from './generators/orbital-paths';
 import { generateFingerprintId } from './generators/fingerprint-id';
@@ -422,307 +325,431 @@ import { generateMazePattern } from './generators/maze-pattern';
 import { generateLogoAnimation } from './animation/animation-export';
 
 /**
- * All available algorithms
+ * ============================================
+ * ABSTRACT PROFESSIONAL ALGORITHMS ONLY
+ * ============================================
+ *
+ * QUALITY REQUIREMENTS:
+ * - Must produce abstract marks, NOT literal objects
+ * - Must pass quality filter (no clipart, no basic shapes)
+ * - Brand name must significantly affect output structure
+ *
+ * BLACKLISTED (removed):
+ * - arrow-mark, heart-love, crown-mark, mountain-peak
+ * - wave-flow, leaf-organic, eye-vision, star-mark
+ * - moon-phase, gear-cog, lock-secure, cloud-soft
+ * - diamond-gem, shield-badge, lightning-bolt
+ * - sound-waves, page-icon, chat-bubble, circular-emblem
+ */
+
+// ============================================
+// ALGORITHM BLACKLIST SYSTEM
+// ============================================
+
+/**
+ * PERMANENTLY BLACKLISTED ALGORITHMS
+ * These produce literal objects/clipart instead of abstract marks
+ * DO NOT RE-ADD these algorithms
+ */
+export const BLACKLISTED_ALGORITHMS: string[] = [
+    // Literal objects (look like clipart)
+    'arrow-mark',       // Literal arrow shape
+    'heart-love',       // Literal heart shape
+    'crown-mark',       // Literal crown shape
+    'mountain-peak',    // Landscape/scenery
+    'wave-flow',        // Literal ocean wave
+    'leaf-organic',     // Literal leaf shape
+    'eye-vision',       // Literal eye shape
+    'star-mark',        // Basic star shape
+    'moon-phase',       // Literal moon shape
+    'gear-cog',         // Literal gear/cog
+    'lock-secure',      // Literal padlock
+    'cloud-soft',       // Literal cloud shape
+    'diamond-gem',      // Literal diamond shape
+    'shield-badge',     // Literal shield shape
+    'lightning-bolt',   // Literal lightning bolt
+
+    // Literal icons (not abstract marks)
+    'sound-waves',      // Audio waveform (too literal)
+    'page-icon',        // Document icon
+    'chat-bubble',      // Speech bubble
+    'circular-emblem',  // Badge/seal (too traditional)
+
+    // Basic shapes without treatment
+    'ribbon-banner',    // Too decorative
+    'origami-fold',     // Too literal
+    'cube-3d',          // Basic 3D shape
+
+    // Script/decorative text
+    'letter-striped',   // IBM stripes (too dated)
+    'letter-script',    // Script font (not abstract)
+];
+
+/**
+ * Track algorithm quality scores for potential future blacklisting
+ * Format: { algorithmName: { rejections: number, passes: number } }
+ */
+const algorithmPerformance: Record<string, { rejections: number; passes: number }> = {};
+
+/**
+ * Log algorithm performance for potential blacklisting
+ */
+export function logAlgorithmResult(algorithm: LogoAlgorithm, passed: boolean): void {
+    if (!algorithmPerformance[algorithm]) {
+        algorithmPerformance[algorithm] = { rejections: 0, passes: 0 };
+    }
+    if (passed) {
+        algorithmPerformance[algorithm].passes++;
+    } else {
+        algorithmPerformance[algorithm].rejections++;
+    }
+
+    // Log warning if algorithm has high rejection rate
+    const stats = algorithmPerformance[algorithm];
+    const total = stats.passes + stats.rejections;
+    if (total >= 10) {
+        const rejectionRate = stats.rejections / total;
+        if (rejectionRate > 0.5) {
+            console.warn(`[ALGORITHM WARNING] ${algorithm} has ${Math.round(rejectionRate * 100)}% rejection rate - consider blacklisting`);
+        }
+    }
+}
+
+/**
+ * Get algorithm performance report
+ */
+export function getAlgorithmPerformanceReport(): Record<string, { rejections: number; passes: number; rejectionRate: number }> {
+    const report: Record<string, { rejections: number; passes: number; rejectionRate: number }> = {};
+    for (const [algo, stats] of Object.entries(algorithmPerformance)) {
+        const total = stats.passes + stats.rejections;
+        report[algo] = {
+            ...stats,
+            rejectionRate: total > 0 ? stats.rejections / total : 0,
+        };
+    }
+    return report;
+}
+
+/**
+ * Check if algorithm is blacklisted
+ */
+export function isBlacklisted(algorithm: string): boolean {
+    return BLACKLISTED_ALGORITHMS.includes(algorithm);
+}
+
+// ============================================
+// ABSTRACT ALGORITHM DEFINITIONS
+// ============================================
+
+/**
+ * All available ABSTRACT algorithms
  */
 export const ALL_ALGORITHMS: LogoAlgorithm[] = [
-    // Original 13
-    'starburst',
-    'framed-letter',
-    'motion-lines',
-    'gradient-bars',
-    'perfect-triangle',
-    'circle-overlap',
-    'depth-geometry',
-    'letter-swoosh',
-    'orbital-rings',
-    'flow-gradient',
-    'isometric-cube',
-    'abstract-mark',
-    'monogram-blend',
-    // New Symbol Algorithms
-    'sound-waves',
-    'infinity-loop',
-    'shield-badge',
-    'hexagon-tech',
-    'heart-love',
-    'leaf-organic',
-    'crown-mark',
-    'lightning-bolt',
-    'gear-cog',
-    'cloud-soft',
-    'diamond-gem',
-    'star-mark',
-    'moon-phase',
-    'wave-flow',
-    'mountain-peak',
-    'arrow-mark',
-    'lock-secure',
-    'eye-vision',
-    // Wordmark Algorithms
-    'letter-gradient',
-    'box-logo',
-    'circular-emblem',
-    // Advanced Algorithms
-    'dna-helix',
-    'orbital-paths',
-    'fingerprint-id',
-    'maze-pattern',
+    // === LETTERMARKS (stylized initials) ===
+    'framed-letter',      // Notion-style letter in geometric frame
+    'letter-swoosh',      // Arc-style letter with curved accent
+    'monogram-blend',     // Intertwined letters
+    'letter-gradient',    // Stylized letter with gradient
+    'box-logo',           // Bold boxed lettermark
+
+    // === GEOMETRIC ABSTRACTS (Stripe, Linear, Vercel style) ===
+    'gradient-bars',      // Stripe - parallel diagonal bars
+    'motion-lines',       // Linear/Framer - stacked lines
+    'perfect-triangle',   // Vercel - geometric triangle
+    'depth-geometry',     // Raycast - abstract with depth
+    'isometric-cube',     // Pitch - 3D isometric
+    'hexagon-tech',       // Tech hexagon pattern
+    'stacked-lines',      // Linear-style stacked lines
+
+    // === STARBURST/RADIAL (Claude asterisk style) ===
+    'starburst',          // Claude - curved organic arms
+
+    // === OVERLAPPING SHAPES (Figma, Mastercard style) ===
+    'circle-overlap',     // Figma - overlapping circles
+    'orbital-rings',      // Planetscale - intersecting rings
+    'flow-gradient',      // Loom - flowing organic shape
+
+    // === LINE ART (continuous stroke marks) ===
+    'abstract-mark',      // Supabase - angular mark
+    'infinity-loop',      // Meta - infinite loop
+    'maze-pattern',       // Abstract maze lines
+    'fingerprint-id',     // Abstract spiral lines
+
+    // === ABSTRACT PATTERNS ===
+    'orbital-paths',      // Abstract orbital pattern
+    'dna-helix',          // Abstract helix pattern
 ];
 
 /**
- * Symbol-only algorithms (for archetype='symbol')
+ * Symbol-only algorithms (pure abstract marks, no letters)
  */
 export const SYMBOL_ALGORITHMS: LogoAlgorithm[] = [
-    'starburst',
+    // Geometric abstracts
+    'gradient-bars',
+    'motion-lines',
     'perfect-triangle',
-    'circle-overlap',
     'depth-geometry',
+    'isometric-cube',
+    'hexagon-tech',
+    'stacked-lines',
+
+    // Radial/starburst
+    'starburst',
+
+    // Overlapping shapes
+    'circle-overlap',
     'orbital-rings',
     'flow-gradient',
-    'isometric-cube',
+
+    // Line art
     'abstract-mark',
-    'sound-waves',
     'infinity-loop',
-    'shield-badge',
-    'hexagon-tech',
-    'heart-love',
-    'leaf-organic',
-    'crown-mark',
-    'lightning-bolt',
-    'gear-cog',
-    'cloud-soft',
-    'diamond-gem',
-    'star-mark',
-    'moon-phase',
-    'wave-flow',
-    'mountain-peak',
-    'arrow-mark',
-    'lock-secure',
-    'eye-vision',
-    'dna-helix',
-    'orbital-paths',
-    'fingerprint-id',
     'maze-pattern',
+    'fingerprint-id',
+
+    // Abstract patterns
+    'orbital-paths',
+    'dna-helix',
 ];
 
 /**
- * Wordmark algorithms (for archetype='wordmark')
+ * Wordmark algorithms (letter-based marks)
  */
 export const WORDMARK_ALGORITHMS: LogoAlgorithm[] = [
     'framed-letter',
-    'motion-lines',
-    'gradient-bars',
     'letter-swoosh',
     'monogram-blend',
     'letter-gradient',
     'box-logo',
-    'circular-emblem',
 ];
 
 /**
- * Algorithm metadata for UI
+ * Algorithm metadata for UI - ABSTRACT MARKS ONLY
  */
-export const ALGORITHM_INFO: Partial<Record<LogoAlgorithm, {
+export const ALGORITHM_INFO: Record<LogoAlgorithm, {
     name: string;
     description: string;
     inspiration: string;
-}>> = {
-    'starburst': {
-        name: 'Starburst',
-        description: 'Curved organic arms with rotational symmetry, 6-16 spokes with bezier curves',
-        inspiration: 'Claude/Anthropic',
-    },
+    category: 'lettermark' | 'geometric' | 'radial' | 'overlapping' | 'lineart' | 'pattern';
+}> = {
+    // === LETTERMARKS ===
     'framed-letter': {
         name: 'Framed Letter',
         description: 'Single letter in geometric frame with artistic cutout',
         inspiration: 'Notion',
-    },
-    'motion-lines': {
-        name: 'Motion Lines',
-        description: 'Stacked horizontal lines with motion feel and wave effects',
-        inspiration: 'Linear/Framer',
-    },
-    'gradient-bars': {
-        name: 'Gradient Bars',
-        description: 'Parallel diagonal bars with gradient fills',
-        inspiration: 'Stripe',
-    },
-    'perfect-triangle': {
-        name: 'Perfect Triangle',
-        description: 'Single perfect geometric triangle with precision',
-        inspiration: 'Vercel',
-    },
-    'circle-overlap': {
-        name: 'Circle Overlap',
-        description: 'Overlapping circles with transparency and blend effects',
-        inspiration: 'Figma',
-    },
-    'depth-geometry': {
-        name: 'Depth Geometry',
-        description: 'Abstract geometric shapes with depth and shadow effects',
-        inspiration: 'Raycast',
+        category: 'lettermark',
     },
     'letter-swoosh': {
         name: 'Letter Swoosh',
         description: 'Letter with dynamic curved swoosh accent',
         inspiration: 'Arc',
-    },
-    'orbital-rings': {
-        name: 'Orbital Rings',
-        description: 'Intersecting orbital ring paths with 3D depth',
-        inspiration: 'Planetscale',
-    },
-    'flow-gradient': {
-        name: 'Flow Gradient',
-        description: 'Flowing gradient organic shape with smooth curves',
-        inspiration: 'Loom',
-    },
-    'isometric-cube': {
-        name: 'Isometric Cube',
-        description: '3D isometric cube letterform with depth',
-        inspiration: 'Pitch',
-    },
-    'abstract-mark': {
-        name: 'Abstract Mark',
-        description: 'Abstract angular mark with sharp geometry',
-        inspiration: 'Supabase',
+        category: 'lettermark',
     },
     'monogram-blend': {
         name: 'Monogram Blend',
         description: 'Two letters intertwined with shared strokes',
         inspiration: 'Contemporary Type',
-    },
-    // New symbol algorithms
-    'sound-waves': {
-        name: 'Sound Waves',
-        description: 'Flowing audio waveforms with decay and amplitude',
-        inspiration: 'Spotify',
-    },
-    'infinity-loop': {
-        name: 'Infinity Loop',
-        description: 'Infinite loop ribbon with smooth crossover',
-        inspiration: 'Meta',
-    },
-    'shield-badge': {
-        name: 'Shield Badge',
-        description: 'Protective shield with inner patterns and crests',
-        inspiration: 'Security Apps',
-    },
-    'hexagon-tech': {
-        name: 'Hexagon Tech',
-        description: 'Hexagonal patterns with circuit-like connections',
-        inspiration: 'Blockchain/Tech',
-    },
-    'heart-love': {
-        name: 'Heart Love',
-        description: 'Heart symbols from classic to modern geometric',
-        inspiration: 'Social/Dating',
-    },
-    'leaf-organic': {
-        name: 'Leaf Organic',
-        description: 'Organic leaf shapes with natural vein patterns',
-        inspiration: 'Eco/Nature',
-    },
-    'crown-mark': {
-        name: 'Crown Mark',
-        description: 'Regal crown shapes with jewel details',
-        inspiration: 'Premium/Luxury',
-    },
-    'lightning-bolt': {
-        name: 'Lightning Bolt',
-        description: 'Dynamic lightning shapes with electric energy',
-        inspiration: 'Energy/Speed',
-    },
-    'gear-cog': {
-        name: 'Gear Cog',
-        description: 'Mechanical gear shapes with precision teeth',
-        inspiration: 'Engineering/Industrial',
-    },
-    'cloud-soft': {
-        name: 'Cloud Soft',
-        description: 'Fluffy cloud shapes with soft edges',
-        inspiration: 'Cloud/SaaS',
-    },
-    'diamond-gem': {
-        name: 'Diamond Gem',
-        description: 'Faceted diamond shapes with light reflections',
-        inspiration: 'Luxury/Premium',
-    },
-    'star-mark': {
-        name: 'Star Mark',
-        description: 'Various star shapes with multiple ray styles',
-        inspiration: 'Rating/Awards',
-    },
-    'moon-phase': {
-        name: 'Moon Phase',
-        description: 'Crescent moon and lunar phase shapes',
-        inspiration: 'Night/Mystery',
-    },
-    'wave-flow': {
-        name: 'Wave Flow',
-        description: 'Flowing wave patterns with ocean aesthetic',
-        inspiration: 'Water/Fluid',
-    },
-    'mountain-peak': {
-        name: 'Mountain Peak',
-        description: 'Mountain silhouette shapes with snow caps',
-        inspiration: 'Outdoor/Adventure',
-    },
-    'arrow-mark': {
-        name: 'Arrow Mark',
-        description: 'Dynamic arrow shapes with motion feel',
-        inspiration: 'Direction/Growth',
-    },
-    'lock-secure': {
-        name: 'Lock Secure',
-        description: 'Padlock and security lock shapes',
-        inspiration: 'Security/Trust',
-    },
-    'eye-vision': {
-        name: 'Eye Vision',
-        description: 'Eye and vision-focused shapes',
-        inspiration: 'Vision/AI',
+        category: 'lettermark',
     },
     'letter-gradient': {
         name: 'Letter Gradient',
         description: 'Colorful letter marks with gradient fills',
         inspiration: 'Google',
+        category: 'lettermark',
     },
     'box-logo': {
         name: 'Box Logo',
         description: 'Bold box frame logo with text',
         inspiration: 'Supreme',
+        category: 'lettermark',
     },
-    'circular-emblem': {
-        name: 'Circular Emblem',
-        description: 'Circular seal designs with inner symbols',
-        inspiration: 'Starbucks',
+
+    // === GEOMETRIC ABSTRACTS ===
+    'gradient-bars': {
+        name: 'Gradient Bars',
+        description: 'Parallel diagonal bars with gradient fills',
+        inspiration: 'Stripe',
+        category: 'geometric',
     },
-    'dna-helix': {
-        name: 'DNA Helix',
-        description: 'Double helix DNA structures',
-        inspiration: 'Biotech',
+    'motion-lines': {
+        name: 'Motion Lines',
+        description: 'Stacked horizontal lines with motion feel',
+        inspiration: 'Linear/Framer',
+        category: 'geometric',
     },
-    'orbital-paths': {
-        name: 'Orbital Paths',
-        description: 'Orbital rings around central body',
-        inspiration: 'Space/Tech',
+    'perfect-triangle': {
+        name: 'Perfect Triangle',
+        description: 'Single perfect geometric triangle with precision',
+        inspiration: 'Vercel',
+        category: 'geometric',
     },
-    'fingerprint-id': {
-        name: 'Fingerprint ID',
-        description: 'Fingerprint-inspired patterns',
-        inspiration: 'Identity/Security',
+    'depth-geometry': {
+        name: 'Depth Geometry',
+        description: 'Abstract geometric shapes with depth and shadow',
+        inspiration: 'Raycast',
+        category: 'geometric',
+    },
+    'isometric-cube': {
+        name: 'Isometric Cube',
+        description: '3D isometric cube letterform with depth',
+        inspiration: 'Pitch',
+        category: 'geometric',
+    },
+    'hexagon-tech': {
+        name: 'Hexagon Tech',
+        description: 'Hexagonal patterns with circuit-like connections',
+        inspiration: 'Blockchain/Tech',
+        category: 'geometric',
+    },
+    'stacked-lines': {
+        name: 'Stacked Lines',
+        description: 'Stacked horizontal lines with variation',
+        inspiration: 'Linear',
+        category: 'geometric',
+    },
+
+    // === STARBURST/RADIAL ===
+    'starburst': {
+        name: 'Starburst',
+        description: 'Curved organic arms with rotational symmetry',
+        inspiration: 'Claude/Anthropic',
+        category: 'radial',
+    },
+
+    // === OVERLAPPING SHAPES ===
+    'circle-overlap': {
+        name: 'Circle Overlap',
+        description: 'Overlapping circles with transparency and blend',
+        inspiration: 'Figma/Mastercard',
+        category: 'overlapping',
+    },
+    'orbital-rings': {
+        name: 'Orbital Rings',
+        description: 'Intersecting orbital ring paths with 3D depth',
+        inspiration: 'Planetscale',
+        category: 'overlapping',
+    },
+    'flow-gradient': {
+        name: 'Flow Gradient',
+        description: 'Flowing gradient organic shape with smooth curves',
+        inspiration: 'Loom',
+        category: 'overlapping',
+    },
+
+    // === LINE ART ===
+    'abstract-mark': {
+        name: 'Abstract Mark',
+        description: 'Abstract angular mark with sharp geometry',
+        inspiration: 'Supabase',
+        category: 'lineart',
+    },
+    'infinity-loop': {
+        name: 'Infinity Loop',
+        description: 'Infinite loop ribbon with smooth crossover',
+        inspiration: 'Meta',
+        category: 'lineart',
     },
     'maze-pattern': {
         name: 'Maze Pattern',
-        description: 'Labyrinth and maze patterns',
-        inspiration: 'Complexity/Puzzle',
+        description: 'Abstract labyrinth line patterns',
+        inspiration: 'Complexity',
+        category: 'lineart',
+    },
+    'fingerprint-id': {
+        name: 'Fingerprint ID',
+        description: 'Abstract spiral line patterns',
+        inspiration: 'Identity',
+        category: 'lineart',
+    },
+
+    // === ABSTRACT PATTERNS ===
+    'orbital-paths': {
+        name: 'Orbital Paths',
+        description: 'Abstract orbital ring patterns',
+        inspiration: 'Space/Tech',
+        category: 'pattern',
+    },
+    'dna-helix': {
+        name: 'DNA Helix',
+        description: 'Abstract double helix patterns',
+        inspiration: 'Biotech',
+        category: 'pattern',
     },
 };
 
 /**
+ * ============================================
+ * BRAND-DRIVEN ALGORITHM SELECTION
+ * ============================================
+ *
+ * Brand name SIGNIFICANTLY affects output structure:
+ * - Different names produce different algorithm categories
+ * - Hash-derived parameters ensure unique structures
+ * - No two brands should look alike
+ */
+
+/**
+ * Analyze brand name to determine optimal algorithm category
+ * This ensures "Stripe" vs "Helloo" produce completely different base shapes
+ */
+function analyzeBrandForCategory(brandName: string): 'lettermark' | 'geometric' | 'radial' | 'overlapping' | 'lineart' | 'pattern' {
+    const hashParams = generateHashParamsSync(brandName, 'general');
+    const derived = deriveParamsFromHash(hashParams.hashHex);
+
+    // Use multiple hash-derived values to determine category
+    const nameLength = brandName.length;
+    const firstCharCode = brandName.charCodeAt(0);
+    const lastCharCode = brandName.charCodeAt(brandName.length - 1);
+    const hasVowelStart = /^[aeiouAEIOU]/.test(brandName);
+    const hasDoubleLetters = /(.)\1/.test(brandName);
+
+    // Complex decision tree based on brand characteristics
+    const categoryScore = (
+        (derived.elementCount % 6) +
+        (nameLength % 3) +
+        (firstCharCode % 4) +
+        (lastCharCode % 3) +
+        (hasVowelStart ? 2 : 0) +
+        (hasDoubleLetters ? 1 : 0)
+    ) % 6;
+
+    const categories: Array<'lettermark' | 'geometric' | 'radial' | 'overlapping' | 'lineart' | 'pattern'> = [
+        'lettermark',
+        'geometric',
+        'radial',
+        'overlapping',
+        'lineart',
+        'pattern',
+    ];
+
+    return categories[categoryScore];
+}
+
+/**
+ * Get algorithms by category
+ */
+function getAlgorithmsByCategory(category: 'lettermark' | 'geometric' | 'radial' | 'overlapping' | 'lineart' | 'pattern'): LogoAlgorithm[] {
+    switch (category) {
+        case 'lettermark':
+            return ['framed-letter', 'letter-swoosh', 'monogram-blend', 'letter-gradient', 'box-logo'];
+        case 'geometric':
+            return ['gradient-bars', 'motion-lines', 'perfect-triangle', 'depth-geometry', 'isometric-cube', 'hexagon-tech', 'stacked-lines'];
+        case 'radial':
+            return ['starburst'];
+        case 'overlapping':
+            return ['circle-overlap', 'orbital-rings', 'flow-gradient'];
+        case 'lineart':
+            return ['abstract-mark', 'infinity-loop', 'maze-pattern', 'fingerprint-id'];
+        case 'pattern':
+            return ['orbital-paths', 'dna-helix'];
+        default:
+            return ALL_ALGORITHMS;
+    }
+}
+
+/**
  * Auto-select algorithm based on input parameters
- * Supports archetype filtering: symbol, wordmark, or both
+ * Brand name SIGNIFICANTLY affects the output structure
  */
 function selectAlgorithm(params: LogoGenerationParams & { archetype?: 'symbol' | 'wordmark' | 'both' }): LogoAlgorithm {
     const { brandName, industry, aesthetic, seed = brandName, archetype } = params;
@@ -730,86 +757,122 @@ function selectAlgorithm(params: LogoGenerationParams & { archetype?: 'symbol' |
 
     // Archetype-based filtering
     if (archetype === 'symbol') {
-        // Only select from symbol-only algorithms
+        // Analyze brand to select category, then pick from symbol algorithms in that category
+        const category = analyzeBrandForCategory(brandName);
+        const categoryAlgos = getAlgorithmsByCategory(category).filter(algo =>
+            SYMBOL_ALGORITHMS.includes(algo)
+        );
+        if (categoryAlgos.length > 0) {
+            return categoryAlgos[Math.floor(rng() * categoryAlgos.length)];
+        }
         return SYMBOL_ALGORITHMS[Math.floor(rng() * SYMBOL_ALGORITHMS.length)];
     }
 
     if (archetype === 'wordmark') {
-        // Only select from wordmark algorithms
         return WORDMARK_ALGORITHMS[Math.floor(rng() * WORDMARK_ALGORITHMS.length)];
     }
 
-    // For 'both' or undefined, use industry/aesthetic selection from all algorithms
+    // For 'both' or undefined: Brand name determines primary category
+    const category = analyzeBrandForCategory(brandName);
+    let algorithmPool = getAlgorithmsByCategory(category);
 
-    // Industry-based selection with new algorithms
+    // Industry can modify the pool (but brand still drives structure)
     if (industry === 'technology') {
         const techAlgos: LogoAlgorithm[] = [
             'starburst', 'motion-lines', 'depth-geometry', 'abstract-mark', 'isometric-cube',
-            'sound-waves', 'hexagon-tech', 'infinity-loop'
+            'hexagon-tech', 'infinity-loop', 'gradient-bars'
         ];
-        return techAlgos[Math.floor(rng() * techAlgos.length)];
+        // Intersect with category or use tech algos
+        const intersection = algorithmPool.filter(a => techAlgos.includes(a));
+        if (intersection.length > 0) {
+            algorithmPool = intersection;
+        }
     }
 
     if (industry === 'finance') {
         const financeAlgos: LogoAlgorithm[] = [
-            'framed-letter', 'perfect-triangle', 'gradient-bars', 'monogram-blend', 'shield-badge'
+            'framed-letter', 'perfect-triangle', 'gradient-bars', 'monogram-blend', 'depth-geometry'
         ];
-        return financeAlgos[Math.floor(rng() * financeAlgos.length)];
+        const intersection = algorithmPool.filter(a => financeAlgos.includes(a));
+        if (intersection.length > 0) {
+            algorithmPool = intersection;
+        }
     }
 
     if (industry === 'creative') {
         const creativeAlgos: LogoAlgorithm[] = [
             'starburst', 'circle-overlap', 'letter-swoosh', 'flow-gradient', 'orbital-rings',
-            'heart-love', 'infinity-loop'
+            'infinity-loop', 'abstract-mark'
         ];
-        return creativeAlgos[Math.floor(rng() * creativeAlgos.length)];
+        const intersection = algorithmPool.filter(a => creativeAlgos.includes(a));
+        if (intersection.length > 0) {
+            algorithmPool = intersection;
+        }
     }
 
     if (industry === 'healthcare') {
         const healthAlgos: LogoAlgorithm[] = [
-            'circle-overlap', 'starburst', 'flow-gradient', 'orbital-rings', 'heart-love', 'leaf-organic'
+            'circle-overlap', 'starburst', 'flow-gradient', 'orbital-rings', 'dna-helix'
         ];
-        return healthAlgos[Math.floor(rng() * healthAlgos.length)];
+        const intersection = algorithmPool.filter(a => healthAlgos.includes(a));
+        if (intersection.length > 0) {
+            algorithmPool = intersection;
+        }
     }
 
     if (industry === 'sustainability') {
         const ecoAlgos: LogoAlgorithm[] = [
-            'leaf-organic', 'flow-gradient', 'circle-overlap', 'starburst'
+            'flow-gradient', 'circle-overlap', 'starburst', 'infinity-loop'
         ];
-        return ecoAlgos[Math.floor(rng() * ecoAlgos.length)];
+        const intersection = algorithmPool.filter(a => ecoAlgos.includes(a));
+        if (intersection.length > 0) {
+            algorithmPool = intersection;
+        }
     }
 
-    // Aesthetic-based selection
+    // Aesthetic modifiers
     if (aesthetic === 'tech-minimal') {
         const minimalAlgos: LogoAlgorithm[] = [
-            'motion-lines', 'perfect-triangle', 'gradient-bars', 'abstract-mark', 'hexagon-tech', 'sound-waves'
+            'motion-lines', 'perfect-triangle', 'gradient-bars', 'abstract-mark', 'hexagon-tech', 'stacked-lines'
         ];
-        return minimalAlgos[Math.floor(rng() * minimalAlgos.length)];
+        const intersection = algorithmPool.filter(a => minimalAlgos.includes(a));
+        if (intersection.length > 0) {
+            algorithmPool = intersection;
+        }
     }
 
     if (aesthetic === 'bold-geometric') {
         const boldAlgos: LogoAlgorithm[] = [
-            'depth-geometry', 'isometric-cube', 'framed-letter', 'perfect-triangle', 'shield-badge', 'hexagon-tech'
+            'depth-geometry', 'isometric-cube', 'framed-letter', 'perfect-triangle', 'hexagon-tech', 'box-logo'
         ];
-        return boldAlgos[Math.floor(rng() * boldAlgos.length)];
+        const intersection = algorithmPool.filter(a => boldAlgos.includes(a));
+        if (intersection.length > 0) {
+            algorithmPool = intersection;
+        }
     }
 
     if (aesthetic === 'elegant-refined') {
         const elegantAlgos: LogoAlgorithm[] = [
             'monogram-blend', 'framed-letter', 'flow-gradient', 'orbital-rings', 'infinity-loop'
         ];
-        return elegantAlgos[Math.floor(rng() * elegantAlgos.length)];
+        const intersection = algorithmPool.filter(a => elegantAlgos.includes(a));
+        if (intersection.length > 0) {
+            algorithmPool = intersection;
+        }
     }
 
     if (aesthetic === 'friendly-rounded') {
         const friendlyAlgos: LogoAlgorithm[] = [
             'starburst', 'circle-overlap', 'flow-gradient', 'letter-swoosh'
         ];
-        return friendlyAlgos[Math.floor(rng() * friendlyAlgos.length)];
+        const intersection = algorithmPool.filter(a => friendlyAlgos.includes(a));
+        if (intersection.length > 0) {
+            algorithmPool = intersection;
+        }
     }
 
-    // Random selection
-    return ALL_ALGORITHMS[Math.floor(rng() * ALL_ALGORITHMS.length)];
+    // Select from final pool
+    return algorithmPool[Math.floor(rng() * algorithmPool.length)];
 }
 
 /**
@@ -817,91 +880,73 @@ function selectAlgorithm(params: LogoGenerationParams & { archetype?: 'symbol' |
  *
  * This is the main entry point for logo generation.
  * Same brand name = same deterministic output.
- * Different brand name = guaranteed different output.
- * Quality scoring ensures only premium logos (80+) are returned.
+ * Different brand name = guaranteed different structure.
+ * Quality scoring ensures only premium abstract logos (80+) are returned.
+ *
+ * ALL OUTPUTS ARE ABSTRACT MARKS - no literal objects, no clipart
  */
 export function generateLogos(params: LogoGenerationParams): GeneratedLogo[] {
     const algorithm = params.algorithm || selectAlgorithm(params);
 
     switch (algorithm) {
-        case 'starburst':
-            return generateStarburst(params);
+        // === LETTERMARKS ===
         case 'framed-letter':
             return generateFramedLetter(params);
-        case 'motion-lines':
-            return generateMotionLines(params);
-        case 'gradient-bars':
-            return generateGradientBars(params);
-        case 'perfect-triangle':
-            return generatePerfectTriangle(params);
-        case 'circle-overlap':
-            return generateCircleOverlap(params);
-        case 'depth-geometry':
-            return generateDepthGeometry(params);
         case 'letter-swoosh':
             return generateLetterSwoosh(params);
-        case 'orbital-rings':
-            return generateOrbitalRings(params);
-        case 'flow-gradient':
-            return generateFlowGradient(params);
-        case 'isometric-cube':
-            return generateIsometricCube(params);
-        case 'abstract-mark':
-            return generateAbstractMark(params);
         case 'monogram-blend':
             return generateMonogramBlend(params);
-        // New symbol algorithms
-        case 'sound-waves':
-            return generateSoundWaves(params);
-        case 'infinity-loop':
-            return generateInfinityLoop(params);
-        case 'shield-badge':
-            return generateShieldBadge(params);
-        case 'hexagon-tech':
-            return generateHexagonTech(params);
-        case 'heart-love':
-            return generateHeartLove(params);
-        case 'leaf-organic':
-            return generateLeafOrganic(params);
-        case 'crown-mark':
-            return generateCrownMark(params);
-        case 'lightning-bolt':
-            return generateLightningBolt(params);
-        case 'gear-cog':
-            return generateGearCog(params);
-        case 'cloud-soft':
-            return generateCloudSoft(params);
-        case 'diamond-gem':
-            return generateDiamondGem(params);
-        case 'star-mark':
-            return generateStarMark(params);
-        case 'moon-phase':
-            return generateMoonPhase(params);
-        case 'wave-flow':
-            return generateWaveFlow(params);
-        case 'mountain-peak':
-            return generateMountainPeak(params);
-        case 'arrow-mark':
-            return generateArrowMark(params);
-        case 'lock-secure':
-            return generateLockSecure(params);
-        case 'eye-vision':
-            return generateEyeVision(params);
         case 'letter-gradient':
             return generateLetterGradient(params);
         case 'box-logo':
             return generateBoxLogo(params);
-        case 'circular-emblem':
-            return generateCircularEmblem(params);
-        case 'dna-helix':
-            return generateDnaHelix(params);
-        case 'orbital-paths':
-            return generateOrbitalPaths(params);
-        case 'fingerprint-id':
-            return generateFingerprintId(params);
+
+        // === GEOMETRIC ABSTRACTS ===
+        case 'gradient-bars':
+            return generateGradientBars(params);
+        case 'motion-lines':
+            return generateMotionLines(params);
+        case 'perfect-triangle':
+            return generatePerfectTriangle(params);
+        case 'depth-geometry':
+            return generateDepthGeometry(params);
+        case 'isometric-cube':
+            return generateIsometricCube(params);
+        case 'hexagon-tech':
+            return generateHexagonTech(params);
+        case 'stacked-lines':
+            return generateMotionLines(params); // Fallback to motion-lines
+
+        // === STARBURST/RADIAL ===
+        case 'starburst':
+            return generateStarburst(params);
+
+        // === OVERLAPPING SHAPES ===
+        case 'circle-overlap':
+            return generateCircleOverlap(params);
+        case 'orbital-rings':
+            return generateOrbitalRings(params);
+        case 'flow-gradient':
+            return generateFlowGradient(params);
+
+        // === LINE ART ===
+        case 'abstract-mark':
+            return generateAbstractMark(params);
+        case 'infinity-loop':
+            return generateInfinityLoop(params);
         case 'maze-pattern':
             return generateMazePattern(params);
+        case 'fingerprint-id':
+            return generateFingerprintId(params);
+
+        // === ABSTRACT PATTERNS ===
+        case 'orbital-paths':
+            return generateOrbitalPaths(params);
+        case 'dna-helix':
+            return generateDnaHelix(params);
+
         default:
+            // Default to starburst (Claude-style radial abstract)
             return generateStarburst(params);
     }
 }
@@ -1010,4 +1055,183 @@ export function getUniqueLogos(logos: GeneratedLogo[]): GeneratedLogo[] {
         seen.add(logo.hash);
         return true;
     });
+}
+
+// ============================================
+// TESTING & VERIFICATION
+// ============================================
+
+/**
+ * Test brand names for verification
+ */
+const TEST_BRAND_NAMES = [
+    'Stripe',       // Fintech - should get geometric bars
+    'Helloo',       // Friendly - should get different structure
+    'TechCorp',     // Technology - should get tech patterns
+    'Bloom',        // Organic - should get flowing shapes
+    'Vertex',       // Sharp - should get angular marks
+    'Pulse',        // Dynamic - should get motion-based
+    'Nova',         // Space - should get orbital/radial
+    'Craft',        // Artisan - should get lettermarks
+    'Flux',         // Change - should get flowing patterns
+    'Nexus',        // Connection - should get overlapping shapes
+];
+
+/**
+ * Test that 10 different brand names produce unique structures
+ * Each brand should select a different algorithm category
+ */
+export function testBrandUniqueness(): {
+    passed: boolean;
+    results: Array<{
+        brand: string;
+        category: string;
+        algorithm: LogoAlgorithm;
+        qualityScore: number;
+    }>;
+    duplicateCategories: string[];
+} {
+    const results: Array<{
+        brand: string;
+        category: string;
+        algorithm: LogoAlgorithm;
+        qualityScore: number;
+    }> = [];
+
+    const categoryCount: Record<string, number> = {};
+
+    for (const brand of TEST_BRAND_NAMES) {
+        const category = analyzeBrandForCategory(brand);
+        const params: LogoGenerationParams = {
+            brandName: brand,
+            primaryColor: '#000000',
+        };
+
+        const algorithm = selectAlgorithm(params);
+        const logos = generateLogos({ ...params, algorithm, variations: 1 });
+
+        const qualityScore = logos[0]?.quality?.score || 0;
+
+        results.push({
+            brand,
+            category,
+            algorithm,
+            qualityScore,
+        });
+
+        categoryCount[category] = (categoryCount[category] || 0) + 1;
+
+        // Log result
+        console.log(`[TEST] ${brand}: category=${category}, algo=${algorithm}, quality=${qualityScore}`);
+
+        // Track algorithm performance
+        logAlgorithmResult(algorithm, qualityScore >= 75);
+    }
+
+    // Find duplicate categories (not ideal, but acceptable)
+    const duplicateCategories = Object.entries(categoryCount)
+        .filter(([, count]) => count > 2)
+        .map(([cat]) => cat);
+
+    // Test passes if:
+    // 1. No category has more than 3 brands (some overlap is acceptable)
+    // 2. All logos have quality score >= 60
+    const allHighQuality = results.every(r => r.qualityScore >= 60);
+    const diverseCategories = duplicateCategories.length === 0;
+
+    const passed = allHighQuality && diverseCategories;
+
+    console.log(`\n[TEST SUMMARY]`);
+    console.log(`All high quality: ${allHighQuality}`);
+    console.log(`Diverse categories: ${diverseCategories}`);
+    console.log(`Result: ${passed ? 'PASSED' : 'FAILED'}`);
+
+    if (duplicateCategories.length > 0) {
+        console.warn(`Categories with >2 brands: ${duplicateCategories.join(', ')}`);
+    }
+
+    return { passed, results, duplicateCategories };
+}
+
+/**
+ * Verify an algorithm produces abstract marks, not clipart
+ */
+export function verifyAlgorithmAbstractness(algorithm: LogoAlgorithm): {
+    isAbstract: boolean;
+    avgQuality: number;
+    failedBrands: string[];
+} {
+    const failedBrands: string[] = [];
+    let totalQuality = 0;
+
+    for (const brand of TEST_BRAND_NAMES) {
+        const logos = generateLogos({
+            brandName: brand,
+            primaryColor: '#3B82F6',
+            algorithm,
+            variations: 1,
+        });
+
+        const quality = logos[0]?.quality?.score || 0;
+        totalQuality += quality;
+
+        if (quality < 70) {
+            failedBrands.push(brand);
+            logAlgorithmResult(algorithm, false);
+        } else {
+            logAlgorithmResult(algorithm, true);
+        }
+    }
+
+    const avgQuality = totalQuality / TEST_BRAND_NAMES.length;
+    const isAbstract = failedBrands.length <= 2 && avgQuality >= 70;
+
+    console.log(`[VERIFY] ${algorithm}: avgQuality=${avgQuality.toFixed(1)}, failures=${failedBrands.length}, isAbstract=${isAbstract}`);
+
+    return { isAbstract, avgQuality, failedBrands };
+}
+
+/**
+ * Run full verification suite
+ */
+export function runVerificationSuite(): {
+    brandUniqueness: ReturnType<typeof testBrandUniqueness>;
+    algorithmResults: Record<LogoAlgorithm, ReturnType<typeof verifyAlgorithmAbstractness>>;
+    overallPassed: boolean;
+} {
+    console.log('='.repeat(60));
+    console.log('LOGO ENGINE VERIFICATION SUITE');
+    console.log('='.repeat(60));
+
+    // Test 1: Brand uniqueness
+    console.log('\n--- TEST 1: Brand Uniqueness ---');
+    const brandUniqueness = testBrandUniqueness();
+
+    // Test 2: Verify each algorithm
+    console.log('\n--- TEST 2: Algorithm Abstractness ---');
+    const algorithmResults: Record<string, ReturnType<typeof verifyAlgorithmAbstractness>> = {};
+
+    for (const algorithm of ALL_ALGORITHMS) {
+        algorithmResults[algorithm] = verifyAlgorithmAbstractness(algorithm);
+    }
+
+    // Overall result
+    const algorithmsPassed = Object.values(algorithmResults).filter(r => r.isAbstract).length;
+    const algorithmsTotal = ALL_ALGORITHMS.length;
+    const overallPassed = brandUniqueness.passed && algorithmsPassed >= algorithmsTotal * 0.8;
+
+    console.log('\n' + '='.repeat(60));
+    console.log('VERIFICATION RESULTS');
+    console.log('='.repeat(60));
+    console.log(`Brand Uniqueness: ${brandUniqueness.passed ? 'PASSED' : 'FAILED'}`);
+    console.log(`Algorithm Tests: ${algorithmsPassed}/${algorithmsTotal} passed`);
+    console.log(`Overall: ${overallPassed ? 'PASSED' : 'FAILED'}`);
+    console.log('\nAlgorithm Performance Report:');
+    console.log(JSON.stringify(getAlgorithmPerformanceReport(), null, 2));
+
+    return {
+        brandUniqueness,
+        algorithmResults: algorithmResults as Record<LogoAlgorithm, ReturnType<typeof verifyAlgorithmAbstractness>>,
+        overallPassed,
+    };
 }

@@ -9,58 +9,52 @@
 // CORE ALGORITHM TYPES
 // ============================================
 
+/**
+ * ABSTRACT PROFESSIONAL LOGO ALGORITHMS ONLY
+ *
+ * All algorithms must produce abstract marks, NOT literal objects.
+ * Inspired by: Stripe, Linear, Vercel, Figma, Claude, Mastercard
+ *
+ * REJECTED PATTERNS (DO NOT ADD):
+ * - Literal objects: hearts, crowns, leaves, mountains, clouds, locks
+ * - Clipart-style: arrows, stars, moons, gears, eyes, shields
+ * - Basic shapes: simple circles, squares, triangles without treatment
+ * - Scenery: landscapes, weather, nature scenes
+ */
 export type LogoAlgorithm =
-    // Existing algorithms (13)
-    | 'starburst'        // Claude/Anthropic - curved organic arms
-    | 'framed-letter'    // Notion - letter in geometric frame
-    | 'motion-lines'     // Linear/Framer - stacked motion lines
-    | 'gradient-bars'    // Stripe - parallel diagonal bars
-    | 'perfect-triangle' // Vercel - single perfect triangle
-    | 'circle-overlap'   // Figma - overlapping transparent circles
+    // === LETTERMARKS (stylized initials with cuts/negative space) ===
+    | 'framed-letter'    // Notion - letter in geometric frame with cutouts
+    | 'letter-swoosh'    // Arc - letter with dynamic curved accent
+    | 'monogram-blend'   // Intertwined letters with shared strokes
+    | 'letter-gradient'  // Stylized letter with gradient treatment
+    | 'box-logo'         // Bold boxed lettermark
+
+    // === GEOMETRIC ABSTRACTS (Stripe bars, Linear lines, Vercel triangle) ===
+    | 'gradient-bars'    // Stripe - parallel diagonal bars with gradient
+    | 'motion-lines'     // Linear/Framer - stacked horizontal lines
+    | 'perfect-triangle' // Vercel - single perfect geometric triangle
     | 'depth-geometry'   // Raycast - abstract with depth/shadow
-    | 'letter-swoosh'    // Arc - letter with dynamic swoosh
+    | 'isometric-cube'   // Pitch - 3D isometric letterform
+    | 'hexagon-tech'     // Tech/blockchain - nested hexagonal pattern
+    | 'stacked-lines'    // Linear-inspired stacked horizontal lines
+
+    // === STARBURST/RADIAL (like Claude asterisk) ===
+    | 'starburst'        // Claude/Anthropic - curved organic arms with rotational symmetry
+
+    // === OVERLAPPING SHAPES (like Figma, Mastercard) ===
+    | 'circle-overlap'   // Figma - overlapping transparent circles
     | 'orbital-rings'    // Planetscale - intersecting orbital paths
     | 'flow-gradient'    // Loom - flowing gradient organic shape
-    | 'isometric-cube'   // Pitch - 3D isometric cube letterform
-    | 'abstract-mark'    // Supabase - abstract angular mark
-    | 'monogram-blend'   // Two letters intertwined
-    // New Symbol Algorithms (20)
-    | 'sound-waves'      // Spotify - flowing audio waveforms
-    | 'page-icon'        // Notion - document/page with sidebar
-    | 'chat-bubble'      // Slack/Discord - speech bubble stack
-    | 'infinity-loop'    // Meta - infinite loop/ribbon
-    | 'arrow-mark'       // Amazon/FedEx - dynamic arrow
-    | 'shield-badge'     // Security apps - protective shield
-    | 'crown-mark'       // Premium brands - royal crown
-    | 'lightning-bolt'   // Energy/speed - electric bolt
-    | 'mountain-peak'    // Outdoor brands - mountain silhouette
-    | 'wave-flow'        // Water/fluid - ocean wave
-    | 'leaf-organic'     // Eco/nature - organic leaf
-    | 'eye-vision'       // AI/surveillance - stylized eye
-    | 'heart-love'       // Social/dating - heart symbol
-    | 'star-mark'        // Rating/awards - star burst
-    | 'moon-phase'       // Night/mystery - crescent moon
-    | 'gear-cog'         // Engineering - mechanical gear
-    | 'lock-secure'      // Security - padlock
-    | 'cloud-soft'       // Cloud/hosting - soft cloud
-    | 'diamond-gem'      // Luxury - faceted diamond
-    | 'hexagon-tech'     // Tech/blockchain - hexagonal pattern
-    // New Wordmark Algorithms (4)
-    | 'letter-gradient'  // Google - colorful letter gradient
-    | 'letter-striped'   // IBM - horizontal stripes through letters
-    | 'letter-script'    // Coca-Cola - flowing script style
-    | 'box-logo'         // Supreme - boxed logo text
-    // New Advanced/3D Algorithms (8)
-    | 'circular-emblem'  // Starbucks - circular badge/seal
-    | 'ribbon-banner'    // Vintage - flowing ribbon
-    | 'cube-3d'          // Pitch - 3D extruded cube
-    | 'origami-fold'     // Paper craft - folded paper
-    | 'maze-pattern'     // Complexity - labyrinth pattern
-    | 'fingerprint-id'   // Identity - spiral fingerprint
-    | 'dna-helix'        // Biotech - double helix
-    | 'orbital-paths'    // Planetscale - planetary orbits
-    // Stacked Lines Algorithm
-    | 'stacked-lines';   // Linear-inspired stacked horizontal lines
+
+    // === LINE ART (continuous stroke marks) ===
+    | 'abstract-mark'    // Supabase - abstract angular continuous mark
+    | 'infinity-loop'    // Meta - infinite loop ribbon
+    | 'maze-pattern'     // Abstract labyrinth line pattern
+    | 'fingerprint-id'   // Abstract spiral line pattern
+
+    // === ABSTRACT PATTERNS ===
+    | 'orbital-paths'    // Abstract orbital ring pattern
+    | 'dna-helix';       // Abstract double helix pattern
 
 export type LogoCategory =
     | 'technology'
@@ -403,44 +397,9 @@ export interface MonogramBlendParams extends BaseParameters {
 // NEW SYMBOL ALGORITHM PARAMETERS (20)
 // ============================================
 
-export interface SoundWavesParams extends BaseParameters {
-    waveCount: number;             // 3-8
-    amplitude: number;             // 10-40
-    frequency: number;             // 0.5-2.0
-    decay: number;                 // 0.7-1.0
-    spacing: number;               // 8-24
-    strokeTaper: number;           // 0.3-0.9
-    phaseOffset: number;           // 0-360
-    waveStyle: 'sine' | 'sawtooth' | 'square' | 'organic';
-    symmetry: 'bilateral' | 'radial' | 'none';
-    peakRounding: number;          // 0-1
-}
-
-export interface PageIconParams extends BaseParameters {
-    pageCornerRadius: number;      // 0-15
-    sidebarWidth: number;          // 10-25
-    pageLines: number;             // 2-6
-    foldAngle: number;             // 0-45
-    foldSize: number;              // 5-20
-    dotPattern: boolean;
-    lineSpacing: number;           // 4-12
-    sidebarStyle: 'solid' | 'dots' | 'lines';
-    pageAspect: number;            // 0.6-0.9
-    shadowDepth: number;           // 0-10
-}
-
-export interface ChatBubbleParams extends BaseParameters {
-    bubbleShape: 'round' | 'square' | 'organic';
-    tailPosition: 'bottom-left' | 'bottom-right' | 'left' | 'right';
-    borderRadius: number;          // 5-30
-    stackCount: number;            // 1-3
-    stackOffset: number;           // 5-20
-    tailSize: number;              // 5-15
-    bubbleAspect: number;          // 0.8-1.2
-    innerDots: boolean;
-    dotCount: number;              // 2-4
-    layerOpacity: number;          // 0.3-0.8
-}
+// ============================================
+// ABSTRACT ALGORITHM PARAMETERS
+// ============================================
 
 export interface InfinityLoopParams extends BaseParameters {
     loopWidth: number;             // 30-60
@@ -453,254 +412,6 @@ export interface InfinityLoopParams extends BaseParameters {
     innerGap: number;              // 2-10
     smoothness: number;            // 0.5-1
     ribbonStyle: boolean;
-}
-
-export interface ArrowMarkParams extends BaseParameters {
-    arrowCurve: number;            // 0-1
-    headAngle: number;             // 30-90
-    tailWidth: number;             // 3-15
-    direction: 'right' | 'up' | 'diagonal' | 'circular' | 'up-right';
-    headStyle?: 'sharp' | 'rounded' | 'open';
-    bodyTaper?: number;            // 0-1
-    dynamicCurve?: number;         // 0-1
-    smileEffect?: number;          // 0-1 (Amazon smile)
-    strokeCap?: 'round' | 'square';
-    doubleArrow: boolean;
-    arrowLength: number;           // 30-60
-    headSize: number;              // 10-25
-    curved: boolean;
-    motionLines?: number;
-    strokeStyle?: string | boolean;
-}
-
-export interface ShieldBadgeParams extends BaseParameters {
-    shieldShape: 'classic' | 'modern' | 'rounded' | 'pointed';
-    innerPattern: 'none' | 'cross' | 'star' | 'chevron';
-    borderWidth: number;           // 2-10
-    crestStyle: 'flat' | 'curved' | 'pointed';
-    innerPadding: number;          // 5-20
-    divisionStyle: 'none' | 'quarters' | 'horizontal' | 'vertical';
-    accentBand: boolean;
-    bandPosition: number;          // 0.3-0.7
-    embossEffect: number;          // 0-1
-    cornerDetail: boolean;
-}
-
-export interface CrownMarkParams extends BaseParameters {
-    pointCount: number;            // 3-7
-    jewelStyle: 'none' | 'round' | 'diamond' | 'star' | 'circles' | 'diamonds' | 'mixed';
-    baseWidth: number;             // 40-70
-    archHeight: number;            // 10-30
-    pointHeight: number;           // 15-35
-    bandHeight?: number;           // 5-15
-    jewelSize?: number;            // 3-10
-    velvetFill?: boolean;
-    ornateLevel?: number;          // 0-1
-    symmetryPerfect?: boolean;
-    crownWidth: number;            // 40-70
-    rimThickness: number;          // 2-8
-    baseDecoration: boolean;
-    crossOnCenter?: boolean;
-}
-
-export interface LightningBoltParams extends BaseParameters {
-    boltAngles: number[];          // Array of angle changes
-    branchCount: number;           // 0-3
-    glowAmount: number;            // 0-1
-    zigzagDepth: number;           // 5-20
-    boltWidth: number;             // 5-20
-    taperAmount?: number;          // 0-1
-    electricEffect?: boolean;
-    branchScale?: number;          // 0.3-0.7
-    sharpness: number;             // 0-1
-    energyGlow?: number;           // 0-1
-    electricGlow: boolean;
-    secondaryBolt: boolean;
-    energyLines: number;           // 0-5
-    rotation?: number;
-}
-
-export interface MountainPeakParams extends BaseParameters {
-    peakCount: number;             // 1-5
-    snowLine: number;              // 0-1
-    ridgeStyle: 'sharp' | 'rounded' | 'jagged' | 'smooth' | 'stepped';
-    baseWidth: number;             // 60-90
-    peakHeights?: number[];        // Relative heights
-    layerCount: number;            // 1-3
-    sunMoon?: 'none' | 'sun' | 'moon';
-    treeLine: boolean;
-    reflectionEffect?: boolean;
-    atmosphericPerspective?: number; // 0-1
-    peakSharpness: number;         // 0-1
-    mainPeakHeight: number;        // 30-50
-    sunBehind: boolean;
-    fogEffect: boolean;
-}
-
-export interface WaveFlowParams extends BaseParameters {
-    waveCount: number;             // 2-5
-    amplitude: number;             // 10-30
-    flowDirection: 'horizontal' | 'vertical' | 'circular' | 'diagonal';
-    foamAmount: number;            // 0-1
-    crestStyle: 'smooth' | 'curled' | 'breaking' | 'sharp';
-    layerOpacity: number;          // 0.3-0.8
-    wavelength: number;            // 20-50
-    phaseShift: number;            // 0-1
-    splashEffect?: boolean;
-    depthGradient?: boolean;
-    droplets?: number;
-    gradient?: boolean;
-}
-
-export interface LeafOrganicParams extends BaseParameters {
-    leafShape: 'oval' | 'pointed' | 'heart' | 'maple';
-    veinPattern: 'none' | 'central' | 'branching' | 'parallel';
-    stemCurve: number;             // 0-1
-    serrationCount: number;        // 0-12
-    leafCurl: number;              // 0-1
-    stemLength: number;            // 10-30
-    veinDepth: number;             // 0-1
-    asymmetry: number;             // 0-0.3
-    multiLeaf: number;             // 1-3
-    dropShadow: boolean;
-}
-
-export interface EyeVisionParams extends BaseParameters {
-    pupilSize: number;             // 0.2-0.5
-    irisPattern: 'solid' | 'radial' | 'concentric' | 'organic' | 'gradient' | 'rings' | 'tech';
-    lashStyle: 'none' | 'simple' | 'detailed' | 'full' | 'minimal';
-    glintPosition: number;         // 0-360 angle
-    eyeShape?: 'almond' | 'round' | 'cat';
-    irisRings?: number;            // 1-4
-    pupilShape?: 'round' | 'vertical' | 'horizontal';
-    glintCount?: number;           // 1-3
-    lidThickness?: number;         // 1-5
-    expressiveness?: number;       // 0-1
-    eyeWidth: number;              // 30-50
-    eyeHeight: number;             // 15-30
-    irisSize: number;              // 0.5-0.8
-    glowEffect: boolean;
-    scanLines: boolean;
-    techOverlay: boolean;
-}
-
-export interface HeartLoveParams extends BaseParameters {
-    heartStyle: 'classic' | 'modern' | 'geometric' | 'organic';
-    curveDepth: number;            // 0.3-0.8
-    splitAmount: number;           // 0-0.3
-    pulseEffect: boolean;
-    heartRotation: number;         // -30 to 30
-    innerHeart: boolean;
-    innerScale: number;            // 0.3-0.7
-    strokeOnly: boolean;
-    heartWidth: number;            // 0.8-1.2 aspect
-    tipSharpness: number;          // 0-1
-}
-
-export interface StarMarkParams extends BaseParameters {
-    pointCount: number;            // 4-12
-    innerRadius: number;           // 0.2-0.6
-    rotationOffset: number;        // 0-360
-    rayStyle: 'sharp' | 'rounded' | 'beveled' | 'pointed' | 'split';
-    pointLength?: number;          // 0.3-0.8
-    alternatePoints?: boolean;
-    innerStar: boolean;
-    twinkleEffect?: boolean;
-    threeD?: boolean;
-    facetShading?: number;         // 0-1
-    outerRadius: number;           // 25-40
-    pointSharpness: number;        // 0-1
-    glowRays: boolean;
-    dimensionalEffect: boolean;
-    innerScale: number;            // 0.3-0.7
-}
-
-export interface MoonPhaseParams extends BaseParameters {
-    phaseAmount: number;           // 0-1 (0=new, 0.5=full, 1=new)
-    craterStyle: 'none' | 'subtle' | 'detailed';
-    glowRadius: number;            // 0-20
-    crescentWidth: number;         // 0.1-0.5
-    orientation?: number;          // 0-360
-    starCount: number;             // 0-5
-    faceDetail?: 'none' | 'simple' | 'detailed';
-    auraEffect?: boolean;
-    surfaceTexture: number | boolean; // 0-1
-    shadowSoftness?: number;       // 0-1
-    moonRadius: number;            // 25-40
-    haloEffect: boolean;
-    tilt?: number;
-    innerShadow?: boolean;
-}
-
-export interface GearCogParams extends BaseParameters {
-    toothCount: number;            // 6-20
-    toothDepth: number;            // 5-20
-    hubSize: number;               // 0.2-0.5
-    spokeStyle: 'none' | 'solid' | 'spokes' | 'holes' | 'lines' | 'curved';
-    toothShape: 'square' | 'rounded' | 'pointed' | 'squared';
-    hubHole?: boolean;
-    holeSize?: number | boolean | string; // 0.1-0.3
-    bevelEffect: number | boolean;  // 0-1
-    secondaryGear?: boolean;
-    meshAngle?: number;            // 0-360
-    outerRadius: number;           // 30-45
-    toothWidth: number;            // 5-15
-    innerRing: boolean;
-    spokeCount: number;            // 3-8
-}
-
-export interface LockSecureParams extends BaseParameters {
-    shackleWidth: number;          // 0.4-0.8
-    bodyShape: 'square' | 'rounded' | 'circular' | 'squared' | 'shield';
-    keyholeStyle: 'classic' | 'modern' | 'digital' | 'none' | 'circle';
-    boltCount: number;             // 0-4
-    shackleThickness?: number;     // 3-10
-    bodyHeight?: number;           // 0.6-1.0
-    lockState?: 'locked' | 'unlocked';
-    shineEffect?: boolean;
-    brandingArea?: boolean;
-    securityLevel?: number;        // 0-1 (visual complexity)
-    shackleHeight: number;         // 15-30
-    lockClosed: boolean;
-    bodyWidth: number;             // 25-40
-    metallic: boolean;
-    glowEffect: boolean;
-    reinforced: boolean;
-}
-
-export interface CloudSoftParams extends BaseParameters {
-    puffCount: number;             // 3-7
-    baseWidth: number;             // 50-80
-    baseHeight: number;            // 25-45
-    shadowDepth: number;           // 0-1
-    layerCount: number;            // 1-3
-    puffSize?: number[];           // Relative sizes
-    fluffiness: number;            // 0-1
-    rainEffect?: boolean;
-    sunPeek: boolean;
-    lightningBolt?: boolean;
-    atmosphereGlow?: number;       // 0-1
-    puffVariation: number;         // 0-1
-    softness: number;              // 0.5-1
-    rainDrops: number;             // 0-10
-}
-
-export interface DiamondGemParams extends BaseParameters {
-    facetCount: number;            // 4-12
-    brillianceCut: 'round' | 'princess' | 'emerald' | 'oval' | 'brilliant';
-    tableSize: number;             // 0.3-0.6
-    pavilionAngle: number;         // 30-50
-    crownHeight: number;           // 0.1-0.3
-    girdleThickness?: number;      // 1-5
-    sparkleEffect?: boolean;
-    colorDispersion?: boolean;
-    facetShading?: number;         // 0-1
-    outline?: boolean;
-    lightDirection: number;        // 0-360
-    sparkleCount: number;          // 0-6
-    facetDepth: number;            // 0.2-0.5
-    girdle?: number;
-    symmetryPerfection?: number;
 }
 
 export interface HexagonTechParams extends BaseParameters {
@@ -717,7 +428,7 @@ export interface HexagonTechParams extends BaseParameters {
 }
 
 // ============================================
-// NEW WORDMARK ALGORITHM PARAMETERS (4)
+// WORDMARK ALGORITHM PARAMETERS
 // ============================================
 
 export interface LetterGradientParams extends BaseParameters {
@@ -740,32 +451,6 @@ export interface LetterGradientParams extends BaseParameters {
     saturation?: number;           // 0-1
 }
 
-export interface LetterStripedParams extends BaseParameters {
-    stripeCount: number;           // 3-10
-    stripeAngle: number;           // 0-90
-    gapSize: number;               // 1-5
-    strokeWidth: number;           // 2-8
-    letterWeight: number;          // 400-800
-    stripeStyle: 'solid' | 'dashed' | 'dotted';
-    maskToLetter: boolean;
-    alternateColors: boolean;
-    perspectiveEffect: boolean;
-    extrusionDepth: number;        // 0-10
-}
-
-export interface LetterScriptParams extends BaseParameters {
-    flourishAmount: number;        // 0-1
-    baselineWobble: number;        // 0-1
-    connectStyle: 'full' | 'partial' | 'none';
-    slant: number;                 // -30 to 30
-    strokeContrast: number;        // 0-1
-    loopSize: number;              // 0-1
-    tailExtension: number;         // 0-30
-    inkVariation: number;          // 0-1
-    pressureEffect: boolean;
-    vintageWear: number;           // 0-1
-}
-
 export interface BoxLogoParams extends BaseParameters {
     boxPadding: number;            // 5-25
     cornerRadius: number;          // 0-20
@@ -784,64 +469,8 @@ export interface BoxLogoParams extends BaseParameters {
 }
 
 // ============================================
-// NEW ADVANCED/3D ALGORITHM PARAMETERS (8)
+// ABSTRACT PATTERN ALGORITHM PARAMETERS
 // ============================================
-
-export interface CircularEmblemParams extends BaseParameters {
-    ringCount: number;             // 1-4
-    innerSymbol: 'none' | 'star' | 'shield' | 'letter' | 'custom' | 'crown';
-    textCurve: number;             // 0-1
-    sealStyle: 'classic' | 'modern' | 'vintage' | 'minimal' | 'none' | 'simple' | 'ornate';
-    borderPattern?: 'solid' | 'dots' | 'rope' | 'laurel';
-    innerRadius: number;           // 0.3-0.7
-    textUpperArc?: string;
-    textLowerArc?: string;
-    starCount: number;             // 0-12
-    yearBadge?: boolean;
-    borderWidth: number;           // 2-8
-    decorativeElements: boolean;
-    doubleBorder: boolean;
-    vintageStyle: boolean;
-}
-
-export interface RibbonBannerParams extends BaseParameters {
-    foldCount: number;             // 0-4
-    ribbonWidth: number;           // 15-40
-    endStyle: 'pointed' | 'fishtail' | 'straight' | 'rounded';
-    waveAmount: number;            // 0-1
-    textOnRibbon: boolean;
-    ribbonLayers: number;          // 1-3
-    shadowDepth: number;           // 0-10
-    curveAmount: number;           // 0-1
-    stitchEffect: boolean;
-    wornTexture: number;           // 0-1
-}
-
-export interface Cube3DParams extends BaseParameters {
-    isometricAngle: number;        // 25-35
-    faceShading: 'none' | 'gradient' | 'solid';
-    extrusionDepth: number;        // 10-40
-    edgeStyle: 'sharp' | 'beveled' | 'rounded';
-    facePattern: 'none' | 'grid' | 'dots' | 'letter';
-    perspectiveAmount: number;     // 0-1
-    transparentFaces: boolean;
-    wireframeMode: boolean;
-    rotationX: number;             // -30 to 30
-    rotationY: number;             // -30 to 30
-}
-
-export interface OrigamiFoldParams extends BaseParameters {
-    foldCount: number;             // 2-8
-    creaseDensity: number;         // 0-1
-    shadowAngle: number;           // 0-360
-    paperTexture: 'none' | 'subtle' | 'visible';
-    baseShape: 'square' | 'triangle' | 'crane' | 'abstract';
-    foldDepth: number;             // 0-1
-    colorFaces: boolean;
-    crispness: number;             // 0-1
-    unfoldAmount: number;          // 0-1
-    lightSource: number;           // 0-360
-}
 
 export interface MazePatternParams extends BaseParameters {
     pathWidth: number;             // 3-10
@@ -929,59 +558,44 @@ export interface StackedLinesParams extends BaseParameters {
     alignment: 'left' | 'center' | 'right' | 'justified';
 }
 
-// Union type for all parameter types
+/**
+ * Union type for all ABSTRACT algorithm parameters
+ * Only includes professional-grade abstract mark generators
+ */
 export type AlgorithmParams =
-    // Existing
-    | StarburstParams
-    | FramedLetterParams
-    | MotionLinesParams
-    | GradientBarsParams
-    | PerfectTriangleParams
-    | CircleOverlapParams
-    | DepthGeometryParams
-    | LetterSwooshParams
-    | OrbitalRingsParams
-    | FlowGradientParams
-    | IsometricCubeParams
-    | AbstractMarkParams
-    | MonogramBlendParams
-    // New Symbol Algorithms
-    | SoundWavesParams
-    | PageIconParams
-    | ChatBubbleParams
-    | InfinityLoopParams
-    | ArrowMarkParams
-    | ShieldBadgeParams
-    | CrownMarkParams
-    | LightningBoltParams
-    | MountainPeakParams
-    | WaveFlowParams
-    | LeafOrganicParams
-    | EyeVisionParams
-    | HeartLoveParams
-    | StarMarkParams
-    | MoonPhaseParams
-    | GearCogParams
-    | LockSecureParams
-    | CloudSoftParams
-    | DiamondGemParams
-    | HexagonTechParams
-    // New Wordmark Algorithms
-    | LetterGradientParams
-    | LetterStripedParams
-    | LetterScriptParams
-    | BoxLogoParams
-    // New Advanced/3D Algorithms
-    | CircularEmblemParams
-    | RibbonBannerParams
-    | Cube3DParams
-    | OrigamiFoldParams
-    | MazePatternParams
-    | FingerprintIdParams
-    | DnaHelixParams
-    | OrbitalPathsParams
-    // Stacked Lines
-    | StackedLinesParams;
+    // === LETTERMARKS ===
+    | FramedLetterParams       // Notion-style letter in frame
+    | LetterSwooshParams       // Arc-style letter with swoosh
+    | MonogramBlendParams      // Intertwined letters
+    | LetterGradientParams     // Gradient lettermark
+    | BoxLogoParams            // Boxed lettermark
+
+    // === GEOMETRIC ABSTRACTS ===
+    | GradientBarsParams       // Stripe-style bars
+    | MotionLinesParams        // Linear-style lines
+    | PerfectTriangleParams    // Vercel-style triangle
+    | DepthGeometryParams      // Abstract with depth
+    | IsometricCubeParams      // 3D isometric
+    | HexagonTechParams        // Tech hexagon pattern
+    | StackedLinesParams       // Stacked horizontal lines
+
+    // === STARBURST/RADIAL ===
+    | StarburstParams          // Claude-style radial arms
+
+    // === OVERLAPPING SHAPES ===
+    | CircleOverlapParams      // Figma-style circles
+    | OrbitalRingsParams       // Intersecting rings
+    | FlowGradientParams       // Flowing organic shape
+
+    // === LINE ART/CONTINUOUS ===
+    | AbstractMarkParams       // Abstract angular mark
+    | InfinityLoopParams       // Meta-style infinity
+    | MazePatternParams        // Abstract maze lines
+    | FingerprintIdParams      // Abstract spiral lines
+
+    // === ABSTRACT PATTERNS ===
+    | OrbitalPathsParams       // Abstract orbital pattern
+    | DnaHelixParams;          // Abstract helix pattern
 
 // ============================================
 // INPUT PARAMETERS
