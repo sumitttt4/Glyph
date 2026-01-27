@@ -145,7 +145,7 @@ function BillboardMockup({ brand }: { brand: BrandIdentity }) {
                     style={{ background: colors.primary }}
                 >
                     <div className="absolute inset-0 flex items-center px-6">
-                        <div className="w-16 h-16 flex-shrink-0" style={{ filter: 'brightness(0) invert(1)' }}>
+                        <div className="w-16 h-16 flex-shrink-0">
                             <LogoComposition brand={brand} className="w-full h-full" />
                         </div>
                         <div className="ml-4">
@@ -307,7 +307,7 @@ function PackagingBoxMockup({ brand }: { brand: BrandIdentity }) {
                         boxShadow: '20px 20px 40px rgba(0,0,0,0.3)',
                     }}
                 >
-                    <div className="w-20 h-20 mb-2" style={{ filter: 'brightness(0) invert(1)' }}>
+                    <div className="w-20 h-20 mb-2">
                         <LogoComposition brand={brand} className="w-full h-full" />
                     </div>
                     <p className="text-white font-bold" style={{ fontFamily }}>
@@ -374,7 +374,6 @@ function HoodieMockup({ brand }: { brand: BrandIdentity }) {
                 {/* Logo */}
                 <div
                     className="absolute left-1/2 top-[35%] -translate-x-1/2 w-20 h-20"
-                    style={{ filter: 'brightness(0) invert(1)' }}
                 >
                     <LogoComposition brand={brand} className="w-full h-full" />
                 </div>
@@ -514,7 +513,7 @@ function LinkedInBannerMockup({ brand }: { brand: BrandIdentity }) {
             <div className="relative w-full max-w-[90%] rounded-lg overflow-hidden" style={{ aspectRatio: '1584/396', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.3)' }}>
                 <div className="absolute inset-0" style={{ background: colors.primary }} />
                 <div className="absolute inset-0 flex items-center justify-between px-8">
-                    <div className="w-20 h-20 flex-shrink-0" style={{ filter: 'brightness(0) invert(1)' }}>
+                    <div className="w-20 h-20 flex-shrink-0">
                         <LogoComposition brand={brand} className="w-full h-full" />
                     </div>
                     <div className="flex-1 ml-8">
@@ -568,7 +567,7 @@ function MobileAppMockup({ brand }: { brand: BrandIdentity }) {
                 <div className="absolute inset-[3px] rounded-[2.3rem] overflow-hidden bg-black">
                     <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-6 bg-black rounded-full z-10" />
                     <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: colors.primary }}>
-                        <div className="w-20 h-20 mb-4" style={{ filter: 'brightness(0) invert(1)' }}>
+                        <div className="w-20 h-20 mb-4">
                             <LogoComposition brand={brand} className="w-full h-full" />
                         </div>
                         <p className="text-white text-lg font-semibold">{brand.name}</p>

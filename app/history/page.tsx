@@ -1,162 +1,190 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/client';
-import { BrandIdentity } from '@/lib/data';
+import { useHistory } from '@/hooks/use-history';
+import { PaywallOverlay } from '@/components/history/PaywallOverlay';
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
-
-interface BrandRecord {
-    id: string;
-    user_id: string;
-    identity: BrandIdentity;
-    created_at: string;
-}
+import { ArrowLeft, Clock, Search, Grid, LayoutGrid } from 'lucide-react';
 
 export default function HistoryPage() {
-    const [brands, setBrands] = useState<BrandRecord[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { brands, loading, isPro, blockedCount } = useHistory();
 
-    useEffect(() => {
-        const fetchBrands = async () => {
-            try {
-                const supabase = createClient();
-                const { data: { user } } = await supabase.auth.getUser();
-                if (!user) {
-                    // If not logged in, redirect to login
-                    window.location.href = '/login?next=/history';
-                    return;
-                }
-
-                const { data, error: fetchError } = await supabase
-                    .from('brands')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .order('created_at', { ascending: false });
-
-                if (fetchError) {
-                    console.error('Error fetching history:', fetchError);
-                    setError('Failed to load your generation history. Please try again.');
-                } else if (data) {
-                    setBrands(data);
-                }
-            } catch (e) {
-                console.error('History fetch error:', e);
-                setError('Something went wrong. Please refresh the page.');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchBrands();
-    }, []);
-
+    // Loading State
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-stone-50">
-                <div className="flex flex-col items-center gap-3">
-                    <div className="animate-spin w-8 h-8 border-2 border-stone-900 border-t-transparent rounded-full" />
-                    <span className="text-sm font-mono text-stone-500">LOADING_ARCHIVE...</span>
+            <div className="min-h-screen flex items-center justify-center bg-stone-950">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-10 h-10 border-2 border-stone-800 border-t-orange-500 rounded-full animate-spin" />
+                    <span className="text-xs font-mono text-stone-500 tracking-widest uppercase">Initializing_Archive...</span>
                 </div>
             </div>
         );
     }
 
+    // Number of dummy cards to show for the blurred/locked section
+    // If blockedCount is 0, we show 0. If > 0, we show at least 4-8 to look nice.
+    const dummyCardsCount = blockedCount > 0 ? Math.min(Math.max(blockedCount, 4), 8) : 0;
+    const dummyCards = Array(dummyCardsCount).fill(null);
+
     return (
-        <div className="min-h-screen bg-stone-50 font-sans">
+        <div className="min-h-screen bg-stone-950 font-sans selection:bg-orange-500/20">
             {/* Header */}
-            <header className="bg-white border-b border-stone-200 sticky top-0 z-30">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <header className="sticky top-0 z-30 bg-stone-950/80 backdrop-blur-md border-b border-stone-800">
+                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-6">
-                        <Link href="/generator" className="text-sm font-semibold text-stone-600 hover:text-stone-900 flex items-center gap-2 group transition-colors">
-                            <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-                            Back to Generator
+                        <Link
+                            href="/generator"
+                            className="text-xs font-medium text-stone-400 hover:text-white flex items-center gap-2 group transition-colors"
+                        >
+                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                            Return to Lab
                         </Link>
-                        <div className="h-6 w-px bg-stone-200" />
+
+                        <div className="h-4 w-px bg-stone-800" />
+
                         <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                            <h1 className="text-lg font-bold text-stone-900 font-mono tracking-tight">HISTORY_ARCHIVE</h1>
+                            <div className={`w-2 h-2 rounded-full ${isPro ? 'bg-green-500' : 'bg-orange-500'} animate-pulse`} />
+                            <h1 className="text-sm font-bold text-white font-mono tracking-wider">
+                                GENERATION_LOG
+                            </h1>
+                            <span className="px-1.5 py-0.5 rounded-md bg-stone-900 border border-stone-800 text-[10px] text-stone-500 font-mono">
+                                v5.0
+                            </span>
                         </div>
                     </div>
-                    <div className="text-sm text-stone-500">
-                        <span className="font-bold text-stone-900">{brands.length}</span> Brands Saved
+
+                    <div className="flex items-center gap-4 text-xs font-mono text-stone-500">
+                        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-900 border border-stone-800">
+                            <Clock className="w-3 h-3" />
+                            <span>{new Date().toLocaleDateString()}</span>
+                        </div>
+                        <div className="px-3 py-1.5 rounded-lg bg-stone-900 border border-stone-800">
+                            <span className="text-stone-300 font-bold">{brands.length + blockedCount}</span> RECORDS
+                        </div>
                     </div>
                 </div>
             </header>
 
             <main className="max-w-7xl mx-auto px-6 py-8">
-                {error ? (
-                    <div className="text-center py-32 animate-in fade-in duration-500">
-                        <div className="w-20 h-20 bg-red-50 border border-red-200 rounded-full mx-auto mb-6 flex items-center justify-center shadow-sm">
-                            <svg className="w-8 h-8 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                {brands.length === 0 && blockedCount === 0 ? (
+                    // Empty State
+                    <div className="flex flex-col items-center justify-center py-32 animate-in fade-in duration-500">
+                        <div className="w-24 h-24 bg-stone-900 border border-stone-800 rounded-2xl flex items-center justify-center mb-6 shadow-2xl">
+                            <Grid className="w-10 h-10 text-stone-700" />
                         </div>
-                        <h3 className="text-xl font-bold text-stone-900 mb-2">Error Loading History</h3>
-                        <p className="text-stone-500 mb-8 max-w-sm mx-auto">{error}</p>
-                        <button
-                            onClick={() => window.location.reload()}
-                            className="px-6 py-3 bg-stone-900 text-white font-semibold rounded-xl hover:bg-black transition-all hover:shadow-lg hover:-translate-y-0.5 inline-flex items-center gap-2"
+                        <h3 className="text-xl font-bold text-white mb-2">No Generations Found</h3>
+                        <p className="text-stone-500 mb-8 max-w-sm text-center text-sm">
+                            Your conceptual archive is empty. Initialize the generator to begin creating.
+                        </p>
+                        <Link
+                            href="/generator"
+                            className="px-6 py-3 bg-white text-black font-bold rounded-xl hover:bg-stone-200 transition-all inline-flex items-center gap-2 text-sm"
                         >
-                            <span>Try Again</span>
-                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" /></svg>
-                        </button>
-                    </div>
-                ) : brands.length === 0 ? (
-                    <div className="text-center py-32 animate-in fade-in duration-500">
-                        <div className="w-20 h-20 bg-stone-100 border border-stone-200 rounded-full mx-auto mb-6 flex items-center justify-center shadow-sm">
-                            <svg className="w-8 h-8 text-stone-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>
-                        </div>
-                        <h3 className="text-xl font-bold text-stone-900 mb-2">No generations yet</h3>
-                        <p className="text-stone-500 mb-8 max-w-sm mx-auto">Your generated brand identities will appear here. Start creating to build your archive.</p>
-                        <Link href="/generator" className="px-6 py-3 bg-stone-900 text-white font-semibold rounded-xl hover:bg-black transition-all hover:shadow-lg hover:-translate-y-0.5 inline-flex items-center gap-2">
-                            <span>Start Generating</span>
-                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                            <LayoutGrid className="w-4 h-4" />
+                            <span>Initialize Generator</span>
                         </Link>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in slide-in-from-bottom-4 duration-500">
-                        {brands.map((item, index) => {
-                            const identity = item.identity as BrandIdentity;
-                            return (
+                    <div className="space-y-8">
+                        {/* Active Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in slide-in-from-bottom-4 duration-500">
+                            {brands.map((item, index) => (
                                 <div
                                     key={item.id}
-                                    className="bg-white rounded-2xl border border-stone-200 overflow-hidden hover:border-orange-200 hover:ring-4 hover:ring-orange-500/10 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl"
+                                    className="group relative bg-stone-900 rounded-2xl border border-stone-800 overflow-hidden hover:border-stone-600 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
                                     style={{ animationDelay: `${index * 50}ms` }}
                                 >
-                                    <div className="aspect-[4/3] bg-stone-50 flex items-center justify-center p-8 relative overflow-hidden group-hover:bg-white transition-colors">
-                                        {/* Dynamic Background Tint */}
+                                    {/* Preview Area */}
+                                    <div className="aspect-[4/3] bg-stone-950 relative flex items-center justify-center p-8 overflow-hidden">
+                                        {/* Grid Background */}
+                                        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1c1917_1px,transparent_1px),linear-gradient(to_bottom,#1c1917_1px,transparent_1px)] bg-[size:16px_16px] opacity-20" />
+
+                                        {/* Ambient Glow */}
                                         <div
-                                            className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity"
-                                            style={{ background: identity.theme?.tokens.light.primary || '#000' }}
+                                            className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-700"
+                                            style={{ background: `radial-gradient(circle at center, ${item.identity.theme?.tokens.light.primary || '#fff'}, transparent 70%)` }}
                                         />
 
-                                        <div className="transform group-hover:scale-110 transition-transform duration-500 ease-out">
-                                            <LogoComposition brand={identity} className="w-32 h-32" />
+                                        <div className="relative z-10 transform group-hover:scale-105 transition-transform duration-500">
+                                            <LogoComposition
+                                                brand={item.identity}
+                                                className="w-32 h-32"
+                                            />
                                         </div>
 
-                                        {/* Quick Actions Overlay */}
-                                        <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[1px]">
-                                            <button className="px-4 py-2 bg-white rounded-lg shadow-sm font-semibold text-xs text-stone-900 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                                                Load Brand
+                                        {/* Action Overlay */}
+                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                            <button
+                                                onClick={() => {
+                                                    // Load into generator via localStorage
+                                                    localStorage.setItem('glyph_pending_project', JSON.stringify({
+                                                        restoreMode: true,
+                                                        identity: item.identity,
+                                                        timestamp: Date.now()
+                                                    }));
+                                                    window.location.href = '/generator';
+                                                }}
+                                                className="px-4 py-2 bg-white text-black text-xs font-bold rounded-lg transform translate-y-2 group-hover:translate-y-0 transition-transform"
+                                            >
+                                                EDIT_PROJECT
                                             </button>
                                         </div>
                                     </div>
 
-                                    <div className="p-4 border-t border-stone-100 bg-white relative z-10">
+                                    {/* Info Area */}
+                                    <div className="p-4 bg-stone-900 border-t border-stone-800">
                                         <div className="flex items-start justify-between mb-2">
-                                            <h3 className="font-bold text-stone-900 truncate flex-1 pr-2" title={identity.name}>{identity.name}</h3>
-                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: identity.theme?.tokens.light.primary || '#000' }} />
+                                            <h3 className="font-bold text-white truncate flex-1 pr-2 text-sm">
+                                                {item.identity.name}
+                                            </h3>
+                                            <div
+                                                className="w-2 h-2 rounded-full ring-2 ring-stone-900"
+                                                style={{ backgroundColor: item.identity.theme?.tokens.light.primary || '#fff' }}
+                                            />
                                         </div>
                                         <div className="flex items-center justify-between text-[10px] text-stone-500 font-mono">
-                                            <span className="uppercase tracking-wider">{identity.vibe}</span>
-                                            <span>{new Date(item.created_at).toLocaleDateString()}</span>
+                                            <span className="uppercase tracking-wider">
+                                                {item.identity.vibe}
+                                            </span>
+                                            <span>{new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
                                         </div>
                                     </div>
                                 </div>
-                            );
-                        })}
+                            ))}
+                        </div>
+
+                        {/* Paywall / Blurred Section */}
+                        {blockedCount > 0 && (
+                            <div className="relative pt-8">
+                                <div className="absolute inset-0 -top-12 bg-gradient-to-b from-stone-950/0 via-stone-950/80 to-stone-950 z-10 pointer-events-none" />
+
+                                {/* Overlay Component */}
+                                <div className="absolute inset-0 z-20 top-0">
+                                    <PaywallOverlay />
+                                </div>
+
+                                {/* Blurred Grid */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 opacity-30 blur-sm select-none pointer-events-none grayscale">
+                                    {dummyCards.map((_, i) => (
+                                        <div key={i} className="bg-stone-900 rounded-2xl border border-stone-800 overflow-hidden h-[240px]">
+                                            <div className="h-4/5 bg-stone-950/50" />
+                                            <div className="p-4 border-t border-stone-800">
+                                                <div className="h-4 w-24 bg-stone-800 rounded mb-2" />
+                                                <div className="h-3 w-16 bg-stone-800 rounded" />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="text-center mt-4 text-xs text-stone-600 font-mono">
+                                    + {blockedCount} HIDDEN RECORD{blockedCount !== 1 ? 'S' : ''}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </main>
         </div>
-    )
+    );
 }

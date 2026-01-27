@@ -17,6 +17,47 @@ function generateBrandTexture(brand: BrandIdentity, width = 512, height = 512, l
         const bgColor = '#ffffff';
         const name = brand.name || 'Brand';
 
+        // 1. Use Generated Logo if available (Priority)
+        const selectedLogo = brand.generatedLogos?.[brand.selectedLogoIndex || 0];
+        if (selectedLogo?.svg) {
+            // Encode the logo SVG to base64 to embed it safely
+            const logoBase64 = btoa(unescape(encodeURIComponent(selectedLogo.svg)));
+
+            if (layout === 'card') {
+                // Business Card with real Logo
+                return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(`
+                    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+                        <rect width="${width}" height="${height}" fill="${bgColor}"/>
+                        
+                        <!-- Logo (Top Left or Center Left) -->
+                        <image href="data:image/svg+xml;base64,${logoBase64}" x="${width * 0.1}" y="${height * 0.25}" width="${width * 0.2}" height="${height * 0.2}" />
+                        
+                        <!-- Text -->
+                        <text x="${width * 0.1}" y="${height * 0.65}" font-family="Arial, sans-serif" font-weight="bold" font-size="${height * 0.08}" fill="#333333">
+                            ${name}
+                        </text>
+                        <text x="${width * 0.1}" y="${height * 0.78}" font-family="Arial, sans-serif" font-size="${height * 0.04}" fill="#666666">
+                            hello@${name.toLowerCase().replace(/\s+/g, '')}.com
+                        </text>
+                    </svg>
+                `)))}`;
+            } else {
+                // Centered Logo (for Box, Icon, etc)
+                // We use an empty background or transparent?
+                // Usually mockups expect white bg texture with logo in middle.
+                return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(`
+                    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+                        <rect width="${width}" height="${height}" fill="${bgColor}" fill-opacity="1"/>
+                        <image href="data:image/svg+xml;base64,${logoBase64}" x="${width * 0.2}" y="${height * 0.2}" width="${width * 0.6}" height="${height * 0.6}" />
+                        <text x="50%" y="90%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="${height * 0.08}" fill="#333333">
+                            ${name}
+                        </text>
+                    </svg>
+                `)))}`;
+            }
+        }
+
+        // 2. Fallback to Hardcoded (Legacy)
         if (layout === 'card') {
             // Business card layout
             return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(`

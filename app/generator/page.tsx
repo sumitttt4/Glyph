@@ -22,7 +22,7 @@ export default function GeneratorPage() {
   const brandGenerators = useBrandGenerator();
   // ... rest of component
 
-  const { brand, generateBrand, isGenerating, resetBrand } = brandGenerators;
+  const { brand, generateBrand, isGenerating, resetBrand, setBrand } = brandGenerators;
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedVibe, setSelectedVibe] = useState('minimalist');
   const [viewMode, setViewMode] = useState<'overview' | 'presentation'>('overview');
@@ -105,6 +105,35 @@ export default function GeneratorPage() {
 
     checkAccess();
   }, []);
+
+  // RESTORE STATE: Check for pending projects (History Edit or Login Redirect)
+  useEffect(() => {
+    const pendingJSON = localStorage.getItem('glyph_pending_project');
+    if (pendingJSON) {
+      try {
+        const pending = JSON.parse(pendingJSON);
+
+        // 1. Exact Restoration (From History Page)
+        if (pending.restoreMode && pending.identity) {
+          console.log("Restoring exact brand state...");
+          setBrand?.(pending.identity);
+          localStorage.removeItem('glyph_pending_project');
+          return;
+        }
+
+        // 2. Pending Inputs (From Login Redirect)
+        if (pending.name && pending.vibe) {
+          console.log("Restoring pending input state...");
+          generateBrand(pending.vibe, pending.name, {
+            color: pending.color
+          });
+          localStorage.removeItem('glyph_pending_project');
+        }
+      } catch (e) {
+        console.error("Failed to restore project:", e);
+      }
+    }
+  }, [generateBrand, setBrand]);
 
   // PLG: Check Authed Session Helper (Gate)
   const checkAuth = async (): Promise<boolean> => {

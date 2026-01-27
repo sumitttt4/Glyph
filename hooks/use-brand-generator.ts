@@ -11,6 +11,7 @@ import { generateBrandStrategy } from '@/lib/strategy-engine';
 import { incrementGenerationCount } from '@/app/actions/stats';
 import {
     generateLogos,
+    generateSemanticLogos, // Imported semantic engine
     LogoCategory,
     LogoAesthetic,
     LogoAlgorithm,
@@ -233,24 +234,32 @@ export function useBrandGenerator() {
         // 4. GENERATE STRATEGY (Premium Engine)
         const brandStrategy = generateBrandStrategy(name, vibe);
 
-        // 5. GENERATE PREMIUM LOGOS (Logo Engine v5)
+        // 5. GENERATE PREMIUM LOGOS (Semantic Logo Engine)
+        // Uses the new semantic engine to analyze brand name for meaning and industry context
         const logoCategory = vibeToCategory[vibe.toLowerCase()] || 'technology';
         const logoAesthetic = vibeToAesthetic[vibe.toLowerCase()] || 'tech-minimal';
         const logoPrimaryColor = options.color || aiColor || selectedTheme.tokens.light.primary;
 
         let generatedLogos: GeneratedLogo[] = [];
         try {
-            generatedLogos = generateLogos({
-                brandName: name.trim() || 'Brand',
-                primaryColor: logoPrimaryColor,
-                accentColor: selectedTheme.tokens.light.accent || undefined,
-                category: logoCategory,
-                industry: logoCategory,
-                aesthetic: logoAesthetic,
-                archetype: options.archetype, // Pass archetype for algorithm filtering
-                variations: 3, // Generate 3 variations
-                minQualityScore: 85, // Premium quality threshold
-            });
+            // Semantic Generation - Analyzes name "Brewly" -> Coffee/Cup logic
+            const { logos, analysis, context } = generateSemanticLogos(
+                name.trim() || 'Brand',
+                logoCategory, // Pass category for industry context
+                logoPrimaryColor,
+                {
+                    accentColor: selectedTheme.tokens.light.accent || undefined,
+                    aesthetic: logoAesthetic,
+                    variations: 4, // More base variations
+                    seed: Date.now()
+                }
+            );
+
+            generatedLogos = logos;
+
+            console.log('[Semantic Engine] Context:', context);
+            console.log('[Semantic Engine] Matched Keywords:', analysis.matchedKeywords.map(k => k.word).join(', '));
+            console.log('[Semantic Engine] Letter Meanings:', analysis.letterAnalysis.flatMap(l => l.hiddenMeanings).join(', '));
 
             // Generate all 6 variations for each logo (horizontal, stacked, icon-only, wordmark-only, dark, light)
             if (generatedLogos.length > 0) {
@@ -322,13 +331,14 @@ export function useBrandGenerator() {
         // GLOBAL STATS: Increment counter (fire and forget)
         incrementGenerationCount();
 
-        // PERSISTENCE: Save to Supabase (Background)
+        // PERSISTENCE: Save to Supabase (Background) or LocalStorage (Guest)
         // Fire and forget - don't block UI
         (async () => {
             try {
                 const { createClient } = await import('@/lib/supabase/client');
                 const supabase = createClient();
                 const { data: { user } } = await supabase.auth.getUser();
+
                 if (user) {
                     await supabase.from('brands').insert({
                         user_id: user.id,
@@ -338,6 +348,23 @@ export function useBrandGenerator() {
                         created_at: new Date().toISOString()
                     });
                     console.log('Brand persisted to DB');
+                } else {
+                    // FALLBACK: Save to LocalStorage for Guest/Bypass users
+                    const isBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
+                    if (isBypass) {
+                        const localHistory = JSON.parse(localStorage.getItem('glyph_guest_history') || '[]');
+                        // Add new brand to start, limit to 50
+                        const updatedHistory = [
+                            {
+                                id: newBrand.id,
+                                identity: newBrand,
+                                created_at: new Date().toISOString()
+                            },
+                            ...localHistory
+                        ].slice(0, 50);
+                        localStorage.setItem('glyph_guest_history', JSON.stringify(updatedHistory));
+                        console.log('Brand persisted to LocalStorage');
+                    }
                 }
             } catch (e) {
                 console.error('Persistence Error', e);

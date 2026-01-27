@@ -1011,3 +1011,217 @@ export function getUniqueLogos(logos: GeneratedLogo[]): GeneratedLogo[] {
         return true;
     });
 }
+
+// ============================================
+// SEMANTIC LOGO ENGINE
+// ============================================
+
+import {
+    analyzeSemantics,
+    getSemanticAlgorithms,
+    getSemanticContext,
+    KEYWORD_SHAPE_MAP,
+    INDUSTRY_SHAPE_MAP,
+    LETTER_SHAPE_MAP,
+    type SemanticAnalysis,
+    type ShapeMapping,
+    type IndustryMapping,
+    type LetterAnalysis,
+} from '@/lib/semantic-logo-engine';
+
+// Re-export semantic types
+export type { SemanticAnalysis, ShapeMapping, IndustryMapping, LetterAnalysis };
+
+// Re-export semantic utilities
+export { analyzeSemantics, getSemanticAlgorithms, getSemanticContext };
+
+// Export mappings for external use
+export { KEYWORD_SHAPE_MAP, INDUSTRY_SHAPE_MAP, LETTER_SHAPE_MAP };
+
+/**
+ * Generate logos using semantic analysis of brand name and category.
+ * 
+ * This is the SMART entry point for logo generation.
+ * It analyzes the brand name for keywords, industry context, and letter shapes
+ * to select the most contextually relevant algorithms.
+ * 
+ * Example: "Brewly" + "Coffee Shop" = steam/cup-inspired algorithms
+ * Example: "CloudSync" + "Tech" = cloud + data flow algorithms
+ * Example: "SecureVault" + "Fintech" = shield + lock algorithms
+ * 
+ * @param brandName - The brand name to analyze
+ * @param category - Optional industry/category context
+ * @param primaryColor - Primary brand color
+ * @param options - Additional generation options
+ */
+export function generateSemanticLogos(
+    brandName: string,
+    category: string | undefined,
+    primaryColor: string,
+    options?: {
+        accentColor?: string;
+        aesthetic?: LogoGenerationParams['aesthetic'];
+        variations?: number;
+        seed?: number;
+    }
+): {
+    logos: GeneratedLogo[];
+    analysis: SemanticAnalysis;
+    context: string;
+} {
+    // Perform semantic analysis
+    const analysis = analyzeSemantics(brandName, category, options?.aesthetic);
+    const context = getSemanticContext(brandName, category);
+
+    // Get recommended algorithms from semantic analysis
+    const recommendedAlgorithms = getSemanticAlgorithms(
+        brandName,
+        category,
+        options?.aesthetic,
+        options?.seed
+    );
+
+    // Generate logos from each recommended algorithm
+    const allLogos: GeneratedLogo[] = [];
+    const variationsPerAlgo = Math.max(1, Math.floor((options?.variations || 6) / recommendedAlgorithms.length));
+
+    for (const algoName of recommendedAlgorithms) {
+        // Map semantic algorithm names to actual LogoAlgorithm types
+        const algorithm = algoName as LogoAlgorithm;
+
+        // Check if it's a valid algorithm
+        if (ALL_ALGORITHMS.includes(algorithm)) {
+            try {
+                const logos = generateLogos({
+                    brandName,
+                    primaryColor,
+                    accentColor: options?.accentColor,
+                    industry: mapCategoryToIndustry(category),
+                    aesthetic: options?.aesthetic,
+                    algorithm,
+                    variations: variationsPerAlgo,
+                    seed: options?.seed ? `${options.seed}-${algorithm}` : undefined,
+                });
+                allLogos.push(...logos);
+            } catch (e) {
+                console.warn(`[Semantic] Failed to generate ${algorithm}:`, e);
+            }
+        }
+    }
+
+    // If no logos generated, fall back to default generation
+    if (allLogos.length === 0) {
+        const fallbackLogos = generateLogos({
+            brandName,
+            primaryColor,
+            accentColor: options?.accentColor,
+            variations: options?.variations || 6,
+        });
+        allLogos.push(...fallbackLogos);
+    }
+
+    return {
+        logos: getUniqueLogos(allLogos),
+        analysis,
+        context,
+    };
+}
+
+/**
+ * Map user-provided category string to LogoGenerationParams industry type
+ */
+function mapCategoryToIndustry(category?: string): LogoGenerationParams['industry'] | undefined {
+    if (!category) return undefined;
+
+    const lowerCategory = category.toLowerCase();
+
+    // Map common category keywords to industry types
+    const industryMappings: Record<string, LogoGenerationParams['industry']> = {
+        'tech': 'technology',
+        'technology': 'technology',
+        'software': 'technology',
+        'saas': 'technology',
+        'ai': 'technology',
+        'app': 'technology',
+        'digital': 'technology',
+        'finance': 'finance',
+        'fintech': 'finance',
+        'bank': 'finance',
+        'money': 'finance',
+        'invest': 'finance',
+        'crypto': 'finance',
+        'health': 'healthcare',
+        'healthcare': 'healthcare',
+        'medical': 'healthcare',
+        'wellness': 'healthcare',
+        'pharma': 'healthcare',
+        'creative': 'creative',
+        'design': 'creative',
+        'art': 'creative',
+        'studio': 'creative',
+        'agency': 'creative',
+        'media': 'creative',
+        'eco': 'sustainability',
+        'green': 'sustainability',
+        'organic': 'sustainability',
+        'sustainable': 'sustainability',
+        'environment': 'sustainability',
+        'nature': 'sustainability',
+    };
+
+    for (const [keyword, industry] of Object.entries(industryMappings)) {
+        if (lowerCategory.includes(keyword)) {
+            return industry;
+        }
+    }
+
+    return undefined;
+}
+
+/**
+ * Quick semantic generation - simplified API
+ */
+export function quickSemanticGenerate(
+    brandName: string,
+    primaryColor: string,
+    category?: string
+): GeneratedLogo[] {
+    const { logos } = generateSemanticLogos(brandName, category, primaryColor);
+    return logos;
+}
+
+/**
+ * Get algorithm recommendations based on semantic analysis
+ * Useful for UI to show why certain algorithms were selected
+ */
+export function getAlgorithmRecommendations(
+    brandName: string,
+    category?: string
+): {
+    recommended: string[];
+    reasons: string[];
+} {
+    const analysis = analyzeSemantics(brandName, category);
+    const reasons: string[] = [];
+
+    // Build reason strings
+    if (analysis.matchedKeywords.length > 0) {
+        reasons.push(`Found keywords: ${analysis.matchedKeywords.map(k => k.word).join(', ')}`);
+    }
+
+    if (analysis.industry) {
+        reasons.push(`Industry match: ${analysis.industry.name}`);
+    }
+
+    if (analysis.letterAnalysis.length > 0) {
+        const letters = analysis.letterAnalysis.map(l => l.letter).join('');
+        const meanings = analysis.letterAnalysis.flatMap(l => l.hiddenMeanings).slice(0, 3);
+        reasons.push(`Letter "${letters}" meanings: ${meanings.join(', ')}`);
+    }
+
+    return {
+        recommended: analysis.recommendedAlgorithms.slice(0, 5),
+        reasons,
+    };
+}
+
