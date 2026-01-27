@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download, RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
 import { MockupType, MOCKUP_METADATA, downloadMockupAsPng } from '@/lib/mockup-state';
 import { BrandIdentity } from '@/lib/data';
-import Mockup3DCard from './Mockup3DCard';
+import { Mockup3DScene, has3DComponent } from './mockups-3d';
 
 interface Mockup3DModalProps {
     isOpen: boolean;
@@ -37,7 +37,8 @@ export function Mockup3DModal({
     const lastPosition = useRef({ x: 0, y: 0 });
 
     const metadata = MOCKUP_METADATA[mockupType];
-    const isR3F = mockupType === 'business-card';
+    // All mockup types now have 3D components
+    const isR3F = has3DComponent(mockupType);
 
     useEffect(() => {
         setMounted(true);
@@ -154,9 +155,9 @@ export function Mockup3DModal({
                         <div className="relative flex-1 bg-gradient-to-br from-gray-900 via-gray-950 to-black overflow-hidden">
 
                             {isR3F ? (
-                                /* R3F Component */
+                                /* R3F 3D Component - Now supports ALL mockup types */
                                 <div className="absolute inset-0">
-                                    <Mockup3DCard brand={brand} />
+                                    <Mockup3DScene brand={brand} mockupType={mockupType} />
                                 </div>
                             ) : (
                                 /* CSS 3D Implementation (Fallback/Legacy) */

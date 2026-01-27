@@ -74,7 +74,7 @@ function CardModel({ brand }: { brand: BrandIdentity }) {
     );
 }
 
-export function Mockup3DCard({ brand }: Mockup3DCardProps) {
+export function Mockup3DCard({ brand, stacked }: Mockup3DCardProps) {
     return (
         <div className="w-full h-full">
             <Canvas

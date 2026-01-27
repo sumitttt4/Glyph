@@ -115,7 +115,7 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                 <motion.div
                     whileHover={{ scale: 1.005 }}
                     onClick={() => setViewMode?.('presentation')}
-                    className="md:col-span-4 md:row-span-2 rounded-[2.5rem] overflow-hidden relative cursor-pointer group shadow-2xl transition-all border border-black/5"
+                    className="md:col-span-4 md:row-span-2 rounded-[2.5rem] overflow-hidden relative cursor-pointer group shadow-2xl transition-all border border-[#1c1917]"
                     style={{
                         background: tokens.gradient
                             ? `linear-gradient(145deg, ${tokens.gradient[0]}, ${tokens.gradient[1]})`
@@ -175,12 +175,12 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                 </motion.div>
 
                 {/* 2. Construction */}
-                <div className="md:col-span-5 md:row-span-1 h-[320px] bg-white rounded-[2.5rem] overflow-hidden border border-stone-200 relative group shadow-sm">
+                <div className="md:col-span-5 md:row-span-1 h-[320px] bg-white rounded-[2.5rem] overflow-hidden border border-[#1c1917] relative group shadow-sm">
                     <LogoConstruction brand={brand} className="w-full h-full" />
                 </div>
 
                 {/* Logo Block */}
-                <div className="col-span-2 row-span-2 md:col-span-2 md:row-span-1 bg-white rounded-3xl p-6 md:p-8 flex items-center justify-between overflow-hidden relative group hover:shadow-xl transition-all duration-500 border border-stone-100">
+                <div className="col-span-2 row-span-2 md:col-span-2 md:row-span-1 bg-white rounded-3xl p-6 md:p-8 flex items-center justify-between overflow-hidden relative group hover:shadow-xl transition-all duration-500 border border-[#1c1917]/10">
                     <div className="flex items-center gap-6 md:gap-8 z-10 w-full">
                         <div className="w-24 h-24 md:w-28 md:h-28 shrink-0 relative group/logo">
                             <LogoComposition brand={brand} />
@@ -199,22 +199,22 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                 </div>
 
                 {/* Safari Mockup */}
-                <div className="md:col-span-8 md:row-span-1 h-[380px] bg-stone-100 rounded-[2.5rem] overflow-hidden border border-stone-200 relative group p-6 flex items-center justify-center">
+                <div className="md:col-span-8 md:row-span-1 h-[380px] bg-white rounded-[2.5rem] overflow-hidden border border-[#1c1917] relative group p-6 flex items-center justify-center">
                     <SafariBrowserMockup brand={brand} className="w-full max-w-3xl shadow-2xl" isDark={isDark} />
                 </div>
 
                 {/* 3. Color Palette */}
-                <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-stone-200">
+                <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-[#1c1917]">
                     <ColorPaletteHorizontal colors={[{ label: 'Background', hex: tokens.bg }, { label: 'Primary', hex: tokens.primary }, { label: 'Surface', hex: tokens.surface }, { label: 'Text', hex: tokens.text }]} className="h-full" />
                 </div>
 
                 {/* 3.5 iPhone */}
-                <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-stone-200">
+                <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-[#1c1917]">
                     <MockupIPhoneHome brand={brand} isDark={isDark} />
                 </div>
 
                 {/* 4. Mobile Context */}
-                <div className="md:col-span-3 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden flex items-center justify-center bg-stone-100 border border-stone-200 relative">
+                <div className="md:col-span-3 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden flex items-center justify-center bg-white border border-[#1c1917] relative">
                     <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at center, #000 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
                     <div className="scale-[0.8] origin-center shadow-2xl rounded-[2.5rem]">
                         <MockupDevice brand={brand} />
@@ -222,22 +222,22 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                 </div>
 
                 {/* 5. Credit Card */}
-                <div className="md:col-span-5 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-stone-200 relative" style={{ backgroundColor: tokens.bg }}>
+                <div className="md:col-span-5 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-[#1c1917] relative" style={{ backgroundColor: tokens.bg }}>
                     <MockupCreditCard brand={brand} isDark={isDark} />
                 </div>
 
                 {/* 6. Business Cards */}
-                <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden bg-stone-50 border border-stone-200 flex items-center justify-center">
+                <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden bg-white border border-[#1c1917] flex items-center justify-center">
                     <Mockup3DCard brand={brand} stacked />
                 </div>
 
                 {/* 7. ID Badge */}
-                <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-stone-200" style={{ background: `linear-gradient(135deg, ${tokens.surface} 0%, ${tokens.bg} 100%)` }}>
+                <div className="md:col-span-4 md:row-span-1 h-[320px] rounded-[2.5rem] shadow-xl overflow-hidden border border-[#1c1917]" style={{ background: `linear-gradient(135deg, ${tokens.surface} 0%, ${tokens.bg} 100%)` }}>
                     <MockupIDBadge brand={brand} isDark={isDark} />
                 </div>
 
                 {/* 6. Typography Spec */}
-                <div onClick={onSwapFont} className="md:col-span-12 md:row-span-1 h-auto min-h-[400px] rounded-[2.5rem] shadow-xl overflow-hidden relative cursor-pointer group hover:bg-stone-50 transition-colors bg-white border border-stone-200">
+                <div onClick={onSwapFont} className="md:col-span-12 md:row-span-1 h-auto min-h-[400px] rounded-[2.5rem] shadow-xl overflow-hidden relative cursor-pointer group hover:bg-stone-50 transition-colors bg-white border border-[#1c1917]">
                     <div className="p-8 md:p-12 flex flex-col h-full">
                         <div className="flex justify-between items-start mb-12">
                             <div>
@@ -271,15 +271,15 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
 
                             {/* Column 2: Major Headings */}
                             <div className="space-y-10 self-center">
-                                <div className="group/item flex items-baseline justify-between border-b border-stone-100 pb-3">
+                                <div className="group/item flex items-baseline justify-between border-b border-[#1c1917]/10 pb-3">
                                     <p className={cn("text-5xl text-stone-900 leading-tight", brand.font.heading)}>Heading 3</p>
                                     <span className="text-[10px] font-mono text-stone-300 shrink-0 ml-4">48px</span>
                                 </div>
-                                <div className="group/item flex items-baseline justify-between border-b border-stone-100 pb-3">
+                                <div className="group/item flex items-baseline justify-between border-b border-[#1c1917]/10 pb-3">
                                     <p className={cn("text-4xl text-stone-900 leading-tight", brand.font.heading)}>Heading 4</p>
                                     <span className="text-[10px] font-mono text-stone-300 shrink-0 ml-4">36px</span>
                                 </div>
-                                <div className="group/item flex items-baseline justify-between border-b border-stone-100 pb-3">
+                                <div className="group/item flex items-baseline justify-between border-b border-[#1c1917]/10 pb-3">
                                     <p className={cn("text-3xl text-stone-900 leading-tight", brand.font.heading)}>Heading 5</p>
                                     <span className="text-[10px] font-mono text-stone-300 shrink-0 ml-4">30px</span>
                                 </div>
@@ -287,15 +287,15 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
 
                             {/* Column 3: Minor Headings */}
                             <div className="space-y-8 self-center">
-                                <div className="group/item flex items-baseline justify-between border-b border-stone-100 pb-2">
+                                <div className="group/item flex items-baseline justify-between border-b border-[#1c1917]/10 pb-2">
                                     <p className="text-2xl font-semibold text-stone-900">Heading 6</p>
                                     <span className="text-[10px] font-mono text-stone-300 shrink-0 ml-4">24px</span>
                                 </div>
-                                <div className="group/item flex items-baseline justify-between border-b border-stone-100 pb-2">
+                                <div className="group/item flex items-baseline justify-between border-b border-[#1c1917]/10 pb-2">
                                     <p className="text-xl font-medium text-stone-800">Heading 7</p>
                                     <span className="text-[10px] font-mono text-stone-300 shrink-0 ml-4">20px</span>
                                 </div>
-                                <div className="group/item flex items-baseline justify-between border-b border-stone-100 pb-2">
+                                <div className="group/item flex items-baseline justify-between border-b border-[#1c1917]/10 pb-2">
                                     <p className="text-lg font-medium text-stone-800">Heading 8</p>
                                     <span className="text-[10px] font-mono text-stone-300 shrink-0 ml-4">18px</span>
                                 </div>
@@ -312,7 +312,7 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                                     </div>
                                 </div>
 
-                                <div className="pt-8 border-t border-stone-100">
+                                <div className="pt-8 border-t border-[#1c1917]/10">
                                     <p className="text-xs text-stone-400 uppercase tracking-widest font-bold mb-2">
                                         Caption Text
                                     </p>
@@ -327,7 +327,7 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                 </div>
 
                 {/* Brand Guidelines Link */}
-                <div id="section-guidelines" className="mt-6 md:col-span-12 h-auto min-h-[200px] rounded-[2.5rem] shadow-xl overflow-hidden relative group hover:bg-stone-50 transition-colors bg-white border border-stone-200 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 animate-fade-in-up">
+                <div id="section-guidelines" className="mt-6 md:col-span-12 h-auto min-h-[200px] rounded-[2.5rem] shadow-xl overflow-hidden relative group hover:bg-stone-50 transition-colors bg-white border border-[#1c1917] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 animate-fade-in-up">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
                             <h3 className="text-[10px] font-bold text-orange-500 uppercase tracking-[0.2em]">Premium Asset</h3>
@@ -343,14 +343,13 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                     </div>
                 </div>
 
-                {/* 7.5 Real-World Mockups */}
-                <div className="mt-12 md:col-span-12">
-                    <div className="flex items-center gap-2 mb-6 px-2">
-                        <h2 className="text-xl font-bold text-stone-900">Real-World Application</h2>
+                {/* 7.5 Real-World Mockups (Renamed to 3D Mockups) */}
+                <div id="section-mockups" className="md:col-span-12 mt-12">
+                    <div className="mb-6">
+                        <h3 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-2">3D Mockups</h3>
+                        <p className="text-stone-500 font-mono text-xs tracking-tight">Click any mockup for 3D view • Download as PNG</p>
                     </div>
-                    <BrandMockups
-                        brand={brand}
-                    />
+                    <BrandMockups brand={brand} showCarousel={true} className="bg-white rounded-[2.5rem] p-6 shadow-xl border border-[#1c1917]" />
                 </div>
 
                 {/* 8. Social Media Kit */}
@@ -358,18 +357,9 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                     <SocialMediaKit brand={brand} />
                 </div>
 
-                {/* 9. 3D Mockups with Download */}
-                <div id="section-mockups" className="md:col-span-12 mt-12">
-                    <div className="mb-6">
-                        <h3 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-2">3D Mockups</h3>
-                        <p className="text-stone-500 font-mono text-xs tracking-tight">Click any mockup for 3D view • Download as PNG</p>
-                    </div>
-                    <BrandMockups brand={brand} showCarousel={true} className="bg-white rounded-[2.5rem] p-6 shadow-xl border border-stone-200" />
-                </div>
-
                 {/* 10. Brand Graphics System */}
                 <div id="section-brand-system" className="md:col-span-12 mt-12">
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-stone-200">
+                    <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#1c1917]">
                         <BrandGraphicsSystem brand={brand} />
                     </div>
                 </div>
@@ -379,3 +369,4 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
         </div>
     );
 }
+

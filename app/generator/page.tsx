@@ -282,8 +282,8 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
   };
 
   return (
-    // Mobile: Vertical stack, Desktop: Fixed sidebar + scrollable main
-    <div className="min-h-screen w-full bg-stone-50 font-sans">
+    // Responsive Flex Layout: Stacks on mobile, Row on desktop
+    <div className="flex flex-col md:flex-row min-h-screen w-full bg-stone-50 font-sans">
       <LoadingState isLoading={isGenerating} />
       <ProGateModal
         isOpen={showProModal}
@@ -291,8 +291,10 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
         featureName="Full Package Export"
       />
 
-      {/* Sidebar - Fixed on desktop, normal flow on mobile */}
-      <div className="md:fixed md:left-0 md:top-0 md:bottom-0 md:w-[420px] md:overflow-y-auto overflow-x-hidden md:border-r md:border-stone-200 z-40 scrollbar-hide">
+      {/* Sidebar - Relative Flex Child */}
+      {/* md:w-[420px] ensures it takes space in the flow */}
+      {/* md:sticky md:top-0 md:h-screen ensures it stays viewable while scrolling main content */}
+      <aside className="w-full md:w-[420px] flex-shrink-0 z-40 relative md:sticky md:top-0 md:h-screen md:overflow-y-auto border-r border-stone-200 bg-white scrollbar-hide">
         <Sidebar
           onGenerate={handleGenerate}
           isGenerating={isGenerating}
@@ -300,10 +302,10 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
           setSelectedVibe={setSelectedVibe}
           hasGenerated={!!brand}
         />
-      </div>
+      </aside>
 
-      {/* Main Content - Has left margin on desktop to account for fixed sidebar */}
-      <main ref={mainRef} className="relative bg-[#FAFAF9] min-h-screen md:ml-[420px]">
+      {/* Main Content - Flex-1 takes remaining space */}
+      <main ref={mainRef} className="flex-1 relative bg-[#FAFAF9] min-h-screen">
         <div
           className="absolute inset-0 opacity-40"
           style={{

@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, Grid3X3, Layers, MessageSquare, Presentation, Image, Share2 } from 'lucide-react';
 import { BrandIdentity } from '@/lib/data';
@@ -59,6 +60,15 @@ const CATEGORY_CONFIG: Record<CategoryFilter, { label: string; icon: React.React
 export function BrandGraphicsSystem({ brand, className = '' }: BrandGraphicsSystemProps) {
     const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('all');
     const [selectedAsset, setSelectedAsset] = useState<GraphicAsset | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    // Mount state for portal
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
+
+    const colors = brand.theme.tokens.light;
 
     // Generate all graphics
     const allGraphics = useMemo(() => generateAllBrandGraphics(brand), [brand]);
@@ -69,7 +79,7 @@ export function BrandGraphicsSystem({ brand, className = '' }: BrandGraphicsSyst
         return allGraphics.filter(g => g.category === selectedCategory);
     }, [allGraphics, selectedCategory]);
 
-    // Download SVG
+    // Download helpers
     const downloadSVG = (asset: GraphicAsset) => {
         const blob = new Blob([asset.svg], { type: 'image/svg+xml' });
         const url = URL.createObjectURL(blob);
@@ -80,21 +90,23 @@ export function BrandGraphicsSystem({ brand, className = '' }: BrandGraphicsSyst
         URL.revokeObjectURL(url);
     };
 
-    // Download PNG
     const downloadPNG = async (asset: GraphicAsset) => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        canvas.width = asset.width;
-        canvas.height = asset.height;
+        // Scale for high res
+        const scale = 2;
+        canvas.width = asset.width * scale;
+        canvas.height = asset.height * scale;
+        ctx.scale(scale, scale);
 
         const img = new window.Image();
         const svgBlob = new Blob([asset.svg], { type: 'image/svg+xml;charset=utf-8' });
         const url = URL.createObjectURL(svgBlob);
 
         img.onload = () => {
-            ctx.drawImage(img, 0, 0);
+            ctx.drawImage(img, 0, 0, asset.width, asset.height);
             URL.revokeObjectURL(url);
             canvas.toBlob((blob) => {
                 if (blob) {
@@ -107,7 +119,6 @@ export function BrandGraphicsSystem({ brand, className = '' }: BrandGraphicsSyst
                 }
             }, 'image/png');
         };
-
         img.src = url;
     };
 
@@ -116,34 +127,39 @@ export function BrandGraphicsSystem({ brand, className = '' }: BrandGraphicsSyst
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
                 <div>
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Brand Graphics System</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <h2 className="text-xl font-bold" style={{ color: colors.text }}>Brand Graphics System</h2>
+                    <p className="text-sm opacity-60" style={{ color: colors.text }}>
                         {filteredGraphics.length} assets • Click to preview, download as SVG or PNG
                     </p>
                 </div>
             </div>
 
             {/* Category Filters */}
-            <div className="flex flex-wrap gap-2 mb-6 p-2 bg-gray-100 dark:bg-gray-800 rounded-xl">
-                {(Object.entries(CATEGORY_CONFIG) as [CategoryFilter, typeof CATEGORY_CONFIG[CategoryFilter]][]).map(([key, config]) => (
-                    <button
-                        key={key}
-                        onClick={() => setSelectedCategory(key)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                            selectedCategory === key
-                                ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white'
-                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                        }`}
-                    >
-                        {config.icon}
-                        <span>{config.label}</span>
-                        {key !== 'all' && (
-                            <span className="text-xs opacity-60">
-                                ({allGraphics.filter(g => g.category === key).length})
-                            </span>
-                        )}
-                    </button>
-                ))}
+            <div className="flex flex-wrap gap-2 mb-6 p-2 rounded-xl transition-colors" style={{ background: colors.surface }}>
+                {(Object.entries(CATEGORY_CONFIG) as [CategoryFilter, typeof CATEGORY_CONFIG[CategoryFilter]][]).map(([key, config]) => {
+                    const isActive = selectedCategory === key;
+                    return (
+                        <button
+                            key={key}
+                            onClick={() => setSelectedCategory(key)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${isActive ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
+                                }`}
+                            style={{
+                                background: isActive ? colors.bg : 'transparent',
+                                color: colors.text,
+                                border: isActive ? `1px solid ${colors.border}` : '1px solid transparent'
+                            }}
+                        >
+                            {config.icon}
+                            <span>{config.label}</span>
+                            {key !== 'all' && (
+                                <span className="text-xs opacity-60">
+                                    ({allGraphics.filter(g => g.category === key).length})
+                                </span>
+                            )}
+                        </button>
+                    );
+                })}
             </div>
 
             {/* Graphics Grid */}
@@ -157,111 +173,125 @@ export function BrandGraphicsSystem({ brand, className = '' }: BrandGraphicsSyst
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
                             transition={{ duration: 0.2 }}
-                            className="group relative rounded-xl border-2 border-gray-200 dark:border-gray-700 overflow-hidden hover:border-gray-300 dark:hover:border-gray-600 transition-all cursor-pointer"
+                            className="group relative rounded-xl border overflow-hidden transition-all cursor-pointer hover:shadow-lg"
+                            style={{
+                                borderColor: colors.border,
+                                background: colors.surface
+                            }}
                             onClick={() => setSelectedAsset(asset)}
                         >
                             {/* Preview */}
                             <div
-                                className="aspect-video bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4"
-                                dangerouslySetInnerHTML={{
-                                    __html: asset.svg.replace(
-                                        /width="[^"]*"/,
-                                        'width="100%"'
-                                    ).replace(
-                                        /height="[^"]*"/,
-                                        'height="100%"'
-                                    )
-                                }}
-                            />
+                                className="aspect-video flex items-center justify-center p-4 relative"
+                                style={{ background: colors.bg }} // Use brand bg for preview area
+                            >
+                                <div
+                                    className="w-full h-full flex items-center justify-center"
+                                    dangerouslySetInnerHTML={{
+                                        __html: asset.svg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="100%"')
+                                    }}
+                                />
 
-                            {/* Info overlay */}
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); downloadSVG(asset); }}
-                                        className="p-2 bg-white rounded-lg shadow-lg hover:scale-105 transition-transform"
-                                        title="Download SVG"
-                                    >
-                                        <Download className="w-4 h-4 text-gray-900" />
-                                    </button>
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); downloadPNG(asset); }}
-                                        className="p-2 bg-white rounded-lg shadow-lg hover:scale-105 transition-transform"
-                                        title="Download PNG"
-                                    >
-                                        <Image className="w-4 h-4 text-gray-900" />
-                                    </button>
+                                {/* Info overlay */}
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 backdrop-blur-[1px]">
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); downloadSVG(asset); }}
+                                            className="p-2 bg-white rounded-lg shadow-lg hover:scale-105 transition-transform"
+                                            title="Download SVG"
+                                        >
+                                            <Download className="w-4 h-4 text-black" />
+                                        </button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); downloadPNG(asset); }}
+                                            className="p-2 bg-white rounded-lg shadow-lg hover:scale-105 transition-transform"
+                                            title="Download PNG"
+                                        >
+                                            <Image className="w-4 h-4 text-black" />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Label */}
-                            <div className="px-3 py-2 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-                                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{asset.name}</p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">{asset.width}×{asset.height}</p>
+                            <div className="px-3 py-2 border-t" style={{ borderColor: colors.border, background: colors.surface }}>
+                                <p className="text-sm font-medium truncate" style={{ color: colors.text }}>{asset.name}</p>
+                                <p className="text-xs opacity-50" style={{ color: colors.text }}>{asset.width}×{asset.height}</p>
                             </div>
                         </motion.div>
                     ))}
                 </AnimatePresence>
             </div>
 
-            {/* Preview Modal */}
-            <AnimatePresence>
-                {selectedAsset && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80"
-                        onClick={() => setSelectedAsset(null)}
-                    >
+            {/* Preview Modal - Rendered via Portal to escape layout context */}
+            {mounted && createPortal(
+                <AnimatePresence>
+                    {selectedAsset && (
                         <motion.div
-                            initial={{ scale: 0.9 }}
-                            animate={{ scale: 1 }}
-                            exit={{ scale: 0.9 }}
-                            className="relative max-w-5xl w-full bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-2xl"
-                            onClick={(e) => e.stopPropagation()}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
+                            onClick={() => setSelectedAsset(null)}
                         >
-                            {/* Preview */}
-                            <div
-                                className="w-full aspect-video bg-gray-100 dark:bg-gray-800 flex items-center justify-center p-8"
-                                dangerouslySetInnerHTML={{
-                                    __html: selectedAsset.svg.replace(
-                                        /width="[^"]*"/,
-                                        'width="100%"'
-                                    ).replace(
-                                        /height="[^"]*"/,
-                                        'height="auto"'
-                                    )
-                                }}
-                            />
-
-                            {/* Actions */}
-                            <div className="flex items-center justify-between p-4 border-t border-gray-200 dark:border-gray-700">
-                                <div>
-                                    <h3 className="font-bold text-gray-900 dark:text-white">{selectedAsset.name}</h3>
-                                    <p className="text-sm text-gray-500">{selectedAsset.width}×{selectedAsset.height} • {selectedAsset.category}</p>
+                            <motion.div
+                                initial={{ scale: 0.9, y: 20 }}
+                                animate={{ scale: 1, y: 0 }}
+                                exit={{ scale: 0.9, y: 20 }}
+                                className="relative max-w-5xl w-full rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+                                style={{ background: colors.bg }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {/* Header */}
+                                <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: colors.border, background: colors.surface }}>
+                                    <div>
+                                        <h3 className="font-bold text-lg" style={{ color: colors.text }}>{selectedAsset.name}</h3>
+                                        <p className="text-sm opacity-60" style={{ color: colors.text }}>{selectedAsset.width}×{selectedAsset.height} • {selectedAsset.category}</p>
+                                    </div>
+                                    <button className="p-2 hover:bg-black/5 rounded-full" onClick={() => setSelectedAsset(null)}>
+                                        <Share2 className="w-5 h-5" style={{ color: colors.text }} />
+                                    </button>
                                 </div>
-                                <div className="flex gap-2">
+
+                                {/* Preview */}
+                                <div
+                                    className="flex-1 overflow-auto flex items-center justify-center p-8"
+                                    style={{ background: colors.bg }}
+                                >
+                                    <div
+                                        className="max-w-full max-h-full shadow-lg"
+                                        dangerouslySetInnerHTML={{
+                                            __html: selectedAsset.svg.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="auto"')
+                                        }}
+                                        style={{ width: selectedAsset.width > 800 ? '100%' : selectedAsset.width, maxWidth: '100%' }}
+                                    />
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex items-center justify-end gap-3 p-6 border-t" style={{ borderColor: colors.border, background: colors.surface }}>
                                     <button
                                         onClick={() => downloadSVG(selectedAsset)}
-                                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                                        className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors hover:opacity-80"
+                                        style={{ background: colors.bg, color: colors.text, border: `1px solid ${colors.border}` }}
                                     >
                                         <Download className="w-4 h-4" />
                                         SVG
                                     </button>
                                     <button
                                         onClick={() => downloadPNG(selectedAsset)}
-                                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                        className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-white transition-colors hover:opacity-90 shadow-sm"
+                                        style={{ background: colors.primary }}
                                     >
                                         <Image className="w-4 h-4" />
-                                        PNG
+                                        Download PNG
                                     </button>
                                 </div>
-                            </div>
+                            </motion.div>
                         </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </div>
     );
 }

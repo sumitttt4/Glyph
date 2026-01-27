@@ -189,17 +189,17 @@ export function generateGeometricTexture(
 
             switch (shapeType) {
                 case 0: // Square
-                    shapes.push(`<rect x="${cx - size/2}" y="${cy - size/2}" width="${size}" height="${size}" fill="${colors.primary}" opacity="${opacity}" transform="rotate(${Math.random() * 45}, ${cx}, ${cy})"/>`);
+                    shapes.push(`<rect x="${cx - size / 2}" y="${cy - size / 2}" width="${size}" height="${size}" fill="${colors.primary}" opacity="${opacity}" transform="rotate(${Math.random() * 45}, ${cx}, ${cy})"/>`);
                     break;
                 case 1: // Circle
-                    shapes.push(`<circle cx="${cx}" cy="${cy}" r="${size/2}" fill="${colors.primary}" opacity="${opacity}"/>`);
+                    shapes.push(`<circle cx="${cx}" cy="${cy}" r="${size / 2}" fill="${colors.primary}" opacity="${opacity}"/>`);
                     break;
                 case 2: // Triangle
-                    const points = `${cx},${cy - size/2} ${cx - size/2},${cy + size/2} ${cx + size/2},${cy + size/2}`;
+                    const points = `${cx},${cy - size / 2} ${cx - size / 2},${cy + size / 2} ${cx + size / 2},${cy + size / 2}`;
                     shapes.push(`<polygon points="${points}" fill="${colors.primary}" opacity="${opacity}"/>`);
                     break;
                 case 3: // Line
-                    shapes.push(`<line x1="${cx - size/2}" y1="${cy}" x2="${cx + size/2}" y2="${cy}" stroke="${colors.primary}" stroke-width="2" opacity="${opacity}" transform="rotate(${Math.random() * 180}, ${cx}, ${cy})"/>`);
+                    shapes.push(`<line x1="${cx - size / 2}" y1="${cy}" x2="${cx + size / 2}" y2="${cy}" stroke="${colors.primary}" stroke-width="2" opacity="${opacity}" transform="rotate(${Math.random() * 180}, ${cx}, ${cy})"/>`);
                     break;
             }
         }
@@ -297,6 +297,26 @@ export function generateQuoteCard(
     const width = 1080;
     const height = 1080;
 
+    // Word-wrap helper that respects word boundaries
+    function wrapText(text: string, maxCharsPerLine: number): string[] {
+        const words = text.split(' ');
+        const lines: string[] = [];
+        let currentLine = '';
+
+        for (const word of words) {
+            if (currentLine.length + word.length + 1 <= maxCharsPerLine) {
+                currentLine += (currentLine ? ' ' : '') + word;
+            } else {
+                if (currentLine) lines.push(currentLine);
+                currentLine = word;
+            }
+        }
+        if (currentLine) lines.push(currentLine);
+        return lines.slice(0, 3); // Max 3 lines
+    }
+
+    const quoteLines = wrapText(quote, 35);
+
     return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
     <defs>
@@ -311,19 +331,17 @@ export function generateQuoteCard(
 
     <!-- Pattern overlay -->
     <g opacity="0.1">
-        ${Array.from({length: 20}, (_, i) =>
-            `<circle cx="${100 + i * 50}" cy="${100 + i * 50}" r="${10 + i * 5}" fill="none" stroke="white" stroke-width="1"/>`
-        ).join('\n        ')}
+        ${Array.from({ length: 20 }, (_, i) =>
+        `<circle cx="${100 + i * 50}" cy="${100 + i * 50}" r="${10 + i * 5}" fill="none" stroke="white" stroke-width="1"/>`
+    ).join('\n        ')}
     </g>
 
     <!-- Quote mark -->
     <text x="100" y="300" font-family="${fontFamily}" font-size="200" fill="white" opacity="0.2">"</text>
 
-    <!-- Quote text -->
-    <text x="100" y="500" font-family="${fontFamily}" font-size="48" fill="white" font-weight="bold">
-        <tspan x="100" dy="0">${quote.slice(0, 40)}</tspan>
-        <tspan x="100" dy="60">${quote.slice(40, 80)}</tspan>
-        <tspan x="100" dy="60">${quote.slice(80)}</tspan>
+    <!-- Quote text - word-wrapped -->
+    <text x="100" y="450" font-family="${fontFamily}" font-size="48" fill="white" font-weight="bold">
+        ${quoteLines.map((line, i) => `<tspan x="100" dy="${i === 0 ? 0 : 70}">${line}</tspan>`).join('\n        ')}
     </text>
 
     <!-- Author -->
@@ -398,15 +416,15 @@ export function generateAnnouncementCard(
     <rect x="${width - 200}" y="${height - 200}" width="400" height="400" fill="white" opacity="0.1" transform="rotate(45, ${width - 100}, ${height - 100})"/>
 
     <!-- Centered content -->
-    <text x="${width/2}" y="400" font-family="${fontFamily}" font-size="120" fill="white" text-anchor="middle" font-weight="bold">${headline}</text>
-    <text x="${width/2}" y="500" font-family="${fontFamily}" font-size="36" fill="white" text-anchor="middle" opacity="0.9">${subtext}</text>
+    <text x="${width / 2}" y="400" font-family="${fontFamily}" font-size="120" fill="white" text-anchor="middle" font-weight="bold">${headline}</text>
+    <text x="${width / 2}" y="500" font-family="${fontFamily}" font-size="36" fill="white" text-anchor="middle" opacity="0.9">${subtext}</text>
 
     <!-- CTA button -->
-    <rect x="${width/2 - 120}" y="600" width="240" height="60" rx="30" fill="white"/>
-    <text x="${width/2}" y="640" font-family="${fontFamily}" font-size="20" fill="${colors.primary}" text-anchor="middle" font-weight="bold">Learn More</text>
+    <rect x="${width / 2 - 120}" y="600" width="240" height="60" rx="30" fill="white"/>
+    <text x="${width / 2}" y="640" font-family="${fontFamily}" font-size="20" fill="${colors.primary}" text-anchor="middle" font-weight="bold">Learn More</text>
 
     <!-- Brand -->
-    <text x="${width/2}" y="980" font-family="${fontFamily}" font-size="28" fill="white" text-anchor="middle" opacity="0.8">${brand.name}</text>
+    <text x="${width / 2}" y="980" font-family="${fontFamily}" font-size="28" fill="white" text-anchor="middle" opacity="0.8">${brand.name}</text>
 </svg>`;
 }
 
@@ -432,16 +450,16 @@ export function generateTeamCard(
     <rect y="0" width="${width}" height="700" fill="${colors.surface}"/>
 
     <!-- Avatar placeholder -->
-    <circle cx="${width/2}" cy="350" r="150" fill="${colors.primary}" opacity="0.2"/>
-    <circle cx="${width/2}" cy="350" r="120" fill="${colors.primary}" opacity="0.3"/>
-    <text x="${width/2}" y="370" font-family="${fontFamily}" font-size="80" fill="${colors.primary}" text-anchor="middle">${name.charAt(0)}</text>
+    <circle cx="${width / 2}" cy="350" r="150" fill="${colors.primary}" opacity="0.2"/>
+    <circle cx="${width / 2}" cy="350" r="120" fill="${colors.primary}" opacity="0.3"/>
+    <text x="${width / 2}" y="370" font-family="${fontFamily}" font-size="80" fill="${colors.primary}" text-anchor="middle">${name.charAt(0)}</text>
 
     <!-- Info -->
-    <text x="${width/2}" y="800" font-family="${fontFamily}" font-size="48" fill="${colors.text}" text-anchor="middle" font-weight="bold">${name}</text>
-    <text x="${width/2}" y="860" font-family="${fontFamily}" font-size="28" fill="${colors.muted}" text-anchor="middle">${role}</text>
+    <text x="${width / 2}" y="800" font-family="${fontFamily}" font-size="48" fill="${colors.text}" text-anchor="middle" font-weight="bold">${name}</text>
+    <text x="${width / 2}" y="860" font-family="${fontFamily}" font-size="28" fill="${colors.muted}" text-anchor="middle">${role}</text>
 
     <!-- Brand -->
-    <text x="${width/2}" y="980" font-family="${fontFamily}" font-size="24" fill="${colors.muted}" text-anchor="middle">${brand.name}</text>
+    <text x="${width / 2}" y="980" font-family="${fontFamily}" font-size="24" fill="${colors.muted}" text-anchor="middle">${brand.name}</text>
 </svg>`;
 }
 
@@ -469,21 +487,21 @@ export function generateStatsCard(
 
     <!-- Pattern -->
     <g opacity="0.1">
-        ${Array.from({length: 10}, (_, i) =>
-            `<line x1="0" y1="${i * 120}" x2="${width}" y2="${i * 120}" stroke="white" stroke-width="1"/>`
-        ).join('\n        ')}
+        ${Array.from({ length: 10 }, (_, i) =>
+        `<line x1="0" y1="${i * 120}" x2="${width}" y2="${i * 120}" stroke="white" stroke-width="1"/>`
+    ).join('\n        ')}
     </g>
 
     <!-- Stats -->
     ${stats.map((stat, i) => `
         <g transform="translate(${i * statWidth}, 0)">
-            <text x="${statWidth/2}" y="480" font-family="${fontFamily}" font-size="120" fill="white" text-anchor="middle" font-weight="bold">${stat.value}</text>
-            <text x="${statWidth/2}" y="560" font-family="${fontFamily}" font-size="28" fill="white" text-anchor="middle" opacity="0.8">${stat.label}</text>
+            <text x="${statWidth / 2}" y="480" font-family="${fontFamily}" font-size="120" fill="white" text-anchor="middle" font-weight="bold">${stat.value}</text>
+            <text x="${statWidth / 2}" y="560" font-family="${fontFamily}" font-size="28" fill="white" text-anchor="middle" opacity="0.8">${stat.label}</text>
         </g>
     `).join('')}
 
     <!-- Brand -->
-    <text x="${width/2}" y="980" font-family="${fontFamily}" font-size="28" fill="white" text-anchor="middle" opacity="0.8">${brand.name}</text>
+    <text x="${width / 2}" y="980" font-family="${fontFamily}" font-size="28" fill="white" text-anchor="middle" opacity="0.8">${brand.name}</text>
 </svg>`;
 }
 
@@ -516,14 +534,14 @@ export function generateCTACard(
     <circle cx="${width - 200}" cy="${height - 200}" r="400" fill="${colors.primary}" opacity="0.05"/>
 
     <!-- Content -->
-    <text x="${width/2}" y="450" font-family="${fontFamily}" font-size="72" fill="${colors.text}" text-anchor="middle" font-weight="bold">${headline}</text>
+    <text x="${width / 2}" y="450" font-family="${fontFamily}" font-size="72" fill="${colors.text}" text-anchor="middle" font-weight="bold">${headline}</text>
 
     <!-- CTA button -->
-    <rect x="${width/2 - 150}" y="550" width="300" height="80" rx="40" fill="${colors.primary}"/>
-    <text x="${width/2}" y="602" font-family="${fontFamily}" font-size="28" fill="white" text-anchor="middle" font-weight="bold">${cta}</text>
+    <rect x="${width / 2 - 150}" y="550" width="300" height="80" rx="40" fill="${colors.primary}"/>
+    <text x="${width / 2}" y="602" font-family="${fontFamily}" font-size="28" fill="white" text-anchor="middle" font-weight="bold">${cta}</text>
 
     <!-- Brand -->
-    <text x="${width/2}" y="980" font-family="${fontFamily}" font-size="24" fill="${colors.muted}" text-anchor="middle">${brand.name}</text>
+    <text x="${width / 2}" y="980" font-family="${fontFamily}" font-size="24" fill="${colors.muted}" text-anchor="middle">${brand.name}</text>
 </svg>`;
 }
 
@@ -546,20 +564,20 @@ export function generateTitleSlide(brand: BrandIdentity, title?: string, subtitl
 
     <!-- Pattern background -->
     <g opacity="0.03">
-        ${Array.from({length: 30}, (_, i) =>
-            `<circle cx="${Math.random() * width}" cy="${Math.random() * height}" r="${20 + Math.random() * 40}" fill="${colors.primary}"/>`
-        ).join('\n        ')}
+        ${Array.from({ length: 30 }, (_, i) =>
+        `<circle cx="${Math.random() * width}" cy="${Math.random() * height}" r="${20 + Math.random() * 40}" fill="${colors.primary}"/>`
+    ).join('\n        ')}
     </g>
 
     <!-- Brand accent bar -->
     <rect x="0" y="${height - 8}" width="${width}" height="8" fill="${colors.primary}"/>
 
     <!-- Content -->
-    <text x="${width/2}" y="450" font-family="${fontFamily}" font-size="96" fill="${colors.text}" text-anchor="middle" font-weight="bold">${title || brand.name}</text>
-    <text x="${width/2}" y="550" font-family="${fontFamily}" font-size="36" fill="${colors.muted}" text-anchor="middle">${subtitle || brand.strategy?.tagline || 'Brand Presentation'}</text>
+    <text x="${width / 2}" y="450" font-family="${fontFamily}" font-size="96" fill="${colors.text}" text-anchor="middle" font-weight="bold">${title || brand.name}</text>
+    <text x="${width / 2}" y="550" font-family="${fontFamily}" font-size="36" fill="${colors.muted}" text-anchor="middle">${subtitle || brand.strategy?.tagline || 'Brand Presentation'}</text>
 
     <!-- Date -->
-    <text x="${width/2}" y="950" font-family="${fontFamily}" font-size="20" fill="${colors.muted}" text-anchor="middle">${new Date().getFullYear()}</text>
+    <text x="${width / 2}" y="950" font-family="${fontFamily}" font-size="20" fill="${colors.muted}" text-anchor="middle">${new Date().getFullYear()}</text>
 </svg>`;
 }
 
@@ -584,7 +602,7 @@ export function generateSectionDividerSlide(brand: BrandIdentity, sectionTitle: 
     <text x="150" y="200" font-family="${fontFamily}" font-size="200" fill="white" opacity="0.2" font-weight="bold">01</text>
 
     <!-- Title -->
-    <text x="${width/2}" y="${height/2 + 30}" font-family="${fontFamily}" font-size="80" fill="white" text-anchor="middle" font-weight="bold">${sectionTitle}</text>
+    <text x="${width / 2}" y="${height / 2 + 30}" font-family="${fontFamily}" font-size="80" fill="white" text-anchor="middle" font-weight="bold">${sectionTitle}</text>
 </svg>`;
 }
 
@@ -642,8 +660,8 @@ export function generateFeatureShowcaseSlide(brand: BrandIdentity, feature: stri
     <text x="100" y="420" font-family="${fontFamily}" font-size="24" fill="${colors.muted}">Description of this amazing feature</text>
 
     <!-- Feature visual -->
-    <rect x="${width/2 + 50}" y="150" width="750" height="600" rx="24" fill="${colors.surface}" stroke="${colors.border}" stroke-width="2"/>
-    <circle cx="${width/2 + 425}" cy="450" r="150" fill="${colors.primary}" opacity="0.1"/>
+    <rect x="${width / 2 + 50}" y="150" width="750" height="600" rx="24" fill="${colors.surface}" stroke="${colors.border}" stroke-width="2"/>
+    <circle cx="${width / 2 + 425}" cy="450" r="150" fill="${colors.primary}" opacity="0.1"/>
 
     <!-- Brand -->
     <text x="100" y="${height - 50}" font-family="${fontFamily}" font-size="20" fill="${colors.muted}">${brand.name}</text>
@@ -673,14 +691,14 @@ export function generateStatsSlide(
     <rect width="${width}" height="${height}" fill="${colors.bg}"/>
 
     <!-- Title -->
-    <text x="${width/2}" y="200" font-family="${fontFamily}" font-size="48" fill="${colors.text}" text-anchor="middle" font-weight="bold">By the Numbers</text>
+    <text x="${width / 2}" y="200" font-family="${fontFamily}" font-size="48" fill="${colors.text}" text-anchor="middle" font-weight="bold">By the Numbers</text>
 
     <!-- Stats -->
     ${stats.map((stat, i) => `
         <g transform="translate(${100 + i * statWidth}, 0)">
             <rect x="20" y="350" width="${statWidth - 40}" height="300" rx="16" fill="${colors.surface}"/>
-            <text x="${statWidth/2}" y="500" font-family="${fontFamily}" font-size="72" fill="${colors.primary}" text-anchor="middle" font-weight="bold">${stat.value}</text>
-            <text x="${statWidth/2}" y="580" font-family="${fontFamily}" font-size="24" fill="${colors.muted}" text-anchor="middle">${stat.label}</text>
+            <text x="${statWidth / 2}" y="500" font-family="${fontFamily}" font-size="72" fill="${colors.primary}" text-anchor="middle" font-weight="bold">${stat.value}</text>
+            <text x="${statWidth / 2}" y="580" font-family="${fontFamily}" font-size="24" fill="${colors.muted}" text-anchor="middle">${stat.label}</text>
         </g>
     `).join('')}
 
@@ -711,7 +729,7 @@ export function generateTimelineSlide(brand: BrandIdentity): string {
     <rect width="${width}" height="${height}" fill="${colors.bg}"/>
 
     <!-- Title -->
-    <text x="${width/2}" y="150" font-family="${fontFamily}" font-size="48" fill="${colors.text}" text-anchor="middle" font-weight="bold">Our Journey</text>
+    <text x="${width / 2}" y="150" font-family="${fontFamily}" font-size="48" fill="${colors.text}" text-anchor="middle" font-weight="bold">Our Journey</text>
 
     <!-- Timeline line -->
     <line x1="200" y1="500" x2="${width - 200}" y2="500" stroke="${colors.border}" stroke-width="4"/>
@@ -751,16 +769,16 @@ export function generateTeamSlide(brand: BrandIdentity): string {
     <rect width="${width}" height="${height}" fill="${colors.bg}"/>
 
     <!-- Title -->
-    <text x="${width/2}" y="150" font-family="${fontFamily}" font-size="48" fill="${colors.text}" text-anchor="middle" font-weight="bold">Leadership Team</text>
+    <text x="${width / 2}" y="150" font-family="${fontFamily}" font-size="48" fill="${colors.text}" text-anchor="middle" font-weight="bold">Leadership Team</text>
 
     <!-- Team members -->
     ${team.map((member, i) => `
         <g transform="translate(${150 + i * memberWidth}, 250)">
-            <circle cx="${memberWidth/2}" cy="150" r="100" fill="${colors.surface}"/>
-            <circle cx="${memberWidth/2}" cy="150" r="80" fill="${colors.primary}" opacity="0.2"/>
-            <text x="${memberWidth/2}" y="170" font-family="${fontFamily}" font-size="48" fill="${colors.primary}" text-anchor="middle">${member.name.charAt(0)}</text>
-            <text x="${memberWidth/2}" y="320" font-family="${fontFamily}" font-size="24" fill="${colors.text}" text-anchor="middle" font-weight="bold">${member.name}</text>
-            <text x="${memberWidth/2}" y="360" font-family="${fontFamily}" font-size="18" fill="${colors.muted}" text-anchor="middle">${member.role}</text>
+            <circle cx="${memberWidth / 2}" cy="150" r="100" fill="${colors.surface}"/>
+            <circle cx="${memberWidth / 2}" cy="150" r="80" fill="${colors.primary}" opacity="0.2"/>
+            <text x="${memberWidth / 2}" y="170" font-family="${fontFamily}" font-size="48" fill="${colors.primary}" text-anchor="middle">${member.name.charAt(0)}</text>
+            <text x="${memberWidth / 2}" y="320" font-family="${fontFamily}" font-size="24" fill="${colors.text}" text-anchor="middle" font-weight="bold">${member.name}</text>
+            <text x="${memberWidth / 2}" y="360" font-family="${fontFamily}" font-size="18" fill="${colors.muted}" text-anchor="middle">${member.role}</text>
         </g>
     `).join('')}
 
@@ -784,20 +802,20 @@ export function generateClosingSlide(brand: BrandIdentity): string {
 
     <!-- Pattern -->
     <g opacity="0.1">
-        ${Array.from({length: 40}, (_, i) =>
-            `<circle cx="${Math.random() * width}" cy="${Math.random() * height}" r="${10 + Math.random() * 30}" fill="white"/>`
-        ).join('\n        ')}
+        ${Array.from({ length: 40 }, (_, i) =>
+        `<circle cx="${Math.random() * width}" cy="${Math.random() * height}" r="${10 + Math.random() * 30}" fill="white"/>`
+    ).join('\n        ')}
     </g>
 
     <!-- Content -->
-    <text x="${width/2}" y="400" font-family="${fontFamily}" font-size="72" fill="white" text-anchor="middle" font-weight="bold">Thank You</text>
-    <text x="${width/2}" y="500" font-family="${fontFamily}" font-size="32" fill="white" text-anchor="middle" opacity="0.9">${brand.strategy?.tagline || 'Let\'s build something great together'}</text>
+    <text x="${width / 2}" y="400" font-family="${fontFamily}" font-size="72" fill="white" text-anchor="middle" font-weight="bold">Thank You</text>
+    <text x="${width / 2}" y="500" font-family="${fontFamily}" font-size="32" fill="white" text-anchor="middle" opacity="0.9">${brand.strategy?.tagline || 'Let\'s build something great together'}</text>
 
     <!-- Contact -->
-    <text x="${width/2}" y="700" font-family="${fontFamily}" font-size="24" fill="white" text-anchor="middle" opacity="0.8">hello@${brand.name.toLowerCase().replace(/\s+/g, '')}.com</text>
+    <text x="${width / 2}" y="700" font-family="${fontFamily}" font-size="24" fill="white" text-anchor="middle" opacity="0.8">hello@${brand.name.toLowerCase().replace(/\s+/g, '')}.com</text>
 
     <!-- Brand -->
-    <text x="${width/2}" y="900" font-family="${fontFamily}" font-size="48" fill="white" text-anchor="middle" font-weight="bold">${brand.name}</text>
+    <text x="${width / 2}" y="900" font-family="${fontFamily}" font-size="48" fill="white" text-anchor="middle" font-weight="bold">${brand.name}</text>
 </svg>`;
 }
 
@@ -864,12 +882,12 @@ export function generateHeroSection(brand: BrandIdentity): string {
 
     <!-- Background pattern -->
     <g opacity="0.05">
-        ${Array.from({length: 50}, (_, i) => {
-            const x = Math.random() * width;
-            const y = Math.random() * height;
-            const size = 20 + Math.random() * 60;
-            return `<circle cx="${x}" cy="${y}" r="${size}" fill="${colors.primary}"/>`;
-        }).join('\n        ')}
+        ${Array.from({ length: 50 }, (_, i) => {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        const size = 20 + Math.random() * 60;
+        return `<circle cx="${x}" cy="${y}" r="${size}" fill="${colors.primary}"/>`;
+    }).join('\n        ')}
     </g>
 
     <!-- Gradient overlay -->
@@ -882,12 +900,12 @@ export function generateHeroSection(brand: BrandIdentity): string {
     <rect width="${width}" height="${height}" fill="url(#hero-grad)"/>
 
     <!-- Content -->
-    <text x="${width/2}" y="300" font-family="${fontFamily}" font-size="80" fill="${colors.text}" text-anchor="middle" font-weight="bold">${brand.name}</text>
-    <text x="${width/2}" y="400" font-family="${fontFamily}" font-size="32" fill="${colors.muted}" text-anchor="middle">${brand.strategy?.tagline || 'Your brand, elevated'}</text>
+    <text x="${width / 2}" y="300" font-family="${fontFamily}" font-size="80" fill="${colors.text}" text-anchor="middle" font-weight="bold">${brand.name}</text>
+    <text x="${width / 2}" y="400" font-family="${fontFamily}" font-size="32" fill="${colors.muted}" text-anchor="middle">${brand.strategy?.tagline || 'Your brand, elevated'}</text>
 
     <!-- CTA -->
-    <rect x="${width/2 - 120}" y="480" width="240" height="60" rx="30" fill="${colors.primary}"/>
-    <text x="${width/2}" y="520" font-family="${fontFamily}" font-size="20" fill="white" text-anchor="middle" font-weight="bold">Get Started</text>
+    <rect x="${width / 2 - 120}" y="480" width="240" height="60" rx="30" fill="${colors.primary}"/>
+    <text x="${width / 2}" y="520" font-family="${fontFamily}" font-size="20" fill="white" text-anchor="middle" font-weight="bold">Get Started</text>
 </svg>`;
 }
 
@@ -909,7 +927,7 @@ export function generateBannerWide(brand: BrandIdentity, text: string = "Special
     <circle cx="${width - 100}" cy="150" r="150" fill="white" opacity="0.1"/>
 
     <!-- Text -->
-    <text x="${width/2}" y="${height/2 + 20}" font-family="${fontFamily}" font-size="56" fill="white" text-anchor="middle" font-weight="bold">${text}</text>
+    <text x="${width / 2}" y="${height / 2 + 20}" font-family="${fontFamily}" font-size="56" fill="white" text-anchor="middle" font-weight="bold">${text}</text>
 
     <!-- Brand -->
     <text x="${width - 50}" y="${height - 30}" font-family="${fontFamily}" font-size="16" fill="white" text-anchor="end" opacity="0.8">${brand.name}</text>
@@ -920,6 +938,16 @@ export function generateBannerWide(brand: BrandIdentity, text: string = "Special
  * Generate all brand graphics
  */
 export function generateAllBrandGraphics(brand: BrandIdentity): GraphicAsset[] {
+    // Smart Context Extraction
+    const mission = brand.strategy?.mission || brand.strategy?.tagline || "To build something meaningful.";
+    const shortMission = mission.length > 100 ? mission.slice(0, 100) + "..." : mission;
+
+    const tagline = brand.strategy?.tagline || "Innovation by Design";
+    const brandName = brand.name;
+
+    const featureTitle = "New Launch";
+    const featureDesc = `Experience the ${brand.vibe} difference.`;
+
     return [
         // Patterns
         { type: 'dot-grid', name: 'Dot Grid Pattern', svg: generateDotGridPattern(brand), width: 800, height: 600, category: 'pattern' },
@@ -929,19 +957,19 @@ export function generateAllBrandGraphics(brand: BrandIdentity): GraphicAsset[] {
         { type: 'wave-pattern', name: 'Wave Pattern', svg: generateWavePattern(brand), width: 800, height: 600, category: 'pattern' },
         { type: 'diagonal-lines', name: 'Diagonal Lines', svg: generateDiagonalLines(brand), width: 800, height: 600, category: 'pattern' },
 
-        // Social Cards
-        { type: 'quote', name: 'Quote Card', svg: generateQuoteCard(brand), width: 1080, height: 1080, category: 'social' },
-        { type: 'feature-highlight', name: 'Feature Card', svg: generateFeatureCard(brand), width: 1080, height: 1080, category: 'social' },
-        { type: 'announcement', name: 'Announcement Card', svg: generateAnnouncementCard(brand), width: 1080, height: 1080, category: 'social' },
-        { type: 'team', name: 'Team Card', svg: generateTeamCard(brand), width: 1080, height: 1080, category: 'social' },
+        // Social Cards - Smart Content
+        { type: 'quote', name: 'Quote Card', svg: generateQuoteCard(brand, shortMission, brandName), width: 1080, height: 1080, category: 'social' },
+        { type: 'feature-highlight', name: 'Feature Card', svg: generateFeatureCard(brand, featureTitle, featureDesc), width: 1080, height: 1080, category: 'social' },
+        { type: 'announcement', name: 'Announcement Card', svg: generateAnnouncementCard(brand, "We are Live", tagline), width: 1080, height: 1080, category: 'social' },
+        { type: 'team', name: 'Team Card', svg: generateTeamCard(brand, "Founder", "Visionary"), width: 1080, height: 1080, category: 'social' },
         { type: 'stats', name: 'Stats Card', svg: generateStatsCard(brand), width: 1080, height: 1080, category: 'social' },
-        { type: 'cta', name: 'CTA Card', svg: generateCTACard(brand), width: 1080, height: 1080, category: 'social' },
+        { type: 'cta', name: 'CTA Card', svg: generateCTACard(brand, "Join " + brandName, "Get Started"), width: 1080, height: 1080, category: 'social' },
 
-        // Slides
-        { type: 'title', name: 'Title Slide', svg: generateTitleSlide(brand), width: 1920, height: 1080, category: 'slide' },
-        { type: 'section-divider', name: 'Section Divider', svg: generateSectionDividerSlide(brand), width: 1920, height: 1080, category: 'slide' },
-        { type: 'content', name: 'Content Slide', svg: generateContentSlide(brand), width: 1920, height: 1080, category: 'slide' },
-        { type: 'feature-showcase', name: 'Feature Showcase', svg: generateFeatureShowcaseSlide(brand), width: 1920, height: 1080, category: 'slide' },
+        // Slides - Smart Content
+        { type: 'title', name: 'Title Slide', svg: generateTitleSlide(brand, brandName, tagline), width: 1920, height: 1080, category: 'slide' },
+        { type: 'section-divider', name: 'Section Divider', svg: generateSectionDividerSlide(brand, "Our Vision"), width: 1920, height: 1080, category: 'slide' },
+        { type: 'content', name: 'Content Slide', svg: generateContentSlide(brand, "Key Pillars"), width: 1920, height: 1080, category: 'slide' },
+        { type: 'feature-showcase', name: 'Feature Showcase', svg: generateFeatureShowcaseSlide(brand, brand.vibe + " Ecosystem"), width: 1920, height: 1080, category: 'slide' },
         { type: 'stats-slide', name: 'Stats Slide', svg: generateStatsSlide(brand), width: 1920, height: 1080, category: 'slide' },
         { type: 'timeline', name: 'Timeline Slide', svg: generateTimelineSlide(brand), width: 1920, height: 1080, category: 'slide' },
         { type: 'team-slide', name: 'Team Slide', svg: generateTeamSlide(brand), width: 1920, height: 1080, category: 'slide' },
@@ -949,9 +977,9 @@ export function generateAllBrandGraphics(brand: BrandIdentity): GraphicAsset[] {
 
         // Marketing
         { type: 'hero-section', name: 'Hero Section', svg: generateHeroSection(brand), width: 1440, height: 800, category: 'marketing' },
-        { type: 'banner-wide', name: 'Wide Banner', svg: generateBannerWide(brand), width: 1200, height: 300, category: 'marketing' },
+        { type: 'banner-wide', name: 'Wide Banner', svg: generateBannerWide(brand, "Launch Special"), width: 1200, height: 300, category: 'marketing' },
 
         // OG
-        { type: 'og-image', name: 'OG Image', svg: generateOGImage(brand), width: 1200, height: 630, category: 'og' },
+        { type: 'og-image', name: 'OG Image', svg: generateOGImage(brand, brandName, tagline), width: 1200, height: 630, category: 'og' },
     ];
 }
