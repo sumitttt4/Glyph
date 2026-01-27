@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, Maximize2, Grid3X3, Rows3 } from 'lucide-react';
+import { Download, Maximize2 } from 'lucide-react';
 import { BrandIdentity } from '@/lib/data';
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 import { Mockup3DModal } from './Mockup3DModal';
@@ -49,16 +49,23 @@ type MockupCategory = keyof typeof MOCKUP_CATEGORIES;
 /**
  * 3D Business Card Mockup
  */
-function BusinessCard3DMockup({ brand }: { brand: BrandIdentity }) {
+function BusinessCard3DMockup({ brand, isInteractive = false }: { brand: BrandIdentity; isInteractive?: boolean }) {
     const colors = brand.theme.tokens.light;
     const fontFamily = brand.font.headingName || 'system-ui';
+
+    const baseTransform = isInteractive
+        ? {}
+        : { transform: 'rotateX(55deg) rotateZ(-25deg)' };
 
     return (
         <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1200px' }}>
             <div
                 className="absolute w-[320px] h-[180px] bg-black/20 rounded-xl blur-xl"
                 style={{
-                    transform: 'rotateX(55deg) rotateZ(-25deg) translateZ(-80px) translateY(40px)',
+                    ...baseTransform,
+                    transform: isInteractive
+                        ? 'translateZ(-80px)'
+                        : 'rotateX(55deg) rotateZ(-25deg) translateZ(-80px) translateY(40px)',
                     transformStyle: 'preserve-3d',
                 }}
             />
@@ -66,7 +73,10 @@ function BusinessCard3DMockup({ brand }: { brand: BrandIdentity }) {
                 className="absolute w-[320px] h-[180px] rounded-xl"
                 style={{
                     background: colors.surface,
-                    transform: 'rotateX(55deg) rotateZ(-25deg) translateZ(-40px) translateY(20px)',
+                    ...baseTransform,
+                    transform: isInteractive
+                        ? 'translateZ(-40px)'
+                        : 'rotateX(55deg) rotateZ(-25deg) translateZ(-40px) translateY(20px)',
                     transformStyle: 'preserve-3d',
                     boxShadow: '0 25px 50px -12px rgba(0,0,0,0.3)',
                 }}
@@ -75,7 +85,10 @@ function BusinessCard3DMockup({ brand }: { brand: BrandIdentity }) {
                 className="absolute w-[320px] h-[180px] rounded-xl overflow-hidden"
                 style={{
                     background: colors.bg,
-                    transform: 'rotateX(55deg) rotateZ(-25deg) translateZ(0px)',
+                    ...baseTransform,
+                    transform: isInteractive
+                        ? 'translateZ(0px)'
+                        : 'rotateX(55deg) rotateZ(-25deg) translateZ(0px)',
                     transformStyle: 'preserve-3d',
                     boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)',
                 }}
@@ -113,7 +126,7 @@ function BillboardMockup({ brand }: { brand: BrandIdentity }) {
     return (
         <div className="relative w-full h-full flex items-center justify-center p-4">
             <div
-                className="relative w-full max-w-[500px] rounded-lg overflow-hidden"
+                className="relative w-full max-w-[90%] rounded-lg overflow-hidden"
                 style={{
                     aspectRatio: '2/1',
                     boxShadow: '0 30px 60px -15px rgba(0,0,0,0.4)',
@@ -163,7 +176,7 @@ function LaptopScreenMockup({ brand }: { brand: BrandIdentity }) {
     return (
         <div className="relative w-full h-full flex items-center justify-center p-4">
             <div
-                className="relative w-full max-w-[500px]"
+                className="relative w-full max-w-[80%]"
                 style={{ boxShadow: '0 40px 80px -20px rgba(0,0,0,0.3)' }}
             >
                 {/* Screen bezel */}
@@ -239,7 +252,7 @@ function StorefrontSignMockup({ brand }: { brand: BrandIdentity }) {
             />
             {/* Sign box */}
             <div
-                className="relative w-full max-w-[400px] h-[120px] rounded-lg overflow-hidden"
+                className="relative w-full max-w-[80%] h-[120px] rounded-lg overflow-hidden"
                 style={{
                     background: '#1a1a1a',
                     boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
@@ -452,7 +465,7 @@ function PhoneScreenMockup({ brand }: { brand: BrandIdentity }) {
     return (
         <div className="relative w-full h-full flex items-center justify-center">
             <div
-                className="relative w-[180px] rounded-[2rem] overflow-hidden"
+                className="relative w-full max-w-[300px] rounded-[2rem] overflow-hidden"
                 style={{
                     aspectRatio: '390/844',
                     background: '#1a1a1a',
@@ -498,7 +511,7 @@ function LinkedInBannerMockup({ brand }: { brand: BrandIdentity }) {
 
     return (
         <div className="relative w-full h-full flex items-center justify-center p-4">
-            <div className="relative w-full max-w-[600px] rounded-lg overflow-hidden" style={{ aspectRatio: '1584/396', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.3)' }}>
+            <div className="relative w-full max-w-[90%] rounded-lg overflow-hidden" style={{ aspectRatio: '1584/396', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.3)' }}>
                 <div className="absolute inset-0" style={{ background: colors.primary }} />
                 <div className="absolute inset-0 flex items-center justify-between px-8">
                     <div className="w-20 h-20 flex-shrink-0" style={{ filter: 'brightness(0) invert(1)' }}>
@@ -519,7 +532,7 @@ function WebsiteHeaderMockup({ brand }: { brand: BrandIdentity }) {
 
     return (
         <div className="relative w-full h-full flex items-center justify-center p-4">
-            <div className="relative w-full max-w-[600px] rounded-xl overflow-hidden" style={{ boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)' }}>
+            <div className="relative w-full max-w-[90%] rounded-xl overflow-hidden" style={{ boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)' }}>
                 <div className="bg-gray-100 px-4 py-3 flex items-center gap-3 border-b border-gray-200">
                     <div className="flex gap-2">
                         <div className="w-3 h-3 rounded-full bg-red-400" />
@@ -551,7 +564,7 @@ function MobileAppMockup({ brand }: { brand: BrandIdentity }) {
 
     return (
         <div className="relative w-full h-full flex items-center justify-center">
-            <div className="relative w-[200px] h-[400px] rounded-[2.5rem] overflow-hidden" style={{ background: '#1a1a1a', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), inset 0 0 0 3px #333' }}>
+            <div className="relative w-full max-w-[300px] h-auto aspect-[1/2] rounded-[2.5rem] overflow-hidden" style={{ background: '#1a1a1a', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), inset 0 0 0 3px #333' }}>
                 <div className="absolute inset-[3px] rounded-[2.3rem] overflow-hidden bg-black">
                     <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-6 bg-black rounded-full z-10" />
                     <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: colors.primary }}>
@@ -612,9 +625,9 @@ function LetterheadMockup({ brand }: { brand: BrandIdentity }) {
 // MOCKUP RENDERER
 // ============================================
 
-function renderMockup(type: MockupType, brand: BrandIdentity) {
+function renderMockup(type: MockupType, brand: BrandIdentity, isInteractive = false) {
     switch (type) {
-        case 'business-card': return <BusinessCard3DMockup brand={brand} />;
+        case 'business-card': return <BusinessCard3DMockup brand={brand} isInteractive={isInteractive} />;
         case 'linkedin-banner': return <LinkedInBannerMockup brand={brand} />;
         case 'website-header': return <WebsiteHeaderMockup brand={brand} />;
         case 'mobile-app': return <MobileAppMockup brand={brand} />;
@@ -628,7 +641,7 @@ function renderMockup(type: MockupType, brand: BrandIdentity) {
         case 'hoodie': return <HoodieMockup brand={brand} />;
         case 'tote-bag': return <ToteBagMockup brand={brand} />;
         case 'coffee-cup': return <CoffeeCupMockup brand={brand} />;
-        default: return <BusinessCard3DMockup brand={brand} />;
+        default: return <BusinessCard3DMockup brand={brand} isInteractive={isInteractive} />;
     }
 }
 
@@ -645,7 +658,7 @@ export function BrandMockups({
 }: BrandMockupsProps) {
     const [selectedMockup, setSelectedMockup] = useState<MockupType>(defaultMockup);
     const [selectedCategory, setSelectedCategory] = useState<MockupCategory>('all');
-    const [viewMode, setViewMode] = useState<'carousel' | 'grid'>('carousel');
+
     const [modalOpen, setModalOpen] = useState(false);
     const [downloadingMockup, setDownloadingMockup] = useState<MockupType | null>(null);
     const mockupRef = useRef<HTMLDivElement>(null);
@@ -689,142 +702,32 @@ export function BrandMockups({
 
     const metadata = MOCKUP_METADATA[selectedMockup];
 
-    // Grid view
-    if (!showCarousel || viewMode === 'grid') {
-        return (
-            <div className={`flex flex-col ${className}`}>
-                {/* Header with view toggle */}
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex gap-2">
-                        {(Object.entries(MOCKUP_CATEGORIES) as [MockupCategory, string][]).map(([key, label]) => (
-                            <button
-                                key={key}
-                                onClick={() => setSelectedCategory(key)}
-                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${selectedCategory === key
-                                    ? 'bg-white dark:bg-gray-700 shadow-sm'
-                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
-                                    }`}
-                            >
-                                {label}
-                            </button>
-                        ))}
-                    </div>
-                    {showCarousel && (
-                        <div className="flex gap-1 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                            <button
-                                onClick={() => setViewMode('carousel')}
-                                className={`p-2 rounded ${viewMode === 'carousel' ? 'bg-white dark:bg-gray-700 shadow' : ''}`}
-                            >
-                                <Rows3 className="w-4 h-4" />
-                            </button>
-                            <button
-                                onClick={() => setViewMode('grid')}
-                                className={`p-2 rounded ${viewMode === 'grid' ? 'bg-white dark:bg-gray-700 shadow' : ''}`}
-                            >
-                                <Grid3X3 className="w-4 h-4" />
-                            </button>
-                        </div>
-                    )}
-                </div>
 
-                {/* Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {filteredMockups.map((type) => {
-                        const info = MOCKUP_METADATA[type];
-                        const isSelected = selectedMockup === type;
-
-                        return (
-                            <motion.div
-                                key={type}
-                                whileHover={{ scale: 1.02 }}
-                                className={`relative rounded-xl border-2 transition-all overflow-hidden group ${isSelected
-                                    ? 'border-blue-500 ring-2 ring-blue-500/20'
-                                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                                    }`}
-                            >
-                                <button
-                                    onClick={() => handleMockupSelect(type)}
-                                    className="w-full aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900"
-                                >
-                                    <div className="w-full h-full transform scale-50 origin-center">
-                                        {renderMockup(type, brand)}
-                                    </div>
-                                </button>
-
-                                {/* Overlay buttons */}
-                                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button
-                                        onClick={() => { setSelectedMockup(type); setModalOpen(true); }}
-                                        className="p-1.5 bg-black/50 rounded-lg hover:bg-black/70 transition-colors"
-                                        title="View 3D"
-                                    >
-                                        <Maximize2 className="w-4 h-4 text-white" />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDownload(type)}
-                                        disabled={downloadingMockup === type}
-                                        className="p-1.5 bg-black/50 rounded-lg hover:bg-black/70 transition-colors disabled:opacity-50"
-                                        title="Download PNG"
-                                    >
-                                        <Download className="w-4 h-4 text-white" />
-                                    </button>
-                                </div>
-
-                                {/* Label */}
-                                <div className="p-2 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
-                                    <span className="text-xs font-medium">{info.name}</span>
-                                </div>
-                            </motion.div>
-                        );
-                    })}
-                </div>
-
-                {/* 3D Modal */}
-                <Mockup3DModal
-                    isOpen={modalOpen}
-                    onClose={() => setModalOpen(false)}
-                    mockupType={selectedMockup}
-                    brand={brand}
-                >
-                    {renderMockup(selectedMockup, brand)}
-                </Mockup3DModal>
-            </div>
-        );
-    }
 
     // Carousel view
     return (
         <div className={`flex flex-col ${className}`}>
             {/* Category filter and view toggle */}
             <div className="flex items-center justify-between mb-4">
-                <div className="flex flex-wrap gap-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                <div className="flex flex-wrap gap-2 p-2 rounded-lg" style={{ background: brand.theme.tokens.light.surface }}>
                     {(Object.entries(MOCKUP_CATEGORIES) as [MockupCategory, string][]).map(([key, label]) => (
                         <button
                             key={key}
                             onClick={() => setSelectedCategory(key)}
                             className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${selectedCategory === key
-                                ? 'bg-white dark:bg-gray-700 shadow-sm'
-                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
+                                ? 'shadow-sm'
+                                : 'opacity-60 hover:opacity-100'
                                 }`}
+                            style={{
+                                background: selectedCategory === key ? brand.theme.tokens.light.bg : 'transparent',
+                                color: brand.theme.tokens.light.text
+                            }}
                         >
                             {label}
                         </button>
                     ))}
                 </div>
-                <div className="flex gap-1 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                    <button
-                        onClick={() => setViewMode('carousel')}
-                        className="p-2 rounded bg-white dark:bg-gray-700 shadow"
-                    >
-                        <Rows3 className="w-4 h-4" />
-                    </button>
-                    <button
-                        onClick={() => setViewMode('grid')}
-                        className="p-2 rounded"
-                    >
-                        <Grid3X3 className="w-4 h-4" />
-                    </button>
-                </div>
+
             </div>
 
             {/* Mockup selector */}
@@ -838,11 +741,15 @@ export function BrandMockups({
                             key={type}
                             onClick={() => handleMockupSelect(type)}
                             className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 ${isSelected
-                                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                ? 'shadow-sm'
+                                : 'opacity-60 hover:opacity-100'
                                 }`}
+                            style={{
+                                background: isSelected ? brand.theme.tokens.light.surface : 'transparent',
+                                color: brand.theme.tokens.light.text,
+                                border: isSelected ? `1px solid ${brand.theme.tokens.light.border}` : '1px solid transparent'
+                            }}
                         >
-                            <span>{info.icon}</span>
                             <span className="hidden sm:inline">{info.name}</span>
                         </button>
                     );
@@ -907,7 +814,7 @@ export function BrandMockups({
                 mockupType={selectedMockup}
                 brand={brand}
             >
-                {renderMockup(selectedMockup, brand)}
+                {renderMockup(selectedMockup, brand, true)}
             </Mockup3DModal>
         </div>
     );
