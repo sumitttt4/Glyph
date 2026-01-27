@@ -4,8 +4,6 @@ import * as React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { UnifiedExportMenu } from '@/components/generator/UnifiedExportMenu';
 import { SocialMediaKit } from '@/components/preview/SocialMediaKit';
-import { BrandMockups } from '@/components/preview/BrandMockups';
-// Force rebuild
 import { ArrowUp, ArrowUpRight as ArrowUpEnd } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BrandIdentity } from '@/lib/data';
@@ -28,6 +26,9 @@ import { BrowserBrandPreview } from '@/components/preview/BrowserBrandPreview';
 import { MonogramMark } from '@/components/logo-engine/LogoMonogram';
 import { FontSelector } from './FontSelector';
 import { FontConfig } from '@/lib/fonts';
+import { BrandMockups } from '@/components/preview/BrandMockups';
+import { MockupGallery } from '@/components/preview/MockupGallery';
+import { BrandGraphicsSystem } from '@/components/preview/BrandGraphicsSystem';
 
 interface WorkbenchBentoGridProps {
     brand: BrandIdentity;
@@ -357,9 +358,24 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                     <SocialMediaKit brand={brand} />
                 </div>
 
+                {/* 9. 3D Mockups with Download */}
+                <div id="section-mockups" className="md:col-span-12 mt-12">
+                    <div className="mb-6">
+                        <h3 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-2">3D Mockups</h3>
+                        <p className="text-stone-500 font-mono text-xs tracking-tight">Click any mockup for 3D view • Download as PNG</p>
+                    </div>
+                    <BrandMockups brand={brand} showCarousel={true} className="bg-white rounded-[2.5rem] p-6 shadow-xl border border-stone-200" />
+                </div>
+
+                {/* 10. Brand Graphics System */}
+                <div id="section-brand-system" className="md:col-span-12 mt-12">
+                    <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-stone-200">
+                        <BrandGraphicsSystem brand={brand} />
+                    </div>
+                </div>
+
                 <FontSelector isOpen={isFontSelectorOpen} onClose={() => setIsFontSelectorOpen(false)} currentFontId={brand.font.id} onSelect={(font) => { onUpdateFont?.(font); }} />
             </div>
-
         </div>
     );
 }

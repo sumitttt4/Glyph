@@ -24,6 +24,7 @@ import {
 import { generateAllMockups } from '@/components/export/ExportMockups';
 import { generateTypographyExport, generateTypographyJSON } from '@/components/export/ExportTypography';
 import { generateBrandBookPDF } from '@/components/export/ExportPDF';
+import { generateAllBrandGraphics } from '@/lib/brand-graphics';
 import {
     hasValidExportState,
     validateExportState,
@@ -739,7 +740,62 @@ module.exports = {
     }
 
     // ========================================================================
-    // 8. README.md - Complete documentation
+    // 8. /brand-graphics FOLDER - Patterns, Social Cards, Slides, Marketing
+    // ========================================================================
+    const brandGraphics = root.folder("brand-graphics");
+    if (brandGraphics) {
+        const allGraphics = generateAllBrandGraphics(brand);
+
+        // Create subfolders by category
+        const patternsFolder = brandGraphics.folder("patterns");
+        const socialFolder = brandGraphics.folder("social-cards");
+        const slidesFolder = brandGraphics.folder("presentation-slides");
+        const marketingFolder = brandGraphics.folder("marketing");
+        const ogFolder = brandGraphics.folder("og-images");
+
+        for (const graphic of allGraphics) {
+            let targetFolder = brandGraphics;
+            if (graphic.category === 'pattern' && patternsFolder) targetFolder = patternsFolder;
+            else if (graphic.category === 'social' && socialFolder) targetFolder = socialFolder;
+            else if (graphic.category === 'slide' && slidesFolder) targetFolder = slidesFolder;
+            else if (graphic.category === 'marketing' && marketingFolder) targetFolder = marketingFolder;
+            else if (graphic.category === 'og' && ogFolder) targetFolder = ogFolder;
+
+            // SVG version
+            targetFolder.file(`${graphic.type}.svg`, graphic.svg);
+
+            // PNG version
+            try {
+                const pngBlob = await svgToPng(graphic.svg, graphic.width, graphic.height, 1);
+                targetFolder.file(`${graphic.type}.png`, pngBlob);
+            } catch (e) {
+                console.error(`Failed to generate PNG for ${graphic.type}:`, e);
+            }
+        }
+
+        // Add metadata
+        const graphicsMetadata = {
+            brand: brand.name,
+            generatedAt: new Date().toISOString(),
+            categories: {
+                patterns: allGraphics.filter(g => g.category === 'pattern').length,
+                socialCards: allGraphics.filter(g => g.category === 'social').length,
+                slides: allGraphics.filter(g => g.category === 'slide').length,
+                marketing: allGraphics.filter(g => g.category === 'marketing').length,
+                ogImages: allGraphics.filter(g => g.category === 'og').length,
+            },
+            assets: allGraphics.map(g => ({
+                type: g.type,
+                name: g.name,
+                category: g.category,
+                dimensions: `${g.width}x${g.height}`,
+            })),
+        };
+        brandGraphics.file('graphics-metadata.json', JSON.stringify(graphicsMetadata, null, 2));
+    }
+
+    // ========================================================================
+    // 9. README.md - Complete documentation
     // ========================================================================
     const readme = `# ${brand.name} Brand Assets
 
@@ -800,6 +856,13 @@ ${folderName}/
 │   ├── apple-touch-icon.png  # iOS home screen (180x180)
 │   ├── android-chrome-*.png  # Android icons
 │   └── site.webmanifest      # PWA manifest
+│
+├── brand-graphics/           # Brand visual system
+│   ├── patterns/             # Brand patterns (dot grid, lines, geometric)
+│   ├── social-cards/         # 6 social media templates
+│   ├── presentation-slides/  # 8 slide templates
+│   ├── marketing/            # Hero sections, banners
+│   └── og-images/            # Open Graph social share images
 │
 └── README.md                 # This file
 \`\`\`
