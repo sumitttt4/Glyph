@@ -9,12 +9,13 @@ import { Button } from '@/components/ui/button';
 import { BrandIdentity } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { Copy, Check, Shuffle, RefreshCw, SlidersHorizontal, Share2 } from 'lucide-react';
+import { Copy, Check, Shuffle, RefreshCw, SlidersHorizontal, Share2, Grid3X3, Eye, EyeOff } from 'lucide-react';
 import { LogoTweakPanel } from './LogoTweakPanel';
 import { ExportBrandKit } from './ExportBrandKit';
 import { SlideCover, SlideStrategy, SlideLogo, SlideColors, SlideTypography, SlideSocial, SlideOutdoor, SlideMockups, SlidePitchDeck, SlideGuidelines } from './BrandSlides';
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 import { LogoConstruction } from '@/components/logo-engine/LogoConstruction';
+import { LogoConstructionGrid } from '@/components/logo-engine/LogoConstructionGrid';
 import { SafariBrowserMockup } from '@/components/preview/SafariBrowserMockup';
 import { ColorPaletteHorizontal } from './ColorPaletteStrip';
 import { AppIconVariants } from './AppIconVariants';
@@ -49,6 +50,7 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
     const [isFontSelectorOpen, setIsFontSelectorOpen] = useState(false);
     const [isTweakPanelOpen, setIsTweakPanelOpen] = useState(false);
     const [copiedHex, setCopiedHex] = useState<string | null>(null);
+    const [showGuidelines, setShowGuidelines] = useState(true);
 
     // Generate robust Data URL for the logo using client-side DOM extraction (Build Safe)
     const [logoDataUrl, setLogoDataUrl] = useState('');
@@ -174,9 +176,28 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                     </div>
                 </motion.div>
 
-                {/* 2. Construction */}
-                <div className="md:col-span-5 md:row-span-1 h-[320px] bg-white rounded-[2.5rem] overflow-hidden border border-[#1c1917] relative group shadow-sm">
-                    <LogoConstruction brand={brand} className="w-full h-full" />
+                {/* 2. Construction with Guidelines Toggle */}
+                <div className="md:col-span-5 md:row-span-1 h-[320px] rounded-[2.5rem] overflow-hidden border border-[#1c1917] relative group shadow-sm">
+                    {/* Guidelines Toggle Button */}
+                    <button
+                        onClick={() => setShowGuidelines(!showGuidelines)}
+                        className="absolute top-4 right-4 z-20 flex items-center gap-2 px-3 py-1.5 bg-black/50 backdrop-blur-sm rounded-full text-xs font-medium text-white hover:bg-black/70 transition-all"
+                    >
+                        <Grid3X3 className="w-3 h-3" />
+                        <span>Guidelines</span>
+                        {showGuidelines ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                    </button>
+
+                    {/* Construction Grid */}
+                    <LogoConstructionGrid
+                        brand={brand}
+                        className="w-full h-full"
+                        showGuidelines={showGuidelines}
+                        showMeasurements={showGuidelines}
+                        showGoldenRatio={showGuidelines}
+                        showSafeZones={showGuidelines}
+                        variant="blueprint"
+                    />
                 </div>
 
                 {/* Logo Block */}

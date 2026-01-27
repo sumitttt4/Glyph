@@ -49,42 +49,49 @@ export const KEYWORD_SHAPE_MAP: Record<string, ShapeMapping> = {
     'harvest': { shapes: ['wheat-bundle', 'basket-arc', 'sun-rays'], algorithms: ['starburst', 'flow-gradient'], style: 'abundant' },
 
     // ============================================
-    // BAGS & ACCESSORIES
+    // BAGS & ACCESSORIES (Enhanced with specific primitives)
     // ============================================
-    'bag': { shapes: ['tote-outline', 'handle-curves', 'opening-fold', 'strap-abstract'], algorithms: ['framed-letter', 'depth-geometry'], style: 'fashion' },
-    'tote': { shapes: ['bag-body', 'handle-loop', 'fabric-fold'], algorithms: ['framed-letter', 'motion-lines'], style: 'casual' },
-    'purse': { shapes: ['clasp-detail', 'chain-link', 'flap-curve'], algorithms: ['depth-geometry', 'flow-gradient'], style: 'luxury' },
-    'wallet': { shapes: ['fold-line', 'pocket-stack', 'card-slot'], algorithms: ['gradient-bars', 'framed-letter'], style: 'minimal' },
-    'backpack': { shapes: ['pack-outline', 'strap-x', 'zipper-line'], algorithms: ['depth-geometry', 'shield-badge'], style: 'adventure' },
-    'luggage': { shapes: ['case-rect', 'wheel-circle', 'handle-pull'], algorithms: ['framed-letter', 'depth-geometry'], style: 'travel' },
-    'leather': { shapes: ['stitch-line', 'texture-grain', 'edge-curve'], algorithms: ['motion-lines', 'flow-gradient'], style: 'craft' },
-    'fashion': { shapes: ['runway-line', 'silhouette-curve', 'fabric-drape'], algorithms: ['flow-gradient', 'motion-lines'], style: 'elegant' },
-    'wear': { shapes: ['hanger-hook', 'fold-crease', 'fabric-wave'], algorithms: ['motion-lines', 'flow-gradient'], style: 'style' },
+    'bag': { shapes: ['handle-curves', 'tote-geometric-abstract', 'opening-fold', 'strap-loop', 'body-rectangle', 'clasp-circle'], algorithms: ['framed-letter', 'depth-geometry', 'flow-gradient'], style: 'fashion' },
+    'tote': { shapes: ['tote-geometric-abstract', 'handle-curve-pair', 'fabric-fold-wave', 'base-rectangle', 'stitch-line'], algorithms: ['framed-letter', 'motion-lines', 'depth-geometry'], style: 'casual' },
+    'purse': { shapes: ['clasp-detail-arc', 'chain-link-repeat', 'flap-curve-elegant', 'lock-mechanism', 'handle-short'], algorithms: ['depth-geometry', 'flow-gradient', 'diamond-gem'], style: 'luxury' },
+    'handbag': { shapes: ['handle-curves', 'body-trapezoid', 'zipper-line-top', 'pocket-rectangle', 'logo-plate'], algorithms: ['framed-letter', 'depth-geometry', 'motion-lines'], style: 'premium' },
+    'wallet': { shapes: ['fold-line-center', 'pocket-stack-layers', 'card-slot-grid', 'clasp-minimal', 'leather-edge'], algorithms: ['gradient-bars', 'framed-letter', 'depth-geometry'], style: 'minimal' },
+    'backpack': { shapes: ['pack-outline-rounded', 'strap-x-cross', 'zipper-line-curve', 'pocket-front', 'buckle-detail'], algorithms: ['depth-geometry', 'shield-badge', 'motion-lines'], style: 'adventure' },
+    'luggage': { shapes: ['case-rect-rounded', 'wheel-circle-pair', 'handle-pull-extend', 'lock-secure', 'shell-hard'], algorithms: ['framed-letter', 'depth-geometry', 'shield-badge'], style: 'travel' },
+    'leather': { shapes: ['stitch-line-cross', 'texture-grain-pattern', 'edge-curve-burnished', 'grain-organic', 'patina-subtle'], algorithms: ['motion-lines', 'flow-gradient', 'depth-geometry'], style: 'craft' },
+    'fashion': { shapes: ['runway-line-perspective', 'silhouette-curve-elegant', 'fabric-drape-flow', 'haute-angle', 'trend-wave'], algorithms: ['flow-gradient', 'motion-lines', 'starburst'], style: 'elegant' },
+    'wear': { shapes: ['hanger-hook-minimal', 'fold-crease-sharp', 'fabric-wave-soft', 'collar-v', 'seam-line'], algorithms: ['motion-lines', 'flow-gradient', 'framed-letter'], style: 'style' },
+    'accessory': { shapes: ['belt-loop', 'buckle-frame', 'chain-link', 'tassel-drop', 'charm-dangle'], algorithms: ['depth-geometry', 'circle-overlap', 'motion-lines'], style: 'detail' },
 
     // ============================================
-    // CLOUD & TECH
+    // CLOUD & TECH (Enhanced with Tech/SaaS primitives)
     // ============================================
-    'cloud': { shapes: ['cumulus-rounded', 'server-stack', 'floating-dots', 'data-stream'], algorithms: ['circle-overlap', 'flow-gradient', 'orbital-rings'], style: 'tech' },
-    'sync': { shapes: ['arrow-cycle', 'refresh-loop', 'circular-flow'], algorithms: ['infinity-loop', 'orbital-rings'], style: 'seamless' },
-    'data': { shapes: ['bar-chart', 'node-network', 'stream-lines'], algorithms: ['gradient-bars', 'maze-pattern'], style: 'analytical' },
-    'server': { shapes: ['rack-stack', 'led-dots', 'cable-curve'], algorithms: ['gradient-bars', 'depth-geometry'], style: 'infrastructure' },
-    'api': { shapes: ['bracket-pair', 'slash-angle', 'connect-dot'], algorithms: ['framed-letter', 'motion-lines'], style: 'developer' },
-    'code': { shapes: ['bracket-angle', 'cursor-line', 'syntax-block'], algorithms: ['framed-letter', 'gradient-bars'], style: 'developer' },
-    'dev': { shapes: ['terminal-prompt', 'branch-git', 'merge-arrow'], algorithms: ['framed-letter', 'arrow-mark'], style: 'technical' },
-    'stack': { shapes: ['layer-pile', 'block-tower', 'level-shift'], algorithms: ['depth-geometry', 'gradient-bars'], style: 'structured' },
-    'node': { shapes: ['dot-connect', 'network-web', 'junction-point'], algorithms: ['orbital-paths', 'fingerprint-id'], style: 'connected' },
-    'pixel': { shapes: ['grid-square', 'mosaic-tile', 'bitmap-dot'], algorithms: ['maze-pattern', 'gradient-bars'], style: 'digital' },
-    'byte': { shapes: ['binary-pair', 'bit-block', 'data-unit'], algorithms: ['framed-letter', 'gradient-bars'], style: 'computing' },
-    'ai': { shapes: ['neural-node', 'brain-curve', 'spark-synapse'], algorithms: ['orbital-paths', 'starburst'], style: 'intelligent' },
-    'ml': { shapes: ['graph-curve', 'training-arrow', 'model-layer'], algorithms: ['flow-gradient', 'gradient-bars'], style: 'learning' },
-    'bot': { shapes: ['face-simple', 'antenna-dot', 'chat-bubble'], algorithms: ['framed-letter', 'circle-overlap'], style: 'friendly' },
-    'auto': { shapes: ['gear-tooth', 'cycle-arrow', 'flow-auto'], algorithms: ['infinity-loop', 'orbital-rings'], style: 'automated' },
-    'smart': { shapes: ['bulb-glow', 'connect-dot', 'think-cloud'], algorithms: ['starburst', 'orbital-paths'], style: 'intelligent' },
-    'digital': { shapes: ['screen-frame', 'pixel-grid', 'signal-wave'], algorithms: ['framed-letter', 'wave-flow'], style: 'modern' },
-    'cyber': { shapes: ['shield-hex', 'lock-circuit', 'scan-line'], algorithms: ['shield-badge', 'maze-pattern'], style: 'secure' },
-    'meta': { shapes: ['infinity-twist', 'dimension-fold', 'portal-ring'], algorithms: ['infinity-loop', 'orbital-rings'], style: 'virtual' },
-    'virtual': { shapes: ['vr-headset', 'dimension-grid', 'portal-frame'], algorithms: ['depth-geometry', 'orbital-rings'], style: 'immersive' },
-    'quantum': { shapes: ['superposition-blur', 'particle-wave', 'entangle-link'], algorithms: ['orbital-paths', 'wave-flow'], style: 'scientific' },
+    'cloud': { shapes: ['cumulus-rounded', 'server-stack', 'floating-dots', 'data-stream', 'node-cluster'], algorithms: ['circle-overlap', 'flow-gradient', 'orbital-rings'], style: 'tech' },
+    'sync': { shapes: ['arrow-cycle', 'refresh-loop', 'circular-flow', 'sync-arrows-dual'], algorithms: ['infinity-loop', 'orbital-rings', 'motion-lines'], style: 'seamless' },
+    'data': { shapes: ['bar-chart', 'node-network', 'stream-lines', 'data-flow-arrow', 'analytics-graph'], algorithms: ['gradient-bars', 'maze-pattern', 'orbital-paths'], style: 'analytical' },
+    'server': { shapes: ['rack-stack', 'led-dots', 'cable-curve', 'server-blade', 'rack-unit'], algorithms: ['gradient-bars', 'depth-geometry', 'maze-pattern'], style: 'infrastructure' },
+    'api': { shapes: ['node-brackets', 'bracket-pair', 'slash-angle', 'connect-dot', 'endpoint-circle'], algorithms: ['framed-letter', 'motion-lines', 'orbital-paths'], style: 'developer' },
+    'code': { shapes: ['node-brackets', 'bracket-angle', 'cursor-line', 'syntax-block', 'terminal-cursor'], algorithms: ['framed-letter', 'gradient-bars', 'maze-pattern'], style: 'developer' },
+    'dev': { shapes: ['terminal-prompt', 'branch-git', 'merge-arrow', 'code-commit', 'pipeline-flow'], algorithms: ['framed-letter', 'arrow-mark', 'motion-lines'], style: 'technical' },
+    'saas': { shapes: ['node-brackets', 'cloud-connect', 'subscription-loop', 'dashboard-grid', 'api-endpoint'], algorithms: ['framed-letter', 'orbital-rings', 'gradient-bars'], style: 'platform' },
+    'stack': { shapes: ['layer-pile', 'block-tower', 'level-shift', 'tech-stack-blocks', 'integration-layers'], algorithms: ['depth-geometry', 'gradient-bars', 'motion-lines'], style: 'structured' },
+    'node': { shapes: ['node-brackets', 'dot-connect', 'network-web', 'junction-point', 'hub-spoke'], algorithms: ['orbital-paths', 'fingerprint-id', 'maze-pattern'], style: 'connected' },
+    'pixel': { shapes: ['pixel-grid', 'grid-square', 'mosaic-tile', 'bitmap-dot', 'raster-pattern'], algorithms: ['maze-pattern', 'gradient-bars', 'depth-geometry'], style: 'digital' },
+    'byte': { shapes: ['binary-pair', 'bit-block', 'data-unit', 'byte-stream', 'hex-pattern'], algorithms: ['framed-letter', 'gradient-bars', 'maze-pattern'], style: 'computing' },
+    'tech': { shapes: ['circuit-path', 'node-brackets', 'pixel-grid', 'chip-pattern', 'signal-pulse'], algorithms: ['framed-letter', 'maze-pattern', 'orbital-paths'], style: 'innovative' },
+    'software': { shapes: ['window-frame', 'code-block', 'layer-stack', 'module-grid', 'interface-element'], algorithms: ['framed-letter', 'depth-geometry', 'gradient-bars'], style: 'digital' },
+    'platform': { shapes: ['foundation-base', 'integration-hub', 'api-gateway', 'connect-points', 'service-mesh'], algorithms: ['depth-geometry', 'orbital-paths', 'gradient-bars'], style: 'infrastructure' },
+    'ai': { shapes: ['neural-node', 'brain-curve', 'spark-synapse', 'deep-layer', 'inference-path'], algorithms: ['orbital-paths', 'starburst', 'flow-gradient'], style: 'intelligent' },
+    'ml': { shapes: ['graph-curve', 'training-arrow', 'model-layer', 'tensor-flow', 'gradient-descent'], algorithms: ['flow-gradient', 'gradient-bars', 'orbital-paths'], style: 'learning' },
+    'bot': { shapes: ['face-simple', 'antenna-dot', 'chat-bubble', 'robot-head', 'speak-wave'], algorithms: ['framed-letter', 'circle-overlap', 'starburst'], style: 'friendly' },
+    'auto': { shapes: ['gear-tooth', 'cycle-arrow', 'flow-auto', 'process-loop', 'automation-cog'], algorithms: ['infinity-loop', 'orbital-rings', 'motion-lines'], style: 'automated' },
+    'smart': { shapes: ['bulb-glow', 'connect-dot', 'think-cloud', 'idea-spark', 'intelligence-aura'], algorithms: ['starburst', 'orbital-paths', 'flow-gradient'], style: 'intelligent' },
+    'digital': { shapes: ['screen-frame', 'pixel-grid', 'signal-wave', 'binary-stream', 'interface-clean'], algorithms: ['framed-letter', 'wave-flow', 'gradient-bars'], style: 'modern' },
+    'cyber': { shapes: ['shield-hex', 'lock-circuit', 'scan-line', 'firewall-barrier', 'secure-grid'], algorithms: ['shield-badge', 'maze-pattern', 'lock-secure'], style: 'secure' },
+    'meta': { shapes: ['infinity-twist', 'dimension-fold', 'portal-ring', 'multiverse-layer', 'vr-horizon'], algorithms: ['infinity-loop', 'orbital-rings', 'depth-geometry'], style: 'virtual' },
+    'virtual': { shapes: ['vr-headset', 'dimension-grid', 'portal-frame', 'immersive-sphere', 'reality-warp'], algorithms: ['depth-geometry', 'orbital-rings', 'flow-gradient'], style: 'immersive' },
+    'quantum': { shapes: ['superposition-blur', 'particle-wave', 'entangle-link', 'qubit-state', 'probability-cloud'], algorithms: ['orbital-paths', 'wave-flow', 'starburst'], style: 'scientific' },
+
 
     // ============================================
     // WAVE & MOTION
@@ -128,18 +135,21 @@ export const KEYWORD_SHAPE_MAP: Record<string, ShapeMapping> = {
     'crystal': { shapes: ['facet-angle', 'prism-light', 'gem-cut'], algorithms: ['diamond-gem', 'depth-geometry'], style: 'precious' },
 
     // ============================================
-    // FINANCE & BUSINESS
+    // FINANCE & BUSINESS (Enhanced with Fintech primitives)
     // ============================================
-    'finance': { shapes: ['chart-rise', 'bar-growth', 'coin-stack'], algorithms: ['gradient-bars', 'arrow-mark'], style: 'professional' },
-    'fintech': { shapes: ['circuit-coin', 'digital-currency', 'secure-transaction'], algorithms: ['shield-badge', 'lock-secure'], style: 'innovative' },
-    'bank': { shapes: ['column-pillar', 'vault-door', 'safe-lock'], algorithms: ['framed-letter', 'depth-geometry'], style: 'trust' },
-    'pay': { shapes: ['card-swipe', 'checkmark-confirm', 'transfer-arrow'], algorithms: ['arrow-mark', 'motion-lines'], style: 'instant' },
-    'money': { shapes: ['currency-symbol', 'coin-circle', 'bill-fold'], algorithms: ['framed-letter', 'circle-overlap'], style: 'value' },
-    'invest': { shapes: ['growth-arrow', 'seed-money', 'compound-stack'], algorithms: ['arrow-mark', 'gradient-bars'], style: 'growth' },
-    'trade': { shapes: ['exchange-arrow', 'market-chart', 'balance-scale'], algorithms: ['arrow-mark', 'motion-lines'], style: 'dynamic' },
-    'wealth': { shapes: ['accumulate-stack', 'diamond-gem', 'crown-peak'], algorithms: ['depth-geometry', 'diamond-gem'], style: 'premium' },
-    'crypto': { shapes: ['blockchain-link', 'hash-pattern', 'decentralized-node'], algorithms: ['maze-pattern', 'orbital-paths'], style: 'disruptive' },
-    'insurance': { shapes: ['umbrella-cover', 'shield-protect', 'safety-net'], algorithms: ['shield-badge', 'framed-letter'], style: 'protective' },
+    'finance': { shapes: ['chart-rise', 'bar-growth', 'coin-stack', 'arrow-precision', 'growth-trend'], algorithms: ['gradient-bars', 'arrow-mark', 'depth-geometry'], style: 'professional' },
+    'fintech': { shapes: ['shield-vector', 'locked-growth', 'arrow-precision', 'circuit-coin', 'digital-currency', 'secure-transaction'], algorithms: ['shield-badge', 'lock-secure', 'arrow-mark', 'gradient-bars'], style: 'innovative' },
+    'bank': { shapes: ['column-pillar', 'vault-door', 'shield-vector', 'safe-lock', 'institution-facade'], algorithms: ['framed-letter', 'depth-geometry', 'shield-badge'], style: 'trust' },
+    'pay': { shapes: ['card-swipe', 'checkmark-confirm', 'transfer-arrow', 'arrow-precision', 'instant-flash'], algorithms: ['arrow-mark', 'motion-lines', 'starburst'], style: 'instant' },
+    'money': { shapes: ['currency-symbol', 'coin-circle', 'bill-fold', 'value-stack', 'wealth-shine'], algorithms: ['framed-letter', 'circle-overlap', 'depth-geometry'], style: 'value' },
+    'invest': { shapes: ['locked-growth', 'growth-arrow', 'seed-money', 'compound-stack', 'portfolio-chart'], algorithms: ['arrow-mark', 'gradient-bars', 'depth-geometry'], style: 'growth' },
+    'trade': { shapes: ['exchange-arrow', 'market-chart', 'balance-scale', 'candlestick-pattern', 'bid-ask-flow'], algorithms: ['arrow-mark', 'motion-lines', 'gradient-bars'], style: 'dynamic' },
+    'wealth': { shapes: ['accumulate-stack', 'diamond-gem', 'crown-peak', 'locked-growth', 'prosperity-arc'], algorithms: ['depth-geometry', 'diamond-gem', 'starburst'], style: 'premium' },
+    'crypto': { shapes: ['blockchain-link', 'hash-pattern', 'decentralized-node', 'token-circle', 'chain-secure'], algorithms: ['maze-pattern', 'orbital-paths', 'lock-secure'], style: 'disruptive' },
+    'insurance': { shapes: ['umbrella-cover', 'shield-vector', 'safety-net', 'protection-circle', 'coverage-arc'], algorithms: ['shield-badge', 'framed-letter', 'circle-overlap'], style: 'protective' },
+    'payment': { shapes: ['card-chip', 'contactless-wave', 'arrow-precision', 'secure-check', 'tap-circle'], algorithms: ['motion-lines', 'circle-overlap', 'arrow-mark'], style: 'seamless' },
+    'capital': { shapes: ['pillar-strong', 'locked-growth', 'foundation-base', 'accumulation-stack', 'institution-solid'], algorithms: ['depth-geometry', 'gradient-bars', 'framed-letter'], style: 'substantial' },
+
 
     // ============================================
     // HEALTHCARE & WELLNESS
