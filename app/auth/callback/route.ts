@@ -25,7 +25,8 @@ export async function GET(request: Request) {
             return response;
         } else {
             console.error('Auth Error:', error)
-
+            const errorMessage = error?.message || 'Unknown error'
+            return NextResponse.redirect(`${origin}/auth/auth-code-error?error=${encodeURIComponent(errorMessage)}`)
         }
     }
 
