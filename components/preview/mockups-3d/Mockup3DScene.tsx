@@ -428,6 +428,8 @@ export const MOCKUP_3D_REGISTRY: Record<MockupType, React.FC<{ brand: BrandIdent
     'linkedin-banner': ({ brand }) => <FlatMockupModel brand={brand} aspectRatio={1584 / 396} />,
     'website-header': ({ brand }) => <FlatMockupModel brand={brand} aspectRatio={1200 / 800} />,
     'letterhead': ({ brand }) => <FlatMockupModel brand={brand} aspectRatio={595 / 842} />,
+    'social-suite': null,
+    'merch-suite': null,
 };
 
 export function has3DComponent(mockupType: MockupType): boolean {

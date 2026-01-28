@@ -26,7 +26,6 @@ export type MockupType =
     | 'packaging-box'
     | 'hoodie'
     | 'tote-bag'
-    | 'tote-bag'
     | 'coffee-cup'
     | 'social-suite'
     | 'merch-suite';
