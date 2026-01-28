@@ -81,8 +81,8 @@ export function BrandContextSelector({ onSelect, selectedId }: BrandContextSelec
                                 key={industry.id}
                                 onClick={() => handleSelect(industry)}
                                 className={`flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer text-sm font-medium transition-colors ${selected.id === industry.id
-                                        ? "bg-orange-50 text-orange-900"
-                                        : "text-stone-600 hover:bg-stone-50"
+                                    ? "bg-orange-50 text-orange-900"
+                                    : "text-stone-600 hover:bg-stone-50"
                                     }`}
                             >
                                 <industry.icon size={16} className={`shrink-0 ${selected.id === industry.id ? "text-orange-500" : "text-stone-400"}`} />

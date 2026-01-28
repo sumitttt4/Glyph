@@ -26,7 +26,10 @@ export type MockupType =
     | 'packaging-box'
     | 'hoodie'
     | 'tote-bag'
-    | 'coffee-cup';
+    | 'tote-bag'
+    | 'coffee-cup'
+    | 'social-suite'
+    | 'merch-suite';
 
 export interface MockupData {
     type: MockupType;
@@ -53,7 +56,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
     name: string;
     icon: string;
     description: string;
-    category: 'print' | 'digital' | 'merchandise' | 'signage';
+    category: 'essentials' | 'digital' | 'social' | 'outdoor' | 'merch';
     width: number;
     height: number;
 }> = {
@@ -61,7 +64,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
         name: 'Business Card',
         icon: '',
         description: '3D angled card with shadow',
-        category: 'print',
+        category: 'essentials',
         width: 800,
         height: 500,
     },
@@ -69,7 +72,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
         name: 'LinkedIn Banner',
         icon: '',
         description: 'Professional profile banner',
-        category: 'digital',
+        category: 'social',
         width: 1584,
         height: 396,
     },
@@ -90,10 +93,10 @@ export const MOCKUP_METADATA: Record<MockupType, {
         height: 900,
     },
     'poster': {
-        name: 'Poster',
+        name: 'Social Post',
         icon: '',
-        description: 'Large format display',
-        category: 'print',
+        description: 'Vertical social media post',
+        category: 'social',
         width: 600,
         height: 800,
     },
@@ -101,20 +104,20 @@ export const MOCKUP_METADATA: Record<MockupType, {
         name: 'Letterhead',
         icon: '',
         description: 'A4 document template',
-        category: 'print',
+        category: 'essentials',
         width: 595,
         height: 842,
     },
     'billboard': {
-        name: 'Billboard',
+        name: 'Times Square',
         icon: '',
-        description: 'Outdoor advertising display',
-        category: 'signage',
+        description: 'High-impact outdoor display',
+        category: 'outdoor',
         width: 1200,
         height: 600,
     },
     'phone-screen': {
-        name: 'Phone Screen',
+        name: 'Phone UI',
         icon: '',
         description: 'App interface mockup',
         category: 'digital',
@@ -122,7 +125,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
         height: 844,
     },
     'laptop-screen': {
-        name: 'Laptop Screen',
+        name: 'Laptop',
         icon: '',
         description: 'MacBook Pro display',
         category: 'digital',
@@ -130,26 +133,26 @@ export const MOCKUP_METADATA: Record<MockupType, {
         height: 900,
     },
     'storefront-sign': {
-        name: 'Storefront Sign',
+        name: 'Storefront',
         icon: '',
         description: 'Illuminated store signage',
-        category: 'signage',
+        category: 'outdoor',
         width: 1000,
         height: 400,
     },
     'packaging-box': {
-        name: 'Packaging Box',
+        name: 'Packaging',
         icon: '',
         description: 'Product packaging design',
-        category: 'print',
+        category: 'essentials',
         width: 800,
         height: 800,
     },
     'hoodie': {
-        name: 'Hoodie',
+        name: 'Merch Hoodie',
         icon: '',
         description: 'Apparel mockup',
-        category: 'merchandise',
+        category: 'essentials',
         width: 800,
         height: 900,
     },
@@ -157,7 +160,7 @@ export const MOCKUP_METADATA: Record<MockupType, {
         name: 'Tote Bag',
         icon: '',
         description: 'Canvas tote bag',
-        category: 'merchandise',
+        category: 'essentials',
         width: 700,
         height: 800,
     },
@@ -165,9 +168,25 @@ export const MOCKUP_METADATA: Record<MockupType, {
         name: 'Coffee Cup',
         icon: '',
         description: 'Ceramic mug mockup',
-        category: 'merchandise',
+        category: 'essentials',
         width: 600,
         height: 600,
+    },
+    'social-suite': {
+        name: 'Social Suite',
+        icon: '',
+        description: 'LinkedIn & Instagram Profile Setup',
+        category: 'social',
+        width: 1600,
+        height: 1000,
+    },
+    'merch-suite': {
+        name: 'Merch Kit',
+        icon: '',
+        description: 'Apparel & Accessories',
+        category: 'merch',
+        width: 1600,
+        height: 1000,
     },
 };
 

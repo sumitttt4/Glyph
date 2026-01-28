@@ -21,6 +21,7 @@ import {
     WORDMARK_ALGORITHMS,
     generateAllLogoVariations,
 } from '@/components/logo-engine';
+import { InfiniteLogoEngine } from '@/lib/logo-engine-v2/master';
 
 // Map vibe to LogoCategory for logo engine
 const vibeToCategory: Record<string, LogoCategory> = {
@@ -72,7 +73,8 @@ export function useBrandGenerator() {
             archetype?: 'symbol' | 'wordmark' | 'both';
             gradient?: { colors: string[]; angle: number } | null;
             prompt?: string;
-            surpriseMe?: boolean
+            surpriseMe?: boolean;
+            category?: string;
         } = {}
     ) => {
         setIsGenerating(true);
@@ -113,6 +115,26 @@ export function useBrandGenerator() {
             }
         }
 
+        // CONTEXT ENGINE: Apply Aesthetic Rules
+        // 1. Theme Logic
+        let themeId = 'midnight'; // Default
+        if (options.category === 'fintech' || vibe === 'tech') themeId = 'nebula';
+        else if (options.category === 'fashion' || vibe === 'minimalist') themeId = 'somatic';
+        else if (options.category === 'nature' || vibe === 'nature') themeId = 'sage';
+        else if (vibe === 'bold') themeId = 'midnight';
+        else if (vibe === 'luxury') themeId = 'lux';
+
+        let selectedTheme = THEMES.find(t => t.id === themeId) || THEMES[0];
+
+        // 2. Font Logic
+        let fontId = 'inter'; // Default
+        if (options.category === 'fintech' || vibe === 'tech') fontId = 'jetbrains-mono';
+        else if (options.category === 'fashion' || vibe === 'luxury') fontId = 'playfair-display';
+        else if (vibe === 'bold') fontId = 'archivo-black';
+
+        // Override if options.category dictates
+        if (options.category === 'legal') fontId = 'merriweather';
+
         await minDelay;
 
         // Fallback: Use new icon library with vibe-based selection
@@ -135,15 +157,14 @@ export function useBrandGenerator() {
         }
 
         // 1. SELECT THEME (or override)
-        let selectedTheme: typeof THEMES[0];
-
-        // Priority: Option Color > AI Color > Theme Default
+        // The above CONTEXT ENGINE logic now handles initial theme selection.
+        // This block now only handles color/gradient overrides.
         const effectiveColor = options.color || aiColor;
 
         if (effectiveColor || options.gradient) {
             // If customized, pick a base theme matching the vibe but OVERRIDE colors
             const cleanThemes = filterContent(THEMES);
-            const baseTheme = cleanThemes[Math.floor(Math.random() * cleanThemes.length)];
+            const baseTheme = cleanThemes.find(t => t.id === selectedTheme.id) || cleanThemes[Math.floor(Math.random() * cleanThemes.length)];
 
             // Clone and override
             selectedTheme = {
@@ -167,9 +188,8 @@ export function useBrandGenerator() {
                 }
             };
         } else {
-            // Standard random selection
-            const availableThemes = filterContent(THEMES);
-            selectedTheme = availableThemes[Math.floor(Math.random() * availableThemes.length)];
+            // If no custom color/gradient, ensure selectedTheme is from THEMES array
+            selectedTheme = THEMES.find(t => t.id === selectedTheme.id) || filterContent(THEMES)[Math.floor(Math.random() * filterContent(THEMES).length)];
         }
 
 
@@ -194,21 +214,25 @@ export function useBrandGenerator() {
         }
 
         // Font selection with category-based matching
-        const availableFonts = filterContent(fontPairings);
-        let selectedFont = availableFonts[Math.floor(Math.random() * availableFonts.length)];
+        let selectedFont = fontPairings.find(f => f.id === fontId) || fontPairings[0]; // Use fontId from context engine
 
-        // Try to match fonts by category/vibe
+        // Try to match fonts by category/vibe (fallback if fontId not found or for further refinement)
         const vibeCategory = vibe.toLowerCase();
-        const categoryFonts = availableFonts.filter(f =>
+        const categoryFonts = fontPairings.filter(f =>
             f.categories?.some(c => vibeCategory.includes(c)) ||
             f.tags.some(t => vibeCategory.includes(t))
         );
         if (categoryFonts.length > 0) {
             // Prefer recommended fonts within category
             const recommended = categoryFonts.filter(f => f.recommended);
-            selectedFont = recommended.length > 0
+            const fallbackFont = recommended.length > 0
                 ? recommended[Math.floor(Math.random() * recommended.length)]
                 : categoryFonts[Math.floor(Math.random() * categoryFonts.length)];
+
+            // Only override if the context engine didn't already pick a specific font
+            if (!fontPairings.find(f => f.id === fontId)) {
+                selectedFont = fallbackFont;
+            }
         }
 
         // AI Font Override
@@ -243,27 +267,73 @@ export function useBrandGenerator() {
         let generatedLogos: GeneratedLogo[] = [];
         try {
             // Semantic Generation - Analyzes name "Brewly" -> Coffee/Cup logic
-            const { logos, analysis, context } = generateSemanticLogos(
+            /* REPLACED BY INFINITE ENGINE AS PER USER REQUEST */
+
+            // 1. Generate via Infinite Engine (SHA-256 Neural Uniqueness)
+            // Use Category for context if available, otherwise vibe
+            const contextSeed = options.category || vibe.toLowerCase();
+            const infiniteResults = await InfiniteLogoEngine.generateBatch(
                 name.trim() || 'Brand',
-                logoCategory, // Pass category for industry context
-                logoPrimaryColor,
-                {
-                    accentColor: selectedTheme.tokens.light.accent || undefined,
-                    aesthetic: logoAesthetic,
-                    variations: 4, // More base variations
-                    seed: Date.now()
-                }
+                contextSeed,
+                1
             );
 
-            generatedLogos = logos;
+            if (infiniteResults.length > 0) {
+                const infiniteLogo = infiniteResults[0];
 
-            console.log('[Semantic Engine] Context:', context);
-            console.log('[Semantic Engine] Matched Keywords:', analysis.matchedKeywords.map(k => k.word).join(', '));
-            console.log('[Semantic Engine] Letter Meanings:', analysis.letterAnalysis.flatMap(l => l.hiddenMeanings).join(', '));
+                // Color Injection: The engine returns neutral SVGs. We inject the selected primary color.
+                let coloredSvg = infiniteLogo.svg;
+                const targetColor = logoPrimaryColor;
+
+                // Smart Color Replacement (Replace white/currentColor with primary brand color)
+                if (targetColor) {
+                    coloredSvg = coloredSvg
+                        .replace(/fill="white"/g, `fill="${targetColor}"`)
+                        .replace(/fill="#ffffff"/gi, `fill="${targetColor}"`)
+                        .replace(/fill="currentColor"/gi, `fill="${targetColor}"`)
+                        .replace(/stroke="white"/g, `stroke="${targetColor}"`)
+                        .replace(/stroke="#ffffff"/gi, `stroke="${targetColor}"`)
+                        .replace(/stroke="currentColor"/gi, `stroke="${targetColor}"`)
+                        .replace(/stop-color="currentColor"/gi, `stop-color="${targetColor}"`)
+                        .replace(/stop-color="white"/gi, `stop-color="${targetColor}"`);
+                }
+
+                const newGeneratedLogo: GeneratedLogo = {
+                    id: infiniteLogo.id,
+                    hash: infiniteLogo.id,
+                    algorithm: (infiniteLogo.algorithm || 'abstract-mark') as LogoAlgorithm,
+                    variant: 0,
+                    svg: coloredSvg,
+                    viewBox: '0 0 200 200', // Standardized ViewBox
+                    meta: {
+                        brandName: name,
+                        generatedAt: Date.now(),
+                        seed: infiniteLogo.id,
+                        hashParams: {} as any,
+                        geometry: {} as any,
+                        colors: { primary: targetColor, palette: [targetColor] }
+                    },
+                    params: (infiniteLogo.params || {}) as any,
+                    quality: {
+                        score: infiniteLogo.qualityScore || 90,
+                        pathSmoothness: 90,
+                        visualBalance: 90,
+                        complexity: 50,
+                        goldenRatioAdherence: 0,
+                        uniqueness: 95
+                    }
+                };
+
+                generatedLogos = [newGeneratedLogo];
+
+                console.log('[Infinite Engine] Generated Logo:', infiniteLogo.algorithm);
+            }
 
             // Generate all 6 variations for each logo (horizontal, stacked, icon-only, wordmark-only, dark, light)
             if (generatedLogos.length > 0) {
                 const tempBrandForVariations = {
+                    vibe,
+                    category: options.category,
                     name: name.trim() || 'Brand',
                     theme: selectedTheme,
                     font: {
@@ -352,18 +422,53 @@ export function useBrandGenerator() {
                     // FALLBACK: Save to LocalStorage for Guest/Bypass users
                     const isBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
                     if (isBypass) {
-                        const localHistory = JSON.parse(localStorage.getItem('glyph_guest_history') || '[]');
-                        // Add new brand to start, limit to 50
-                        const updatedHistory = [
-                            {
-                                id: newBrand.id,
-                                identity: newBrand,
-                                created_at: new Date().toISOString()
-                            },
-                            ...localHistory
-                        ].slice(0, 50);
-                        localStorage.setItem('glyph_guest_history', JSON.stringify(updatedHistory));
-                        console.log('Brand persisted to LocalStorage');
+                        try {
+                            const localHistory = JSON.parse(localStorage.getItem('glyph_guest_history') || '[]');
+
+                            // Create a lightweight version of the brand (strip heavy logo SVG data)
+                            const lightweightBrand = {
+                                ...newBrand,
+                                // Keep only first generated logo reference, strip SVG content
+                                generatedLogos: newBrand.generatedLogos?.slice(0, 1).map(logo => ({
+                                    ...logo,
+                                    svg: '', // Strip SVG to save space
+                                    variations: undefined, // Strip variations
+                                })) || [],
+                            };
+
+                            // Add new brand to start, limit to 15 entries to prevent quota issues
+                            const updatedHistory = [
+                                {
+                                    id: newBrand.id,
+                                    identity: lightweightBrand,
+                                    created_at: new Date().toISOString()
+                                },
+                                ...localHistory
+                            ].slice(0, 15);
+
+                            localStorage.setItem('glyph_guest_history', JSON.stringify(updatedHistory));
+                            console.log('Brand persisted to LocalStorage (lightweight)');
+                        } catch (storageError) {
+                            // Handle QuotaExceededError gracefully
+                            if (storageError instanceof DOMException && storageError.name === 'QuotaExceededError') {
+                                console.warn('LocalStorage quota exceeded, clearing old history...');
+                                // Clear old history and try again with just the new item
+                                try {
+                                    const minimalBrand = {
+                                        id: newBrand.id,
+                                        name: newBrand.name,
+                                        vibe: newBrand.vibe,
+                                        created_at: new Date().toISOString()
+                                    };
+                                    localStorage.setItem('glyph_guest_history', JSON.stringify([{ id: newBrand.id, identity: minimalBrand, created_at: new Date().toISOString() }]));
+                                } catch (e) {
+                                    console.error('Failed to save even minimal history, clearing storage');
+                                    localStorage.removeItem('glyph_guest_history');
+                                }
+                            } else {
+                                console.error('LocalStorage Error:', storageError);
+                            }
+                        }
                     }
                 }
             } catch (e) {

@@ -18,6 +18,7 @@ export interface GenerationOptions {
     shape?: string;
     gradient?: { colors: string[]; angle: number } | null;
     surpriseMe?: boolean;
+    category?: string;
 }
 
 export interface SidebarProps {
@@ -87,6 +88,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
     const [selectedArchetype, setSelectedArchetype] = useState<'symbol' | 'wordmark'>('symbol');
     const [isShapesOpen, setIsShapesOpen] = useState(false);
     const [isAiLoading, setIsAiLoading] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState(INDUSTRIES[0]);
 
     const isValid = brandName.trim().length > 0 && prompt.trim().length > 0 && (selectedVibe || customVibe.trim().length > 0);
 
@@ -151,6 +153,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
             archetype: selectedArchetype,
             shape: selectedShape || undefined,
             gradient: gradientObj ? { colors: gradientObj.colors, angle: gradientObj.angle } : null,
+            category: selectedCategory.id
         });
     };
 
@@ -260,7 +263,9 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
 
                     <div className="space-y-5">
                         <BrandContextSelector
+                            selectedId={selectedCategory.id}
                             onSelect={(industry) => {
+                                setSelectedCategory(industry);
                                 // AUTO-SELECT LOGIC based on Industry DNA
                                 setSelectedVibe(industry.vibe);
                                 if (industry.archetype === 'app-icon') {

@@ -150,8 +150,8 @@ export function Toolbar({ brand, isDark, toggleDark, onExport, viewMode, setView
                 )}
             </div>
 
-            {/* Compare Controls */}
-            {onAddToCompare && onOpenCompare && (
+            {/* Compare Controls / Variations */}
+            {onVariations && (
                 <div className="flex items-center gap-2 mr-2">
                     <button
                         onClick={onVariations}
@@ -166,23 +166,6 @@ export function Toolbar({ brand, isDark, toggleDark, onExport, viewMode, setView
                         )}
                         <span>{isGenerating ? 'Thinking...' : 'Variations'}</span>
                     </button>
-
-                    <button
-                        onClick={onAddToCompare}
-                        className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 border border-stone-200 rounded-full bg-white shadow-sm text-stone-500 hover:text-orange-600 hover:border-orange-200 transition-all"
-                        title="Add to Comparison"
-                    >
-                        <span className="text-xl font-light leading-none mb-0.5">+</span>
-                    </button>
-                    {compareCount > 0 && (
-                        <button
-                            onClick={onOpenCompare}
-                            className="flex items-center gap-2 px-3 py-2 h-9 md:h-10 bg-stone-900 text-white rounded-full shadow-sm text-xs font-semibold hover:bg-stone-800 transition-all animate-in fade-in zoom-in duration-200"
-                        >
-                            Compare
-                            <span className="bg-white/20 px-1.5 py-0.5 rounded-full text-[10px]">{compareCount}</span>
-                        </button>
-                    )}
                 </div>
             )}
 

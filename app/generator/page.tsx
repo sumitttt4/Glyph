@@ -175,7 +175,8 @@ export default function GeneratorPage() {
       color: options.color,
       shape: options.shape,
       gradient: options.gradient,
-      surpriseMe: options.surpriseMe
+      surpriseMe: options.surpriseMe,
+      category: options.category
     });
   }, [generateBrand]);
 
@@ -536,11 +537,6 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
                   setViewMode(mode);
                 }}
               />
-
-              {/* SOFT GATE for Email Capture */}
-              <div className="max-w-3xl mx-auto px-4">
-                <SoftGateVariations onUnlock={handleGenerateVariations} />
-              </div>
             </div>
           ) : (
             <RobotEmptyState />
