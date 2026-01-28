@@ -348,6 +348,13 @@ export {
     generateSingleMazePatternPreview,
 } from './generators/maze-pattern';
 
+// Visual Synthesis Generator (Cole Palmer Rule)
+export {
+    generateInitialSynthesis,
+    generateSingleInitialSynthesisPreview,
+    generateSynthesisConstructionGrid,
+} from './generators/initial-synthesis';
+
 // ============================================
 // ANIMATION
 // ============================================

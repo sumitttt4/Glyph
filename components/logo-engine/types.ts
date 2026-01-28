@@ -60,7 +60,9 @@ export type LogoAlgorithm =
     | 'dna-helix'        // Biotech - double helix
     | 'orbital-paths'    // Planetscale - planetary orbits
     // Stacked Lines Algorithm
-    | 'stacked-lines';   // Linear-inspired stacked horizontal lines
+    | 'stacked-lines'    // Linear-inspired stacked horizontal lines
+    // Visual Synthesis Algorithm
+    | 'initial-synthesis';   // Cole Palmer style - merged initials into single silhouette
 
 export type LogoCategory =
     | 'technology'
@@ -929,6 +931,20 @@ export interface StackedLinesParams extends BaseParameters {
     alignment: 'left' | 'center' | 'right' | 'justified';
 }
 
+// Initial Synthesis Parameters (Cole Palmer Rule)
+export interface InitialSynthesisParams extends BaseParameters {
+    mode: 'merged' | 'athletic' | 'geometric' | 'flowing';
+    letterPair: [string, string];
+    shareStroke: boolean;
+    mergePoint: Point;
+    strokeWeight: number;
+    curveTension: number;
+    cornerRadius: number;
+    verticalBias: number;
+    horizontalBias: number;
+    silhouetteStyle: 'abstract' | 'pose' | 'symbol';
+}
+
 // Union type for all parameter types
 export type AlgorithmParams =
     // Existing
@@ -981,7 +997,9 @@ export type AlgorithmParams =
     | DnaHelixParams
     | OrbitalPathsParams
     // Stacked Lines
-    | StackedLinesParams;
+    | StackedLinesParams
+    // Visual Synthesis
+    | InitialSynthesisParams;
 
 // ============================================
 // INPUT PARAMETERS
@@ -1038,6 +1056,12 @@ export interface LogoMetadata {
         accent?: string;
         gradient?: GradientDef;
         palette: string[];
+    };
+    // Visual Synthesis metadata
+    synthesis?: {
+        letters: [string, string];
+        mode: 'merged' | 'athletic' | 'geometric' | 'flowing';
+        isAthletic: boolean;
     };
 }
 
