@@ -69,7 +69,7 @@ export const FontSelector = ({ isOpen, onClose, currentFontId, onSelect }: FontS
                     <div className="flex items-center justify-between">
                         <div>
                             <h2 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-white">Typography System</h2>
-                            <p className="text-stone-500 dark:text-white/50 text-sm">Select a font pairing to define your brand's voice.</p>
+                            <p className="text-stone-500 dark:text-white/50 text-sm">Select a font pairing to define your brand&apos;s voice.</p>
                         </div>
                         <button
                             onClick={onClose}
