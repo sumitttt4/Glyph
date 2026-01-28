@@ -30,7 +30,7 @@ import { FontConfig } from '@/lib/fonts';
 import { BrandMockups } from '@/components/preview/BrandMockups';
 import { MockupGallery } from '@/components/preview/MockupGallery';
 import { BrandGraphicsSystem } from '@/components/preview/BrandGraphicsSystem';
-import { FigmaExportSection } from '@/components/export/FigmaExportSection';
+
 
 interface WorkbenchBentoGridProps {
     brand: BrandIdentity;
@@ -383,13 +383,6 @@ export function WorkbenchBentoGrid({ brand, isDark, onShuffleLogo, onSwapFont, o
                 <div id="section-brand-system" className="md:col-span-12 mt-12">
                     <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#1c1917]">
                         <BrandGraphicsSystem brand={brand} />
-                    </div>
-                </div>
-
-                {/* 11. Figma Export Section */}
-                <div id="section-figma-export" className="md:col-span-6 lg:col-span-4 mt-12">
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#1c1917] h-full">
-                        <FigmaExportSection brand={brand} />
                     </div>
                 </div>
 

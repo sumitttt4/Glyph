@@ -20,7 +20,7 @@ import {
     QualityMetrics,
     HashParams,
     Point,
-    InitialInitialSynthesisParams,
+    InitialSynthesisParams,
     BaseParameters,
 } from '../types';
 import {
@@ -673,6 +673,7 @@ function generateInitialSynthesisParams(hashParams: HashParams, rng: () => numbe
         : ['merged', 'geometric', 'flowing'];
 
     return {
+        ...base,
         mode: modes[derived.styleVariant % modes.length],
         letterPair: ['A', 'B'],
         shareStroke: derived.organicAmount > 0.4,
@@ -924,7 +925,7 @@ export function generateSynthesisConstructionGrid(
     <!-- Logo Preview -->
     <g id="synthesized-logo" transform="translate(${(size - 240) / 2}, ${(size - 240) / 2})">
         <svg width="240" height="240" viewBox="0 0 100 100">
-            <path d="${generateCPStylePath(letter1, letter2, 50, 50, 85, 8, { mode: 'merged', letterPair: [letter1, letter2], shareStroke: true, mergePoint: { x: 50, y: 50 }, strokeWeight: 8, curveTension: 0.5, cornerRadius: 10, verticalBias: 0, horizontalBias: 0, silhouetteStyle: 'abstract' })}" fill="${primaryColor}"/>
+            <path d="${generateCPStylePath(letter1, letter2, 50, 50, 85, 8, { mode: 'merged', letterPair: [letter1, letter2], shareStroke: true, mergePoint: { x: 50, y: 50 }, strokeWeight: 8, curveTension: 0.5, cornerRadius: 10, verticalBias: 0, horizontalBias: 0, silhouetteStyle: 'abstract' } as any)}" fill="${primaryColor}"/>
         </svg>
     </g>
 
