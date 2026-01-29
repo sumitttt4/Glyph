@@ -1,0 +1,1210 @@
+﻿
+F:\work\Glyph\app\api\webhook\dodo\route.ts
+  62:10  warning  'sanitizeEmail' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\app\generator\page.tsx
+  13:10  warning  'generateSocialMediaKit' is defined but never used  @typescript-eslint/no-unused-vars
+  13:34  warning  'downloadSocialAsset' is defined but never used     @typescript-eslint/no-unused-vars
+  25:47  warning  'resetBrand' is assigned a value but never used     @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\app\legal\privacy\page.tsx
+  41:217  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+F:\work\Glyph\app\login\page.tsx
+   5:22  warning  'Github' is defined but never used                      @typescript-eslint/no-unused-vars
+  14:12  warning  'loadingMessage' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  14:28  warning  'setLoadingMessage' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\app\page.tsx
+   5:10  warning  'motion' is defined but never used                     @typescript-eslint/no-unused-vars
+   5:18  warning  'AnimatePresence' is defined but never used            @typescript-eslint/no-unused-vars
+   6:22  warning  'Sparkles' is defined but never used                   @typescript-eslint/no-unused-vars
+   6:37  warning  'Layers' is defined but never used                     @typescript-eslint/no-unused-vars
+   6:54  warning  'Layout' is defined but never used                     @typescript-eslint/no-unused-vars
+   6:62  warning  'Type' is defined but never used                       @typescript-eslint/no-unused-vars
+   6:68  warning  'ShieldCheck' is defined but never used                @typescript-eslint/no-unused-vars
+  11:10  warning  'MockupBrowser' is defined but never used              @typescript-eslint/no-unused-vars
+  11:25  warning  'MockupDevice' is defined but never used               @typescript-eslint/no-unused-vars
+  12:10  warning  'Mockup3DCard' is defined but never used               @typescript-eslint/no-unused-vars
+  13:10  warning  'Button' is defined but never used                     @typescript-eslint/no-unused-vars
+  35:7   warning  'EXAMPLE_THEME' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  36:7   warning  'EXAMPLE_SHAPE' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  38:7   warning  'FEATURES' is assigned a value but never used          @typescript-eslint/no-unused-vars
+  73:9   warning  'currentDemoTheme' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  74:9   warning  'currentDemoShape' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\auth\UserProfile.tsx
+   25:22  warning  'isPro' is assigned a value but never used                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+   26:11  warning  'planInfo' is assigned a value but never used                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+   77:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  109:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  158:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+F:\work\Glyph\components\dashboard\BentoGrid.tsx
+  16:32  warning  'Download' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\dashboard\CodeCell.tsx
+   2:10  warning  'cn' is defined but never used    @typescript-eslint/no-unused-vars
+  11:35  warning  'mode' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\dashboard\PaletteCell.tsx
+  2:10  warning  'cn' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\dashboard\TumblerCell.tsx
+  14:11  warning  'patternColor' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\export\ExportPDF.ts
+   11:10  warning  'getStoredLogoSVG' is defined but never used  @typescript-eslint/no-unused-vars
+  186:51  warning  'i' is defined but never used                 @typescript-eslint/no-unused-vars
+  364:30  warning  'i' is defined but never used                 @typescript-eslint/no-unused-vars
+  554:34  warning  'i' is defined but never used                 @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\export\ExportSVG.ts
+   9:18  warning  'Shape' is defined but never used                    @typescript-eslint/no-unused-vars
+  55:11  warning  'secondaryScale' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  76:13  warning  'accentColor' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  77:13  warning  'bgColor' is assigned a value but never used         @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\export\ExportSocial.ts
+  208:14  warning  'platform' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\generator\ArchetypeSelector.tsx
+  3:10  warning  'motion' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\generator\BrandSlides.tsx
+    5:14  warning  'hexToRgb' is defined but never used      @typescript-eslint/no-unused-vars
+    5:24  warning  'hexToCmyk' is defined but never used     @typescript-eslint/no-unused-vars
+    6:10  warning  'motion' is defined but never used        @typescript-eslint/no-unused-vars
+    7:23  warning  'ExternalLink' is defined but never used  @typescript-eslint/no-unused-vars
+    7:37  warning  'ArrowRight' is defined but never used    @typescript-eslint/no-unused-vars
+  347:42  warning  'onSwapFont' is defined but never used    @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\generator\ColorPaletteStrip.tsx
+  71:33  warning  'idx' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\generator\CompareOverlay.tsx
+   9:13  warning  'Check' is defined but never used                 @typescript-eslint/no-unused-vars
+   9:20  warning  'Copy' is defined but never used                  @typescript-eslint/no-unused-vars
+  10:10  warning  'getReadableTextColor' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\generator\ExportBrandKit.tsx
+  8:29  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\generator\FontSelector.tsx
+   5:34   warning  'Filter' is defined but never used                               @typescript-eslint/no-unused-vars
+   8:10   warning  'motion' is defined but never used                               @typescript-eslint/no-unused-vars
+   8:18   warning  'AnimatePresence' is defined but never used                      @typescript-eslint/no-unused-vars
+  72:128  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+F:\work\Glyph\components\generator\LoadingState.tsx
+  23:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+F:\work\Glyph\components\generator\LoadingState.tsx:23:13
+  21 |     useEffect(() => {
+  22 |         if (!isLoading) {
+> 23 |             setMessageIndex(0);
+     |             ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  24 |             return;
+  25 |         }
+  26 |  react-hooks/set-state-in-effect
+
+F:\work\Glyph\components\generator\LogoCustomizer.tsx
+   5:20  warning  'ProLockOverlay' is defined but never used  @typescript-eslint/no-unused-vars
+  23:3   warning  'brand' is defined but never used           @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\generator\LogoStylePicker.tsx
+  5:34  warning  'isStyleFree' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\generator\Sidebar.tsx
+    4:10  warning  'Check' is defined but never used                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   10:32  warning  'INDUSTRIES' is defined but never used                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   86:12  warning  'isShapesOpen' is assigned a value but never used                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   86:26  warning  'setIsShapesOpen' is assigned a value but never used                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  109:8   warning  React Hook useEffect has a missing dependency: 'setSelectedVibe'. Either include it or remove the dependency array. If 'setSelectedVibe' changes too often, find the parent component that defines it and wrap that definition in useCallback  react-hooks/exhaustive-deps
+  136:11  warning  'handleSurpriseMe' is assigned a value but never used                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  201:11  warning  'handleExpandVibe' is assigned a value but never used                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\generator\Toolbar.tsx
+  4:91  warning  'Copy' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\generator\UnifiedExportMenu.tsx
+   6:78  warning  'Box' is defined but never used          @typescript-eslint/no-unused-vars
+   6:83  warning  'Check' is defined but never used        @typescript-eslint/no-unused-vars
+  18:8   warning  'html2canvas' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\generator\WorkbenchBentoGrid.tsx
+   3:20  warning  'useRef' is defined but never used                    @typescript-eslint/no-unused-vars
+   3:28  warning  'useEffect' is defined but never used                 @typescript-eslint/no-unused-vars
+   4:10  warning  'UnifiedExportMenu' is defined but never used         @typescript-eslint/no-unused-vars
+   6:10  warning  'ArrowUp' is defined but never used                   @typescript-eslint/no-unused-vars
+  11:10  warning  'Copy' is defined but never used                      @typescript-eslint/no-unused-vars
+  11:16  warning  'Check' is defined but never used                     @typescript-eslint/no-unused-vars
+  11:62  warning  'Share2' is defined but never used                    @typescript-eslint/no-unused-vars
+  19:10  warning  'AppIconVariants' is defined but never used           @typescript-eslint/no-unused-vars
+  25:24  warning  'MockupBrowser' is defined but never used             @typescript-eslint/no-unused-vars
+  26:10  warning  'BrowserBrandPreview' is defined but never used       @typescript-eslint/no-unused-vars
+  27:10  warning  'MonogramMark' is defined but never used              @typescript-eslint/no-unused-vars
+  51:12  warning  'copiedHex' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  58:11  warning  'content' is assigned a value but never used          @typescript-eslint/no-unused-vars
+  81:11  warning  'copyToClipboard' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\landing\AuthSection.tsx
+  1:30  warning  'Mail' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\landing\HeroAnimation.tsx
+  3:51  warning  'useSpring' is defined but never used      @typescript-eslint/no-unused-vars
+  6:10  warning  'THEMES' is defined but never used         @typescript-eslint/no-unused-vars
+  8:10  warning  'FONT_PAIRINGS' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\landing\Pricing.tsx
+  1:20  warning  'ShieldCheck' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\layout\Navbar.tsx
+  5:19  warning  'ArrowRight' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\BrandGuidelines.tsx
+  40:18  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  51:19  warning  'ratio' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx
+  114:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:114:18
+  112 |         return (
+  113 |             <div className={cn("flex items-center", className)} style={{ gap: `${gap}px` }}>
+> 114 |                 <IconMark />
+      |                  ^^^^^^^^ This component is created during render
+  115 |                 <Wordmark />
+  116 |             </div>
+  117 |         );
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:55:22
+  53 |
+  54 |     // Render the Icon Part - supports both custom SVG and Lucide
+> 55 |     const IconMark = ({ size = 24, forceColor }: { size?: number, forceColor?: string }) => (
+     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 56 |         <div
+     | ^^^^^^^^^^^^
+> 57 |             className={cn(
+     ΓÇª
+     | ^^^^^^^^^^^^
+> 95 |         </div>
+     | ^^^^^^^^^^^^
+> 96 |     );
+     | ^^^^^^ The component is created during render here
+  97 |
+  98 |     // Render the Text Part
+  99 |     const Wordmark = () => (                                                                                                                                                                                                                                                                                                                                              react-hooks/static-components
+  115:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:115:18
+  113 |             <div className={cn("flex items-center", className)} style={{ gap: `${gap}px` }}>
+  114 |                 <IconMark />
+> 115 |                 <Wordmark />
+      |                  ^^^^^^^^ This component is created during render
+  116 |             </div>
+  117 |         );
+  118 |     }
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:99:22
+   97 |
+   98 |     // Render the Text Part
+>  99 |     const Wordmark = () => (
+      |                      ^^^^^^^
+> 100 |         <span
+      | ^^^^^^^^^^^^^
+> 101 |             className="font-bold text-xl tracking-tight text-current"
+      | ^^^^^^^^^^^^^
+> 102 |             style={{ fontFamily: fontFamily || 'inherit' }}
+      | ^^^^^^^^^^^^^
+> 103 |         >
+      | ^^^^^^^^^^^^^
+> 104 |             {brandName}
+      | ^^^^^^^^^^^^^
+> 105 |         </span>
+      | ^^^^^^^^^^^^^
+> 106 |     );
+      | ^^^^^^ The component is created during render here
+  107 |
+  108 |     // --- THE LAYOUT SWITCHER ---
+  109 |                                                                                                                                                                                                                                                                                                       react-hooks/static-components
+  124:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:124:18
+  122 |         return (
+  123 |             <div className={cn("flex items-center flex-row-reverse", className)} style={{ gap: `${gap}px` }}>
+> 124 |                 <IconMark />
+      |                  ^^^^^^^^ This component is created during render
+  125 |                 <Wordmark />
+  126 |             </div>
+  127 |         );
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:55:22
+  53 |
+  54 |     // Render the Icon Part - supports both custom SVG and Lucide
+> 55 |     const IconMark = ({ size = 24, forceColor }: { size?: number, forceColor?: string }) => (
+     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 56 |         <div
+     | ^^^^^^^^^^^^
+> 57 |             className={cn(
+     ΓÇª
+     | ^^^^^^^^^^^^
+> 95 |         </div>
+     | ^^^^^^^^^^^^
+> 96 |     );
+     | ^^^^^^ The component is created during render here
+  97 |
+  98 |     // Render the Text Part
+  99 |     const Wordmark = () => (                                                                                                                                                                                                                                                                                                                             react-hooks/static-components
+  125:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:125:18
+  123 |             <div className={cn("flex items-center flex-row-reverse", className)} style={{ gap: `${gap}px` }}>
+  124 |                 <IconMark />
+> 125 |                 <Wordmark />
+      |                  ^^^^^^^^ This component is created during render
+  126 |             </div>
+  127 |         );
+  128 |     }
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:99:22
+   97 |
+   98 |     // Render the Text Part
+>  99 |     const Wordmark = () => (
+      |                      ^^^^^^^
+> 100 |         <span
+      | ^^^^^^^^^^^^^
+> 101 |             className="font-bold text-xl tracking-tight text-current"
+      | ^^^^^^^^^^^^^
+> 102 |             style={{ fontFamily: fontFamily || 'inherit' }}
+      | ^^^^^^^^^^^^^
+> 103 |         >
+      | ^^^^^^^^^^^^^
+> 104 |             {brandName}
+      | ^^^^^^^^^^^^^
+> 105 |         </span>
+      | ^^^^^^^^^^^^^
+> 106 |     );
+      | ^^^^^^ The component is created during render here
+  107 |
+  108 |     // --- THE LAYOUT SWITCHER ---
+  109 |                                                                                                                                                                                                                                                                                      react-hooks/static-components
+  134:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:134:18
+  132 |         return (
+  133 |             <div className={cn("flex flex-col items-center text-center", className)} style={{ gap: `${gap}px` }}>
+> 134 |                 <IconMark size={32} />
+      |                  ^^^^^^^^ This component is created during render
+  135 |                 <Wordmark />
+  136 |             </div>
+  137 |         );
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:55:22
+  53 |
+  54 |     // Render the Icon Part - supports both custom SVG and Lucide
+> 55 |     const IconMark = ({ size = 24, forceColor }: { size?: number, forceColor?: string }) => (
+     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 56 |         <div
+     | ^^^^^^^^^^^^
+> 57 |             className={cn(
+     ΓÇª
+     | ^^^^^^^^^^^^
+> 95 |         </div>
+     | ^^^^^^^^^^^^
+> 96 |     );
+     | ^^^^^^ The component is created during render here
+  97 |
+  98 |     // Render the Text Part
+  99 |     const Wordmark = () => (                                                                                                                                                                                                                                                                                                               react-hooks/static-components
+  135:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:135:18
+  133 |             <div className={cn("flex flex-col items-center text-center", className)} style={{ gap: `${gap}px` }}>
+  134 |                 <IconMark size={32} />
+> 135 |                 <Wordmark />
+      |                  ^^^^^^^^ This component is created during render
+  136 |             </div>
+  137 |         );
+  138 |     }
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:99:22
+   97 |
+   98 |     // Render the Text Part
+>  99 |     const Wordmark = () => (
+      |                      ^^^^^^^
+> 100 |         <span
+      | ^^^^^^^^^^^^^
+> 101 |             className="font-bold text-xl tracking-tight text-current"
+      | ^^^^^^^^^^^^^
+> 102 |             style={{ fontFamily: fontFamily || 'inherit' }}
+      | ^^^^^^^^^^^^^
+> 103 |         >
+      | ^^^^^^^^^^^^^
+> 104 |             {brandName}
+      | ^^^^^^^^^^^^^
+> 105 |         </span>
+      | ^^^^^^^^^^^^^
+> 106 |     );
+      | ^^^^^^ The component is created during render here
+  107 |
+  108 |     // --- THE LAYOUT SWITCHER ---
+  109 |                                                                                                                                                                                                                                                                        react-hooks/static-components
+  175:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:175:22
+  173 |                     style={{ color: primaryColor }}
+  174 |                 >
+> 175 |                     <IconElement size={14} strokeWidth={2.5} />
+      |                      ^^^^^^^^^^^ This component is created during render
+  176 |                 </div>
+  177 |                 <span
+  178 |                     className="text-sm font-bold uppercase tracking-widest opacity-80"
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:141:25
+  139 |
+  140 |     // Helper to render just the raw icon (Custom or Lucide)
+> 141 |     const IconElement = ({ size, color, strokeWidth = 2.5 }: { size: number, color?: string, strokeWidth?: number }) => {
+      |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 142 |         if (customIcon) {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 143 |             return (
+      ΓÇª
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 158 |         return <LucideIcon size={size} color={color || (isGhost ? primaryColor : 'white')} strokeWidth={strokeWidth} />;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 159 |     };
+      | ^^^^^^ The component is created during render here
+  160 |
+  161 |     // 3. Badge (Tiny, Pill shape for container)
+  162 |     if (layout === 'badge') {                 react-hooks/static-components
+  202:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:202:22
+  200 |                 </span>
+  201 |                 <div className="absolute -bottom-2 -right-2 bg-white p-1.5 rounded-full border-2 border-white shadow-sm">
+> 202 |                     <IconElement size={16} color={primaryColor} strokeWidth={3} />
+      |                      ^^^^^^^^^^^ This component is created during render
+  203 |                 </div>
+  204 |             </div>
+  205 |         )
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:141:25
+  139 |
+  140 |     // Helper to render just the raw icon (Custom or Lucide)
+> 141 |     const IconElement = ({ size, color, strokeWidth = 2.5 }: { size: number, color?: string, strokeWidth?: number }) => {
+      |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 142 |         if (customIcon) {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 143 |             return (
+      ΓÇª
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 158 |         return <LucideIcon size={size} color={color || (isGhost ? primaryColor : 'white')} strokeWidth={strokeWidth} />;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 159 |     };
+      | ^^^^^^ The component is created during render here
+  160 |
+  161 |     // 3. Badge (Tiny, Pill shape for container)
+  162 |     if (layout === 'badge') {  react-hooks/static-components
+  212:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:212:18
+  210 |         return (
+  211 |             <div className={cn("flex items-center justify-center", className)}>
+> 212 |                 <IconElement size={32} strokeWidth={2.5} />
+      |                  ^^^^^^^^^^^ This component is created during render
+  213 |             </div>
+  214 |         );
+  215 |     }
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:141:25
+  139 |
+  140 |     // Helper to render just the raw icon (Custom or Lucide)
+> 141 |     const IconElement = ({ size, color, strokeWidth = 2.5 }: { size: number, color?: string, strokeWidth?: number }) => {
+      |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 142 |         if (customIcon) {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 143 |             return (
+      ΓÇª
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 158 |         return <LucideIcon size={size} color={color || (isGhost ? primaryColor : 'white')} strokeWidth={strokeWidth} />;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 159 |     };
+      | ^^^^^^ The component is created during render here
+  160 |
+  161 |     // 3. Badge (Tiny, Pill shape for container)
+  162 |     if (layout === 'badge') {                                                                                              react-hooks/static-components
+  220:14  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:220:14
+  218 |     return (
+  219 |         <div className={cn("flex items-center gap-3", className)}>
+> 220 |             <IconMark />
+      |              ^^^^^^^^ This component is created during render
+  221 |             <Wordmark />
+  222 |         </div>
+  223 |     );
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:55:22
+  53 |
+  54 |     // Render the Icon Part - supports both custom SVG and Lucide
+> 55 |     const IconMark = ({ size = 24, forceColor }: { size?: number, forceColor?: string }) => (
+     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 56 |         <div
+     | ^^^^^^^^^^^^
+> 57 |             className={cn(
+     ΓÇª
+     | ^^^^^^^^^^^^
+> 95 |         </div>
+     | ^^^^^^^^^^^^
+> 96 |     );
+     | ^^^^^^ The component is created during render here
+  97 |
+  98 |     // Render the Text Part
+  99 |     const Wordmark = () => (                                                                                                                                                                                                                                                                                                                                                                                                react-hooks/static-components
+  221:14  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:221:14
+  219 |         <div className={cn("flex items-center gap-3", className)}>
+  220 |             <IconMark />
+> 221 |             <Wordmark />
+      |              ^^^^^^^^ This component is created during render
+  222 |         </div>
+  223 |     );
+  224 | }
+
+F:\work\Glyph\components\logo-engine\LogoAssembler.tsx:99:22
+   97 |
+   98 |     // Render the Text Part
+>  99 |     const Wordmark = () => (
+      |                      ^^^^^^^
+> 100 |         <span
+      | ^^^^^^^^^^^^^
+> 101 |             className="font-bold text-xl tracking-tight text-current"
+      | ^^^^^^^^^^^^^
+> 102 |             style={{ fontFamily: fontFamily || 'inherit' }}
+      | ^^^^^^^^^^^^^
+> 103 |         >
+      | ^^^^^^^^^^^^^
+> 104 |             {brandName}
+      | ^^^^^^^^^^^^^
+> 105 |         </span>
+      | ^^^^^^^^^^^^^
+> 106 |     );
+      | ^^^^^^ The component is created during render here
+  107 |
+  108 |     // --- THE LAYOUT SWITCHER ---
+  109 |                                                                                                                                                                                                                                                                                                                                                         react-hooks/static-components
+
+F:\work\Glyph\components\logo-engine\LogoComposition.tsx
+    6:25  warning  'getRandomShape' is defined but never used        @typescript-eslint/no-unused-vars
+    7:23  warning  'IconDefinition' is defined but never used        @typescript-eslint/no-unused-vars
+    8:10  warning  'FREE_STYLES' is defined but never used           @typescript-eslint/no-unused-vars
+    8:23  warning  'LOGO_STYLES' is defined but never used           @typescript-eslint/no-unused-vars
+    8:36  warning  'isStyleFree' is defined but never used           @typescript-eslint/no-unused-vars
+    9:10  warning  'AutoLettermark' is defined but never used        @typescript-eslint/no-unused-vars
+   10:8   warning  'LogoEngine' is defined but never used            @typescript-eslint/no-unused-vars
+   11:8   warning  'LogoAssembler' is defined but never used         @typescript-eslint/no-unused-vars
+   80:92  warning  'isPro' is assigned a value but never used        @typescript-eslint/no-unused-vars
+   83:11  warning  'rng' is assigned a value but never used          @typescript-eslint/no-unused-vars
+  148:20  warning  'sWidth' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  158:11  warning  'gap' is assigned a value but never used          @typescript-eslint/no-unused-vars
+  198:62  error    Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+  208:11  warning  'forceSolid' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  435:15  warning  'accentColor' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  460:19  warning  'isWhite' is assigned a value but never used      @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\LogoConstruction.tsx
+  19:11  warning  'guideColor' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\PalettePreview.tsx
+  102:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\PalettePreview.tsx:102:22
+  100 |                 <div className="mt-auto space-y-1.5">
+  101 |                     <div className="text-[9px] font-mono mb-2 opacity-40 uppercase tracking-wider">Generated Tokens</div>
+> 102 |                     <TokenRow label="--brand" value={light.brand} mode="light" />
+      |                      ^^^^^^^^ This component is created during render
+  103 |                     <TokenRow label="--surface" value={light.surface} mode="light" />
+  104 |                     <TokenRow label="--accent" value={light.accent} mode="light" />
+  105 |                 </div>
+
+F:\work\Glyph\components\logo-engine\PalettePreview.tsx:28:22
+  26 |     };
+  27 |
+> 28 |     const TokenRow = ({ label, value, mode }: { label: string; value: string; mode: 'light' | 'dark' }) => {
+     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 29 |         const bgStyle = mode === 'light'
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 30 |             ? { backgroundColor: 'rgba(255,255,255,0.5)', borderColor: light.border }
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 50 |         );
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 51 |     };
+     | ^^^^^^ The component is created during render here
+  52 |
+  53 |     return (
+  54 |         <motion.div  react-hooks/static-components
+  103:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\PalettePreview.tsx:103:22
+  101 |                     <div className="text-[9px] font-mono mb-2 opacity-40 uppercase tracking-wider">Generated Tokens</div>
+  102 |                     <TokenRow label="--brand" value={light.brand} mode="light" />
+> 103 |                     <TokenRow label="--surface" value={light.surface} mode="light" />
+      |                      ^^^^^^^^ This component is created during render
+  104 |                     <TokenRow label="--accent" value={light.accent} mode="light" />
+  105 |                 </div>
+  106 |             </div>
+
+F:\work\Glyph\components\logo-engine\PalettePreview.tsx:28:22
+  26 |     };
+  27 |
+> 28 |     const TokenRow = ({ label, value, mode }: { label: string; value: string; mode: 'light' | 'dark' }) => {
+     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 29 |         const bgStyle = mode === 'light'
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 30 |             ? { backgroundColor: 'rgba(255,255,255,0.5)', borderColor: light.border }
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 50 |         );
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 51 |     };
+     | ^^^^^^ The component is created during render here
+  52 |
+  53 |     return (
+  54 |         <motion.div                                     react-hooks/static-components
+  104:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\PalettePreview.tsx:104:22
+  102 |                     <TokenRow label="--brand" value={light.brand} mode="light" />
+  103 |                     <TokenRow label="--surface" value={light.surface} mode="light" />
+> 104 |                     <TokenRow label="--accent" value={light.accent} mode="light" />
+      |                      ^^^^^^^^ This component is created during render
+  105 |                 </div>
+  106 |             </div>
+  107 |
+
+F:\work\Glyph\components\logo-engine\PalettePreview.tsx:28:22
+  26 |     };
+  27 |
+> 28 |     const TokenRow = ({ label, value, mode }: { label: string; value: string; mode: 'light' | 'dark' }) => {
+     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 29 |         const bgStyle = mode === 'light'
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 30 |             ? { backgroundColor: 'rgba(255,255,255,0.5)', borderColor: light.border }
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 50 |         );
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 51 |     };
+     | ^^^^^^ The component is created during render here
+  52 |
+  53 |     return (
+  54 |         <motion.div                                                                                                                                                               react-hooks/static-components
+  150:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\PalettePreview.tsx:150:22
+  148 |                 <div className="mt-auto space-y-1.5">
+  149 |                     <div className="text-[9px] font-mono mb-2 opacity-40 uppercase tracking-wider">Adapted Tokens</div>
+> 150 |                     <TokenRow label="--brand" value={dark.brand} mode="dark" />
+      |                      ^^^^^^^^ This component is created during render
+  151 |                     <TokenRow label="--surface" value={dark.surface} mode="dark" />
+  152 |                     <TokenRow label="--accent" value={dark.accent} mode="dark" />
+  153 |                 </div>
+
+F:\work\Glyph\components\logo-engine\PalettePreview.tsx:28:22
+  26 |     };
+  27 |
+> 28 |     const TokenRow = ({ label, value, mode }: { label: string; value: string; mode: 'light' | 'dark' }) => {
+     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 29 |         const bgStyle = mode === 'light'
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 30 |             ? { backgroundColor: 'rgba(255,255,255,0.5)', borderColor: light.border }
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 50 |         );
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 51 |     };
+     | ^^^^^^ The component is created during render here
+  52 |
+  53 |     return (
+  54 |         <motion.div          react-hooks/static-components
+  151:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\PalettePreview.tsx:151:22
+  149 |                     <div className="text-[9px] font-mono mb-2 opacity-40 uppercase tracking-wider">Adapted Tokens</div>
+  150 |                     <TokenRow label="--brand" value={dark.brand} mode="dark" />
+> 151 |                     <TokenRow label="--surface" value={dark.surface} mode="dark" />
+      |                      ^^^^^^^^ This component is created during render
+  152 |                     <TokenRow label="--accent" value={dark.accent} mode="dark" />
+  153 |                 </div>
+  154 |             </div>
+
+F:\work\Glyph\components\logo-engine\PalettePreview.tsx:28:22
+  26 |     };
+  27 |
+> 28 |     const TokenRow = ({ label, value, mode }: { label: string; value: string; mode: 'light' | 'dark' }) => {
+     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 29 |         const bgStyle = mode === 'light'
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 30 |             ? { backgroundColor: 'rgba(255,255,255,0.5)', borderColor: light.border }
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 50 |         );
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 51 |     };
+     | ^^^^^^ The component is created during render here
+  52 |
+  53 |     return (
+  54 |         <motion.div                                             react-hooks/static-components
+  152:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\logo-engine\PalettePreview.tsx:152:22
+  150 |                     <TokenRow label="--brand" value={dark.brand} mode="dark" />
+  151 |                     <TokenRow label="--surface" value={dark.surface} mode="dark" />
+> 152 |                     <TokenRow label="--accent" value={dark.accent} mode="dark" />
+      |                      ^^^^^^^^ This component is created during render
+  153 |                 </div>
+  154 |             </div>
+  155 |
+
+F:\work\Glyph\components\logo-engine\PalettePreview.tsx:28:22
+  26 |     };
+  27 |
+> 28 |     const TokenRow = ({ label, value, mode }: { label: string; value: string; mode: 'light' | 'dark' }) => {
+     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 29 |         const bgStyle = mode === 'light'
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 30 |             ? { backgroundColor: 'rgba(255,255,255,0.5)', borderColor: light.border }
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 50 |         );
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 51 |     };
+     | ^^^^^^ The component is created during render here
+  52 |
+  53 |     return (
+  54 |         <motion.div                                                                                                                                                                     react-hooks/static-components
+
+F:\work\Glyph\components\logo-engine\animation\animation-export.ts
+   11:5   warning  'LottieKeyframe' is defined but never used      @typescript-eslint/no-unused-vars
+   17:5   warning  'Point' is defined but never used               @typescript-eslint/no-unused-vars
+   19:10  warning  'createSeededRandom' is defined but never used  @typescript-eslint/no-unused-vars
+  338:26  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+
+F:\work\Glyph\components\logo-engine\compositions\AdvancedCompositions.tsx
+   21:3  warning  'brand' is defined but never used         @typescript-eslint/no-unused-vars
+   23:3  warning  'accentColor' is defined but never used   @typescript-eslint/no-unused-vars
+   24:3  warning  'centerOffset' is defined but never used  @typescript-eslint/no-unused-vars
+   27:3  warning  'uniqueId' is defined but never used      @typescript-eslint/no-unused-vars
+   62:3  warning  'brand' is defined but never used         @typescript-eslint/no-unused-vars
+   64:3  warning  'accentColor' is defined but never used   @typescript-eslint/no-unused-vars
+   65:3  warning  'centerOffset' is defined but never used  @typescript-eslint/no-unused-vars
+   68:3  warning  'uniqueId' is defined but never used      @typescript-eslint/no-unused-vars
+  104:3  warning  'brand' is defined but never used         @typescript-eslint/no-unused-vars
+  106:3  warning  'accentColor' is defined but never used   @typescript-eslint/no-unused-vars
+  134:3  warning  'brand' is defined but never used         @typescript-eslint/no-unused-vars
+  173:3  warning  'brand' is defined but never used         @typescript-eslint/no-unused-vars
+  228:3  warning  'accentColor' is defined but never used   @typescript-eslint/no-unused-vars
+  229:3  warning  'centerOffset' is defined but never used  @typescript-eslint/no-unused-vars
+  274:3  warning  'accentColor' is defined but never used   @typescript-eslint/no-unused-vars
+  275:3  warning  'centerOffset' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\compositions\GlassCompositions.tsx
+   21:3  warning  'brand' is defined but never used        @typescript-eslint/no-unused-vars
+   66:3  warning  'brand' is defined but never used        @typescript-eslint/no-unused-vars
+   68:3  warning  'accentColor' is defined but never used  @typescript-eslint/no-unused-vars
+  114:3  warning  'accentColor' is defined but never used  @typescript-eslint/no-unused-vars
+  152:3  warning  'brand' is defined but never used        @typescript-eslint/no-unused-vars
+  154:3  warning  'accentColor' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\compositions\GradientCompositions.tsx
+   21:3  warning  'brand' is defined but never used  @typescript-eslint/no-unused-vars
+   56:3  warning  'brand' is defined but never used  @typescript-eslint/no-unused-vars
+  135:3  warning  'brand' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\compositions\PatternCompositions.tsx
+   21:3  warning  'brand' is defined but never used         @typescript-eslint/no-unused-vars
+   23:3  warning  'accentColor' is defined but never used   @typescript-eslint/no-unused-vars
+   27:3  warning  'uniqueId' is defined but never used      @typescript-eslint/no-unused-vars
+   56:3  warning  'brand' is defined but never used         @typescript-eslint/no-unused-vars
+   58:3  warning  'accentColor' is defined but never used   @typescript-eslint/no-unused-vars
+   92:3  warning  'brand' is defined but never used         @typescript-eslint/no-unused-vars
+   95:3  warning  'centerOffset' is defined but never used  @typescript-eslint/no-unused-vars
+  131:3  warning  'brand' is defined but never used         @typescript-eslint/no-unused-vars
+  133:3  warning  'accentColor' is defined but never used   @typescript-eslint/no-unused-vars
+  137:3  warning  'uniqueId' is defined but never used      @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\compositions\ThreeDCompositions.tsx
+   21:3  warning  'brand' is defined but never used             @typescript-eslint/no-unused-vars
+   55:3  warning  'brand' is defined but never used             @typescript-eslint/no-unused-vars
+   57:3  warning  'accentColor' is defined but never used       @typescript-eslint/no-unused-vars
+   93:3  warning  'accentColor' is defined but never used       @typescript-eslint/no-unused-vars
+  100:9  warning  'bgColor' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  131:3  warning  'brand' is defined but never used             @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\core\advanced-geometry.ts
+  8:17  warning  'BezierCurve' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\core\color-utils.ts
+  290:11  warning  'hsl' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\core\geometry.ts
+  7:30  warning  'GridConfig' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\core\parametric-engine.ts
+   32:7   warning  'CANDIDATES_PER_GENERATION' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  497:11  warning  'rng' is assigned a value but never used                        @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\core\svg-builder.ts
+    8:10  warning  'roundedRectPath' is defined but never used  @typescript-eslint/no-unused-vars
+  209:48  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+F:\work\Glyph\components\logo-engine\generators\abstract-mark.ts
+  31:27  warning  'mixColors' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\box-logo.ts
+  28:10  warning  'lighten' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\circle-overlap.ts
+  15:5   warning  'Point' is defined but never used                @typescript-eslint/no-unused-vars
+  28:5   warning  'createBezierEllipse' is defined but never used  @typescript-eslint/no-unused-vars
+  31:38  warning  'withAlpha' is defined but never used            @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\circular-emblem.ts
+  163:11  warning  'letterUpper' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  399:11  warning  'params' is assigned a value but never used       @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\crown-mark.ts
+  65:61  warning  'crownWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\diamond-gem.ts
+   65:52  warning  'pavilionAngle' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  200:19  warning  'innerR' is assigned a value but never used         @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\fingerprint-id.ts
+  28:19  warning  'darken' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\flow-gradient.ts
+   31:27  warning  'mixColors' is defined but never used       @typescript-eslint/no-unused-vars
+  195:11  warning  'width' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\framed-letter.ts
+  264:11  warning  'k' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\gear-cog.ts
+  69:11  warning  'depth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\gradient-bars.ts
+  26:5   warning  'createBezierRoundedRect' is defined but never used  @typescript-eslint/no-unused-vars
+  65:11  warning  'totalWidth' is assigned a value but never used      @typescript-eslint/no-unused-vars
+  79:11  warning  'barY' is assigned a value but never used            @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\heart-love.ts
+  65:63  warning  'heartRotation' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\infinity-loop.ts
+  28:27  warning  'mixColors' is defined but never used                @typescript-eslint/no-unused-vars
+  66:36  warning  'thickness' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  66:47  warning  'crossoverAngle' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\leaf-organic.ts
+  66:5  warning  'rotation' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\maze-pattern.ts
+  65:5   warning  'totalLayers' is defined but never used             @typescript-eslint/no-unused-vars
+  67:37  warning  'wallThickness' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  88:15  warning  'k' is assigned a value but never used              @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\monogram-blend.ts
+   15:5   warning  'Point' is defined but never used            @typescript-eslint/no-unused-vars
+  133:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  149:60  warning  'sw' is defined but never used               @typescript-eslint/no-unused-vars
+  149:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  150:11  warning  'k' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  167:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  169:11  warning  'k' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  182:60  warning  'sw' is defined but never used               @typescript-eslint/no-unused-vars
+  182:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  196:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  219:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  244:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  267:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  284:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  305:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  322:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  343:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  362:60  warning  'sw' is defined but never used               @typescript-eslint/no-unused-vars
+  362:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  376:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  396:60  warning  'sw' is defined but never used               @typescript-eslint/no-unused-vars
+  396:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  410:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  427:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  446:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  462:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  482:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  504:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  523:72  warning  'style' is defined but never used            @typescript-eslint/no-unused-vars
+  699:11  warning  'params' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\motion-lines.ts
+  25:5   warning  'addNoise' is defined but never used             @typescript-eslint/no-unused-vars
+  68:5   warning  'rng' is defined but never used                  @typescript-eslint/no-unused-vars
+  83:11  warning  'lineLength' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\mountain-peak.ts
+  28:10  warning  'lighten' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\perfect-triangle.ts
+  269:89  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\work\Glyph\components\logo-engine\generators\shield-badge.ts
+  116:27  warning  'innerPadding' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\sound-waves.ts
+  25:5   warning  'PHI' is defined but never used                   @typescript-eslint/no-unused-vars
+  26:5   warning  'lerp' is defined but never used                  @typescript-eslint/no-unused-vars
+  73:64  warning  'phaseOffset' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\star-mark.ts
+  86:19  warning  'prevX' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  87:19  warning  'prevY' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\starburst.ts
+  25:5  warning  'meetsQualityThreshold' is defined but never used  @typescript-eslint/no-unused-vars
+  27:5  warning  'PHI' is defined but never used                    @typescript-eslint/no-unused-vars
+  28:5  warning  'lerp' is defined but never used                   @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\generators\wave-flow.ts
+  70:11  warning  'waveLen' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\logo-engine\renderers\export-utils.ts
+  156:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  166:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\work\Glyph\components\logo-engine\renderers\stored-logo-export.ts
+   92:11  warning  'secondaryColor' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  112:10  warning  'match' is defined but never used                    @typescript-eslint/no-unused-vars
+  112:17  warning  'color' is defined but never used                    @typescript-eslint/no-unused-vars
+  112:24  warning  'offset' is defined but never used                   @typescript-eslint/no-unused-vars
+  216:10  warning  'darkenColor' is defined but never used              @typescript-eslint/no-unused-vars
+  241:16  warning  'logoWidth' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  241:27  warning  'logoHeight' is assigned a value but never used      @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\meta\ComponentPlayground.tsx
+  31:5  warning  'componentName' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\meta\SystemNav.tsx
+  5:10  warning  'usePathname' is defined but never used  @typescript-eslint/no-unused-vars
+  6:10  warning  'cn' is defined but never used           @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\preview\BrowserBrandPreview.tsx
+   4:60  warning  'Plus' is defined but never used              @typescript-eslint/no-unused-vars
+   8:11  warning  'bg' is assigned a value but never used       @typescript-eslint/no-unused-vars
+   9:11  warning  'text' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  10:11  warning  'initial' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\preview\Mockup3DCard.tsx
+  15:11  warning  'text' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  60:18  error    Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\preview\Mockup3DCard.tsx:60:18
+  58 |         return (
+  59 |             <div className="relative w-full h-full flex items-center justify-center py-8">
+> 60 |                 <Card rotate={-15} y={-10} zIndex={10} variant="front" />
+     |                  ^^^^ This component is created during render
+  61 |                 <Card rotate={5} y={15} zIndex={20} variant="back" />
+  62 |             </div>
+  63 |         )
+
+F:\work\Glyph\components\preview\Mockup3DCard.tsx:18:18
+  16 |
+  17 |     // The Card Component
+> 18 |     const Card = ({ rotate = 0, y = 0, zIndex = 0, variant = 'front' }: { rotate?: number, y?: number, zIndex?: number, variant?: 'front' | 'back' }) => (
+     |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 19 |         <div
+     | ^^^^^^^^^^^^
+> 20 |             className="absolute w-56 h-32 rounded-xl shadow-2xl flex flex-col justify-between overflow-hidden border border-white/10"
+     ΓÇª
+     | ^^^^^^^^^^^^
+> 54 |         </div>
+     | ^^^^^^^^^^^^
+> 55 |     );
+     | ^^^^^^ The component is created during render here
+  56 |
+  57 |     if (stacked) {
+  58 |         return (  react-hooks/static-components
+  61:18  error    Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\preview\Mockup3DCard.tsx:61:18
+  59 |             <div className="relative w-full h-full flex items-center justify-center py-8">
+  60 |                 <Card rotate={-15} y={-10} zIndex={10} variant="front" />
+> 61 |                 <Card rotate={5} y={15} zIndex={20} variant="back" />
+     |                  ^^^^ This component is created during render
+  62 |             </div>
+  63 |         )
+  64 |     }
+
+F:\work\Glyph\components\preview\Mockup3DCard.tsx:18:18
+  16 |
+  17 |     // The Card Component
+> 18 |     const Card = ({ rotate = 0, y = 0, zIndex = 0, variant = 'front' }: { rotate?: number, y?: number, zIndex?: number, variant?: 'front' | 'back' }) => (
+     |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 19 |         <div
+     | ^^^^^^^^^^^^
+> 20 |             className="absolute w-56 h-32 rounded-xl shadow-2xl flex flex-col justify-between overflow-hidden border border-white/10"
+     ΓÇª
+     | ^^^^^^^^^^^^
+> 54 |         </div>
+     | ^^^^^^^^^^^^
+> 55 |     );
+     | ^^^^^^ The component is created during render here
+  56 |
+  57 |     if (stacked) {
+  58 |         return (             react-hooks/static-components
+
+F:\work\Glyph\components\preview\MockupBillboard.tsx
+  16:11  warning  'darkTokens' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\preview\MockupDevice.tsx
+  7:11  warning  'text' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\preview\MockupGenerator.tsx
+  7:10  warning  'motion' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\components\preview\MockupSocial.tsx
+  118:36  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\preview\MockupSocial.tsx:118:36
+  116 |     return (
+  117 |         <div className={cn("p-4 flex items-center justify-center bg-stone-50", className)}>
+> 118 |             {variant === 'feed' ? <SocialPost /> : <ProfileHeader />}
+      |                                    ^^^^^^^^^^ This component is created during render
+  119 |         </div>
+  120 |     );
+  121 | };
+
+F:\work\Glyph\components\preview\MockupSocial.tsx:19:24
+  17 |
+  18 |     // Social Post Component
+> 19 |     const SocialPost = () => (
+     |                        ^^^^^^^
+> 20 |         <div className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden max-w-sm w-full mx-auto">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 21 |             {/* Header */}
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |     );
+     | ^^^^^^ The component is created during render here
+  74 |
+  75 |     // Profile Component (Simplified)
+  76 |     const ProfileHeader = () => (                                                                                react-hooks/static-components
+  118:53  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+F:\work\Glyph\components\preview\MockupSocial.tsx:118:53
+  116 |     return (
+  117 |         <div className={cn("p-4 flex items-center justify-center bg-stone-50", className)}>
+> 118 |             {variant === 'feed' ? <SocialPost /> : <ProfileHeader />}
+      |                                                     ^^^^^^^^^^^^^ This component is created during render
+  119 |         </div>
+  120 |     );
+  121 | };
+
+F:\work\Glyph\components\preview\MockupSocial.tsx:76:27
+   74 |
+   75 |     // Profile Component (Simplified)
+>  76 |     const ProfileHeader = () => (
+      |                           ^^^^^^^
+>  77 |         <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-100 max-w-sm w-full mx-auto">
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  78 |             <div className="flex items-center justify-between mb-6">
+      ΓÇª
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 113 |         </div>
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 114 |     );
+      | ^^^^^^ The component is created during render here
+  115 |
+  116 |     return (
+  117 |         <div className={cn("p-4 flex items-center justify-center bg-stone-50", className)}>  react-hooks/static-components
+
+F:\work\Glyph\components\preview\SocialMediaKit.tsx
+   7:20  warning  'Loader2' is defined but never used                     @typescript-eslint/no-unused-vars
+  16:12  warning  'isExporting' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  18:11  warning  'handleDownloadAll' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  36:22  error    Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  64:64  error    Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+
+F:\work\Glyph\components\ui\ColorPicker.tsx
+  117:48  warning  'onClose' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  129:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+F:\work\Glyph\components\ui\ColorPicker.tsx:129:9
+  127 |         const newHsv = hexToHsv(value);
+  128 |         // Only update if the values actually changed to avoid infinite loops
+> 129 |         setHsv(prev => {
+      |         ^^^^^^ Avoid calling setState() directly within an effect
+  130 |             if (prev.h === newHsv.h && prev.s === newHsv.s && prev.v === newHsv.v) {
+  131 |                 return prev;
+  132 |             }                                                                                                                                                                                                                                                                                                                                                                                                                                        react-hooks/set-state-in-effect
+  153:44  error    Compilation Skipped: Existing memoization could not be preserved
+
+React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. This value was memoized in source but not in compilation output.
+
+F:\work\Glyph\components\ui\ColorPicker.tsx:153:44
+  151 |     };
+  152 |
+> 153 |     const updateBoxFromEvent = useCallback((e: MouseEvent | React.MouseEvent) => {
+      |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 154 |         if (!boxRef.current) return;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 155 |         const rect = boxRef.current.getBoundingClientRect();
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 156 |         const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 157 |         const y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 158 |
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 159 |         const newHsv = { ...hsv, s: x * 100, v: (1 - y) * 100 };
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 160 |         setHsv(newHsv);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 161 |         handleColorChange(newHsv);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 162 |     }, [hsv, handleColorChange]);
+      | ^^^^^^ Could not preserve existing memoization
+  163 |
+  164 |     const updateHueFromEvent = useCallback((e: MouseEvent | React.MouseEvent) => {
+  165 |         if (!hueRef.current) return;  react-hooks/preserve-manual-memoization
+  164:44  error    Compilation Skipped: Existing memoization could not be preserved
+
+React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. This value was memoized in source but not in compilation output.
+
+F:\work\Glyph\components\ui\ColorPicker.tsx:164:44
+  162 |     }, [hsv, handleColorChange]);
+  163 |
+> 164 |     const updateHueFromEvent = useCallback((e: MouseEvent | React.MouseEvent) => {
+      |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 165 |         if (!hueRef.current) return;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 166 |         const rect = hueRef.current.getBoundingClientRect();
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 167 |         const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 168 |
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 169 |         const newHsv = { ...hsv, h: x * 360 };
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 170 |         setHsv(newHsv);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 171 |         handleColorChange(newHsv);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 172 |     }, [hsv, handleColorChange]);
+      | ^^^^^^ Could not preserve existing memoization
+  173 |
+  174 |     useEffect(() => {
+  175 |         const handleMouseMove = (e: MouseEvent) => {                                                                                                                                                                             react-hooks/preserve-manual-memoization
+
+F:\work\Glyph\components\ui\button.tsx
+  38:34  warning  'asChild' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\hooks\use-brand-generator.ts
+    9:10  warning  'ICONS' is defined but never used         @typescript-eslint/no-unused-vars
+  103:60  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  249:43  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\work\Glyph\hooks\use-subscription.ts
+  80:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+F:\work\Glyph\hooks\use-subscription.ts:80:9
+  78 |
+  79 |     useEffect(() => {
+> 80 |         checkProStatus();
+     |         ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  81 |     }, [checkProStatus]);
+  82 |
+  83 |     return { ...state, checkProStatus };  react-hooks/set-state-in-effect
+
+F:\work\Glyph\lib\brand-generator.ts
+  188:5  warning  'CURATED_ICONS' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\lib\strategy-engine.ts
+  21:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\work\Glyph\lib\subscription.ts
+  111:11  warning  'freeFeatures' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\lib\supabase\server.ts
+  22:30  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  31:30  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\work\Glyph\middleware.ts
+  23:58  warning  'options' is defined but never used  @typescript-eslint/no-unused-vars
+
+Γ£û 297 problems (40 errors, 257 warnings)
+

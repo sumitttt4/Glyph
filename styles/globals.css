@@ -1,0 +1,234 @@
+@import "tailwindcss";
+
+@theme {
+  /* MarkZero Brand Typography */
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+
+  /* MarkZero Architectural Light Palette */
+  --color-canvas: #FAFAF9;
+  --color-ink: #0C0A09;
+  --color-structure: #E7E5E4;
+  --color-accent: #FF4500;
+
+  /* ========================= */
+  /* PHASE 1: DESIGN DNA       */
+  /* ========================= */
+
+  /* "So Matcha" Organic Curves */
+  --radius-board: 2.5rem;
+  --radius-card: 1.5rem;
+  --radius-pill: 9999px;
+
+  /* Enhanced Shadow System */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 8px 0 rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 16px 0 rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 40px -10px rgba(0, 0, 0, 0.12);
+  --shadow-studio: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+  --shadow-float: 0 10px 30px -5px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 4px 20px -4px rgba(0, 0, 0, 0.1);
+
+  /* "Editorial" Spacing (Dense vs Airy) */
+  --spacing-18: 4.5rem;
+  --spacing-30: 7.5rem;
+}
+
+:root {
+  /* Light Mode (Default) */
+  --background: #FAFAF9;
+  --foreground: #0C0A09;
+  --border: #E7E5E4;
+  --muted: #78716C;
+  --accent: #FF4500;
+}
+
+.dark {
+  /* Dark Mode */
+  --background: #0C0A09;
+  --foreground: #FAFAF9;
+  --border: #292524;
+  --muted: #A8A29E;
+  --accent: #FF6332;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "ss01", "ss02";
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility for editorial italic styling (Instrument Serif) */
+.font-editorial {
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+/* Tight tracking for headlines (Manrope) */
+.tracking-headline {
+  letter-spacing: -0.02em;
+}
+
+/* Button tracking */
+.tracking-button {
+  letter-spacing: 0.02em;
+}
+
+/* Label tracking (uppercase) */
+.tracking-label {
+  letter-spacing: 0.05em;
+}
+
+/* Enhanced label tracking for sections */
+.tracking-section {
+  letter-spacing: 0.1em;
+}
+
+.tracking-wide {
+  letter-spacing: 0.15em;
+}
+
+/* 1px border utility for Bento Grids */
+.border-architectural {
+  border-width: 1px;
+  border-color: var(--border);
+}
+
+/* Sharp corners (no radius) */
+.rounded-none-important {
+  border-radius: 0 !important;
+}
+
+/* Animation keyframes */
+@keyframes moveDown {
+
+  0%,
+  100% {
+    top: 0;
+    opacity: 1;
+  }
+
+  50% {
+    top: calc(100% - 8px);
+    opacity: 0.5;
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* Hide scrollbar but keep functionality (opt-in) */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
+}
+
+/* Global Scrollbar Hide as requested */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+/* Robot Empty State Animations */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 4s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+@keyframes wave-smooth {
+
+  0%,
+  100% {
+    transform: rotate(-5deg);
+  }
+
+  50% {
+    transform: rotate(15deg);
+  }
+}
+
+.animate-wave-smooth {
+  animation: wave-smooth 3s ease-in-out infinite;
+}
+
+.animate-ping-slow {
+  animation: ping 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes bounce-x {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(-4px);
+  }
+}
+
+.animate-bounce-x {
+  animation: bounce-x 1s infinite;
+}
