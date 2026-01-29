@@ -38,6 +38,7 @@ export function generateLineFragmentation(params: LogoGenerationParams): Generat
     const rng = getRng(params.brandName);
     const size = 100;
     const letter = params.brandName.charAt(0).toUpperCase();
+    const color = params.primaryColor || 'currentColor';
 
     // Generate lines
     const lineCount = 10 + Math.floor(rng() * 20); // 10-30
@@ -58,7 +59,7 @@ export function generateLineFragmentation(params: LogoGenerationParams): Generat
             const dash = 5 + rng() * 30;
             const gap = 2 + rng() * 5;
             if (x + dash > size) break;
-            lines += `<line x1="${x}" y1="${y}" x2="${x + dash}" y2="${y}" stroke="currentColor" stroke-width="${step * 0.6}" stroke-linecap="round" />`;
+            lines += `<line x1="${x}" y1="${y}" x2="${x + dash}" y2="${y}" stroke="${color}" stroke-width="${step * 0.6}" stroke-linecap="round" />`;
             x += dash + gap;
         }
     }
@@ -95,6 +96,7 @@ export function generateStaggeredBars(params: LogoGenerationParams): GeneratedLo
     const size = 100;
     const barCount = 8 + Math.floor(rng() * 12); // 8-20
     const barWidth = size / barCount;
+    const color = params.primaryColor || 'currentColor';
 
     let bars = '';
     const center = size / 2;
@@ -106,11 +108,11 @@ export function generateStaggeredBars(params: LogoGenerationParams): GeneratedLo
         const height = size * (0.8 - Math.abs(normalizedX) * 0.6 + rng() * 0.2); // Peak in center
         const y = (size - height) / 2;
 
-        bars += `<rect x="${x + barWidth * 0.1}" y="${y}" width="${barWidth * 0.8}" height="${height}" fill="currentColor" rx="${barWidth * 0.2}" />`;
+        bars += `<rect x="${x + barWidth * 0.1}" y="${y}" width="${barWidth * 0.8}" height="${height}" fill="${color}" rx="${barWidth * 0.2}" />`;
 
         // Add a "stagger" echo
         if (rng() > 0.5) {
-            bars += `<rect x="${x + barWidth * 0.1}" y="${y + height + 2}" width="${barWidth * 0.8}" height="${size * 0.1}" fill="currentColor" opacity="0.5" rx="${barWidth * 0.2}" />`;
+            bars += `<rect x="${x + barWidth * 0.1}" y="${y + height + 2}" width="${barWidth * 0.8}" height="${size * 0.1}" fill="${color}" opacity="0.5" rx="${barWidth * 0.2}" />`;
         }
     }
 
@@ -131,6 +133,7 @@ export function generateStaggeredBars(params: LogoGenerationParams): GeneratedLo
 export function generateBlockAssembly(params: LogoGenerationParams): GeneratedLogo[] {
     const rng = getRng(params.brandName);
     const size = 100;
+    const color = params.primaryColor || 'currentColor';
 
     // Generate 2-4 blocks
     const blockCount = 2 + Math.floor(rng() * 3);
@@ -148,15 +151,15 @@ export function generateBlockAssembly(params: LogoGenerationParams): GeneratedLo
         const opacity = 0.6 + rng() * 0.4;
 
         if (shapeType === 'rect') {
-            blocks += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="currentColor" opacity="${opacity}" rx="5" />`;
+            blocks += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${color}" opacity="${opacity}" rx="5" />`;
             // Add depth shadow
             blocks += `<rect x="${x + 5}" y="${y + 5}" width="${w}" height="${h}" fill="black" opacity="0.2" rx="5" style="mix-blend-mode: multiply" />`;
         } else if (shapeType === 'circle') {
             const r = w / 2;
-            blocks += `<circle cx="${x + r}" cy="${y + r}" r="${r}" fill="currentColor" opacity="${opacity}" />`;
+            blocks += `<circle cx="${x + r}" cy="${y + r}" r="${r}" fill="${color}" opacity="${opacity}" />`;
         } else {
             // Triangle
-            blocks += `<path d="M ${x + w / 2} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z" fill="currentColor" opacity="${opacity}" />`;
+            blocks += `<path d="M ${x + w / 2} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z" fill="${color}" opacity="${opacity}" />`;
         }
     }
 
@@ -178,6 +181,7 @@ export function generateMotionChevrons(params: LogoGenerationParams): GeneratedL
     const rng = getRng(params.brandName);
     const size = 100;
     const count = 3 + Math.floor(rng() * 2);
+    const color = params.primaryColor || 'currentColor';
 
     let paths = '';
     const width = 60;
@@ -195,7 +199,7 @@ export function generateMotionChevrons(params: LogoGenerationParams): GeneratedL
         const arrow = `M ${centerX - width / 2} ${y} L ${centerX} ${y + height} L ${centerX + width / 2} ${y} L ${centerX} ${y + height / 2} Z`; // Filled?
 
         // Stroke style
-        paths += `<path d="${d}" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="${opacity}" fill="none" />`;
+        paths += `<path d="${d}" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="${opacity}" fill="none" />`;
     }
 
     return [{
@@ -216,17 +220,18 @@ export function generateNegativeSpace(params: LogoGenerationParams): GeneratedLo
     const rng = getRng(params.brandName);
     const size = 100;
     const letter = params.brandName.charAt(0).toUpperCase();
+    const color = params.primaryColor || 'currentColor';
 
     const shapeId = Math.floor(rng() * 3);
     let container = '';
 
     if (shapeId === 0) {
-        container = `<rect x="10" y="10" width="80" height="80" fill="currentColor" rx="20" />`;
+        container = `<rect x="10" y="10" width="80" height="80" fill="${color}" rx="20" />`;
     } else if (shapeId === 1) {
-        container = `<circle cx="50" cy="50" r="45" fill="currentColor" />`;
+        container = `<circle cx="50" cy="50" r="45" fill="${color}" />`;
     } else {
         // Hexagon
-        container = `<path d="M 50 5 L 95 27.5 L 95 72.5 L 50 95 L 5 72.5 L 5 27.5 Z" fill="currentColor" />`;
+        container = `<path d="M 50 5 L 95 27.5 L 95 72.5 L 50 95 L 5 72.5 L 5 27.5 Z" fill="${color}" />`;
     }
 
     const content = `
@@ -258,6 +263,7 @@ export function generateNegativeSpace(params: LogoGenerationParams): GeneratedLo
 export function generateInterlockingLoops(params: LogoGenerationParams): GeneratedLogo[] {
     const rng = getRng(params.brandName);
     const size = 100;
+    const color = params.primaryColor || 'currentColor';
 
     // Triangle formation of 3 rings (Anchortack style)
     const r = 25;
@@ -273,7 +279,7 @@ export function generateInterlockingLoops(params: LogoGenerationParams): Generat
     // Draw rings with stroke
     const strokeWidth = 8;
 
-    const ring = (x: number, y: number) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" />`;
+    const ring = (x: number, y: number) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${color}" stroke-width="${strokeWidth}" />`;
 
     // Simple stacking isn't interlocking visually without cuts, but for MVP:
     // We can simulate interlocking by drawing small segments over intersections
@@ -284,7 +290,7 @@ export function generateInterlockingLoops(params: LogoGenerationParams): Generat
         <g opacity="0.9">${ring(p2.x, p2.y)}</g>
         <g opacity="0.9">${ring(p3.x, p3.y)}</g>
         <!-- Adding center connection -->
-        <circle cx="${cx}" cy="${cy}" r="5" fill="currentColor" />
+        <circle cx="${cx}" cy="${cy}" r="5" fill="${color}" />
     `;
 
     return [{
@@ -304,6 +310,7 @@ export function generateInterlockingLoops(params: LogoGenerationParams): Generat
 export function generateMonogramMerge(params: LogoGenerationParams): GeneratedLogo[] {
     const rng = getRng(params.brandName);
     const size = 100;
+    const color = params.primaryColor || 'currentColor';
     const letters = (params.brandName.substring(0, 2)).toUpperCase();
     const l1 = letters.charAt(0);
     const l2 = letters.length > 1 ? letters.charAt(1) : l1;
@@ -311,8 +318,8 @@ export function generateMonogramMerge(params: LogoGenerationParams): GeneratedLo
     // Place slightly offset and blend
     const content = `
         <g font-family="Arial, sans-serif" font-weight="bold" font-size="80">
-            <text x="35" y="80" text-anchor="middle" fill="currentColor" opacity="0.8">${l1}</text>
-            <text x="65" y="80" text-anchor="middle" fill="currentColor" opacity="0.8" style="mix-blend-mode: multiply">${l2}</text>
+            <text x="35" y="80" text-anchor="middle" fill="${color}" opacity="0.8">${l1}</text>
+            <text x="65" y="80" text-anchor="middle" fill="${color}" opacity="0.8" style="mix-blend-mode: multiply">${l2}</text>
         </g>
     `;
 
@@ -336,6 +343,7 @@ export function generateMonogramMerge(params: LogoGenerationParams): GeneratedLo
 export function generateContinuousStroke(params: LogoGenerationParams): GeneratedLogo[] {
     const rng = getRng(params.brandName);
     const size = 100;
+    const color = params.primaryColor || 'currentColor';
 
     // Generate random control points
     const points: { x: number, y: number }[] = [];
@@ -361,7 +369,7 @@ export function generateContinuousStroke(params: LogoGenerationParams): Generate
     // Close it if wanted
     if (rng() > 0.5) d += " Z";
 
-    const content = `<path d="${d}" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />`;
+    const content = `<path d="${d}" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />`;
 
     return [{
         id: `cs-${Date.now()}`,
@@ -380,6 +388,7 @@ export function generateContinuousStroke(params: LogoGenerationParams): Generate
 export function generateGeometricExtract(params: LogoGenerationParams): GeneratedLogo[] {
     const rng = getRng(params.brandName);
     const size = 100;
+    const color = params.primaryColor || 'currentColor';
     const letter = params.brandName.charAt(0).toUpperCase();
 
     // Render letter very large and clip it
@@ -389,9 +398,9 @@ export function generateGeometricExtract(params: LogoGenerationParams): Generate
                 <circle cx="50" cy="50" r="45" />
             </clipPath>
         </defs>
-        <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="2" />
+        <circle cx="50" cy="50" r="48" fill="none" stroke="${color}" stroke-width="2" />
         <g clip-path="url(#clip-circle)">
-             <text x="50" y="90" font-family="Arial, sans-serif" font-weight="900" font-size="120" text-anchor="middle" fill="currentColor" transform="rotate(-15, 50, 50)">${letter}</text>
+             <text x="50" y="90" font-family="Arial, sans-serif" font-weight="900" font-size="120" text-anchor="middle" fill="${color}" transform="rotate(-15, 50, 50)">${letter}</text>
         </g>
     `;
 
@@ -412,6 +421,7 @@ export function generateGeometricExtract(params: LogoGenerationParams): Generate
 export function generateCloverRadial(params: LogoGenerationParams): GeneratedLogo[] {
     const rng = getRng(params.brandName);
     const size = 100;
+    const color = params.primaryColor || 'currentColor';
     const cx = 50;
     const cy = 50;
 
@@ -425,7 +435,7 @@ export function generateCloverRadial(params: LogoGenerationParams): GeneratedLog
         // Rotate transform
         petals += `
             <g transform="rotate(${angle}, ${cx}, ${cy})">
-                <circle cx="${cx}" cy="${cy - 20}" r="${r}" fill="currentColor" opacity="0.8" />
+                <circle cx="${cx}" cy="${cy - 20}" r="${r}" fill="${color}" opacity="0.8" />
             </g>
         `;
     }
