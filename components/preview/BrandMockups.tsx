@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Download, Maximize2, Grid3X3, Rows3 } from 'lucide-react';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
+import { Download, Maximize2 } from 'lucide-react';
 import { BrandIdentity } from '@/lib/data';
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 import { Mockup3DModal } from './Mockup3DModal';
@@ -33,11 +33,11 @@ interface BrandMockupsProps {
 // ============================================
 
 const MOCKUP_CATEGORIES = {
-    all: 'All',
+    essentials: 'Essentials',
     digital: 'Digital',
-    print: 'Print',
-    merchandise: 'Merch',
-    signage: 'Signage',
+    social: 'Social',
+    outdoor: 'Outdoor',
+    merch: 'Merch',
 } as const;
 
 type MockupCategory = keyof typeof MOCKUP_CATEGORIES;
@@ -49,16 +49,23 @@ type MockupCategory = keyof typeof MOCKUP_CATEGORIES;
 /**
  * 3D Business Card Mockup
  */
-function BusinessCard3DMockup({ brand }: { brand: BrandIdentity }) {
+function BusinessCard3DMockup({ brand, isInteractive = false }: { brand: BrandIdentity; isInteractive?: boolean }) {
     const colors = brand.theme.tokens.light;
     const fontFamily = brand.font.headingName || 'system-ui';
+
+    const baseTransform = isInteractive
+        ? {}
+        : { transform: 'rotateX(55deg) rotateZ(-25deg)' };
 
     return (
         <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1200px' }}>
             <div
                 className="absolute w-[320px] h-[180px] bg-black/20 rounded-xl blur-xl"
                 style={{
-                    transform: 'rotateX(55deg) rotateZ(-25deg) translateZ(-80px) translateY(40px)',
+                    ...baseTransform,
+                    transform: isInteractive
+                        ? 'translateZ(-80px)'
+                        : 'rotateX(55deg) rotateZ(-25deg) translateZ(-80px) translateY(40px)',
                     transformStyle: 'preserve-3d',
                 }}
             />
@@ -66,7 +73,10 @@ function BusinessCard3DMockup({ brand }: { brand: BrandIdentity }) {
                 className="absolute w-[320px] h-[180px] rounded-xl"
                 style={{
                     background: colors.surface,
-                    transform: 'rotateX(55deg) rotateZ(-25deg) translateZ(-40px) translateY(20px)',
+                    ...baseTransform,
+                    transform: isInteractive
+                        ? 'translateZ(-40px)'
+                        : 'rotateX(55deg) rotateZ(-25deg) translateZ(-40px) translateY(20px)',
                     transformStyle: 'preserve-3d',
                     boxShadow: '0 25px 50px -12px rgba(0,0,0,0.3)',
                 }}
@@ -75,7 +85,10 @@ function BusinessCard3DMockup({ brand }: { brand: BrandIdentity }) {
                 className="absolute w-[320px] h-[180px] rounded-xl overflow-hidden"
                 style={{
                     background: colors.bg,
-                    transform: 'rotateX(55deg) rotateZ(-25deg) translateZ(0px)',
+                    ...baseTransform,
+                    transform: isInteractive
+                        ? 'translateZ(0px)'
+                        : 'rotateX(55deg) rotateZ(-25deg) translateZ(0px)',
                     transformStyle: 'preserve-3d',
                     boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)',
                 }}
@@ -105,50 +118,97 @@ function BusinessCard3DMockup({ brand }: { brand: BrandIdentity }) {
 /**
  * Billboard Mockup
  */
+/**
+ * Billboard Mockup - Times Square Style
+ */
 function BillboardMockup({ brand }: { brand: BrandIdentity }) {
-    const colors = brand.theme.tokens.light;
+    const primary = brand.theme.tokens.light.primary;
     const fontFamily = brand.font.headingName || 'system-ui';
-    const tagline = brand.strategy?.tagline || `Welcome to ${brand.name}`;
 
     return (
-        <div className="relative w-full h-full flex items-center justify-center p-4">
-            <div
-                className="relative w-full max-w-[500px] rounded-lg overflow-hidden"
+        <div className="relative w-full h-full bg-stone-950 flex items-center justify-center overflow-hidden perspective-[1000px]">
+            {/* Dynamic Ambient Background */}
+            <div className="absolute inset-0">
+                {/* Night Sky Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-b from-stone-900 to-black opacity-90" />
+
+                {/* City Light Bleed (Bottom Up) */}
+                <div className="absolute bottom-0 inset-x-0 h-2/3 bg-gradient-to-t from-purple-900/20 via-blue-900/10 to-transparent blur-3xl opacity-50" />
+
+                {/* Bloom from screen */}
+                <motion.div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[60%] blur-[100px] opacity-20"
+                    style={{ background: primary }}
+                />
+            </div>
+
+            {/* The "Times Square" Curve Screen */}
+            <motion.div
+                initial={{ scale: 1.4, z: 100 }}
+                animate={{ scale: 1, z: 0 }}
+                transition={{ duration: 1.8, ease: "easeOut" }}
+                className="relative z-10 w-[85%] aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl"
                 style={{
-                    aspectRatio: '2/1',
-                    boxShadow: '0 30px 60px -15px rgba(0,0,0,0.4)',
+                    boxShadow: `0 0 80px -20px ${primary}60`
                 }}
             >
-                {/* Sky gradient */}
+                {/* Screen Mesh/Grid Texture */}
                 <div
-                    className="absolute inset-0"
-                    style={{ background: 'linear-gradient(to bottom, #87CEEB, #E0F0FF)' }}
+                    className="absolute inset-0 z-20 pointer-events-none opacity-30 mix-blend-overlay"
+                    style={{
+                        backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+                        backgroundSize: '4px 4px'
+                    }}
                 />
-                {/* Ground */}
-                <div className="absolute bottom-0 left-0 right-0 h-1/4 bg-gray-600" />
-                {/* Billboard */}
-                <div
-                    className="absolute left-[10%] right-[10%] top-[15%] h-[45%] rounded"
-                    style={{ background: colors.primary }}
-                >
-                    <div className="absolute inset-0 flex items-center px-6">
-                        <div className="w-16 h-16 flex-shrink-0" style={{ filter: 'brightness(0) invert(1)' }}>
-                            <LogoComposition brand={brand} className="w-full h-full" />
-                        </div>
-                        <div className="ml-4">
-                            <p className="text-white font-bold text-xl" style={{ fontFamily }}>
-                                {brand.name}
-                            </p>
-                            <p className="text-white/80 text-sm" style={{ fontFamily }}>
-                                {tagline}
-                            </p>
-                        </div>
+
+                {/* Brand Content */}
+                <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                    {/* Background Animation */}
+                    <div className="absolute inset-0 bg-black">
+                        <div
+                            className="absolute inset-0 opacity-50"
+                            style={{
+                                background: `radial-gradient(circle at 50% 50%, ${primary}, transparent 70%)`
+                            }}
+                        />
+                        <div
+                            className="absolute inset-0 opacity-30"
+                            style={{
+                                backgroundImage: `repeating-linear-gradient(45deg, ${primary}20 0px, transparent 2px, transparent 10px)`
+                            }}
+                        />
+                    </div>
+
+                    {/* Central Logo Lockup */}
+                    <div className="relative z-30 flex flex-col items-center p-10 text-center">
+                        <motion.div
+                            className="w-32 h-32 md:w-48 md:h-48 mb-6 drop-shadow-[0_0_25px_rgba(255,255,255,0.5)]"
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.5, duration: 0.8 }}
+                        >
+                            <LogoComposition brand={brand} overrideColors={{ primary: '#ffffff' }} />
+                        </motion.div>
+
+                        <motion.h1
+                            className="text-4xl md:text-6xl font-bold text-white tracking-tight uppercase"
+                            style={{
+                                fontFamily,
+                                textShadow: `0 0 30px ${primary}`
+                            }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.8, duration: 0.8 }}
+                        >
+                            {brand.name}
+                        </motion.h1>
                     </div>
                 </div>
-                {/* Support poles */}
-                <div className="absolute bottom-[25%] left-[25%] w-2 h-[35%] bg-gray-500" />
-                <div className="absolute bottom-[25%] right-[25%] w-2 h-[35%] bg-gray-500" />
-            </div>
+
+                {/* Screen Gloss */}
+                <div className="absolute inset-0 z-40 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none" />
+            </motion.div>
         </div>
     );
 }
@@ -163,7 +223,7 @@ function LaptopScreenMockup({ brand }: { brand: BrandIdentity }) {
     return (
         <div className="relative w-full h-full flex items-center justify-center p-4">
             <div
-                className="relative w-full max-w-[500px]"
+                className="relative w-full max-w-[80%]"
                 style={{ boxShadow: '0 40px 80px -20px rgba(0,0,0,0.3)' }}
             >
                 {/* Screen bezel */}
@@ -239,7 +299,7 @@ function StorefrontSignMockup({ brand }: { brand: BrandIdentity }) {
             />
             {/* Sign box */}
             <div
-                className="relative w-full max-w-[400px] h-[120px] rounded-lg overflow-hidden"
+                className="relative w-full max-w-[80%] h-[120px] rounded-lg overflow-hidden"
                 style={{
                     background: '#1a1a1a',
                     boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
@@ -294,7 +354,7 @@ function PackagingBoxMockup({ brand }: { brand: BrandIdentity }) {
                         boxShadow: '20px 20px 40px rgba(0,0,0,0.3)',
                     }}
                 >
-                    <div className="w-20 h-20 mb-2" style={{ filter: 'brightness(0) invert(1)' }}>
+                    <div className="w-20 h-20 mb-2">
                         <LogoComposition brand={brand} className="w-full h-full" />
                     </div>
                     <p className="text-white font-bold" style={{ fontFamily }}>
@@ -361,7 +421,6 @@ function HoodieMockup({ brand }: { brand: BrandIdentity }) {
                 {/* Logo */}
                 <div
                     className="absolute left-1/2 top-[35%] -translate-x-1/2 w-20 h-20"
-                    style={{ filter: 'brightness(0) invert(1)' }}
                 >
                     <LogoComposition brand={brand} className="w-full h-full" />
                 </div>
@@ -452,7 +511,7 @@ function PhoneScreenMockup({ brand }: { brand: BrandIdentity }) {
     return (
         <div className="relative w-full h-full flex items-center justify-center">
             <div
-                className="relative w-[180px] rounded-[2rem] overflow-hidden"
+                className="relative w-full max-w-[300px] rounded-[2rem] overflow-hidden"
                 style={{
                     aspectRatio: '390/844',
                     background: '#1a1a1a',
@@ -498,10 +557,10 @@ function LinkedInBannerMockup({ brand }: { brand: BrandIdentity }) {
 
     return (
         <div className="relative w-full h-full flex items-center justify-center p-4">
-            <div className="relative w-full max-w-[600px] rounded-lg overflow-hidden" style={{ aspectRatio: '1584/396', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.3)' }}>
+            <div className="relative w-full max-w-[90%] rounded-lg overflow-hidden" style={{ aspectRatio: '1584/396', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.3)' }}>
                 <div className="absolute inset-0" style={{ background: colors.primary }} />
                 <div className="absolute inset-0 flex items-center justify-between px-8">
-                    <div className="w-20 h-20 flex-shrink-0" style={{ filter: 'brightness(0) invert(1)' }}>
+                    <div className="w-20 h-20 flex-shrink-0">
                         <LogoComposition brand={brand} className="w-full h-full" />
                     </div>
                     <div className="flex-1 ml-8">
@@ -519,7 +578,7 @@ function WebsiteHeaderMockup({ brand }: { brand: BrandIdentity }) {
 
     return (
         <div className="relative w-full h-full flex items-center justify-center p-4">
-            <div className="relative w-full max-w-[600px] rounded-xl overflow-hidden" style={{ boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)' }}>
+            <div className="relative w-full max-w-[90%] rounded-xl overflow-hidden" style={{ boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)' }}>
                 <div className="bg-gray-100 px-4 py-3 flex items-center gap-3 border-b border-gray-200">
                     <div className="flex gap-2">
                         <div className="w-3 h-3 rounded-full bg-red-400" />
@@ -551,11 +610,11 @@ function MobileAppMockup({ brand }: { brand: BrandIdentity }) {
 
     return (
         <div className="relative w-full h-full flex items-center justify-center">
-            <div className="relative w-[200px] h-[400px] rounded-[2.5rem] overflow-hidden" style={{ background: '#1a1a1a', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), inset 0 0 0 3px #333' }}>
+            <div className="relative w-full max-w-[300px] h-auto aspect-[1/2] rounded-[2.5rem] overflow-hidden" style={{ background: '#1a1a1a', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), inset 0 0 0 3px #333' }}>
                 <div className="absolute inset-[3px] rounded-[2.3rem] overflow-hidden bg-black">
                     <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-6 bg-black rounded-full z-10" />
                     <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: colors.primary }}>
-                        <div className="w-20 h-20 mb-4" style={{ filter: 'brightness(0) invert(1)' }}>
+                        <div className="w-20 h-20 mb-4">
                             <LogoComposition brand={brand} className="w-full h-full" />
                         </div>
                         <p className="text-white text-lg font-semibold">{brand.name}</p>
@@ -608,13 +667,264 @@ function LetterheadMockup({ brand }: { brand: BrandIdentity }) {
     );
 }
 
+/**
+ * Placeholder for Merch items
+ */
+function MerchPlaceholder({ type, brand }: { type: MockupType; brand: BrandIdentity }) {
+    return (
+        <div className="relative w-full h-full flex items-center justify-center p-8 bg-stone-100">
+            {/* ... Content ... */}
+        </div>
+    );
+}
+
+/**
+ * Merch Scene (T-Shirt + Coffee Cup)
+ */
+function MerchSceneMockup({ brand }: { brand: BrandIdentity }) {
+    const primary = brand.theme.tokens.light.primary;
+    const [rotate, setRotate] = useState({ x: 0, y: 0 });
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        setRotate({ x: -y * 5, y: x * 5 });
+    };
+
+    return (
+        <div
+            className="w-full h-full flex items-center justify-center perspective-[1200px] overflow-hidden bg-stone-900 cursor-move group relative"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => setRotate({ x: 0, y: 0 })}
+        >
+            {/* Concrete Texture Background */}
+            <div className="absolute inset-0 opacity-20" style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+            }} />
+
+            {/* Lighting */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-white/10" />
+
+            <motion.div
+                className="relative flex items-center justify-center gap-8 md:gap-16"
+                animate={{ rotateX: rotate.x, rotateY: rotate.y }}
+                transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            >
+                {/* FOLDED T-SHIRT */}
+                <div className="relative group/shirt">
+                    {/* Shirt Body */}
+                    <div className="w-48 h-56 md:w-64 md:h-72 bg-stone-950 rounded-sm shadow-2xl relative overflow-hidden transform rotate-[-5deg]">
+                        {/* Fabric Texture */}
+                        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/fabric-of-squares.png')]" />
+
+                        {/* Collar Area */}
+                        <div className="absolute top-0 w-full h-8 bg-stone-900 border-b border-stone-800" />
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-stone-950 rounded-b-full border border-stone-800" />
+
+                        {/* Logo Placement */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 md:w-32 md:h-32 opacity-90 mix-blend-screen">
+                            <LogoComposition brand={brand} overrideColors={{ primary: primary }} />
+                        </div>
+
+                        {/* Folds/Wrinkles Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/40 pointer-events-none" />
+                    </div>
+                    {/* Label overlay (Tag) */}
+                    <div className="absolute -bottom-2 -right-2 bg-white px-2 py-0.5 text-[8px] font-bold text-black uppercase tracking-widest rotate-[-5deg] shadow-lg">
+                        Premium Cotton
+                    </div>
+                </div>
+
+                {/* COFFEE CUP */}
+                <div className="relative z-10 mt-12 md:mt-0">
+                    <div className="w-24 h-32 md:w-32 md:h-40 relative transform rotate-[5deg] origin-bottom">
+                        {/* Cup Body */}
+                        <div className="absolute inset-x-2 top-0 bottom-2 bg-white shadow-xl rounded-b-xl overflow-hidden">
+                            {/* Cup Surface shading */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-stone-200 via-white to-stone-200" />
+
+                            {/* Branding Band */}
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 md:w-20 md:h-20">
+                                <LogoComposition brand={brand} />
+                            </div>
+                        </div>
+
+                        {/* Lid */}
+                        <div className="absolute -top-2 inset-x-0 h-4 bg-white border-b-2 border-stone-100 rounded-t-sm shadow-sm" />
+                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-20 md:w-28 h-4 bg-white rounded-[1px] shadow-sm" />
+
+                        {/* Shadow */}
+                        <div className="absolute -bottom-2 left-4 right-4 h-4 bg-black/40 blur-xl rounded-full" />
+                    </div>
+                </div>
+            </motion.div>
+
+            {/* Scene Label */}
+            <div className="absolute bottom-6 left-8">
+                <div className="px-3 py-1 bg-white/10 backdrop-blur rounded-full border border-white/20">
+                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">
+                        Merch Collection • S/S {new Date().getFullYear()}
+                    </span>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+/**
+ * Social Suite Scene (LinkedIn + Instagram)
+ */
+function SocialSuiteMockup({ brand }: { brand: BrandIdentity }) {
+    const primary = brand.theme.tokens.light.primary;
+    // Simple Tilt Logic
+    const [rotate, setRotate] = useState({ x: 0, y: 0 });
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        setRotate({ x: -y * 10, y: x * 10 }); // Gentle 10deg tilt
+    };
+
+    const handleMouseLeave = () => setRotate({ x: 0, y: 0 });
+
+    return (
+        <div
+            className="w-full h-full flex items-center justify-center perspective-[1200px] overflow-hidden bg-stone-50 cursor-move group"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+        >
+            <motion.div
+                className="relative w-full max-w-[80%] aspect-video preserve-3d flex items-center justify-center"
+                animate={{ rotateX: rotate.x, rotateY: rotate.y }}
+                transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            >
+                {/* LAPTOP (Left, Behind) */}
+                <div className="absolute left-0 top-[10%] bottom-[10%] w-[65%] shadow-2xl rounded-xl overflow-hidden bg-white border border-stone-200"
+                    style={{
+                        transform: 'translateZ(-40px)',
+                    }}
+                >
+                    {/* Browser UI */}
+                    <div className="h-6 w-full bg-stone-100 border-b border-stone-200 flex items-center gap-2 px-3">
+                        <div className="flex gap-1.5">
+                            <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+                        </div>
+                        <div className="ml-4 w-[50%] h-3 bg-white rounded-md shadow-sm border border-stone-100" />
+                    </div>
+                    {/* LinkedIn Style Profile */}
+                    <div className="relative w-full h-full bg-white overflow-hidden">
+                        {/* Header Banner */}
+                        <div className="h-[35%] w-full overflow-hidden relative">
+                            <div className="absolute inset-0 opacity-80" style={{ background: primary }} />
+                            {/* Abstract Pattern Overlay */}
+                            <svg className="absolute inset-0 w-full h-full opacity-30">
+                                <pattern id="social-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
+                                </pattern>
+                                <rect width="100%" height="100%" fill="url(#social-grid)" />
+                            </svg>
+                        </div>
+
+                        {/* Profile Section */}
+                        <div className="px-8 relative">
+                            {/* Avatar */}
+                            <div className="-mt-12 w-24 h-24 rounded-full border-4 border-white bg-white shadow-md flex items-center justify-center overflow-hidden relative z-10">
+                                <LogoComposition brand={brand} />
+                            </div>
+
+                            {/* Info */}
+                            <div className="mt-4">
+                                <h2 className="text-2xl font-bold text-stone-900 leading-tight">{brand.name}</h2>
+                                <p className="text-sm text-stone-500 mb-4 text-balance">
+                                    {brand.strategy?.vision || `The future of ${brand.vibe || 'innovation'}.`}
+                                </p>
+                                <div className="flex gap-2">
+                                    <button className="px-4 py-1.5 bg-blue-600 text-white rounded-full text-xs font-bold shadow-sm">Follow</button>
+                                    <button className="px-4 py-1.5 border border-stone-300 text-stone-600 rounded-full text-xs font-bold">Message</button>
+                                </div>
+                            </div>
+
+                            {/* Faux Content Skeleton */}
+                            <div className="mt-8 space-y-3 opacity-30">
+                                <div className="h-4 w-3/4 bg-stone-200 rounded" />
+                                <div className="h-4 w-full bg-stone-200 rounded" />
+                                <div className="h-4 w-5/6 bg-stone-200 rounded" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* PHONE (Right, Front) */}
+                <div className="absolute right-[5%] top-[5%] bottom-[5%] w-[25%] shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-[2rem] overflow-hidden bg-stone-900 border-[6px] border-stone-800"
+                    style={{
+                        transform: 'translateZ(60px)',
+                    }}
+                >
+                    {/* Screen Content: Instagram Style */}
+                    <div className="w-full h-full bg-white flex flex-col">
+                        {/* Header */}
+                        <div className="h-10 border-b border-stone-100 flex items-center justify-center relative">
+                            <span className="font-bold text-xs tracking-tight">{brand.name.toLowerCase()}</span>
+                        </div>
+
+                        {/* Profile Details */}
+                        <div className="p-3 flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600">
+                                <div className="w-full h-full rounded-full border-2 border-white bg-stone-100 overflow-hidden flex items-center justify-center">
+                                    <LogoComposition brand={brand} />
+                                </div>
+                            </div>
+                            <div className="flex-1 flex justify-between px-2 text-center">
+                                <div><div className="text-xs font-bold">128</div><div className="text-[8px] text-stone-400">Posts</div></div>
+                                <div><div className="text-xs font-bold">18k</div><div className="text-[8px] text-stone-400">Followers</div></div>
+                                <div><div className="text-xs font-bold">32</div><div className="text-[8px] text-stone-400">Following</div></div>
+                            </div>
+                        </div>
+
+                        {/* Grid Feed */}
+                        <div className="grid grid-cols-3 gap-0.5 flex-1 content-start bg-stone-50 pb-4">
+                            {[...Array(9)].map((_, i) => (
+                                <div key={i} className="aspect-square bg-white relative overflow-hidden group">
+                                    <div className="absolute inset-0 opacity-10" style={{ background: primary }}></div>
+                                    <div className="absolute inset-0 flex items-center justify-center p-2">
+                                        <div className="w-full h-full rounded-sm opacity-50 flex items-center justify-center scale-75">
+                                            {i % 2 === 0 ? (
+                                                <LogoComposition brand={brand} />
+                                            ) : (
+                                                <div className="w-full h-full rotate-45 opacity-20" style={{ background: primary }} />
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Shine / Reflection */}
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-transparent via-white/10 to-transparent z-50 mix-blend-overlay" />
+            </motion.div>
+
+            <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-stone-400 bg-white/80 px-3 py-1 rounded-full backdrop-blur">
+                    Iteractive 3D Preview
+                </span>
+            </div>
+        </div>
+    );
+}
+
 // ============================================
 // MOCKUP RENDERER
 // ============================================
 
-function renderMockup(type: MockupType, brand: BrandIdentity) {
+function renderMockup(type: MockupType, brand: BrandIdentity, isInteractive = false) {
     switch (type) {
-        case 'business-card': return <BusinessCard3DMockup brand={brand} />;
+        case 'business-card': return <BusinessCard3DMockup brand={brand} isInteractive={isInteractive} />;
         case 'linkedin-banner': return <LinkedInBannerMockup brand={brand} />;
         case 'website-header': return <WebsiteHeaderMockup brand={brand} />;
         case 'mobile-app': return <MobileAppMockup brand={brand} />;
@@ -624,11 +934,17 @@ function renderMockup(type: MockupType, brand: BrandIdentity) {
         case 'phone-screen': return <PhoneScreenMockup brand={brand} />;
         case 'laptop-screen': return <LaptopScreenMockup brand={brand} />;
         case 'storefront-sign': return <StorefrontSignMockup brand={brand} />;
-        case 'packaging-box': return <PackagingBoxMockup brand={brand} />;
-        case 'hoodie': return <HoodieMockup brand={brand} />;
-        case 'tote-bag': return <ToteBagMockup brand={brand} />;
-        case 'coffee-cup': return <CoffeeCupMockup brand={brand} />;
-        default: return <BusinessCard3DMockup brand={brand} />;
+        /* Essentials / Merch mapping */
+        case 'packaging-box':
+        case 'hoodie':
+        case 'tote-bag':
+        case 'coffee-cup':
+            return <MerchPlaceholder type={type} brand={brand} />;
+        case 'social-suite':
+            return <SocialSuiteMockup brand={brand} />;
+        case 'merch-suite':
+            return <MerchSceneMockup brand={brand} />;
+        default: return <BusinessCard3DMockup brand={brand} isInteractive={isInteractive} />;
     }
 }
 
@@ -644,8 +960,8 @@ export function BrandMockups({
     onMockupChange,
 }: BrandMockupsProps) {
     const [selectedMockup, setSelectedMockup] = useState<MockupType>(defaultMockup);
-    const [selectedCategory, setSelectedCategory] = useState<MockupCategory>('all');
-    const [viewMode, setViewMode] = useState<'carousel' | 'grid'>('carousel');
+    const [selectedCategory, setSelectedCategory] = useState<MockupCategory>('essentials');
+
     const [modalOpen, setModalOpen] = useState(false);
     const [downloadingMockup, setDownloadingMockup] = useState<MockupType | null>(null);
     const mockupRef = useRef<HTMLDivElement>(null);
@@ -655,9 +971,20 @@ export function BrandMockups({
         initMockupState(brand);
     }, [brand.id]);
 
+    // Auto-select best mockup when category changes
+    React.useEffect(() => {
+        const defaults: Record<MockupCategory, MockupType> = {
+            essentials: 'business-card',
+            digital: 'laptop-screen',
+            social: 'social-suite',
+            outdoor: 'billboard',
+            merch: 'merch-suite',
+        };
+        setSelectedMockup(defaults[selectedCategory]);
+    }, [selectedCategory]);
+
     // Filter mockups by category
     const filteredMockups = ALL_MOCKUP_TYPES.filter((type) => {
-        if (selectedCategory === 'all') return true;
         return MOCKUP_METADATA[type].category === selectedCategory;
     });
 
@@ -689,227 +1016,78 @@ export function BrandMockups({
 
     const metadata = MOCKUP_METADATA[selectedMockup];
 
-    // Grid view
-    if (!showCarousel || viewMode === 'grid') {
-        return (
-            <div className={`flex flex-col ${className}`}>
-                {/* Header with view toggle */}
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex gap-2">
-                        {(Object.entries(MOCKUP_CATEGORIES) as [MockupCategory, string][]).map(([key, label]) => (
-                            <button
-                                key={key}
-                                onClick={() => setSelectedCategory(key)}
-                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${selectedCategory === key
-                                    ? 'bg-white dark:bg-gray-700 shadow-sm'
-                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
-                                    }`}
-                            >
-                                {label}
-                            </button>
-                        ))}
-                    </div>
-                    {showCarousel && (
-                        <div className="flex gap-1 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                            <button
-                                onClick={() => setViewMode('carousel')}
-                                className={`p-2 rounded ${viewMode === 'carousel' ? 'bg-white dark:bg-gray-700 shadow' : ''}`}
-                            >
-                                <Rows3 className="w-4 h-4" />
-                            </button>
-                            <button
-                                onClick={() => setViewMode('grid')}
-                                className={`p-2 rounded ${viewMode === 'grid' ? 'bg-white dark:bg-gray-700 shadow' : ''}`}
-                            >
-                                <Grid3X3 className="w-4 h-4" />
-                            </button>
-                        </div>
-                    )}
-                </div>
 
-                {/* Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {filteredMockups.map((type) => {
-                        const info = MOCKUP_METADATA[type];
-                        const isSelected = selectedMockup === type;
-
-                        return (
-                            <motion.div
-                                key={type}
-                                whileHover={{ scale: 1.02 }}
-                                className={`relative rounded-xl border-2 transition-all overflow-hidden group ${isSelected
-                                    ? 'border-blue-500 ring-2 ring-blue-500/20'
-                                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                                    }`}
-                            >
-                                <button
-                                    onClick={() => handleMockupSelect(type)}
-                                    className="w-full aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900"
-                                >
-                                    <div className="w-full h-full transform scale-50 origin-center">
-                                        {renderMockup(type, brand)}
-                                    </div>
-                                </button>
-
-                                {/* Overlay buttons */}
-                                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button
-                                        onClick={() => { setSelectedMockup(type); setModalOpen(true); }}
-                                        className="p-1.5 bg-black/50 rounded-lg hover:bg-black/70 transition-colors"
-                                        title="View 3D"
-                                    >
-                                        <Maximize2 className="w-4 h-4 text-white" />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDownload(type)}
-                                        disabled={downloadingMockup === type}
-                                        className="p-1.5 bg-black/50 rounded-lg hover:bg-black/70 transition-colors disabled:opacity-50"
-                                        title="Download PNG"
-                                    >
-                                        <Download className="w-4 h-4 text-white" />
-                                    </button>
-                                </div>
-
-                                {/* Label */}
-                                <div className="p-2 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
-                                    <span className="text-xs font-medium">{info.name}</span>
-                                </div>
-                            </motion.div>
-                        );
-                    })}
-                </div>
-
-                {/* 3D Modal */}
-                <Mockup3DModal
-                    isOpen={modalOpen}
-                    onClose={() => setModalOpen(false)}
-                    mockupType={selectedMockup}
-                    brand={brand}
-                >
-                    {renderMockup(selectedMockup, brand)}
-                </Mockup3DModal>
-            </div>
-        );
-    }
 
     // Carousel view
     return (
-        <div className={`flex flex-col ${className}`}>
-            {/* Category filter and view toggle */}
-            <div className="flex items-center justify-between mb-4">
-                <div className="flex flex-wrap gap-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+        <section className={`relative w-full h-[600px] overflow-hidden rounded-2xl bg-zinc-950 shadow-2xl border border-zinc-800 ${className}`}>
+            {/* FLOATING CONTROLLER (Tabs) */}
+            <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20">
+                <div className="flex p-1 gap-1 bg-zinc-900/80 backdrop-blur-md border border-zinc-800/50 rounded-full shadow-2xl">
                     {(Object.entries(MOCKUP_CATEGORIES) as [MockupCategory, string][]).map(([key, label]) => (
                         <button
                             key={key}
                             onClick={() => setSelectedCategory(key)}
-                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${selectedCategory === key
-                                ? 'bg-white dark:bg-gray-700 shadow-sm'
-                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
+                            className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 relative ${selectedCategory === key
+                                ? 'bg-[#F97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]'
+                                : 'text-zinc-400 hover:text-white hover:bg-white/5'
                                 }`}
                         >
                             {label}
                         </button>
                     ))}
                 </div>
-                <div className="flex gap-1 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                    <button
-                        onClick={() => setViewMode('carousel')}
-                        className="p-2 rounded bg-white dark:bg-gray-700 shadow"
-                    >
-                        <Rows3 className="w-4 h-4" />
-                    </button>
-                    <button
-                        onClick={() => setViewMode('grid')}
-                        className="p-2 rounded"
-                    >
-                        <Grid3X3 className="w-4 h-4" />
-                    </button>
-                </div>
             </div>
 
-            {/* Mockup selector */}
-            <div className="flex flex-wrap gap-2 mb-4">
-                {filteredMockups.map((type) => {
-                    const info = MOCKUP_METADATA[type];
-                    const isSelected = selectedMockup === type;
-
-                    return (
-                        <button
-                            key={type}
-                            onClick={() => handleMockupSelect(type)}
-                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 ${isSelected
-                                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                                }`}
-                        >
-                            <span>{info.icon}</span>
-                            <span className="hidden sm:inline">{info.name}</span>
-                        </button>
-                    );
-                })}
-            </div>
-
-            {/* Mockup display */}
-            <div ref={mockupRef} className="relative">
+            {/* MAIN VIEWER */}
+            <div className="w-full h-full relative z-0">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={selectedMockup}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
-                        className="aspect-[16/10] rounded-xl overflow-hidden relative group shadow-2xl"
-                        style={{ background: brand.theme.tokens.dark.bg }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="w-full h-full"
                     >
                         {renderMockup(selectedMockup, brand)}
-
-                        {/* Action buttons */}
-                        <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
-                                onClick={() => setModalOpen(true)}
-                                className="p-2 bg-black/50 rounded-lg hover:bg-black/70 transition-colors"
-                                title="View in 3D"
-                            >
-                                <Maximize2 className="w-5 h-5 text-white" />
-                            </button>
-                            <button
-                                onClick={() => handleDownload(selectedMockup)}
-                                disabled={downloadingMockup === selectedMockup}
-                                className="p-2 bg-black/50 rounded-lg hover:bg-black/70 transition-colors disabled:opacity-50"
-                                title="Download PNG"
-                            >
-                                <Download className="w-5 h-5 text-white" />
-                            </button>
-                        </div>
                     </motion.div>
                 </AnimatePresence>
             </div>
 
-            {/* Description */}
-            <div className="mt-3 flex items-center justify-between">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {metadata.description} • {metadata.width}x{metadata.height}px
-                </p>
+            {/* GLOBAL CONTROLS */}
+            <div className="absolute top-8 right-8 z-20 flex gap-2">
+                <button
+                    onClick={() => setModalOpen(true)}
+                    className="p-3 bg-zinc-900/80 backdrop-blur-md border border-zinc-800/50 rounded-full text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
+                    title="Fullscreen"
+                >
+                    <Maximize2 className="w-5 h-5" />
+                </button>
                 <button
                     onClick={() => handleDownload(selectedMockup)}
                     disabled={downloadingMockup === selectedMockup}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors disabled:opacity-50"
+                    className="p-3 bg-zinc-900/80 backdrop-blur-md border border-zinc-800/50 rounded-full text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
+                    title="Download"
                 >
-                    <Download className="w-4 h-4" />
-                    {downloadingMockup === selectedMockup ? 'Downloading...' : 'Download'}
+                    {downloadingMockup === selectedMockup ? (
+                        <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                    ) : (
+                        <Download className="w-5 h-5" />
+                    )}
                 </button>
             </div>
 
-            {/* 3D Modal */}
+            {/* MODAL */}
             <Mockup3DModal
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
                 mockupType={selectedMockup}
                 brand={brand}
             >
-                {renderMockup(selectedMockup, brand)}
+                {renderMockup(selectedMockup, brand, true)}
             </Mockup3DModal>
-        </div>
+        </section>
     );
 }
 

@@ -69,7 +69,7 @@ export const FontSelector = ({ isOpen, onClose, currentFontId, onSelect }: FontS
                     <div className="flex items-center justify-between">
                         <div>
                             <h2 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-white">Typography System</h2>
-                            <p className="text-stone-500 dark:text-white/50 text-sm">Select a font pairing to define your brand's voice.</p>
+                            <p className="text-stone-500 dark:text-white/50 text-sm">Select a font pairing to define your brand&apos;s voice.</p>
                         </div>
                         <button
                             onClick={onClose}
@@ -88,7 +88,7 @@ export const FontSelector = ({ isOpen, onClose, currentFontId, onSelect }: FontS
                                 placeholder="Search 'Inter', 'Serif', 'Tech'..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="w-full h-10 pl-10 pr-4 bg-stone-100 dark:bg-white/5 border-none rounded-xl focus:ring-2 focus:ring-stone-900 dark:focus:ring-white outline-none transition-all font-medium text-sm text-stone-900 dark:text-white placeholder:text-stone-400"
+                                className="w-full h-10 pl-10 pr-4 bg-stone-100 dark:bg-white/5 border-none rounded-xl focus:ring-2 focus:ring-[#FF4500] outline-none transition-all font-medium text-sm text-stone-900 dark:text-white placeholder:text-stone-400"
                                 autoFocus
                             />
                         </div>
@@ -102,7 +102,7 @@ export const FontSelector = ({ isOpen, onClose, currentFontId, onSelect }: FontS
                                     className={cn(
                                         "px-4 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all",
                                         activeCategory === cat.id
-                                            ? "bg-white dark:bg-stone-800 text-stone-900 dark:text-white shadow-sm"
+                                            ? "bg-[#FF4500] text-white shadow-sm"
                                             : "text-stone-500 dark:text-white/40 hover:text-stone-900 dark:hover:text-white"
                                     )}
                                 >
@@ -127,7 +127,7 @@ export const FontSelector = ({ isOpen, onClose, currentFontId, onSelect }: FontS
                                     className={cn(
                                         "group relative flex flex-col p-6 rounded-2xl border text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-[280px]",
                                         currentFontId === font.id
-                                            ? "border-stone-900 dark:border-white ring-1 ring-stone-900 dark:ring-white bg-white dark:bg-white/5"
+                                            ? "border-[#FF4500] ring-1 ring-[#FF4500] bg-white dark:bg-white/5"
                                             : "border-stone-200 dark:border-white/5 bg-white dark:bg-stone-900 hover:border-stone-300 dark:hover:border-white/20"
                                     )}
                                 >
@@ -137,7 +137,7 @@ export const FontSelector = ({ isOpen, onClose, currentFontId, onSelect }: FontS
                                             <span className="text-sm font-semibold text-stone-900 dark:text-white/90">{font.name}</span>
                                         </div>
                                         {currentFontId === font.id && (
-                                            <div className="bg-stone-900 dark:bg-white text-white dark:text-black rounded-full p-1 shadow-sm">
+                                            <div className="bg-[#FF4500] text-white rounded-full p-1 shadow-sm">
                                                 <Check className="w-3 h-3" />
                                             </div>
                                         )}

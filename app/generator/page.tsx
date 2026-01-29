@@ -16,13 +16,14 @@ import { CompareOverlay } from '@/components/generator/CompareOverlay';
 import { RobotEmptyState } from '@/components/generator/RobotEmptyState';
 import { BrandIdentity } from '@/lib/data';
 import { SoftGateVariations } from '@/components/generator/SoftGateVariations';
+import { StyleGuidePreview } from '@/components/preview/StyleGuidePreview';
 
 
 export default function GeneratorPage() {
   const brandGenerators = useBrandGenerator();
   // ... rest of component
 
-  const { brand, generateBrand, isGenerating, resetBrand } = brandGenerators;
+  const { brand, generateBrand, isGenerating, resetBrand, setBrand } = brandGenerators;
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedVibe, setSelectedVibe] = useState('minimalist');
   const [viewMode, setViewMode] = useState<'overview' | 'presentation'>('overview');
@@ -106,6 +107,35 @@ export default function GeneratorPage() {
     checkAccess();
   }, []);
 
+  // RESTORE STATE: Check for pending projects (History Edit or Login Redirect)
+  useEffect(() => {
+    const pendingJSON = localStorage.getItem('glyph_pending_project');
+    if (pendingJSON) {
+      try {
+        const pending = JSON.parse(pendingJSON);
+
+        // 1. Exact Restoration (From History Page)
+        if (pending.restoreMode && pending.identity) {
+          console.log("Restoring exact brand state...");
+          setBrand?.(pending.identity);
+          localStorage.removeItem('glyph_pending_project');
+          return;
+        }
+
+        // 2. Pending Inputs (From Login Redirect)
+        if (pending.name && pending.vibe) {
+          console.log("Restoring pending input state...");
+          generateBrand(pending.vibe, pending.name, {
+            color: pending.color
+          });
+          localStorage.removeItem('glyph_pending_project');
+        }
+      } catch (e) {
+        console.error("Failed to restore project:", e);
+      }
+    }
+  }, [generateBrand, setBrand]);
+
   // PLG: Check Authed Session Helper (Gate)
   const checkAuth = async (): Promise<boolean> => {
     // 1. Check cookies for bypass first (fastest)
@@ -145,7 +175,8 @@ export default function GeneratorPage() {
       color: options.color,
       shape: options.shape,
       gradient: options.gradient,
-      surpriseMe: options.surpriseMe
+      surpriseMe: options.surpriseMe,
+      category: options.category
     });
   }, [generateBrand]);
 
@@ -282,8 +313,8 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
   };
 
   return (
-    // Mobile: Vertical stack, Desktop: Fixed sidebar + scrollable main
-    <div className="min-h-screen w-full bg-stone-50 font-sans">
+    // Responsive Flex Layout: Stacks on mobile, Row on desktop
+    <div className="flex flex-col md:flex-row min-h-screen w-full bg-stone-50 font-sans">
       <LoadingState isLoading={isGenerating} />
       <ProGateModal
         isOpen={showProModal}
@@ -291,8 +322,10 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
         featureName="Full Package Export"
       />
 
-      {/* Sidebar - Fixed on desktop, normal flow on mobile */}
-      <div className="md:fixed md:left-0 md:top-0 md:bottom-0 md:w-[420px] md:overflow-y-auto overflow-x-hidden md:border-r md:border-stone-200 z-40 scrollbar-hide">
+      {/* Sidebar - Relative Flex Child */}
+      {/* md:w-[420px] ensures it takes space in the flow */}
+      {/* md:sticky md:top-0 md:h-screen ensures it stays viewable while scrolling main content */}
+      <aside className="w-full md:w-[420px] flex-shrink-0 z-40 relative md:sticky md:top-0 md:h-screen md:overflow-y-auto border-r border-stone-200 bg-white scrollbar-hide">
         <Sidebar
           onGenerate={handleGenerate}
           isGenerating={isGenerating}
@@ -300,10 +333,10 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
           setSelectedVibe={setSelectedVibe}
           hasGenerated={!!brand}
         />
-      </div>
+      </aside>
 
-      {/* Main Content - Has left margin on desktop to account for fixed sidebar */}
-      <main ref={mainRef} className="relative bg-[#FAFAF9] min-h-screen md:ml-[420px]">
+      {/* Main Content - Flex-1 takes remaining space */}
+      <main ref={mainRef} className="flex-1 relative bg-[#FAFAF9] min-h-screen">
         <div
           className="absolute inset-0 opacity-40"
           style={{
@@ -315,6 +348,7 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
         {/* Toolbar - Sticky on mobile */}
         <div className="sticky md:absolute top-0 md:top-6 right-0 md:right-8 z-30 p-3 md:p-0 bg-stone-50/80 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none flex justify-end">
           <Toolbar
+            brand={brand || undefined}
             isDark={isDarkMode}
             toggleDark={() => setIsDarkMode(!isDarkMode)}
             onExport={handleExport}
@@ -503,11 +537,6 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
                   setViewMode(mode);
                 }}
               />
-
-              {/* SOFT GATE for Email Capture */}
-              <div className="max-w-3xl mx-auto px-4">
-                <SoftGateVariations onUnlock={handleGenerateVariations} />
-              </div>
             </div>
           ) : (
             <RobotEmptyState />

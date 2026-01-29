@@ -42,6 +42,7 @@ export interface FontPair {
 export interface BrandIdentity {
   id: string;
   vibe: string;
+  category?: string;
   name: string;
 
   // Visual Core

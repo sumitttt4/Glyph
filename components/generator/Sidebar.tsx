@@ -18,14 +18,17 @@ export interface GenerationOptions {
     shape?: string;
     gradient?: { colors: string[]; angle: number } | null;
     surpriseMe?: boolean;
+    category?: string;
 }
 
-interface SidebarProps {
+export interface SidebarProps {
     onGenerate: (options: GenerationOptions) => void;
     isGenerating: boolean;
     selectedVibe: string;
     setSelectedVibe: (vibe: string) => void;
     hasGenerated?: boolean;
+    isCollapsed?: boolean;
+    onToggle?: () => void;
 }
 
 // Tailwind color palettes (shadcn style)
@@ -74,7 +77,7 @@ const GRADIENT_PRESETS = [
     { id: 'peach', name: 'Peach', colors: ['#fb923c', '#fbbf24'], angle: 135 },
 ];
 
-export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVibe, hasGenerated }: SidebarProps) {
+export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVibe, hasGenerated, isCollapsed, onToggle }: SidebarProps) {
     const [prompt, setPrompt] = useState('');
     const [brandName, setBrandName] = useState('');
     const [selectedColor, setSelectedColor] = useState('#f97316');
@@ -82,9 +85,10 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
     const [customVibe, setCustomVibe] = useState('');
     const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
     const [selectedShape, setSelectedShape] = useState<string | null>(null);
-    const [selectedArchetype, setSelectedArchetype] = useState<'symbol' | 'wordmark'>('symbol'); // ADDING STATE
+    const [selectedArchetype, setSelectedArchetype] = useState<'symbol' | 'wordmark'>('symbol');
     const [isShapesOpen, setIsShapesOpen] = useState(false);
     const [isAiLoading, setIsAiLoading] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState(INDUSTRIES[0]);
 
     const isValid = brandName.trim().length > 0 && prompt.trim().length > 0 && (selectedVibe || customVibe.trim().length > 0);
 
@@ -99,9 +103,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                 if (data.vibe) setSelectedVibe(data.vibe);
                 if (data.customVibe) setCustomVibe(data.customVibe);
                 if (data.color) setSelectedColor(data.color);
-                if (data.archetype) setSelectedArchetype(data.archetype); // RESTORE
-                // Optional: Clear it after loading, or keep it until successful generation?
-                // Keeping it is safer for now.
+                if (data.archetype) setSelectedArchetype(data.archetype);
             } catch (e) {
                 console.error("Failed to restore draft", e);
             }
@@ -120,12 +122,11 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
         if (!isValid) return;
 
         // CHECK LIMIT
-        // Bypass if admin-bypass cookie exists
         const hasAdminBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
 
         if (!hasAdminBypass && generationCount >= 3) {
             // Block action
-            if (confirm("Free preview limit reached. Unlock the Founder Pass to continue generating unlimited brands.\n\nClick OK to upgrade now.")) {
+            if (confirm("Free preview limit reached. Unlock the Founder Pass to continue generating unlimited brands.\\n\\nClick OK to upgrade now.")) {
                 window.location.href = "/#pricing"; // Redirect to pricing section
             }
             return;
@@ -138,13 +139,8 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
             localStorage.setItem('glyph_generation_count', newCount.toString());
         }
 
-        // PLG: Allow everyone to generate (Investment phase)
-        // Login is only required for "Guidelines" and "Export" (Conversion phase)
-
-        // Find full gradient object if selected
         const vibeToUse = selectedVibe === 'custom' && customVibe ? customVibe : selectedVibe;
 
-        // Find full gradient object if selected
         const gradientObj = selectedGradient
             ? GRADIENT_PRESETS.find(g => g.id === selectedGradient)
             : null;
@@ -157,6 +153,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
             archetype: selectedArchetype,
             shape: selectedShape || undefined,
             gradient: gradientObj ? { colors: gradientObj.colors, angle: gradientObj.angle } : null,
+            category: selectedCategory.id
         });
     };
 
@@ -184,7 +181,6 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
             setSelectedVibe(randomVibe);
         }
 
-        // For surprise me, we fill in defaults if missing so it's always valid
         const finalName = brandName || "Surprise Brand";
         const finalPrompt = prompt || "A surprise startup concept";
 
@@ -237,7 +233,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
     };
 
     return (
-        <aside className="w-full md:w-[400px] h-[100dvh] md:h-full bg-white border-r border-stone-200 flex flex-col z-20 overflow-hidden shadow-[4px_0_24px_-12px_rgba(0,0,0,0.1)]">
+        <aside className="w-full h-full bg-white flex flex-col relative">
 
             {/* Header - Premium Height & Spacing */}
             <div className="h-16 border-b border-stone-100 flex items-center justify-between px-6 bg-white shrink-0 sticky top-0 z-10">
@@ -267,7 +263,9 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
 
                     <div className="space-y-5">
                         <BrandContextSelector
+                            selectedId={selectedCategory.id}
                             onSelect={(industry) => {
+                                setSelectedCategory(industry);
                                 // AUTO-SELECT LOGIC based on Industry DNA
                                 setSelectedVibe(industry.vibe);
                                 if (industry.archetype === 'app-icon') {

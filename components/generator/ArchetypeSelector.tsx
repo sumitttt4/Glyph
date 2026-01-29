@@ -1,44 +1,50 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Type, Hexagon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Type, Image as ImageIcon, LayoutTemplate } from "lucide-react";
 
 interface ArchetypeSelectorProps {
-    selected: "symbol" | "wordmark";
-    onSelect: (value: "symbol" | "wordmark") => void;
+    selected: 'symbol' | 'wordmark';
+    onSelect: (value: 'symbol' | 'wordmark') => void;
 }
 
 export function ArchetypeSelector({ selected, onSelect }: ArchetypeSelectorProps) {
+    const options = [
+        {
+            id: 'symbol',
+            label: 'Symbol Priority',
+            icon: ImageIcon,
+            description: 'Icon + Text'
+        },
+        {
+            id: 'wordmark',
+            label: 'Typography Priority',
+            icon: Type,
+            description: 'Text Only / Dominant'
+        }
+    ] as const;
+
     return (
         <div className="grid grid-cols-2 gap-2">
-            {/* SYMBOL OPTION */}
-            <button
-                onClick={() => onSelect("symbol")}
-                className={cn(
-                    "relative flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-all outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2",
-                    selected === "symbol"
-                        ? "bg-stone-900 border-stone-900 text-white shadow-md ring-1 ring-stone-900 ring-offset-1"
-                        : "bg-transparent border-stone-200 text-stone-600 hover:border-stone-300 hover:bg-stone-50/50"
-                )}
-            >
-                <Hexagon className="w-4 h-4" />
-                <span>Symbol</span>
-            </button>
-
-            {/* WORDMARK OPTION */}
-            <button
-                onClick={() => onSelect("wordmark")}
-                className={cn(
-                    "relative flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-all outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2",
-                    selected === "wordmark"
-                        ? "bg-stone-900 border-stone-900 text-white shadow-md ring-1 ring-stone-900 ring-offset-1"
-                        : "bg-transparent border-stone-200 text-stone-600 hover:border-stone-300 hover:bg-stone-50/50"
-                )}
-            >
-                <Type className="w-4 h-4" />
-                <span>Wordmark</span>
-            </button>
+            {options.map((option) => (
+                <button
+                    key={option.id}
+                    onClick={() => onSelect(option.id)}
+                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 ${selected === option.id
+                            ? "bg-white border-stone-900 shadow-md ring-1 ring-stone-900/5"
+                            : "bg-white border-stone-200 hover:border-stone-300 hover:bg-stone-50 text-stone-500"
+                        }`}
+                >
+                    <option.icon
+                        size={20}
+                        className={`mb-2 ${selected === option.id ? "text-stone-900" : "text-stone-400"}`}
+                    />
+                    <span
+                        className={`text-xs font-semibold ${selected === option.id ? "text-stone-900" : "text-stone-500"}`}
+                    >
+                        {option.label}
+                    </span>
+                </button>
+            ))}
         </div>
     );
 }

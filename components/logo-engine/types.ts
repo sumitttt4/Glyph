@@ -54,7 +54,10 @@ export type LogoAlgorithm =
 
     // === ABSTRACT PATTERNS ===
     | 'orbital-paths'    // Abstract orbital ring pattern
-    | 'dna-helix';       // Abstract double helix pattern
+    | 'dna-helix'        // Abstract double helix pattern
+
+    // === VISUAL SYNTHESIS ===
+    | 'initial-synthesis'; // Cole Palmer Rule - merged initials
 
 export type LogoCategory =
     | 'technology'
@@ -558,6 +561,20 @@ export interface StackedLinesParams extends BaseParameters {
     alignment: 'left' | 'center' | 'right' | 'justified';
 }
 
+// Initial Synthesis Parameters (Cole Palmer Rule)
+export interface InitialSynthesisParams extends BaseParameters {
+    mode: 'merged' | 'athletic' | 'geometric' | 'flowing';
+    letterPair: [string, string];
+    shareStroke: boolean;
+    mergePoint: Point;
+    strokeWeight: number;
+    curveTension: number;
+    cornerRadius: number;
+    verticalBias: number;
+    horizontalBias: number;
+    silhouetteStyle: 'abstract' | 'pose' | 'symbol';
+}
+
 /**
  * Union type for all ABSTRACT algorithm parameters
  * Only includes professional-grade abstract mark generators
@@ -595,7 +612,10 @@ export type AlgorithmParams =
 
     // === ABSTRACT PATTERNS ===
     | OrbitalPathsParams       // Abstract orbital pattern
-    | DnaHelixParams;          // Abstract helix pattern
+    | DnaHelixParams           // Abstract helix pattern
+
+    // === VISUAL SYNTHESIS ===
+    | InitialSynthesisParams;  // Cole Palmer Rule - merged initials
 
 // ============================================
 // INPUT PARAMETERS

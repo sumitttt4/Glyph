@@ -100,7 +100,7 @@ export async function fetchProStatusFromDB(
  */
 export function hasFeatureAccess(
     email: string | null | undefined,
-    feature: 'custom_vibes' | 'gradients' | 'svg_export' | 'brand_book' | 'social_kit' | 'favicon_pack' | 'unlimited_history' | 'ai_suggestions'
+    feature: 'custom_vibes' | 'gradients' | 'svg_export' | 'brand_book' | 'social_kit' | 'favicon_pack' | 'unlimited_history' | 'ai_suggestions' | 'figma_export'
 ): boolean {
     const status = getSubscriptionStatus(email);
 
@@ -119,7 +119,8 @@ export function hasFeatureAccess(
         'social_kit',
         'favicon_pack',
         'unlimited_history',
-        'ai_suggestions'
+        'ai_suggestions',
+        'figma_export'
     ];
 
     return !proFeatures.includes(feature);

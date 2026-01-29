@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from 'react';
-import { Sun, Moon, Download, ChevronDown, FileCode, Image, Package, Code2, Share2, Link, Copy, Check, ChevronLeft, ChevronRight, Shuffle, RefreshCw } from 'lucide-react';
+import { Sun, Moon, Download, ChevronDown, FileCode, Image, Package, Code2, Share2, Link, Copy, Check, ChevronLeft, ChevronRight, Shuffle, RefreshCw, Loader2, Sparkles, Lock } from 'lucide-react';
+import { useSubscription } from '@/hooks/use-subscription';
+import { ADMIN_EMAILS } from '@/lib/subscription';
 import UserProfile from '@/components/auth/UserProfile';
+import { FigmaHandoffModal } from '@/components/export/FigmaHandoffModal';
+import { FigmaLogoCompact } from '@/components/icons/FigmaLogo';
 
 interface ToolbarProps {
+    brand?: { name: string; theme: { tokens: { light: any; dark: any } }; font: { headingName?: string; bodyName?: string; heading?: string; body?: string; monoName?: string }; shape?: { name?: string }; logoLayout?: string;[key: string]: any };
     isDark: boolean;
     toggleDark: () => void;
     onExport?: (type: string) => void;
@@ -25,10 +30,16 @@ interface ToolbarProps {
     isGenerating?: boolean;
 }
 
-export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, canUndo, canRedo, onUndo, onRedo, currentHistoryIndex, totalHistory, onAddToCompare, onOpenCompare, compareCount = 0, onVariations, isGenerating }: ToolbarProps) {
+export function Toolbar({ brand, isDark, toggleDark, onExport, viewMode, setViewMode, canUndo, canRedo, onUndo, onRedo, currentHistoryIndex, totalHistory, onAddToCompare, onOpenCompare, compareCount = 0, onVariations, isGenerating }: ToolbarProps) {
     const [showExport, setShowExport] = useState(false);
     const [showShare, setShowShare] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [showFigmaModal, setShowFigmaModal] = useState(false);
+
+    // Check Pro access for Figma export
+    const { isPro, email, isLoading: isLoadingSub } = useSubscription();
+    const isAdmin = email && ADMIN_EMAILS.includes(email);
+    const hasFigmaAccess = isPro || isAdmin;
 
     const exportOptions = [
         { id: 'tailwind', label: 'Tailwind Config', icon: FileCode, desc: 'CSS variables & tokens' },
@@ -139,8 +150,8 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, c
                 )}
             </div>
 
-            {/* Compare Controls */}
-            {onAddToCompare && onOpenCompare && (
+            {/* Compare Controls / Variations */}
+            {onVariations && (
                 <div className="flex items-center gap-2 mr-2">
                     <button
                         onClick={onVariations}
@@ -155,23 +166,6 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, c
                         )}
                         <span>{isGenerating ? 'Thinking...' : 'Variations'}</span>
                     </button>
-
-                    <button
-                        onClick={onAddToCompare}
-                        className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 border border-stone-200 rounded-full bg-white shadow-sm text-stone-500 hover:text-orange-600 hover:border-orange-200 transition-all"
-                        title="Add to Comparison"
-                    >
-                        <span className="text-xl font-light leading-none mb-0.5">+</span>
-                    </button>
-                    {compareCount > 0 && (
-                        <button
-                            onClick={onOpenCompare}
-                            className="flex items-center gap-2 px-3 py-2 h-9 md:h-10 bg-stone-900 text-white rounded-full shadow-sm text-xs font-semibold hover:bg-stone-800 transition-all animate-in fade-in zoom-in duration-200"
-                        >
-                            Compare
-                            <span className="bg-white/20 px-1.5 py-0.5 rounded-full text-[10px]">{compareCount}</span>
-                        </button>
-                    )}
                 </div>
             )}
 
@@ -187,7 +181,8 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, c
                 </button>
 
                 {showExport && (
-                    <div className="absolute top-full right-0 mt-2 w-56 bg-white border border-stone-200 rounded-xl shadow-xl overflow-hidden z-50">
+                    <div className="absolute top-full right-0 mt-2 w-72 bg-white border border-stone-200 rounded-xl shadow-xl overflow-hidden z-50 max-h-[70vh] overflow-y-auto">
+                        {/* Standard Export Options */}
                         {exportOptions.map((option) => (
                             <button
                                 key={option.id}
@@ -206,6 +201,35 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, c
                                 </div>
                             </button>
                         ))}
+
+                        {/* Figma Handoff - Single Button */}
+                        <div className="border-t border-stone-100 mt-1 pt-1">
+                            <button
+                                onClick={() => {
+                                    setShowExport(false);
+                                    setShowFigmaModal(true);
+                                }}
+                                className="w-full px-4 py-3 text-left hover:bg-indigo-50 flex items-center gap-3 transition-colors group"
+                            >
+                                <div className="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center shadow-sm">
+                                    <FigmaLogoCompact size={18} />
+                                </div>
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="text-sm font-semibold text-stone-900">
+                                            Export to Figma
+                                        </span>
+                                        {!hasFigmaAccess && (
+                                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase bg-gradient-to-r from-amber-400 to-orange-500 text-white">
+                                                <Sparkles className="w-2 h-2" />
+                                                Pro
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="text-[10px] text-stone-400">Logo, Colors & Typography</div>
+                                </div>
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
@@ -214,6 +238,17 @@ export function Toolbar({ isDark, toggleDark, onExport, viewMode, setViewMode, c
             <div className="pl-2 border-l border-stone-200">
                 <UserProfile />
             </div>
+
+            {/* Figma Handoff Modal */}
+            {brand && (
+                <FigmaHandoffModal
+                    isOpen={showFigmaModal}
+                    onClose={() => setShowFigmaModal(false)}
+                    brand={brand as any}
+                    hasFigmaAccess={!!hasFigmaAccess}
+                    onUpgrade={() => window.location.href = '/pricing'}
+                />
+            )}
         </div>
     );
 }
