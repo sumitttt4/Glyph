@@ -281,6 +281,29 @@ export {
 } from './animation/animation-export';
 
 // ============================================
+// INFINITE UNIQUENESS ENGINE
+// ============================================
+
+export {
+    // Main generation functions
+    generateInfiniteLogos,
+    generateSingleInfiniteLogo,
+    generateAllAlgorithmSamples,
+    regenerateLogo,
+    verifyUniqueness,
+    getAlgorithmInfo,
+    getGenerationStats,
+    // Selection and utilities
+    selectAlgorithmForBrand,
+    ALL_ALGORITHMS as INFINITE_ALGORITHMS,
+    // Types
+    type MasterSeed,
+    type InfiniteAlgorithm,
+    type UniqueLogoParams,
+    type GeneratedUniqueLogo,
+} from './infinite-engine';
+
+// ============================================
 // LOGO VARIATIONS
 // ============================================
 
