@@ -329,7 +329,7 @@ export function deriveParamsFromHash(hashHex: string): HashDerivedParams {
 }
 
 // ============================================
-// QUALITY SCORING SYSTEM
+// QUALITY SCORING SYSTEM - ABSTRACT MARKS ONLY
 // ============================================
 
 /**
@@ -342,8 +342,84 @@ export interface RejectionReason {
 }
 
 /**
+ * CLIPART DETECTION PATTERNS
+ * These patterns indicate literal/clipart-like shapes that should be rejected
+ */
+const CLIPART_PATTERNS = {
+    // Literal object indicators
+    literalHeart: /[Mm].*[Cc].*[Cc].*[Zz]/i, // Heart shape pattern
+    literalStar: /(polygon|star)/i,
+    literalArrow: /arrow|chevron/i,
+
+    // Too many small circles (clipart-like)
+    manySmallCircles: /<circle[^>]*r="[0-3]"/gi,
+
+    // Recognizable object shapes
+    crownPattern: /(crown|points.*base)/i,
+    leafPattern: /(leaf|vein|stem)/i,
+    cloudPattern: /(puff|cloud)/i,
+};
+
+/**
+ * Check if SVG looks like clipart (literal objects)
+ * Returns rejection score: 0 = definitely clipart, 100 = definitely abstract
+ */
+function checkAbstractness(svgString: string): number {
+    let score = 100;
+
+    // Check for too many small circles (clipart indicator)
+    const smallCircles = (svgString.match(CLIPART_PATTERNS.manySmallCircles) || []).length;
+    if (smallCircles > 5) {
+        score -= 30;
+    }
+
+    // Check for basic geometric shapes without treatment
+    const circles = (svgString.match(/<circle/gi) || []).length;
+    const rects = (svgString.match(/<rect/gi) || []).length;
+    const paths = (svgString.match(/<path/gi) || []).length;
+
+    // If mostly basic shapes with few paths, it's too simple
+    const basicShapeRatio = (circles + rects) / Math.max(1, paths);
+    if (basicShapeRatio > 0.5 && paths < 5) {
+        score -= 25;
+    }
+
+    // Check for lack of complexity in paths
+    const bezierCommands = (svgString.match(/[CcQqSs]/g) || []).length;
+    const lineCommands = (svgString.match(/[LlHhVv]/g) || []).length;
+
+    // Good abstract logos have a healthy mix of curves
+    const curveRatio = bezierCommands / Math.max(1, bezierCommands + lineCommands);
+    if (curveRatio < 0.2) {
+        score -= 20; // Too angular, looks like basic shape
+    }
+
+    return Math.max(0, score);
+}
+
+/**
+ * Check structural complexity (abstract marks should have deliberate structure)
+ * Returns 0-100
+ */
+function checkStructuralComplexity(svgString: string): number {
+    // Count distinct path operations
+    const moveCommands = (svgString.match(/[Mm]\s*[\d.-]/g) || []).length;
+    const curveCommands = (svgString.match(/[CcQqSs]\s*[\d.-]/g) || []).length;
+    const arcCommands = (svgString.match(/[Aa]\s*[\d.-]/g) || []).length;
+
+    // Good abstract logos have multiple distinct elements
+    const totalOperations = moveCommands + curveCommands + arcCommands;
+
+    if (totalOperations < 5) return 30; // Too simple
+    if (totalOperations > 200) return 60; // Possibly over-complex
+    if (totalOperations >= 10 && totalOperations <= 80) return 100; // Sweet spot
+
+    return 70; // Default
+}
+
+/**
  * Calculate quality score for a generated logo
- * ENHANCED: Strict rejection criteria with detailed logging
+ * STRICT: Rejects clipart, basic shapes, and literal objects
  */
 export function calculateQualityScore(svgString: string, params: HashDerivedParams): QualityMetrics {
     const rejections: RejectionReason[] = [];
@@ -351,6 +427,22 @@ export function calculateQualityScore(svgString: string, params: HashDerivedPara
     // Check hard rejection criteria first
     const pathElements = (svgString.match(/<path/gi) || []).length;
     const pathCommands = (svgString.match(/[MLCQSAZ]/gi) || []).length;
+
+    // === CLIPART REJECTION FILTERS ===
+
+    // REJECTION: Looks like clipart (literal object)
+    const abstractnessScore = checkAbstractness(svgString);
+    if (abstractnessScore < 60) {
+        rejections.push({ reason: 'Looks like clipart/literal object', value: abstractnessScore, threshold: 60 });
+    }
+
+    // REJECTION: Lacks structural complexity
+    const structureScore = checkStructuralComplexity(svgString);
+    if (structureScore < 50) {
+        rejections.push({ reason: 'Lacks structural complexity', value: structureScore, threshold: 50 });
+    }
+
+    // === EXISTING REJECTION FILTERS ===
 
     // REJECTION: Less than 3 path elements (too simple)
     if (pathElements < 3) {
