@@ -38,7 +38,7 @@ export function InfiniteLogoExplorer({ brand, onUpdateBrand }: { brand: BrandIde
         const newLogo: GeneratedLogo = {
             id: logo.id,
             hash: logo.id,
-            algorithm: 'abstract-mark', // Default or map if possible
+            algorithm: 'line-fragmentation', // Default or map if possible
             variant: 0,
             svg: logo.svg,
             viewBox: '0 0 200 200',

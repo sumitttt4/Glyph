@@ -4,12 +4,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 // Import logo generators
-import { generateStarburst } from "@/components/logo-engine/generators/starburst";
-import { generateAbstractMark } from "@/components/logo-engine/generators/abstract-mark";
-import { generateFramedLetter } from "@/components/logo-engine/generators/framed-letter";
-import { generateMonogramBlend } from "@/components/logo-engine/generators/monogram-blend";
-import { generateCircleOverlap } from "@/components/logo-engine/generators/circle-overlap";
-import { generateHexagonTech } from "@/components/logo-engine/generators/hexagon-tech";
+// Import logo generators
+import {
+    generateCloverRadial,
+    generateMotionChevrons,
+    generateInterlockingLoops,
+    generateNegativeSpace,
+    generateStaggeredBars,
+    generateBlockAssembly
+} from "@/components/logo-engine/generators/modern-techniques";
 import { GeneratedLogo } from "@/components/logo-engine/types";
 
 // ============================================
@@ -26,7 +29,7 @@ interface ShowcaseBrand {
     textColor: string;
     headingFont: string;
     bodyFont: string;
-    algorithm: 'starburst' | 'abstract-mark' | 'framed-letter' | 'monogram-blend' | 'circle-overlap' | 'hexagon-tech';
+    algorithm: 'clover-radial' | 'motion-chevrons' | 'interlocking-loops' | 'negative-space' | 'staggered-bars' | 'block-assembly';
 }
 
 const SHOWCASE_BRANDS: ShowcaseBrand[] = [
@@ -40,7 +43,7 @@ const SHOWCASE_BRANDS: ShowcaseBrand[] = [
         textColor: "#e0e0ff",
         headingFont: "'Inter', system-ui, sans-serif",
         bodyFont: "'Inter', system-ui, sans-serif",
-        algorithm: "starburst",
+        algorithm: "clover-radial",
     },
     {
         name: "Prism",
@@ -52,7 +55,7 @@ const SHOWCASE_BRANDS: ShowcaseBrand[] = [
         textColor: "#ffeef1",
         headingFont: "'Syne', system-ui, sans-serif",
         bodyFont: "'DM Sans', system-ui, sans-serif",
-        algorithm: "abstract-mark",
+        algorithm: "motion-chevrons",
     },
     {
         name: "Vertex",
@@ -64,7 +67,7 @@ const SHOWCASE_BRANDS: ShowcaseBrand[] = [
         textColor: "#d1fae5",
         headingFont: "'Space Grotesk', system-ui, sans-serif",
         bodyFont: "'Inter', system-ui, sans-serif",
-        algorithm: "framed-letter",
+        algorithm: "interlocking-loops",
     },
     {
         name: "Aurora",
@@ -76,7 +79,7 @@ const SHOWCASE_BRANDS: ShowcaseBrand[] = [
         textColor: "#ede9fe",
         headingFont: "'Outfit', system-ui, sans-serif",
         bodyFont: "'Inter', system-ui, sans-serif",
-        algorithm: "monogram-blend",
+        algorithm: "negative-space",
     },
     {
         name: "Orbit",
@@ -88,7 +91,7 @@ const SHOWCASE_BRANDS: ShowcaseBrand[] = [
         textColor: "#e0f2fe",
         headingFont: "'Manrope', system-ui, sans-serif",
         bodyFont: "'Inter', system-ui, sans-serif",
-        algorithm: "circle-overlap",
+        algorithm: "staggered-bars",
     },
     {
         name: "Hexa",
@@ -100,7 +103,7 @@ const SHOWCASE_BRANDS: ShowcaseBrand[] = [
         textColor: "#fef3c7",
         headingFont: "'Space Grotesk', system-ui, sans-serif",
         bodyFont: "'Inter', system-ui, sans-serif",
-        algorithm: "hexagon-tech",
+        algorithm: "block-assembly",
     },
 ];
 
@@ -122,26 +125,26 @@ function generateLogoForBrand(brand: ShowcaseBrand): GeneratedLogo | null {
         let logos: GeneratedLogo[] = [];
 
         switch (brand.algorithm) {
-            case 'starburst':
-                logos = generateStarburst(params);
+            case 'clover-radial':
+                logos = generateCloverRadial(params);
                 break;
-            case 'abstract-mark':
-                logos = generateAbstractMark(params);
+            case 'motion-chevrons':
+                logos = generateMotionChevrons(params);
                 break;
-            case 'framed-letter':
-                logos = generateFramedLetter(params);
+            case 'interlocking-loops':
+                logos = generateInterlockingLoops(params);
                 break;
-            case 'monogram-blend':
-                logos = generateMonogramBlend(params);
+            case 'negative-space':
+                logos = generateNegativeSpace(params);
                 break;
-            case 'circle-overlap':
-                logos = generateCircleOverlap(params);
+            case 'staggered-bars':
+                logos = generateStaggeredBars(params);
                 break;
-            case 'hexagon-tech':
-                logos = generateHexagonTech(params);
+            case 'block-assembly':
+                logos = generateBlockAssembly(params);
                 break;
             default:
-                logos = generateStarburst(params);
+                logos = generateCloverRadial(params);
         }
 
         return logos[0] || null;

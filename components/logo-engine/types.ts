@@ -22,42 +22,16 @@
  * - Scenery: landscapes, weather, nature scenes
  */
 export type LogoAlgorithm =
-    // === LETTERMARKS (stylized initials with cuts/negative space) ===
-    | 'framed-letter'    // Notion - letter in geometric frame with cutouts
-    | 'letter-swoosh'    // Arc - letter with dynamic curved accent
-    | 'monogram-blend'   // Intertwined letters with shared strokes
-    | 'letter-gradient'  // Stylized letter with gradient treatment
-    | 'box-logo'         // Bold boxed lettermark
-
-    // === GEOMETRIC ABSTRACTS (Stripe bars, Linear lines, Vercel triangle) ===
-    | 'gradient-bars'    // Stripe - parallel diagonal bars with gradient
-    | 'motion-lines'     // Linear/Framer - stacked horizontal lines
-    | 'perfect-triangle' // Vercel - single perfect geometric triangle
-    | 'depth-geometry'   // Raycast - abstract with depth/shadow
-    | 'isometric-cube'   // Pitch - 3D isometric letterform
-    | 'hexagon-tech'     // Tech/blockchain - nested hexagonal pattern
-    | 'stacked-lines'    // Linear-inspired stacked horizontal lines
-
-    // === STARBURST/RADIAL (like Claude asterisk) ===
-    | 'starburst'        // Claude/Anthropic - curved organic arms with rotational symmetry
-
-    // === OVERLAPPING SHAPES (like Figma, Mastercard) ===
-    | 'circle-overlap'   // Figma - overlapping transparent circles
-    | 'orbital-rings'    // Planetscale - intersecting orbital paths
-    | 'flow-gradient'    // Loom - flowing gradient organic shape
-
-    // === LINE ART (continuous stroke marks) ===
-    | 'abstract-mark'    // Supabase - abstract angular continuous mark
-    | 'infinity-loop'    // Meta - infinite loop ribbon
-    | 'maze-pattern'     // Abstract labyrinth line pattern
-    | 'fingerprint-id'   // Abstract spiral line pattern
-
-    // === ABSTRACT PATTERNS ===
-    | 'orbital-paths'    // Abstract orbital ring pattern
-    | 'dna-helix'        // Abstract double helix pattern
-
-    // === VISUAL SYNTHESIS ===
-    | 'initial-synthesis'; // Cole Palmer Rule - merged initials
+    | 'line-fragmentation'
+    | 'staggered-bars'
+    | 'block-assembly'
+    | 'motion-chevrons'
+    | 'negative-space'
+    | 'interlocking-loops'
+    | 'monogram-merge'
+    | 'continuous-stroke'
+    | 'geometric-extract'
+    | 'clover-radial';
 
 export type LogoCategory =
     | 'technology'
@@ -269,353 +243,106 @@ export interface BaseParameters {
 // ALGORITHM-SPECIFIC PARAMETERS
 // ============================================
 
-export interface StarburstParams extends BaseParameters {
-    armCount: number;              // 6-16 arms
-    armLength: number;             // 20-50
-    armWidth: number;              // 3-15
-    armCurvature: number;          // 0-1 (bezier curve intensity)
-    armTaper: number;              // 0.2-0.8 (taper ratio)
-    centerRadius: number;          // 0-15
-    rotationalSymmetry: boolean;
-    spiralAmount: number;          // 0-0.5
-    armBulge: number;              // 0-0.5
-    organicWobble: number;         // 0-1
-}
-
-export interface FramedLetterParams extends BaseParameters {
-    frameShape: 'square' | 'circle' | 'rounded' | 'hexagon' | 'octagon';
-    frameThickness: number;        // 2-15
-    letterScale: number;           // 0.4-0.9
-    letterWeight: number;          // 300-800
-    cutoutStyle: 'none' | 'partial' | 'full';
-    cutoutDepth: number;           // 0-1
-    innerPadding: number;          // 5-25
-    frameRotation: number;         // 0-45
-}
-
-export interface MotionLinesParams extends BaseParameters {
-    lineCount: number;             // 3-8
-    lineThickness: number;         // 2-10
-    lineWaveAmplitude: number;     // 0-15
-    lineSpacing: number;           // 6-20
-    velocityEffect: number;        // 0-1
-    staggerOffset: number;         // 0-20
-    taperDirection: 'left' | 'right' | 'both' | 'none';
-}
-
-export interface GradientBarsParams extends BaseParameters {
-    barCount: number;              // 2-6
-    barWidth: number;              // 8-25
-    barAngle: number;              // -45 to 45
-    barGap: number;                // 3-15
-    barRoundness: number;          // 0-1
-    gradientIntensity: number;     // 0-1
-    staggerAmount: number;         // 0-30
-}
-
-export interface PerfectTriangleParams extends BaseParameters {
-    triangleType: 'equilateral' | 'isoceles' | 'right';
-    triangleSize: number;          // 60-90 (% of viewbox)
-    rotation: number;              // 0-360
-    fillStyle: 'solid' | 'gradient' | 'outline';
-    outlineWidth: number;          // 2-10
-    innerCutout: boolean;
-    cutoutScale: number;           // 0.3-0.7
-}
-
-export interface CircleOverlapParams extends BaseParameters {
-    circleCount: number;           // 2-5
-    circleSize: number;            // 20-40
-    overlapAmount: number;         // 0.2-0.6
-    arrangementType: 'horizontal' | 'vertical' | 'diagonal' | 'cluster';
-    opacityVariation: number;      // 0-0.5
-    sizeVariation: number;         // 0-0.3
-}
-
-export interface DepthGeometryParams extends BaseParameters {
-    shapeType: 'cube' | 'prism' | 'pyramid' | 'abstract';
-    depthLayers: number;           // 2-5
-    depthOffset: number;           // 3-15
-    perspectiveAngle: number;      // -30 to 30
-    shadowIntensity: number;       // 0-1
-    lightDirection: number;        // 0-360
-}
-
-export interface LetterSwooshParams extends BaseParameters {
-    swooshCount: number;           // 1-3
-    swooshWidth: number;           // 3-15
-    swooshCurvature: number;       // 0.3-0.9
-    swooshPlacement: 'under' | 'through' | 'around';
-    letterWeight: number;          // 400-700
-    letterScale: number;           // 0.5-0.8
-    dynamicTaper: boolean;
-}
-
-export interface OrbitalRingsParams extends BaseParameters {
-    ringCount: number;             // 2-4
-    ringThickness: number;         // 2-8
-    orbitAngle: number;            // 0-60
-    orbitEccentricity: number;     // 0-0.5
-    intersectionStyle: 'weave' | 'overlap' | 'break';
-    rotationOffset: number;        // 0-120
-}
-
-export interface FlowGradientParams extends BaseParameters {
-    flowDirection: 'horizontal' | 'vertical' | 'diagonal' | 'radial';
-    waveCount: number;             // 1-4
-    waveAmplitude: number;         // 10-40
-    organicDistortion: number;     // 0-1
-    gradientStops: number;         // 2-5
-    blobFactor: number;            // 0-1
-}
-
-export interface IsometricCubeParams extends BaseParameters {
-    cubeStyle: 'solid' | 'wireframe' | 'partial';
-    cubeAngle: number;             // 25-35 (isometric angle)
-    faceVisibility: [boolean, boolean, boolean]; // top, left, right
-    letterPlacement: 'front' | 'side' | 'integrated';
-    extrusionDepth: number;        // 10-30
-    letterScale: number;           // 0.4-0.7
-}
-
-export interface AbstractMarkParams extends BaseParameters {
-    angularComplexity: number;     // 3-8 points
-    sharpness: number;             // 0-1
-    asymmetryAmount: number;       // 0-0.5
-    innerNegativeSpace: boolean;
-    strokeOnly: boolean;
-    dynamicThickness: number;      // 0-1
-}
-
-export interface MonogramBlendParams extends BaseParameters {
-    blendStyle: 'overlap' | 'interlock' | 'merge' | 'stack';
-    letterSpacing: number;         // -20 to 20
-    shareStrokes: boolean;
-    strokeModulation: number;      // 0-1
-    letterWeights: [number, number]; // weights for each letter
-    verticalOffset: number;        // -15 to 15
-}
-
 // ============================================
-// NEW SYMBOL ALGORITHM PARAMETERS (20)
+// NEW ALGORITHM PARAMETERS (10 TECHNIQUES)
 // ============================================
 
-// ============================================
-// ABSTRACT ALGORITHM PARAMETERS
-// ============================================
-
-export interface InfinityLoopParams extends BaseParameters {
-    loopWidth: number;             // 30-60
-    loopHeight: number;            // 20-40
-    crossoverAngle: number;        // 20-70
-    strokeTaper: number;           // 0.3-0.9
-    thickness: number;             // 3-12
-    twistAmount: number;           // 0-1
-    gradientFlow: boolean;
-    innerGap: number;              // 2-10
-    smoothness: number;            // 0.5-1
-    ribbonStyle: boolean;
+export interface LineFragmentationParams extends BaseParameters {
+    lineCount: number;           // 10-30
+    gapRatio: number;            // 0.1-0.5
+    thickness: number;           // 1-5
+    angle: number;               // 0-180
+    fragmentationIntensity: number; // 0-1
+    minFragmentLength: number;   // 5-20
+    noiseOffset: number;         // 0-10
 }
 
-export interface HexagonTechParams extends BaseParameters {
-    innerShape: 'none' | 'hexagon' | 'circle' | 'letter';
-    honeycombStyle: boolean;
-    borderThickness: number;       // 2-10
-    cornerCut: number;             // 0-1
-    cellCount: number;             // 1-7
-    connectionStyle: 'none' | 'lines' | 'nodes';
-    techPattern: 'solid' | 'circuit' | 'grid';
-    glowEffect: boolean;
-    rotation: number;              // 0-60
-    nestingLevel: number;          // 0-3
+export interface StaggeredBarsParams extends BaseParameters {
+    barCount: number;            // 8-20
+    staggerOffset: number;       // 0-50
+    barHeight: number;           // 5-20
+    rounding: number;            // 0-1
+    widthVariation: number;      // 0-1
+    verticalAlignment: 'top' | 'center' | 'bottom' | 'wave';
 }
 
-// ============================================
-// WORDMARK ALGORITHM PARAMETERS
-// ============================================
-
-export interface LetterGradientParams extends BaseParameters {
-    letterSpacing: number;         // -10 to 20
-    colorStops: number;            // 2-6
-    fontWeight: number | string;   // 300-900 or 'bold'/'normal'
-    letterStyle: 'sans' | 'serif' | 'rounded' | 'mono' | 'geometric' | 'bold' | 'light';
-    gradientDirection?: 'horizontal' | 'vertical' | 'diagonal' | 'per-letter';
-    bounceEffect?: boolean;
-    shadowDrop?: boolean;
-    letterRotation?: number;       // -15 to 15
-    scaleVariation?: number;       // 0-0.3
-    colorfulness?: number;         // 0-1
-    letterCount?: number | string; // 1-5
-    multiColor: boolean;
-    hueShift: number;              // 0-60
-    gradientAngle: number;         // 0-360
-    shadowEffect: boolean;
-    outlineOnly: boolean;
-    saturation?: number;           // 0-1
+export interface BlockAssemblyParams extends BaseParameters {
+    blockCount: number;          // 2-4
+    overlapPercentage: number;   // 0.1-0.8
+    shadowOffset: number;        // 2-15
+    perspectiveAngle: number;    // 0-60
+    depthScale: number;          // 0.5-1.0
+    stackDirection: 'vertical' | 'horizontal' | 'diagonal';
 }
 
-export interface BoxLogoParams extends BaseParameters {
-    boxPadding: number;            // 5-25
-    cornerRadius: number;          // 0-20
-    textWeight: number | string;   // 400-900 or 'bold'/'heavy'
-    borderThickness: number;       // 2-10
-    fillStyle: 'solid' | 'outline' | 'both';
-    textTransform?: 'uppercase' | 'lowercase' | 'capitalize';
-    letterSpacing: number;         // -5 to 20
-    stackedLayout?: boolean;
-    shadowOffset?: number;         // 0-10
-    glitchEffect?: boolean;
-    textSize?: number | string;    // 14-28
-    invertColors: boolean;
-    shadowDepth: number;           // 0-10
-    doubleBox: boolean;
+export interface MotionChevronsParams extends BaseParameters {
+    count: number;               // 2-4
+    spacing: number;             // 5-20
+    angle: number;               // 0-360
+    taper: boolean;
+    chevronWidth: number;        // 10-50
+    chevronAngle: number;        // 30-150 (internal angle)
 }
 
-// ============================================
-// ABSTRACT PATTERN ALGORITHM PARAMETERS
-// ============================================
-
-export interface MazePatternParams extends BaseParameters {
-    pathWidth: number;             // 3-10
-    cornerStyle: 'square' | 'rounded' | 'sharp' | 'beveled';
-    centerSymbol: 'none' | 'dot' | 'star' | 'letter' | 'square';
-    wallThickness: number;         // 1-5
-    complexity: number;            // 0-1
-    mazeStyle?: 'rectangular' | 'circular' | 'hexagonal';
-    deadEnds?: boolean;
-    pathHighlight?: boolean;
-    solutionPath?: boolean;
-    borderThickness?: number;      // 0-5
-    symmetrical: boolean;
-    openings: number;              // 1-4
-    gradientWalls: boolean;
-    glowPath: boolean;
-    rotated?: boolean;
+export interface NegativeSpaceParams extends BaseParameters {
+    containerShape: 'circle' | 'square' | 'hexagon' | 'shield';
+    cutDepth: number;            // 0.1-1.0
+    innerScale: number;          // 0.3-0.8
+    rotation: number;            // 0-360
+    containerBorder: number;     // 0-10
 }
 
-export interface FingerprintIdParams extends BaseParameters {
-    ridgeCount: number;            // 20-50
-    spiralTightness: number;       // 0-1
-    coreStyle: 'loop' | 'whorl' | 'arch';
-    deltaPat?: boolean;
-    deltaPattern: boolean;         // Alias for deltaPat
-    ridgeThickness?: number;       // 1-4
-    ridgeWidth: number;            // 1-4 (alias)
-    gapVariation?: number;         // 0-1
-    breakPattern?: number;         // 0-1
-    breakCount: number;            // 0-3
-    glowEffect: boolean;
-    scanLine: boolean;
-    dataOverlay?: boolean;
-    centerOffset: number;          // 0-0.3
-    ridgeSpacing: number;          // 2-6
+export interface InterlockingLoopsParams extends BaseParameters {
+    loopCount: number;           // 2-4
+    weaveDepth: number;          // 0-10 (visual gap for weave)
+    strokeWidth: number;         // 5-20
+    roundness: number;           // 0-1
+    interactionType: 'chain' | 'braid' | 'olympic';
 }
 
-export interface DnaHelixParams extends BaseParameters {
-    helixTurns: number;            // 1-4
-    baseSpacing: number;           // 5-15
-    strandWidth: number;           // 2-8
-    bondStyle: 'line' | 'lines' | 'dots' | 'blocks' | 'bars';
-    helixAngle?: number;           // 15-45
-    basePairs?: number;            // 4-12 per turn
-    colorCoded?: boolean;
-    glowEffect: boolean;
-    moleculeDetail?: boolean;
-    perspectiveDepth?: number;     // 0-1
-    helixRadius: number;           // 12-25
-    verticalStretch: number;       // 0.8-1.2
-    bondCount: number;             // 4-10
-    gradientStrands: boolean;
-    rotation: number;              // 0-360
+export interface MonogramMergeParams extends BaseParameters {
+    mergePoint: number;          // 0-1 (along stroke)
+    connectionStyle: 'smooth' | 'sharp' | 'gap';
+    letterSpacing: number;       // -20 to 20
+    verticalOffset: number;      // -10 to 10
+    strokeWeight: number;        // 10-40
 }
 
-export interface OrbitalPathsParams extends BaseParameters {
-    orbitCount: number;            // 2-5
-    planetSize: number;            // 5-20
-    ringTilt: number;              // 0-60
-    trailEffect: 'none' | 'fade' | 'solid';
-    orbitSpacing: number;          // 10-30
-    planetPositions?: number[];    // Angles 0-360
-    ringThickness?: number;        // 1-5
-    centerBody?: boolean;
-    centerSize?: number;           // 10-30
-    dashPattern?: boolean;
-    planetCount: number;           // 1-3
-    ringOpacity: number;           // 0.4-0.8
-    centerGlow: boolean;
-    ellipseRatio: number;          // 0.4-0.8
-    rotationAngle: number;         // 0-360
+export interface ContinuousStrokeParams extends BaseParameters {
+    complexity: number;          // 0-1
+    cornerStyle: 'round' | 'sharp' | 'beveled';
+    gridBased: boolean;
+    pathLength: number;          // 0-100
+    loops: number;               // 0-3
 }
 
-// Stacked Lines Parameters
-export interface StackedLinesParams extends BaseParameters {
-    lineCount: number;             // 3-8 lines
-    lineHeight: number;            // 4-12
-    lineSpacing: number;           // 2-8
-    cornerRadius: number;          // 0-6 (for rounded ends)
-    staggerOffset: number;         // 0-20
-    taperAmount: number;           // 0-1
-    waveAmplitude: number;         // 0-15
-    gradientIntensity: number;     // 0-1
-    lineVariation: number;         // 0-1 (length variation)
-    alignment: 'left' | 'center' | 'right' | 'justified';
+export interface GeometricExtractParams extends BaseParameters {
+    extractionPart: 'peak' | 'arc' | 'crossbar' | 'stem' | 'bowl';
+    zoomLevel: number;           // 1.0-3.0
+    abstractionLevel: number;    // 0-1
+    frameType: 'none' | 'circle' | 'box';
+    rotation: number;            // 0-360
 }
 
-// Initial Synthesis Parameters (Cole Palmer Rule)
-export interface InitialSynthesisParams extends BaseParameters {
-    mode: 'merged' | 'athletic' | 'geometric' | 'flowing';
-    letterPair: [string, string];
-    shareStroke: boolean;
-    mergePoint: Point;
-    strokeWeight: number;
-    curveTension: number;
-    cornerRadius: number;
-    verticalBias: number;
-    horizontalBias: number;
-    silhouetteStyle: 'abstract' | 'pose' | 'symbol';
+export interface CloverRadialParams extends BaseParameters {
+    petalCount: number;          // 3-6
+    petalShape: 'round' | 'pointed' | 'heart' | 'shield';
+    overlap: number;             // 0-0.5
+    rotationOffset: number;      // 0-360
+    centerGap: number;           // 0-20
 }
 
-/**
- * Union type for all ABSTRACT algorithm parameters
- * Only includes professional-grade abstract mark generators
- */
 export type AlgorithmParams =
-    // === LETTERMARKS ===
-    | FramedLetterParams       // Notion-style letter in frame
-    | LetterSwooshParams       // Arc-style letter with swoosh
-    | MonogramBlendParams      // Intertwined letters
-    | LetterGradientParams     // Gradient lettermark
-    | BoxLogoParams            // Boxed lettermark
-
-    // === GEOMETRIC ABSTRACTS ===
-    | GradientBarsParams       // Stripe-style bars
-    | MotionLinesParams        // Linear-style lines
-    | PerfectTriangleParams    // Vercel-style triangle
-    | DepthGeometryParams      // Abstract with depth
-    | IsometricCubeParams      // 3D isometric
-    | HexagonTechParams        // Tech hexagon pattern
-    | StackedLinesParams       // Stacked horizontal lines
-
-    // === STARBURST/RADIAL ===
-    | StarburstParams          // Claude-style radial arms
-
-    // === OVERLAPPING SHAPES ===
-    | CircleOverlapParams      // Figma-style circles
-    | OrbitalRingsParams       // Intersecting rings
-    | FlowGradientParams       // Flowing organic shape
-
-    // === LINE ART/CONTINUOUS ===
-    | AbstractMarkParams       // Abstract angular mark
-    | InfinityLoopParams       // Meta-style infinity
-    | MazePatternParams        // Abstract maze lines
-    | FingerprintIdParams      // Abstract spiral lines
-
-    // === ABSTRACT PATTERNS ===
-    | OrbitalPathsParams       // Abstract orbital pattern
-    | DnaHelixParams           // Abstract helix pattern
-
-    // === VISUAL SYNTHESIS ===
-    | InitialSynthesisParams;  // Cole Palmer Rule - merged initials
+    | LineFragmentationParams
+    | StaggeredBarsParams
+    | BlockAssemblyParams
+    | MotionChevronsParams
+    | NegativeSpaceParams
+    | InterlockingLoopsParams
+    | MonogramMergeParams
+    | ContinuousStrokeParams
+    | GeometricExtractParams
+    | CloverRadialParams;
 
 // ============================================
 // INPUT PARAMETERS

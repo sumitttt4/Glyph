@@ -11,7 +11,7 @@ import { generateBrandStrategy } from '@/lib/strategy-engine';
 import { incrementGenerationCount } from '@/app/actions/stats';
 import {
     generateLogos,
-    generateSemanticLogos, // Imported semantic engine
+    // generateSemanticLogos removed
     LogoCategory,
     LogoAesthetic,
     LogoAlgorithm,
@@ -507,15 +507,12 @@ export function useBrandGenerator() {
         const currentAlgorithm = baseBrand.generatedLogos?.[0]?.algorithm;
         const archetype = baseBrand.archetype;
 
-        // Curated algorithm groups for visual variety (ABSTRACT MARKS ONLY)
+        // Curated algorithm groups for visual variety (MODERN TECHNIQUES ONLY)
         const algorithmGroups: LogoAlgorithm[][] = [
-            ['starburst', 'orbital-rings', 'flow-gradient', 'infinity-loop'],                  // Radial/Organic
-            ['framed-letter', 'monogram-blend', 'letter-gradient', 'box-logo'],               // Lettermarks
-            ['abstract-mark', 'depth-geometry', 'isometric-cube', 'hexagon-tech'],            // Abstract/3D
-            ['gradient-bars', 'motion-lines', 'stacked-lines'],                               // Linear/Bars
-            ['perfect-triangle', 'circle-overlap'],                                            // Geometric
-            ['letter-swoosh'],                                                                 // Dynamic
-            ['dna-helix', 'orbital-paths', 'fingerprint-id', 'maze-pattern'],                 // Advanced
+            ['continuous-stroke', 'line-fragmentation', 'staggered-bars'],                    // Linear/Data
+            ['negative-space', 'monogram-merge', 'geometric-extract'],                        // Lettermarks
+            ['block-assembly', 'motion-chevrons', 'interlocking-loops'],                      // Geometric/Structure
+            ['clover-radial'],                                                                // Radial
         ];
 
         // Select algorithm pool based on archetype

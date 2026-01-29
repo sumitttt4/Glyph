@@ -15,6 +15,7 @@ import {
     QualityMetrics,
     SymmetryType,
     Point,
+    RejectionReason, // Added
 } from '../types';
 
 // ============================================
@@ -114,7 +115,7 @@ function sha256Fallback(message: string): string {
         const w: number[] = new Array(64);
         for (let j = 0; j < 16; j++) {
             w[j] = (bytes[i + j * 4] << 24) | (bytes[i + j * 4 + 1] << 16) |
-                   (bytes[i + j * 4 + 2] << 8) | bytes[i + j * 4 + 3];
+                (bytes[i + j * 4 + 2] << 8) | bytes[i + j * 4 + 3];
         }
         for (let j = 16; j < 64; j++) {
             w[j] = (gamma1(w[j - 2]) + w[j - 7] + gamma0(w[j - 15]) + w[j - 16]) >>> 0;
@@ -328,24 +329,20 @@ export function deriveParamsFromHash(hashHex: string): HashDerivedParams {
     };
 }
 
+// ... (previous code)
+
 // ============================================
 // QUALITY SCORING SYSTEM - ABSTRACT MARKS ONLY
 // ============================================
 
-/**
- * Rejection reasons for logging
- */
-export interface RejectionReason {
-    reason: string;
-    value: number;
-    threshold: number;
-}
+// RejectionReason is imported from types.ts
 
 /**
  * CLIPART DETECTION PATTERNS
  * These patterns indicate literal/clipart-like shapes that should be rejected
  */
 const CLIPART_PATTERNS = {
+    // ... (rest of the file)
     // Literal object indicators
     literalHeart: /[Mm].*[Cc].*[Cc].*[Zz]/i, // Heart shape pattern
     literalStar: /(polygon|star)/i,
