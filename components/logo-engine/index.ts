@@ -83,6 +83,72 @@ export {
     selectAlgorithmForBrand,
 } from './infinite-engine';
 
+// Smart logo system exports
+export {
+    selectBestAlgorithms,
+    getTopAlgorithms,
+    validateAccessibility,
+    validateStyleConsistency,
+    suggestWordmarkStyles,
+    suggestColorPalettes,
+    analyzeBrand,
+    INDUSTRY_ALGORITHM_MAP,
+    PERSONALITY_ALGORITHM_MAP,
+} from './core/smart-logo-system';
+export type { BrandProfile, BrandAnalysis, AccessibilityResult, StyleConsistencyResult, ColorPaletteSuggestion } from './core/smart-logo-system';
+
+// SVG effects exports
+export {
+    createDropShadowFilter,
+    createInnerShadowFilter,
+    createLongShadowFilter,
+    createOuterGlowFilter,
+    createInnerGlowFilter,
+    createBevelFilter,
+    createEmbossFilter,
+    createNoiseTextureFilter,
+    createGrainTextureFilter,
+    createHalftoneTextureFilter,
+    createLinearGradientDef,
+    createRadialGradientDef,
+    createDuotoneFilter,
+    createColorOverlayFilter,
+    createBlurFilter,
+    applyEffects,
+    applyPresetToSvg,
+    getAvailablePresets,
+    getPresetInfo,
+    EFFECT_PRESETS,
+} from './core/svg-effects';
+export type {
+    ShadowEffect,
+    GlowEffect,
+    BevelEffect,
+    TextureEffect,
+    GradientEffect,
+    GradientStop,
+    ColorOverlay,
+    LogoEffect,
+    EffectPreset,
+    EffectResult,
+} from './core/svg-effects';
+
+// Brand guidelines exports
+export {
+    generateBrandGuidelines,
+    exportGuidelinesAsMarkdown,
+    exportGuidelinesAsJSON,
+} from './core/brand-guidelines';
+export type {
+    BrandGuidelines,
+    ClearSpaceRule,
+    MinimumSizeRule,
+    ColorVariation,
+    UsageRule,
+    TypographySuggestion,
+    ApplicationExample,
+} from './core/brand-guidelines';
+
 
 export const ALL_ALGORITHMS: LogoAlgorithm[] = [
     'line-fragmentation',
