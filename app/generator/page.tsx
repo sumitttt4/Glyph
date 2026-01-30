@@ -388,7 +388,7 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
         />
 
 
-        <div className={`relative z-10 transition-all duration-500 w-full min-h-full pt-4 md:pt-20 pb-20 px-2 md:px-0 ${isDarkMode ? 'dark' : ''}`}>
+        <div className={`relative z-10 transition-all duration-500 w-full min-h-full pt-4 md:pt-20 ${viewMode === 'presentation' ? 'pb-0' : 'pb-20'} px-2 md:px-0 ${isDarkMode ? 'dark' : ''}`}>
           {brand ? (
             <div className="max-w-7xl mx-auto">
               <WorkbenchBentoGrid
