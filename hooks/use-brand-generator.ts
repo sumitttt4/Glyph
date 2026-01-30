@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { BrandIdentity } from '@/lib/data';
+import { BrandIdentity, LegalEntityType } from '@/lib/data';
 import { THEMES } from '@/lib/themes';
 import { SHAPES } from '@/lib/shapes';
 import { fontPairings } from '@/lib/fonts';
@@ -75,6 +75,7 @@ export function useBrandGenerator() {
             prompt?: string;
             surpriseMe?: boolean;
             category?: string;
+            legalEntity?: LegalEntityType;
         } = {}
     ) => {
         setIsGenerating(true);
@@ -359,6 +360,7 @@ export function useBrandGenerator() {
             id: crypto.randomUUID(),
             vibe,
             name: name.trim() || 'Untitled Brand',
+            legalEntity: options.legalEntity, // Optional legal suffix (LLC, Inc., etc.)
             theme: selectedTheme,
             shape: selectedShape,
             archetype: options.archetype,

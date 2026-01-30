@@ -181,15 +181,21 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
             fontWeight = '300';
         }
 
+        // Legal entity styling: ~45% font size, lower opacity, lighter weight
+        const legalEntity = brand.legalEntity && brand.legalEntity !== 'None' ? brand.legalEntity : null;
+        const baseFontSize = 24;
+        const legalFontSize = Math.round(baseFontSize * 0.45); // ~45% of brand name
+        const viewBoxWidth = legalEntity ? 240 : 200; // Expand viewBox if legal entity present
+
         return (
-            <motion.svg viewBox="0 0 200 60" className={className} xmlns="http://www.w3.org/2000/svg">
+            <motion.svg viewBox={`0 0 ${viewBoxWidth} 60`} className={className} xmlns="http://www.w3.org/2000/svg">
                 <motion.text
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
-                    x="100"
+                    x={legalEntity ? "90" : "100"}
                     y="38"
-                    fontSize="24"
+                    fontSize={baseFontSize}
                     fontFamily={fontFamily}
                     fontWeight={fontWeight}
                     letterSpacing={tracking}
@@ -199,6 +205,23 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
                 >
                     {brand.name}
                 </motion.text>
+                {/* Legal Entity Suffix - Hierarchy styling */}
+                {legalEntity && (
+                    <motion.text
+                        initial={{ opacity: 0, x: -5 }}
+                        animate={{ opacity: 0.6, x: 0 }}
+                        transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                        x={90 + (brand.name.length * baseFontSize * 0.32) + 8}
+                        y="38"
+                        fontSize={legalFontSize}
+                        fontFamily={fontFamily}
+                        fontWeight="400"
+                        fill={primaryColor}
+                        opacity="0.6"
+                    >
+                        {legalEntity}
+                    </motion.text>
+                )}
             </motion.svg>
         );
     }

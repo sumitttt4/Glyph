@@ -47,13 +47,15 @@ function extractSVGContent(svg: string): string {
 
 /**
  * Generate horizontal lockup variation (icon left, wordmark right)
+ * Legal entity is rendered with hierarchy styling (smaller, lighter)
  */
 function generateHorizontalLockup(
     baseSvg: string,
     brandName: string,
     fontFamily: string,
     primaryColor: string,
-    textColor: string
+    textColor: string,
+    legalEntity?: string
 ): LogoVariation {
     const { width, height } = getViewBoxDimensions(baseSvg);
     const innerContent = extractSVGContent(baseSvg);
@@ -61,9 +63,17 @@ function generateHorizontalLockup(
     const iconSize = 48;
     const gap = 16;
     const fontSize = 28;
+    const legalFontSize = Math.round(fontSize * 0.45); // ~45% of brand name size
     const textWidth = brandName.length * fontSize * 0.65;
-    const totalWidth = iconSize + gap + textWidth + 20;
+    const legalWidth = legalEntity ? legalEntity.length * legalFontSize * 0.6 : 0;
+    const legalGap = legalEntity ? 8 : 0; // Gap between name and legal
+    const totalWidth = iconSize + gap + textWidth + legalGap + legalWidth + 20;
     const totalHeight = Math.max(iconSize, 48);
+
+    // Legal entity element with hierarchy styling
+    const legalSuffix = legalEntity
+        ? `<text x="${iconSize + gap + textWidth + legalGap}" y="${totalHeight / 2 + fontSize / 3}" font-family="${fontFamily}, system-ui, sans-serif" font-size="${legalFontSize}" font-weight="400" fill="${textColor}" opacity="0.6">${legalEntity}</text>`
+        : '';
 
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalWidth} ${totalHeight}" fill="none">
@@ -75,6 +85,7 @@ function generateHorizontalLockup(
     <text x="${iconSize + gap}" y="${totalHeight / 2 + fontSize / 3}" font-family="${fontFamily}, system-ui, sans-serif" font-size="${fontSize}" font-weight="700" fill="${textColor}">
         ${brandName}
     </text>
+    ${legalSuffix}
 </svg>`;
 
     return {
@@ -88,13 +99,15 @@ function generateHorizontalLockup(
 
 /**
  * Generate stacked lockup variation (icon top, wordmark below)
+ * Legal entity is rendered with hierarchy styling (smaller, lighter)
  */
 function generateStackedLockup(
     baseSvg: string,
     brandName: string,
     fontFamily: string,
     primaryColor: string,
-    textColor: string
+    textColor: string,
+    legalEntity?: string
 ): LogoVariation {
     const { width, height } = getViewBoxDimensions(baseSvg);
     const innerContent = extractSVGContent(baseSvg);
@@ -102,9 +115,21 @@ function generateStackedLockup(
     const iconSize = 64;
     const gap = 12;
     const fontSize = 24;
+    const legalFontSize = Math.round(fontSize * 0.45); // ~45% of brand name size
     const textWidth = brandName.length * fontSize * 0.65;
-    const totalWidth = Math.max(iconSize, textWidth) + 24;
+    const legalWidth = legalEntity ? legalEntity.length * legalFontSize * 0.6 : 0;
+    const totalTextWidth = textWidth + (legalEntity ? 6 + legalWidth : 0);
+    const totalWidth = Math.max(iconSize, totalTextWidth) + 24;
     const totalHeight = iconSize + gap + fontSize + 16;
+
+    // Calculate text positioning for centering with legal entity
+    const textY = iconSize + gap + fontSize;
+    const nameX = totalWidth / 2 - (legalEntity ? (textWidth + 6 + legalWidth) / 2 - textWidth / 2 : 0);
+
+    // Legal entity element with hierarchy styling
+    const legalSuffix = legalEntity
+        ? `<text x="${nameX + textWidth / 2 + 6}" y="${textY}" font-family="${fontFamily}, system-ui, sans-serif" font-size="${legalFontSize}" font-weight="400" fill="${textColor}" opacity="0.6">${legalEntity}</text>`
+        : '';
 
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalWidth} ${totalHeight}" fill="none">
@@ -113,9 +138,10 @@ function generateStackedLockup(
         ${innerContent}
     </svg>
     <!-- Brand Name (centered) -->
-    <text x="${totalWidth / 2}" y="${iconSize + gap + fontSize}" font-family="${fontFamily}, system-ui, sans-serif" font-size="${fontSize}" font-weight="700" fill="${textColor}" text-anchor="middle">
+    <text x="${legalEntity ? nameX : totalWidth / 2}" y="${textY}" font-family="${fontFamily}, system-ui, sans-serif" font-size="${fontSize}" font-weight="700" fill="${textColor}" text-anchor="${legalEntity ? 'start' : 'middle'}">
         ${brandName}
     </text>
+    ${legalSuffix}
 </svg>`;
 
     return {
@@ -144,22 +170,33 @@ function generateIconOnly(baseSvg: string): LogoVariation {
 
 /**
  * Generate wordmark-only variation (text without symbol)
+ * Legal entity is rendered with hierarchy styling (smaller, lighter)
  */
 function generateWordmarkOnly(
     brandName: string,
     fontFamily: string,
-    primaryColor: string
+    primaryColor: string,
+    legalEntity?: string
 ): LogoVariation {
     const fontSize = 36;
+    const legalFontSize = Math.round(fontSize * 0.45); // ~45% of brand name size
     const textWidth = brandName.length * fontSize * 0.65;
-    const totalWidth = textWidth + 20;
+    const legalWidth = legalEntity ? legalEntity.length * legalFontSize * 0.6 : 0;
+    const legalGap = legalEntity ? 8 : 0;
+    const totalWidth = textWidth + legalGap + legalWidth + 20;
     const totalHeight = fontSize + 20;
+
+    // Legal entity element with hierarchy styling (lower opacity, lighter weight)
+    const legalSuffix = legalEntity
+        ? `<text x="${totalWidth / 2 + textWidth / 2 + legalGap}" y="${totalHeight / 2 + fontSize / 3}" font-family="${fontFamily}, system-ui, sans-serif" font-size="${legalFontSize}" font-weight="400" fill="${primaryColor}" opacity="0.6">${legalEntity}</text>`
+        : '';
 
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalWidth} ${totalHeight}" fill="none">
-    <text x="${totalWidth / 2}" y="${totalHeight / 2 + fontSize / 3}" font-family="${fontFamily}, system-ui, sans-serif" font-size="${fontSize}" font-weight="700" fill="${primaryColor}" text-anchor="middle">
+    <text x="${legalEntity ? totalWidth / 2 - (textWidth + legalGap + legalWidth) / 2 + textWidth / 2 : totalWidth / 2}" y="${totalHeight / 2 + fontSize / 3}" font-family="${fontFamily}, system-ui, sans-serif" font-size="${fontSize}" font-weight="700" fill="${primaryColor}" text-anchor="middle">
         ${brandName}
     </text>
+    ${legalSuffix}
 </svg>`;
 
     return {
@@ -269,6 +306,8 @@ function generateLightVersion(baseSvg: string): LogoVariation {
 
 /**
  * Generate all 6 logo variations from a base logo and brand identity
+ * Legal entity is only shown in wordmark contexts (horizontal, stacked, wordmark-only)
+ * Icon-only contexts do NOT show legal entity (too small to read)
  */
 export function generateLogoVariations(
     logo: GeneratedLogo,
@@ -276,15 +315,18 @@ export function generateLogoVariations(
 ): LogoVariations {
     const baseSvg = logo.svg;
     const brandName = brand.name;
+    const legalEntity = brand.legalEntity && brand.legalEntity !== 'None' ? brand.legalEntity : undefined;
     const fontFamily = brand.font.headingName || brand.font.heading || 'Inter';
     const primaryColor = brand.theme.tokens.light.primary;
     const textColor = brand.theme.tokens.light.text;
 
     return {
-        horizontal: generateHorizontalLockup(baseSvg, brandName, fontFamily, primaryColor, textColor),
-        stacked: generateStackedLockup(baseSvg, brandName, fontFamily, primaryColor, textColor),
+        // Wordmark contexts show legal entity
+        horizontal: generateHorizontalLockup(baseSvg, brandName, fontFamily, primaryColor, textColor, legalEntity),
+        stacked: generateStackedLockup(baseSvg, brandName, fontFamily, primaryColor, textColor, legalEntity),
+        wordmarkOnly: generateWordmarkOnly(brandName, fontFamily, primaryColor, legalEntity),
+        // Icon contexts do NOT show legal entity (too small)
         iconOnly: generateIconOnly(baseSvg),
-        wordmarkOnly: generateWordmarkOnly(brandName, fontFamily, primaryColor),
         dark: generateDarkVersion(baseSvg),
         light: generateLightVersion(baseSvg),
     };

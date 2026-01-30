@@ -4,6 +4,26 @@ import React, { useState, useRef, useMemo } from 'react';
 import { BrandIdentity } from '@/lib/data';
 import { cn, generateDeepColor } from '@/lib/utils';
 import { Check, Copy, Download, Code, FileText, Dices, Palette, RefreshCw, X, Search, Menu, User, Settings, Home, Bell, Mail, Calendar, MapPin, ArrowRight, ChevronDown, Plus, AlertCircle, Info, Heart, Share2, Star, MoreHorizontal } from 'lucide-react';
+import {
+    Home01Icon,
+    Menu01Icon,
+    ArrowDown01Icon,
+    ArrowRight01Icon,
+    MoreHorizontalIcon,
+    Cancel01Icon,
+    Search01Icon,
+    Add01Icon,
+    Settings01Icon,
+    Share01Icon,
+    Download01Icon,
+    Copy01Icon,
+    UserCircleIcon,
+    Mail01Icon,
+    Notification01Icon,
+    FavouriteIcon,
+    StarIcon,
+    Location01Icon
+} from 'hugeicons-react';
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 import { FontConfig } from '@/lib/fonts';
 import { FontSelector } from './FontSelector';
@@ -662,105 +682,158 @@ function TypographySection({ brand, onUpdateFont }: { brand: BrandIdentity; onUp
 
 function IconographySection({ brand }: { brand: BrandIdentity }) {
     const primary = brand.theme.tokens.light.primary;
+    const [copied, setCopied] = useState(false);
+
+    // Determine stroke width based on vibe (SaaS: 1.5px, Crypto: 1px)
+    const isCryptoVibe = brand.vibe.toLowerCase().includes('crypto') ||
+        brand.vibe.toLowerCase().includes('blockchain') ||
+        brand.vibe.toLowerCase().includes('fintech');
+    const strokeWidth = isCryptoVibe ? 1 : 1.5;
+
+    const handleCopyNpm = () => {
+        navigator.clipboard.writeText('npm install hugeicons-react');
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
 
     const IconCard = ({ icon: Icon, label }: { icon: any, label: string }) => {
-        const isActionable = label === 'Copy' || label === 'Download';
-        const handleAction = () => {
-            if (isActionable) {
-                navigator.clipboard.writeText('npm install lucide-react');
-                // Simple alert as requested for immediate feedback
-                alert('Copied specific command: npm install lucide-react');
-            }
-        };
-
         return (
             <div
-                onClick={handleAction}
                 className={cn(
-                    "flex flex-col items-center gap-3 p-4 rounded-xl border border-stone-100 bg-stone-50 hover:bg-white hover:shadow-md transition-all group",
-                    isActionable && "cursor-pointer active:scale-95 ring-2 ring-offset-2 ring-transparent hover:ring-stone-200"
+                    "flex flex-col items-center gap-3 p-4 rounded-xl border border-stone-100 bg-stone-50 hover:bg-white hover:shadow-md transition-all group"
                 )}
             >
                 <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white border border-stone-200 text-stone-600 group-hover:border-transparent group-hover:text-white transition-colors"
                     style={{ '--tw-bg-opacity': 1, '--icon-hover': primary } as React.CSSProperties}
                 >
-                    {/* We use inline style for hover color via CSS variable or direct style if possible. Framer motion is better but keeping it simple. */}
                     <Icon
                         size={20}
+                        strokeWidth={strokeWidth}
                         className="transition-colors duration-300 group-hover:text-[var(--icon-color)]"
                         style={{ '--icon-color': primary } as React.CSSProperties}
                     />
                 </div>
                 <span className="text-xs font-medium text-stone-500 group-hover:text-stone-900 flex items-center gap-1">
                     {label}
-                    {isActionable && <span className="text-[10px] opacity-0 group-hover:opacity-50">↵</span>}
                 </span>
             </div>
         );
     };
 
+    // HugeIcons categories for 4x2 grid layout per category
     const categories = [
         {
             title: "Navigation",
             icons: [
-                { icon: Home, label: "Home" },
-                { icon: Menu, label: "Menu" },
-                { icon: ChevronDown, label: "Dropdown" },
-                { icon: ArrowRight, label: "Arrow" },
-                { icon: MoreHorizontal, label: "More" }, // Need to import MoreHorizontal or just use dots
-                { icon: X, label: "Close" },
+                { icon: Home01Icon, label: "Home" },
+                { icon: Menu01Icon, label: "Menu" },
+                { icon: ArrowDown01Icon, label: "Dropdown" },
+                { icon: ArrowRight01Icon, label: "Arrow" },
+                { icon: MoreHorizontalIcon, label: "More" },
+                { icon: Cancel01Icon, label: "Close" },
             ]
         },
         {
             title: "Actions",
             icons: [
-                { icon: Search, label: "Search" },
-                { icon: Plus, label: "Add" },
-                { icon: Settings, label: "Settings" },
-                { icon: Share2, label: "Share" },
-                { icon: Download, label: "Download" },
-                { icon: Copy, label: "Copy" },
+                { icon: Search01Icon, label: "Search" },
+                { icon: Add01Icon, label: "Add" },
+                { icon: Settings01Icon, label: "Settings" },
+                { icon: Share01Icon, label: "Share" },
+                { icon: Download01Icon, label: "Download" },
+                { icon: Copy01Icon, label: "Copy" },
             ]
         },
         {
             title: "Communication",
             icons: [
-                { icon: User, label: "Profile" },
-                { icon: Mail, label: "Email" },
-                { icon: Bell, label: "Notify" },
-                { icon: Heart, label: "Like" },
-                { icon: Star, label: "Favorite" },
-                { icon: MapPin, label: "Location" },
+                { icon: UserCircleIcon, label: "Profile" },
+                { icon: Mail01Icon, label: "Email" },
+                { icon: Notification01Icon, label: "Notify" },
+                { icon: FavouriteIcon, label: "Like" },
+                { icon: StarIcon, label: "Favorite" },
+                { icon: Location01Icon, label: "Location" },
             ]
         }
     ];
 
     return (
-        <div className="space-y-12">
-            {categories.map((cat, i) => (
-                <div key={i}>
-                    <h4 className="text-sm font-bold text-stone-400 uppercase tracking-widest mb-6">{cat.title}</h4>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
-                        {cat.icons.map((item, j) => (
-                            <IconCard key={j} icon={item.icon} label={item.label} />
-                        ))}
-                    </div>
+        <div className="space-y-6">
+            {/* HugeIcons Partner Badge - stays on brand background */}
+            <div className="flex items-center justify-between">
+                <a
+                    href="https://hugeicons.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                >
+                    <span className="text-xs font-semibold uppercase tracking-wider text-white/60">Powered by</span>
+                    <span className="text-sm font-bold text-white">HugeIcons</span>
+                </a>
+                <div className="flex items-center gap-2">
+                    {/* Figma Plugin Button */}
+                    <a
+                        href="https://www.figma.com/community/plugin/1209922740177393208/hugeicons-pro-icon-library"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-lg border bg-white/10 border-white/20 text-white/80 hover:bg-white/20 hover:border-[#A259FF] transition-all"
+                    >
+                        {/* Figma Logo */}
+                        <svg width="12" height="18" viewBox="0 0 38 57" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 28.5C19 23.2533 23.2533 19 28.5 19C33.7467 19 38 23.2533 38 28.5C38 33.7467 33.7467 38 28.5 38C23.2533 38 19 33.7467 19 28.5Z" fill="#1ABCFE" />
+                            <path d="M0 47.5C0 42.2533 4.25329 38 9.5 38H19V47.5C19 52.7467 14.7467 57 9.5 57C4.25329 57 0 52.7467 0 47.5Z" fill="#0ACF83" />
+                            <path d="M19 0V19H28.5C33.7467 19 38 14.7467 38 9.5C38 4.25329 33.7467 0 28.5 0H19Z" fill="#FF7262" />
+                            <path d="M0 9.5C0 14.7467 4.25329 19 9.5 19H19V0H9.5C4.25329 0 0 4.25329 0 9.5Z" fill="#F24E1E" />
+                            <path d="M0 28.5C0 33.7467 4.25329 38 9.5 38H19V19H9.5C4.25329 19 0 23.2533 0 28.5Z" fill="#A259FF" />
+                        </svg>
+                        Figma
+                    </a>
+                    {/* NPM Install Button */}
+                    <button
+                        onClick={handleCopyNpm}
+                        className={cn(
+                            "flex items-center gap-2 px-3 py-2 text-xs font-mono rounded-lg border transition-all",
+                            copied
+                                ? "bg-white/20 border-white/30 text-white"
+                                : "bg-white/10 border-white/20 text-white/80 hover:bg-white/20"
+                        )}
+                    >
+                        {copied ? (
+                            <><Check size={14} /> Copied!</>
+                        ) : (
+                            <><Copy size={14} /> npm install hugeicons-react</>
+                        )}
+                    </button>
                 </div>
-            ))}
+            </div>
 
-            {/* Usage Example */}
-            <div className="mt-8 p-6 bg-stone-50 rounded-xl border border-stone-200">
-                <div className="flex gap-4 items-center">
-                    <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center">
-                        <Info size={20} className="text-stone-500" />
+            {/* White Documentation Card - easy on the eyes */}
+            <div className="bg-white rounded-2xl border border-stone-200 p-8 space-y-10">
+                {categories.map((cat, i) => (
+                    <div key={i}>
+                        <h4 className="text-sm font-bold text-stone-400 uppercase tracking-widest mb-6">{cat.title}</h4>
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
+                            {cat.icons.map((item, j) => (
+                                <IconCard key={j} icon={item.icon} label={item.label} />
+                            ))}
+                        </div>
                     </div>
-                    <div>
-                        <h5 className="font-bold text-stone-900 text-sm">Icon Usage</h5>
-                        <p className="text-xs text-stone-500 mt-1 max-w-lg">
-                            Icons should be used to enhance comprehension, not decoration.
-                            Use the 24px grid for primary actions and 16px for secondary indicators.
-                            Stroke width should be consistent (2px recommended).
-                        </p>
+                ))}
+
+                {/* Usage Example - inside the white card */}
+                <div className="mt-8 p-6 bg-stone-50 rounded-xl border border-stone-200">
+                    <div className="flex gap-4 items-center">
+                        <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center">
+                            <Info size={20} className="text-stone-500" />
+                        </div>
+                        <div>
+                            <h5 className="font-bold text-stone-900 text-sm">Icon Usage</h5>
+                            <p className="text-xs text-stone-500 mt-1 max-w-lg">
+                                Icons should be used to enhance comprehension, not decoration.
+                                Use the 24px grid for primary actions and 16px for secondary indicators.
+                                Stroke width: <strong>{strokeWidth}px</strong> ({isCryptoVibe ? 'Crypto/Fintech style' : 'SaaS style'}).
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

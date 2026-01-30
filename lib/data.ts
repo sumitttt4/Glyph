@@ -39,11 +39,17 @@ export interface FontPair {
 }
 
 // The main output of the generator
+// Legal entity options for brand names
+export type LegalEntityType = 'None' | 'LLC' | 'Inc.' | 'Ltd.' | 'Corp.' | 'Co.' | 'Pvt Ltd.';
+
+export const LEGAL_ENTITIES: LegalEntityType[] = ['None', 'LLC', 'Inc.', 'Ltd.', 'Corp.', 'Co.', 'Pvt Ltd.'];
+
 export interface BrandIdentity {
   id: string;
   vibe: string;
   category?: string;
   name: string;
+  legalEntity?: LegalEntityType; // Optional legal suffix (LLC, Inc., etc.)
 
   // Visual Core
   theme: Theme;

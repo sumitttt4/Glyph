@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Check, Shuffle } from 'lucide-react';
+import { Check, Shuffle, ChevronDown } from 'lucide-react';
 import { VibeSelector } from './VibeSelector';
 import { expandBriefWithAI, suggestVibeWithAI, expandVibeWithAI } from '@/lib/brand-generator';
 import { GlyphIcon } from '@/components/logo-engine/LogoGlyph';
+import { LegalEntityType, LEGAL_ENTITIES } from '@/lib/data';
 
 import { ArchetypeSelector } from './ArchetypeSelector';
 import { BrandContextSelector, INDUSTRIES } from './BrandContextSelector';
@@ -19,6 +20,7 @@ export interface GenerationOptions {
     gradient?: { colors: string[]; angle: number } | null;
     surpriseMe?: boolean;
     category?: string;
+    legalEntity?: LegalEntityType;
 }
 
 export interface SidebarProps {
@@ -89,6 +91,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
     const [isShapesOpen, setIsShapesOpen] = useState(false);
     const [isAiLoading, setIsAiLoading] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(INDUSTRIES[0]);
+    const [selectedLegalEntity, setSelectedLegalEntity] = useState<LegalEntityType>('None');
 
     const isValid = brandName.trim().length > 0 && prompt.trim().length > 0 && (selectedVibe || customVibe.trim().length > 0);
 
@@ -153,7 +156,8 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
             archetype: selectedArchetype,
             shape: selectedShape || undefined,
             gradient: gradientObj ? { colors: gradientObj.colors, angle: gradientObj.angle } : null,
-            category: selectedCategory.id
+            category: selectedCategory.id,
+            legalEntity: selectedLegalEntity !== 'None' ? selectedLegalEntity : undefined
         });
     };
 
@@ -290,6 +294,26 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                                 className="flex h-10 w-full rounded-lg border border-stone-200 bg-transparent px-3 py-2 text-sm shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2 placeholder:text-stone-400 hover:border-stone-300"
                                 placeholder="e.g. Acme Corp"
                             />
+                        </div>
+
+                        {/* Legal Entity Selector */}
+                        <div className="space-y-2">
+                            <label className="text-[13px] font-medium text-stone-700">Legal Entity <span className="text-stone-400 font-normal">(Optional)</span></label>
+                            <div className="relative">
+                                <select
+                                    value={selectedLegalEntity}
+                                    onChange={(e) => setSelectedLegalEntity(e.target.value as LegalEntityType)}
+                                    className="flex h-10 w-full appearance-none rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2 hover:border-stone-300 cursor-pointer pr-10"
+                                >
+                                    {LEGAL_ENTITIES.map((entity) => (
+                                        <option key={entity} value={entity}>
+                                            {entity === 'None' ? 'None' : entity}
+                                        </option>
+                                    ))}
+                                </select>
+                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" />
+                            </div>
+                            <p className="text-[11px] text-stone-400">Legal suffix displayed smaller next to the brand name</p>
                         </div>
 
                         <div className="space-y-2 relative">

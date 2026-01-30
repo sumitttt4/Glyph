@@ -176,7 +176,8 @@ export default function GeneratorPage() {
       shape: options.shape,
       gradient: options.gradient,
       surpriseMe: options.surpriseMe,
-      category: options.category
+      category: options.category,
+      legalEntity: options.legalEntity
     });
   }, [generateBrand]);
 
