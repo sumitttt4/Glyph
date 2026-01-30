@@ -24,6 +24,7 @@ import {
 import { generateAllMockups } from '@/components/export/ExportMockups';
 import { generateTypographyExport, generateTypographyJSON } from '@/components/export/ExportTypography';
 import { generateBrandBookPDF } from '@/components/export/ExportPDF';
+import { generateAllEmailSignatures } from '@/components/export/ExportEmailSignature';
 import { generateAllBrandGraphics } from '@/lib/brand-graphics';
 import {
     hasValidExportState,
@@ -264,16 +265,24 @@ export async function exportBrandPackage(brand: BrandIdentity) {
     // ========================================================================
     logExport('Starting brand package export', { brandName: brand.name, brandId: brand.id });
 
-    // If no export state, set it from brand data
+    // CRITICAL: Always sync export state with current brand data before export
+    // This ensures we export exactly what the user sees, not stale state
+    const selectedLogo = getSelectedLogo(brand);
+    const storedSvg = selectedLogo?.svg || '';
+
+    if (!storedSvg) {
+        console.error('EXPORT ERROR: No logo SVG found. Cannot export without a logo.');
+        throw new Error('Cannot export: No logo available. Please regenerate your brand identity.');
+    }
+
+    // Refresh export state to guarantee synchronization
+    logExport('Syncing export state with current brand data');
+    setExportState(brand, storedSvg, selectedLogo);
+
+    // Verify export state is now valid
     if (!hasValidExportState()) {
-        logExport('WARNING: No export state set, initializing from brand data');
-        const selectedLogo = getSelectedLogo(brand);
-        const storedSvg = selectedLogo?.svg || '';
-        if (storedSvg) {
-            setExportState(brand, storedSvg, selectedLogo);
-        } else {
-            logExport('ERROR: No stored SVG found in brand data');
-        }
+        console.error('EXPORT ERROR: Failed to initialize export state');
+        throw new Error('Export state initialization failed. Please try again.');
     }
 
     // Log export metadata
@@ -294,8 +303,7 @@ export async function exportBrandPackage(brand: BrandIdentity) {
     const colors = brand.theme.tokens.light;
     const darkColors = brand.theme.tokens.dark;
 
-    // Get selected logo info for "primary" marking
-    const selectedLogo = getSelectedLogo(brand);
+    // Get selected logo index for reference
     const selectedLogoIndex = brand.selectedLogoIndex ?? 0;
 
     logExport('Selected logo info', {
@@ -620,7 +628,7 @@ module.exports = {
     }
 
     // ========================================================================
-    // 5. /guidelines FOLDER - Brand Guidelines PDF
+    // 5. /guidelines FOLDER - Brand Guidelines PDF + Icon Guidelines
     // ========================================================================
     const guidelines = root.folder("guidelines");
     if (guidelines) {
@@ -630,6 +638,237 @@ module.exports = {
         } catch (e) {
             console.error('Failed to generate brand guidelines PDF:', e);
         }
+
+        // Iconography Guidelines
+        const colors = brand.theme.tokens.light;
+        const iconographyGuide = `# Iconography Guidelines
+
+## Overview
+
+This guide provides recommendations for selecting and implementing icons that align with the ${brand.name} brand identity.
+
+## Recommended Icon Libraries
+
+### Primary Recommendation: Lucide Icons
+**Best for**: Modern, minimal brands with clean aesthetics
+
+- **Style**: Outline/stroke-based icons
+- **Stroke Width**: 2px (adjustable)
+- **Corner Radius**: Rounded
+- **License**: ISC (permissive open source)
+- **Installation**: \`npm install lucide-react\` or \`npm install lucide-vue-next\`
+- **Website**: https://lucide.dev
+
+**Why Lucide?**
+- Consistent stroke width across all icons
+- Professionally designed with attention to pixel perfection
+- Actively maintained with 1000+ icons
+- Works seamlessly with ${brand.name}'s clean aesthetic
+
+### Alternative: Heroicons
+**Best for**: Tailwind CSS users
+
+- **Style**: Solid and outline variants
+- **Stroke Width**: 1.5px
+- **License**: MIT
+- **Installation**: \`npm install @heroicons/react\`
+- **Website**: https://heroicons.com
+
+### Alternative: Phosphor Icons
+**Best for**: Brands needing extensive icon variety
+
+- **Style**: Multiple weights (thin, light, regular, bold, fill)
+- **Flexibility**: 6 different weights to choose from
+- **License**: MIT
+- **Installation**: \`npm install @phosphor-icons/react\`
+- **Website**: https://phosphoricons.com
+
+## Icon Style Specifications
+
+### Size Standards
+Use consistent icon sizes across your application:
+
+- **Small**: 16px - Inline with text, dense UIs
+- **Medium**: 20px - Default size for most use cases
+- **Large**: 24px - Emphasized actions, navigation
+- **Extra Large**: 32px - Feature highlights, empty states
+
+### Stroke Width
+Match your brand's typography weight:
+
+- **Light brand** (font-weight ≤ 400): Use 1.5px stroke
+- **Medium brand** (font-weight 500-600): Use 2px stroke
+- **Bold brand** (font-weight ≥ 700): Use 2.5px stroke
+
+**For ${brand.name}**: Recommended stroke width is **2px**
+
+### Color Usage
+
+#### Primary Icons
+Use brand primary color for:
+- Interactive elements (buttons, links)
+- Active states
+- Call-to-action icons
+
+\`\`\`css
+.icon-primary {
+  color: ${colors.primary};
+}
+\`\`\`
+
+#### Neutral Icons
+Use text/muted colors for:
+- Navigation icons
+- Informational icons
+- Decorative elements
+
+\`\`\`css
+.icon-neutral {
+  color: ${colors.text};
+}
+
+.icon-muted {
+  color: ${colors.muted || '#666666'};
+}
+\`\`\`
+
+### Spacing and Alignment
+
+**Icon Padding**: Always add 4-8px padding around clickable icons
+**Text Alignment**: Vertically center icons with text
+**Grid Alignment**: Icons should align to 8px grid for consistency
+
+## Implementation Examples
+
+### React with Lucide
+
+\`\`\`tsx
+import { Home, User, Settings } from 'lucide-react';
+
+function Navigation() {
+  return (
+    <nav>
+      <a href="/"><Home size={20} color="${colors.primary}" /></a>
+      <a href="/profile"><User size={20} /></a>
+      <a href="/settings"><Settings size={20} /></a>
+    </nav>
+  );
+}
+\`\`\`
+
+### Vue with Lucide
+
+\`\`\`vue
+<script setup>
+import { Home, User, Settings } from 'lucide-vue-next';
+</script>
+
+<template>
+  <nav>
+    <a href="/"><Home :size="20" color="${colors.primary}" /></a>
+    <a href="/profile"><User :size="20" /></a>
+    <a href="/settings"><Settings :size="20" /></a>
+  </nav>
+</template>
+\`\`\`
+
+### HTML/CSS
+
+\`\`\`html
+<!-- Using icon font or SVG sprite -->
+<button class="btn-primary">
+  <svg class="icon" width="20" height="20">
+    <use href="/icons.svg#home"></use>
+  </svg>
+  Home
+</button>
+
+<style>
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+  color: ${colors.primary};
+}
+</style>
+\`\`\`
+
+## Best Practices
+
+### DO ✅
+- Use icons consistently throughout your application
+- Maintain consistent sizing and spacing
+- Provide text labels for important actions
+- Use brand colors intentionally (primary for actions, neutral for info)
+- Test icon legibility at all sizes
+- Ensure sufficient color contrast (WCAG AA minimum)
+
+### DON'T ❌
+- Mix different icon styles/libraries in the same view
+- Use icons without sufficient padding for touch targets
+- Rely solely on icons without text for critical actions
+- Use too many different icon sizes
+- Override icon designs with custom styling
+- Use decorative icons for functional purposes
+
+## Accessibility
+
+### Always Provide:
+1. **Aria labels** for icon-only buttons:
+   \`\`\`html
+   <button aria-label="Close menu">
+     <XIcon />
+   </button>
+   \`\`\`
+
+2. **Descriptive titles** for informational icons:
+   \`\`\`html
+   <InfoIcon title="Additional help information" />
+   \`\`\`
+
+3. **Sufficient color contrast**: Minimum 4.5:1 ratio
+4. **Touch targets**: Minimum 44×44px for mobile
+
+## File Organization
+
+Recommended project structure:
+
+\`\`\`
+src/
+├── components/
+│   └── icons/
+│       ├── Icon.tsx           # Wrapper component
+│       └── index.ts           # Export all icons
+├── assets/
+│   └── icons/
+│       └── custom/            # Custom brand icons
+│           └── logo-icon.svg
+\`\`\`
+
+## Custom Icon Creation
+
+If creating custom icons:
+
+1. **Use same stroke width** as chosen library (2px)
+2. **Match corner radius** style (rounded)
+3. **Design on 24×24px grid** for base size
+4. **Maintain consistent optical weight**
+5. **Export as SVG** with viewBox="0 0 24 24"
+6. **Remove unnecessary attributes** (fill, stroke-width if using currentColor)
+
+## Resources
+
+- **Lucide Icons**: https://lucide.dev
+- **Heroicons**: https://heroicons.com
+- **Phosphor Icons**: https://phosphoricons.com
+- **Icon Design Tool**: Figma, Illustrator, or Inkscape
+- **SVG Optimization**: SVGO (https://github.com/svg/svgo)
+
+---
+
+*Generated for ${brand.name} • Following these guidelines ensures visual consistency across all brand touchpoints*
+`;
+        guidelines.file('iconography-guidelines.md', iconographyGuide);
     }
 
     // ========================================================================
@@ -795,7 +1034,284 @@ module.exports = {
     }
 
     // ========================================================================
-    // 9. README.md - Complete documentation
+    // 9. /email-signatures FOLDER - Professional email signatures
+    // ========================================================================
+    const emailFolder = root.folder("email-signatures");
+    if (emailFolder) {
+        const emailSignatures = generateAllEmailSignatures(brand);
+
+        for (const signature of emailSignatures) {
+            emailFolder.file(signature.filename, signature.html);
+
+            // Also include installation instructions for each
+            const instructionsFilename = signature.filename.replace('.html', '-instructions.txt').replace('.txt', '');
+            emailFolder.file(`${instructionsFilename}-instructions.txt`, signature.instructions);
+        }
+
+        // Add a master README for email signatures
+        const emailReadme = `# Email Signatures
+
+This folder contains professional email signature templates for ${brand.name}.
+
+## Available Templates
+
+- **Gmail** - Optimized for Gmail's signature editor
+- **Outlook** - Compatible with Outlook Desktop and Office 365
+- **Plain Text** - Fallback for clients without HTML support
+
+## Installation
+
+Each signature includes detailed installation instructions in its accompanying instructions file.
+
+### Quick Start
+
+1. Open the HTML file for your email client in a web browser
+2. Select all (Ctrl+A / Cmd+A) and copy
+3. Paste into your email client's signature editor
+4. Replace placeholder text with your actual information
+5. Save and test by sending yourself an email
+
+### Important Notes
+
+- Logo images are embedded as base64 data URIs (no external hosting needed)
+- All signatures are responsive and mobile-friendly
+- Colors match your brand palette automatically
+- Update contact information in [square brackets]
+
+For detailed platform-specific instructions, see the individual instruction files.
+`;
+        emailFolder.file('README.md', emailReadme);
+    }
+
+    // ========================================================================
+    // 10. /code-examples FOLDER - Integration snippets
+    // ========================================================================
+    const codeFolder = root.folder("code-examples");
+    if (codeFolder) {
+        const brandSlug = brand.name.toLowerCase().replace(/\s+/g, '-');
+
+        // React Logo Component
+        const reactComponent = `import React from 'react';
+
+/**
+ * ${brand.name} Logo Component
+ * 
+ * Usage:
+ *   <${brand.name.replace(/\s+/g, '')}Logo size={60} variant="color" />
+ * 
+ * Props:
+ *   size: number (default: 40) - Height of the logo in pixels
+ *   variant: 'color' | 'dark' | 'light' (default: 'color')
+ *   className: string (optional) - Additional CSS classes
+ */
+
+interface LogoProps {
+  size?: number;
+  variant?: 'color' | 'dark' | 'light';
+  className?: string;
+}
+
+export const ${brand.name.replace(/\s+/g, '')}Logo: React.FC<LogoProps> = ({ 
+  size = 40, 
+  variant = 'color',
+  className = '' 
+}) => {
+  return (
+    <img 
+      src={\`/assets/logos/logo-\${variant}.svg\`}
+      alt="${brand.name} Logo"
+      height={size}
+      className={\`logo-\${variant} \${className}\`}
+      style={{ height: size, width: 'auto' }}
+    />
+  );
+};
+
+export default ${brand.name.replace(/\s+/g, '')}Logo;
+`;
+        codeFolder.file(`${brandSlug}-logo.tsx`, reactComponent);
+
+        // Vue Logo Component
+        const vueComponent = `<template>
+  <img 
+    :src="\`/assets/logos/logo-\${variant}.svg\`"
+    :alt="\`${brand.name} Logo\`"
+    :height="size"
+    :class="\`logo-\${variant} \${className}\`"
+    :style="{ height: size + 'px', width: 'auto' }"
+  />
+</template>
+
+<script setup lang="ts">
+/**
+ * ${brand.name} Logo Component
+ * 
+ * Usage:
+ *   <${brand.name.replace(/\s+/g, '')}Logo :size="60" variant="color" />
+ */
+
+interface Props {
+  size?: number;
+  variant?: 'color' | 'dark' | 'light';
+  className?: string;
+}
+
+withDefaults(defineProps<Props>(), {
+  size: 40,
+  variant: 'color',
+  className: ''
+});
+</script>
+
+<style scoped>
+img {
+  display: inline-block;
+}
+</style>
+`;
+        codeFolder.file(`${brandSlug}-logo.vue`, vueComponent);
+
+        // HTML Navbar Example
+        const htmlNavbar = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${brand.name} - Navbar Example</title>
+    <link rel="stylesheet" href="../colors/colors.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--color-background);
+        }
+        
+        .navbar {
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--color-text);
+        }
+        
+        .navbar-logo {
+            height: 32px;
+            margin-right: 12px;
+        }
+        
+        .navbar-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        .navbar-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .navbar-link {
+            color: var(--color-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .navbar-link:hover {
+            color: var(--color-primary);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <img src="../logos/logo-horizontal.svg" alt="${brand.name}" class="navbar-logo">
+            <span class="navbar-name">${brand.name}</span>
+        </a>
+        <ul class="navbar-menu">
+            <li><a href="#" class="navbar-link">Home</a></li>
+            <li><a href="#" class="navbar-link">About</a></li>
+            <li><a href="#" class="navbar-link">Services</a></li>
+            <li><a href="#" class="navbar-link">Contact</a></li>
+        </ul>
+    </nav>
+</body>
+</html>
+`;
+        codeFolder.file('html-navbar-example.html', htmlNavbar);
+
+        // Integration README
+        const codeReadme = `# Code Integration Examples
+
+This folder contains ready-to-use code snippets for integrating your ${brand.name} brand into various frameworks and platforms.
+
+## Available Examples
+
+### React Component (\`${brandSlug}-logo.tsx\`)
+TypeScript React component with props for size and variant control.
+
+\`\`\`tsx
+import { ${brand.name.replace(/\s+/g, '')}Logo } from './components/${brandSlug}-logo';
+
+<${brand.name.replace(/\s+/g, '')}Logo size={60} variant="color" />
+\`\`\`
+
+### Vue Component (\`${brandSlug}-logo.vue\`)
+Vue 3 component with script setup and TypeScript support.
+
+\`\`\`vue
+<${brand.name.replace(/\s+/g, '')}Logo :size="60" variant="color" />
+\`\`\`
+
+### HTML Example (\`html-navbar-example.html\`)
+Complete navbar implementation using vanilla HTML/CSS with brand colors.
+
+## Setup Instructions
+
+1. Copy the relevant files to your project
+2. Update import paths to match your project structure
+3. Place logo SVG files in your public/assets folder
+4. Import the colors.css file for consistent styling
+
+## Using Brand Colors
+
+All examples use CSS variables from \`colors/colors.css\`:
+
+- \`--color-primary\` - Brand primary color
+- \`--color-background\` - Page backgrounds
+- \`--color-surface\` - Card/component backgrounds
+- \`--color-text\` - Primary text color
+- \`--color-muted\` - Secondary text color
+- \`--color-border\` - Border colors
+
+## Logo Variants
+
+Available logo files in  the \`/logos\` folder:
+- \`logo-horizontal.svg\` - Full horizontal lockup
+- \`logo-stacked.svg\` - Stacked layout
+- \`logo-icon-only.svg\` - Icon/mark only
+- \`logo-dark.svg\` - For light backgrounds
+- \`logo-light.svg\` - For dark backgrounds
+
+Choose the appropriate variant based on your layout and background color.
+`;
+        codeFolder.file('README.md', codeReadme);
+    }
+
+    // ========================================================================
+    // 11. README.md - Complete documentation
     // ========================================================================
     const readme = `# ${brand.name} Brand Assets
 
@@ -841,7 +1357,8 @@ ${folderName}/
 │   └── colors.css            # CSS custom properties
 │
 ├── guidelines/               # Brand documentation
-│   └── brand-guidelines.pdf  # 20+ page brand guidelines
+│   ├── brand-guidelines.pdf  # 20+ page brand guidelines
+│   └── iconography-guidelines.md  # Icon library recommendations
 │
 ├── social/                   # Social media assets
 │   ├── twitter-*.png         # Twitter profile, header, post
@@ -863,6 +1380,18 @@ ${folderName}/
 │   ├── presentation-slides/  # 8 slide templates
 │   ├── marketing/            # Hero sections, banners
 │   └── og-images/            # Open Graph social share images
+│
+├── email-signatures/         # Professional email signatures
+│   ├── email-signature-gmail.html      # Gmail-optimized signature
+│   ├── email-signature-outlook.html    # Outlook/Office 365 signature
+│   ├── email-signature-plain.txt       # Plain text fallback
+│   └── *-instructions.txt              # Installation instructions
+│
+├── code-examples/            # Integration code snippets
+│   ├── *-logo.tsx            # React component
+│   ├── *-logo.vue            # Vue component
+│   ├── html-navbar-example.html        # HTML/CSS example
+│   └── README.md             # Integration guide
 │
 └── README.md                 # This file
 \`\`\`

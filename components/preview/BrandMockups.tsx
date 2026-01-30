@@ -20,12 +20,17 @@ import { getMockupForExport } from '@/components/export/ExportMockups';
 // TYPES
 // ============================================
 
+type MockupCategory = 'essentials' | 'digital' | 'social' | 'outdoor' | 'merch';
+
 interface BrandMockupsProps {
     brand: BrandIdentity;
     className?: string;
     showCarousel?: boolean;
     defaultMockup?: MockupType;
     onMockupChange?: (mockup: MockupType) => void;
+    showTabsInside?: boolean;
+    externalCategory?: MockupCategory;
+    onCategoryChange?: (category: MockupCategory) => void;
 }
 
 // ============================================
@@ -39,8 +44,6 @@ const MOCKUP_CATEGORIES = {
     outdoor: 'Outdoor',
     merch: 'Merch',
 } as const;
-
-type MockupCategory = keyof typeof MOCKUP_CATEGORIES;
 
 // ============================================
 // INDIVIDUAL MOCKUP COMPONENTS
@@ -246,13 +249,16 @@ function LaptopScreenMockup({ brand }: { brand: BrandIdentity }) {
                         {/* Hero */}
                         <div className="p-6 text-center">
                             <p className="text-lg font-bold mb-2" style={{ color: colors.text, fontFamily }}>
-                                Welcome to {brand.name}
+                                Experience {brand.name}
+                            </p>
+                            <p className="text-xs mb-3 opacity-60" style={{ color: colors.text }}>
+                                {brand.strategy?.tagline || `Crafting exceptional ${brand.vibe} experiences`}
                             </p>
                             <button
-                                className="px-4 py-1.5 rounded text-xs text-white"
+                                className="px-4 py-1.5 rounded text-xs text-white font-medium"
                                 style={{ background: colors.primary }}
                             >
-                                Get Started
+                                Explore Now
                             </button>
                         </div>
                     </div>
@@ -681,7 +687,10 @@ function MerchPlaceholder({ type, brand }: { type: MockupType; brand: BrandIdent
 /**
  * Merch Scene (T-Shirt + Coffee Cup)
  */
-function MerchSceneMockup({ brand }: { brand: BrandIdentity }) {
+/**
+ * Premium Tote Bag Mockup (Hanging)
+ */
+function PremiumToteBagMockup({ brand }: { brand: BrandIdentity }) {
     const primary = brand.theme.tokens.light.primary;
     const [rotate, setRotate] = useState({ x: 0, y: 0 });
 
@@ -694,79 +703,100 @@ function MerchSceneMockup({ brand }: { brand: BrandIdentity }) {
 
     return (
         <div
-            className="w-full h-full flex items-center justify-center perspective-[1200px] overflow-hidden bg-stone-900 cursor-move group relative"
+            className="w-full h-full flex items-center justify-center perspective-[1200px] overflow-hidden bg-[#EAE8E4] cursor-move group relative"
             onMouseMove={handleMouseMove}
             onMouseLeave={() => setRotate({ x: 0, y: 0 })}
         >
-            {/* Concrete Texture Background */}
-            <div className="absolute inset-0 opacity-20" style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-            }} />
-
-            {/* Lighting */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-white/10" />
+            {/* Dynamic Lighting Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white via-transparent to-black/10" />
+            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/5 to-transparent blur-3xl" />
 
             <motion.div
-                className="relative flex items-center justify-center gap-8 md:gap-16"
+                className="relative flex flex-col items-center"
                 animate={{ rotateX: rotate.x, rotateY: rotate.y }}
-                transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                transition={{ type: "spring", stiffness: 80, damping: 20 }}
             >
-                {/* FOLDED T-SHIRT */}
-                <div className="relative group/shirt">
-                    {/* Shirt Body */}
-                    <div className="w-48 h-56 md:w-64 md:h-72 bg-stone-950 rounded-sm shadow-2xl relative overflow-hidden transform rotate-[-5deg]">
-                        {/* Fabric Texture */}
-                        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/fabric-of-squares.png')]" />
+                {/* Hanger Hook / Shadow */}
+                <div className="w-1 h-12 bg-stone-300 rounded-full mb-[-20px] relative z-10 shadow-sm" />
 
-                        {/* Collar Area */}
-                        <div className="absolute top-0 w-full h-8 bg-stone-900 border-b border-stone-800" />
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-stone-950 rounded-b-full border border-stone-800" />
+                {/* TOTE BAG CONTAINER */}
+                <div className="relative w-80 h-[420px] filter drop-shadow-[0_20px_40px_rgba(0,0,0,0.2)]">
 
-                        {/* Logo Placement */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 md:w-32 md:h-32 opacity-90 mix-blend-screen">
-                            <LogoComposition brand={brand} overrideColors={{ primary: primary }} />
-                        </div>
+                    {/* Handles */}
+                    <svg className="absolute top-[-60px] left-1/2 -translate-x-1/2 w-40 h-24 z-0" viewBox="0 0 160 100">
+                        <path
+                            d="M10,100 C10,20 150,20 150,100"
+                            fill="none"
+                            stroke="#D6D1CA"
+                            strokeWidth="16"
+                            strokeLinecap="round"
+                        />
+                        <path
+                            d="M10,100 C10,20 150,20 150,100"
+                            fill="none"
+                            stroke="#C4BCB4"
+                            strokeWidth="16"
+                            strokeLinecap="round"
+                            strokeDasharray="4 8"
+                            opacity="0.5"
+                        />
+                    </svg>
 
-                        {/* Folds/Wrinkles Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/40 pointer-events-none" />
-                    </div>
-                    {/* Label overlay (Tag) */}
-                    <div className="absolute -bottom-2 -right-2 bg-white px-2 py-0.5 text-[8px] font-bold text-black uppercase tracking-widest rotate-[-5deg] shadow-lg">
-                        Premium Cotton
-                    </div>
-                </div>
+                    {/* Bag Body */}
+                    <div className="absolute inset-0 bg-[#F2EFE9] rounded-sm overflow-hidden transform origin-top hover:scale-[1.01] transition-transform duration-500">
+                        {/* Canvas Texture Overlay */}
+                        <div
+                            className="absolute inset-0 opacity-40 mix-blend-multiply pointer-events-none"
+                            style={{
+                                backgroundImage: `url("https://www.transparenttextures.com/patterns/canvas.png")`,
+                                backgroundSize: '100px'
+                            }}
+                        />
 
-                {/* COFFEE CUP */}
-                <div className="relative z-10 mt-12 md:mt-0">
-                    <div className="w-24 h-32 md:w-32 md:h-40 relative transform rotate-[5deg] origin-bottom">
-                        {/* Cup Body */}
-                        <div className="absolute inset-x-2 top-0 bottom-2 bg-white shadow-xl rounded-b-xl overflow-hidden">
-                            {/* Cup Surface shading */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-stone-200 via-white to-stone-200" />
-
-                            {/* Branding Band */}
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 md:w-20 md:h-20">
-                                <LogoComposition brand={brand} />
+                        {/* DESIGN LAYER: Grid Pattern */}
+                        <div className="absolute inset-0 overflow-hidden opacity-90">
+                            <div className="absolute inset-[-50%] w-[200%] h-[200%] rotate-12 flex flex-wrap content-center gap-8 justify-center opacity-10">
+                                {[...Array(40)].map((_, i) => (
+                                    <div key={i} className="w-24 h-24 grayscale">
+                                        <LogoComposition brand={brand} />
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
-                        {/* Lid */}
-                        <div className="absolute -top-2 inset-x-0 h-4 bg-white border-b-2 border-stone-100 rounded-t-sm shadow-sm" />
-                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-20 md:w-28 h-4 bg-white rounded-[1px] shadow-sm" />
+                        {/* Center Hero Logo */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-48 h-48 relative">
+                                <LogoComposition brand={brand} />
+                                {/* Ink Bleed Effect */}
+                                <div className="absolute inset-0 mix-blend-multiply opacity-20 blur-[1px]">
+                                    <LogoComposition brand={brand} />
+                                </div>
+                            </div>
+                        </div>
 
-                        {/* Shadow */}
-                        <div className="absolute -bottom-2 left-4 right-4 h-4 bg-black/40 blur-xl rounded-full" />
+                        {/* Shadow Gradients (Folds) */}
+                        <div className="absolute inset-0 pointer-events-none" style={{
+                            background: `
+                                linear-gradient(90deg, rgba(0,0,0,0.05) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.05) 100%),
+                                linear-gradient(180deg, rgba(0,0,0,0.1) 0%, transparent 20%)
+                            `
+                        }} />
                     </div>
+
+                    {/* Stitching Details */}
+                    <div className="absolute inset-x-4 top-4 border-t-2 border-dashed border-stone-300/50" />
+                    <div className="absolute inset-x-4 bottom-4 border-b-2 border-dashed border-stone-300/50" />
                 </div>
             </motion.div>
 
-            {/* Scene Label */}
-            <div className="absolute bottom-6 left-8">
-                <div className="px-3 py-1 bg-white/10 backdrop-blur rounded-full border border-white/20">
-                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">
-                        Merch Collection • S/S {new Date().getFullYear()}
-                    </span>
+            {/* Scene Label with Color Swatch */}
+            <div className="absolute bottom-6 right-8 flex items-center gap-3">
+                <div className="text-right">
+                    <p className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Material</p>
+                    <p className="text-xs font-semibold text-stone-700">Heavyweight Canvas</p>
                 </div>
+                <div className="w-8 h-8 rounded-full border-2 border-white shadow-sm bg-[#F2EFE9]" />
             </div>
         </div>
     )
@@ -943,7 +973,7 @@ function renderMockup(type: MockupType, brand: BrandIdentity, isInteractive = fa
         case 'social-suite':
             return <SocialSuiteMockup brand={brand} />;
         case 'merch-suite':
-            return <MerchSceneMockup brand={brand} />;
+            return <PremiumToteBagMockup brand={brand} />;
         default: return <BusinessCard3DMockup brand={brand} isInteractive={isInteractive} />;
     }
 }
@@ -958,9 +988,22 @@ export function BrandMockups({
     showCarousel = true,
     defaultMockup = 'business-card',
     onMockupChange,
+    showTabsInside = true,
+    externalCategory,
+    onCategoryChange,
 }: BrandMockupsProps) {
     const [selectedMockup, setSelectedMockup] = useState<MockupType>(defaultMockup);
-    const [selectedCategory, setSelectedCategory] = useState<MockupCategory>('essentials');
+    const [internalCategory, setInternalCategory] = useState<MockupCategory>('essentials');
+
+    // Use external category if provided, otherwise use internal state
+    const selectedCategory = externalCategory ?? internalCategory;
+    const setSelectedCategory = (category: MockupCategory) => {
+        if (onCategoryChange) {
+            onCategoryChange(category);
+        } else {
+            setInternalCategory(category);
+        }
+    };
 
     const [modalOpen, setModalOpen] = useState(false);
     const [downloadingMockup, setDownloadingMockup] = useState<MockupType | null>(null);
@@ -1022,22 +1065,26 @@ export function BrandMockups({
     return (
         <section className={`relative w-full h-[600px] overflow-hidden rounded-2xl bg-zinc-950 shadow-2xl border border-zinc-800 ${className}`}>
             {/* FLOATING CONTROLLER (Tabs) */}
-            <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20">
-                <div className="flex p-1 gap-1 bg-zinc-900/80 backdrop-blur-md border border-zinc-800/50 rounded-full shadow-2xl">
+            {showTabsInside && (
+                <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-3">
                     {(Object.entries(MOCKUP_CATEGORIES) as [MockupCategory, string][]).map(([key, label]) => (
                         <button
                             key={key}
                             onClick={() => setSelectedCategory(key)}
-                            className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 relative ${selectedCategory === key
-                                ? 'bg-[#F97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]'
-                                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                            className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 relative ${selectedCategory === key
+                                ? 'text-white shadow-lg scale-105'
+                                : 'text-zinc-400 hover:text-white bg-black/30 hover:bg-black/40 backdrop-blur-sm'
                                 }`}
+                            style={selectedCategory === key ? {
+                                background: `linear-gradient(135deg, ${brand.theme.tokens.light.primary}, ${brand.theme.tokens.light.primary}dd)`,
+                                boxShadow: `0 4px 20px ${brand.theme.tokens.light.primary}40`
+                            } : {}}
                         >
                             {label}
                         </button>
                     ))}
                 </div>
-            </div>
+            )}
 
             {/* MAIN VIEWER */}
             <div className="w-full h-full relative z-0">

@@ -576,4 +576,96 @@ export function TypographyOverview({ brand }: { brand: BrandIdentity }) {
     );
 }
 
+// ============================================
+// TYPOGRAPHY TEASER (Poster-style for Overview tab)
+// ============================================
+
+export function TypographyTeaser({
+    brand,
+    className = '',
+    onClick
+}: {
+    brand: BrandIdentity;
+    className?: string;
+    onClick?: () => void;
+}) {
+    const colors = brand.theme.tokens.light;
+    const displayFont = getFontFamily(brand, 'display');
+    const fontClassName = getFontClassName(brand, 'display');
+
+    return (
+        <button
+            onClick={onClick}
+            className={`
+                relative w-full overflow-hidden rounded-2xl border transition-all group
+                hover:scale-[1.01] hover:shadow-xl active:scale-[0.99]
+                ${className}
+            `}
+            style={{
+                borderColor: colors.border,
+                background: `linear-gradient(135deg, ${colors.surface} 0%, ${colors.bg} 100%)`,
+            }}
+        >
+            {/* Gradient Overlay from Primary Color */}
+            <div
+                className="absolute inset-0 opacity-30"
+                style={{
+                    background: `radial-gradient(circle at bottom right, ${colors.primary}40 0%, transparent 60%)`,
+                }}
+            />
+
+            {/* Content */}
+            <div className="relative z-10 p-8 md:p-12 flex flex-col items-center justify-center min-h-[280px] md:min-h-[320px]">
+
+                {/* Massive "Aa" */}
+                <div
+                    className={`
+                        text-[120px] md:text-[180px] lg:text-[220px] leading-none tracking-tight
+                        transition-all group-hover:scale-105
+                        ${fontClassName}
+                    `}
+                    style={{
+                        fontFamily: `"${displayFont}", system-ui, sans-serif`,
+                        fontWeight: 700,
+                        color: colors.text,
+                    }}
+                >
+                    Aa
+                </div>
+
+                {/* Font Name Badge */}
+                <div className="mt-4 flex items-center gap-2">
+                    <span
+                        className="px-3 py-1.5 text-xs font-semibold rounded-full uppercase tracking-wider"
+                        style={{
+                            backgroundColor: colors.primary,
+                            color: colors.bg,
+                        }}
+                    >
+                        Typeface
+                    </span>
+                    <span
+                        className="text-sm font-medium"
+                        style={{ color: colors.muted }}
+                    >
+                        {displayFont}
+                    </span>
+                </div>
+
+            </div>
+
+            {/* Subtle Arrow Hint */}
+            <div
+                className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-60 transition-opacity"
+                style={{ color: colors.muted }}
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M7 17L17 7M17 7H7M17 7V17" />
+                </svg>
+            </div>
+        </button>
+    );
+}
+
 export default TypographySpecimen;
+

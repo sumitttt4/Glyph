@@ -349,8 +349,6 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
         <div className="sticky md:absolute top-0 md:top-6 right-0 md:right-8 z-30 p-3 md:p-0 bg-stone-50/80 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none flex justify-end">
           <Toolbar
             brand={brand || undefined}
-            isDark={isDarkMode}
-            toggleDark={() => setIsDarkMode(!isDarkMode)}
             onExport={handleExport}
             viewMode={viewMode}
             setViewMode={async (mode) => {

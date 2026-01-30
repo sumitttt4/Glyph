@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Sun, Moon, Download, ChevronDown, FileCode, Image, Package, Code2, Share2, Link, Copy, Check, ChevronLeft, ChevronRight, Shuffle, RefreshCw, Loader2, Sparkles, Lock } from 'lucide-react';
+import { Download, ChevronDown, FileCode, Image, Package, Code2, Share2, Link, Copy, Check, ChevronLeft, ChevronRight, Shuffle, RefreshCw, Loader2, Sparkles, Lock } from 'lucide-react';
 import { useSubscription } from '@/hooks/use-subscription';
 import { ADMIN_EMAILS } from '@/lib/subscription';
 import UserProfile from '@/components/auth/UserProfile';
@@ -10,8 +10,6 @@ import { FigmaLogoCompact } from '@/components/icons/FigmaLogo';
 
 interface ToolbarProps {
     brand?: { name: string; theme: { tokens: { light: any; dark: any } }; font: { headingName?: string; bodyName?: string; heading?: string; body?: string; monoName?: string }; shape?: { name?: string }; logoLayout?: string;[key: string]: any };
-    isDark: boolean;
-    toggleDark: () => void;
     onExport?: (type: string) => void;
     viewMode: 'overview' | 'presentation';
     setViewMode: (mode: 'overview' | 'presentation') => void;
@@ -30,7 +28,7 @@ interface ToolbarProps {
     isGenerating?: boolean;
 }
 
-export function Toolbar({ brand, isDark, toggleDark, onExport, viewMode, setViewMode, canUndo, canRedo, onUndo, onRedo, currentHistoryIndex, totalHistory, onAddToCompare, onOpenCompare, compareCount = 0, onVariations, isGenerating }: ToolbarProps) {
+export function Toolbar({ brand, onExport, viewMode, setViewMode, canUndo, canRedo, onUndo, onRedo, currentHistoryIndex, totalHistory, onAddToCompare, onOpenCompare, compareCount = 0, onVariations, isGenerating }: ToolbarProps) {
     const [showExport, setShowExport] = useState(false);
     const [showShare, setShowShare] = useState(false);
     const [copied, setCopied] = useState(false);
@@ -102,28 +100,7 @@ export function Toolbar({ brand, isDark, toggleDark, onExport, viewMode, setView
                 </button>
             </div>
 
-            {/* Apple-Style Dark Mode Toggle */}
-            <div
-                className="relative w-16 h-8 rounded-full cursor-pointer transition-colors duration-300 shadow-inner"
-                style={{
-                    backgroundColor: isDark ? '#1d1d1f' : '#e5e5ea',
-                }}
-                onClick={toggleDark}
-            >
-                {/* Sun Icon */}
-                <Sun
-                    className={`absolute left-1.5 top-1.5 w-5 h-5 text-amber-500 transition-opacity duration-300 ${isDark ? 'opacity-30' : 'opacity-100'}`}
-                />
-                {/* Moon Icon */}
-                <Moon
-                    className={`absolute right-1.5 top-1.5 w-5 h-5 text-indigo-300 transition-opacity duration-300 ${isDark ? 'opacity-100' : 'opacity-30'}`}
-                />
-                {/* Sliding Knob */}
-                <div
-                    className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-md transition-all duration-300 ease-in-out ${isDark ? 'left-9' : 'left-1'}`}
-                    style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
-                />
-            </div>
+
 
             {/* Share Button - Hidden on mobile */}
             <div className="relative hidden md:block">

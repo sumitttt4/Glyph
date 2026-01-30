@@ -1,13 +1,50 @@
 
 import { generateInterlocking } from './interlocking';
 import { generateLetterFusion } from './letter-fusion';
-// Helper to implement remaining stubs quickly
+import {
+    generateModular,
+    generateStencil,
+    generateOutline,
+    generateGeometricConstruction,
+    generateCalligraphic,
+    generateMonoline,
+    generateShadowLetter,
+    generateDottedSkeleton,
+    SKELETON_TECHNIQUES,
+    getAvailableTechniques,
+    generateWithTechnique,
+} from './skeleton-techniques';
+
+// Re-export skeleton techniques for external use
+export {
+    SKELETON_TECHNIQUES,
+    getAvailableTechniques,
+    generateWithTechnique,
+    generateModular,
+    generateStencil,
+    generateOutline,
+    generateGeometricConstruction,
+    generateCalligraphic,
+    generateMonoline,
+    generateShadowLetter,
+    generateDottedSkeleton,
+};
 
 import { InfiniteLogoParams } from '../types';
 
 export const ALGORITHMS = [
     { name: 'Letter Fusion', fn: generateLetterFusion },
     { name: 'Interlocking Geometry', fn: generateInterlocking }, // 3 shapes weaving like Anchortack
+
+    // Skeleton-based techniques (proper typography anatomy)
+    { name: 'Modular Units', fn: generateModular, description: 'Geometric units placed at skeleton anchor points' },
+    { name: 'Stencil Cut', fn: generateStencil, description: 'Letter with cut gaps for stencil effect' },
+    { name: 'Multi-Outline', fn: generateOutline, description: 'Multiple parallel strokes following skeleton' },
+    { name: 'Geometric Construction', fn: generateGeometricConstruction, description: 'Built from skeleton with geometric primitives' },
+    { name: 'Calligraphic Stroke', fn: generateCalligraphic, description: 'Variable width calligraphic rendering' },
+    { name: 'Monoline Letter', fn: generateMonoline, description: 'Single continuous stroke skeleton' },
+    { name: 'Shadow Depth', fn: generateShadowLetter, description: 'Skeleton with layered shadow effect' },
+    { name: 'Dotted Path', fn: generateDottedSkeleton, description: 'Skeleton rendered with dotted/dashed stroke' },
     {
         name: 'Negative Space Letter',
         fn: (p: InfiniteLogoParams, b: string) => `

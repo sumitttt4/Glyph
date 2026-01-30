@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { BrandIdentity } from '@/lib/data';
-import { cn } from '@/lib/utils';
-import { Check, Copy, Download, Code, FileText, Dices, Palette, RefreshCw, X } from 'lucide-react';
+import { cn, generateDeepColor } from '@/lib/utils';
+import { Check, Copy, Download, Code, FileText, Dices, Palette, RefreshCw, X, Search, Menu, User, Settings, Home, Bell, Mail, Calendar, MapPin, ArrowRight, ChevronDown, Plus, AlertCircle, Info, Heart, Share2, Star, MoreHorizontal } from 'lucide-react';
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 import { FontConfig } from '@/lib/fonts';
 import { FontSelector } from './FontSelector';
 import { ColorPicker } from '@/components/ui/ColorPicker';
+import { generateTypographyDescription } from '@/lib/typography-intelligence';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -47,6 +48,28 @@ function rgbToCmyk(r: number, g: number, b: number): { c: number; m: number; y: 
 }
 
 // ============================================
+// HELPER: Calculate Luminance for Contrast
+// ============================================
+
+function getLuminance(hex: string): number {
+    const rgb = hexToRgb(hex);
+    const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(val => {
+        val = val / 255;
+        return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function getContrastTextColor(bgHex: string): { text: string; textMuted: string; border: string } {
+    const luminance = getLuminance(bgHex);
+    const isDark = luminance < 0.5;
+
+    return isDark
+        ? { text: '#FFFFFF', textMuted: 'rgba(255, 255, 255, 0.7)', border: 'rgba(255, 255, 255, 0.2)' }
+        : { text: '#1C1917', textMuted: 'rgba(28, 25, 23, 0.6)', border: 'rgba(28, 25, 23, 0.15)' };
+}
+
+// ============================================
 // SECTION WRAPPER: Clean Documentation Style
 // ============================================
 
@@ -64,12 +87,12 @@ function DocSection({
     action?: React.ReactNode;
 }) {
     return (
-        <section id={id} className="py-16 border-b border-stone-200 last:border-0">
+        <section id={id} className="py-16 border-b border-white/10 last:border-0">
             <div className="mb-8 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold text-stone-900 tracking-tight">{title}</h2>
+                    <h2 className="text-2xl font-bold text-white tracking-tight">{title}</h2>
                     {subtitle && (
-                        <p className="text-stone-500 mt-1">{subtitle}</p>
+                        <p className="text-stone-300 mt-1">{subtitle}</p>
                     )}
                 </div>
                 {action && <div className="flex items-center gap-2">{action}</div>}
@@ -126,8 +149,11 @@ function LogoCard({
         setTimeout(() => setCopied(false), 2000);
     };
 
+    const primary = brand.theme.tokens.light.primary;
+    const colors = generateDeepColor(primary);
+
     return (
-        <div className="rounded-xl border border-stone-200 overflow-hidden bg-white">
+        <div className="rounded-xl border border-white/10 overflow-hidden" style={{ backgroundColor: colors.deep }}>
             {/* Logo Display */}
             <div
                 className="aspect-square flex items-center justify-center p-6"
@@ -144,8 +170,8 @@ function LogoCard({
             </div>
 
             {/* Meta & Actions */}
-            <div className="p-3 border-t border-stone-200 bg-stone-50">
-                <p className="font-semibold text-stone-900 text-sm mb-2">{variant}</p>
+            <div className="p-3 border-t border-white/10" style={{ backgroundColor: colors.deeper }}>
+                <p className="font-semibold text-white text-sm mb-2">{variant}</p>
                 <div className="flex gap-2">
                     <button
                         onClick={handleCopySvg}
@@ -177,13 +203,17 @@ function LogoCard({
 // ============================================
 
 function ClearSpaceDiagram({ brand }: { brand: BrandIdentity }) {
+    const primary = brand.theme.tokens.light.primary;
+    const colors = generateDeepColor(primary);
+    const contrastColors = getContrastTextColor(colors.deep);
+
     return (
-        <div className="w-full bg-stone-50 border border-stone-200 rounded-xl overflow-hidden relative">
+        <div className="w-full border rounded-xl overflow-hidden relative" style={{ backgroundColor: colors.deep, borderColor: contrastColors.border }}>
             {/* Grid Background */}
             <div
                 className="absolute inset-0 opacity-30"
                 style={{
-                    backgroundImage: 'linear-gradient(#e7e5e4 1px, transparent 1px), linear-gradient(90deg, #e7e5e4 1px, transparent 1px)',
+                    backgroundImage: `linear-gradient(${contrastColors.border} 1px, transparent 1px), linear-gradient(90deg, ${contrastColors.border} 1px, transparent 1px)`,
                     backgroundSize: '20px 20px'
                 }}
             />
@@ -198,27 +228,27 @@ function ClearSpaceDiagram({ brand }: { brand: BrandIdentity }) {
                     </div>
 
                     {/* Clear Space Boundary (Dashed Box) */}
-                    <div className="absolute -inset-16 border-2 border-dashed border-stone-300 rounded-lg pointer-events-none z-10 flex items-center justify-center">
-                        <div className="absolute top-0 -mt-2 bg-stone-50 px-1 text-[10px] font-mono text-stone-400 font-bold">x</div>
-                        <div className="absolute bottom-0 -mb-2 bg-stone-50 px-1 text-[10px] font-mono text-stone-400 font-bold">x</div>
-                        <div className="absolute left-0 -ml-2 bg-stone-50 px-1 text-[10px] font-mono text-stone-400 font-bold">x</div>
-                        <div className="absolute right-0 -mr-2 bg-stone-50 px-1 text-[10px] font-mono text-stone-400 font-bold">x</div>
+                    <div className="absolute -inset-16 border-2 border-dashed rounded-lg pointer-events-none z-10 flex items-center justify-center" style={{ borderColor: contrastColors.textMuted }}>
+                        <div className="absolute top-0 -mt-2 px-1 text-[10px] font-mono font-bold" style={{ backgroundColor: colors.deep, color: contrastColors.text }}>x</div>
+                        <div className="absolute bottom-0 -mb-2 px-1 text-[10px] font-mono font-bold" style={{ backgroundColor: colors.deep, color: contrastColors.text }}>x</div>
+                        <div className="absolute left-0 -ml-2 px-1 text-[10px] font-mono font-bold" style={{ backgroundColor: colors.deep, color: contrastColors.text }}>x</div>
+                        <div className="absolute right-0 -mr-2 px-1 text-[10px] font-mono font-bold" style={{ backgroundColor: colors.deep, color: contrastColors.text }}>x</div>
                     </div>
 
                     {/* Dimension Markers (Blueprints style) */}
                     {/* Vertical Height Indicator */}
-                    <div className="absolute -right-32 top-0 bottom-0 flex items-center w-8 border-l border-stone-300">
-                        <div className="absolute top-0 w-2 h-px bg-stone-300 -left-1" />
-                        <div className="absolute bottom-0 w-2 h-px bg-stone-300 -left-1" />
-                        <div className="w-px h-full bg-stone-200 mx-auto" />
-                        <span className="bg-stone-50 text-[10px] font-mono text-stone-400 px-1 ml-2">1x Height</span>
+                    <div className="absolute -right-32 top-0 bottom-0 flex items-center w-8" style={{ borderLeft: `1px solid ${contrastColors.border}` }}>
+                        <div className="absolute top-0 w-2 h-px -left-1" style={{ backgroundColor: contrastColors.border }} />
+                        <div className="absolute bottom-0 w-2 h-px -left-1" style={{ backgroundColor: contrastColors.border }} />
+                        <div className="w-px h-full mx-auto" style={{ backgroundColor: contrastColors.textMuted }} />
+                        <span className="text-[10px] font-mono px-1 ml-2" style={{ backgroundColor: colors.deep, color: contrastColors.textMuted }}>1x Height</span>
                     </div>
 
                 </div>
             </div>
 
-            <div className="absolute bottom-4 left-4 bg-white/80 backdrop-blur border border-stone-200 rounded-md px-3 py-1.5">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-stone-500">
+            <div className="absolute bottom-4 left-4 backdrop-blur rounded-md px-3 py-1.5" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', border: `1px solid ${contrastColors.border}` }}>
+                <p className="text-[10px] font-mono uppercase tracking-widest" style={{ color: contrastColors.text }}>
                     <span className="w-2 h-2 inline-block rounded-full bg-blue-400 mr-2" />
                     Clear Space Construction
                 </p>
@@ -310,18 +340,18 @@ function ColorDataCard({
 
     const DataRow = ({ label, value, field }: { label: string; value: string; field: string }) => (
         <tr
-            className="border-b border-stone-100 last:border-0 hover:bg-stone-50 cursor-pointer group transition-colors"
+            className="border-b border-white/5 last:border-0 hover:bg-white/5 cursor-pointer group transition-colors"
             onClick={() => handleCopy(value, field)}
         >
-            <td className="py-2 px-3 text-xs text-stone-500 font-mono uppercase">{label}</td>
-            <td className="py-2 px-3 text-sm font-mono text-stone-900 flex items-center justify-between">
+            <td className="py-2 px-3 text-xs text-stone-400 font-mono uppercase">{label}</td>
+            <td className="py-2 px-3 text-sm font-mono text-white flex items-center justify-between">
                 <span>{value}</span>
                 <button
-                    className="p-1 rounded hover:bg-stone-100 transition-colors"
+                    className="p-1 rounded hover:bg-white/10 transition-colors"
                     onClick={(e) => { e.stopPropagation(); handleCopy(value, field); }}
                 >
                     {copiedField === field ? (
-                        <Check size={14} className="text-green-600" />
+                        <Check size={14} className="text-green-400" />
                     ) : (
                         <Copy size={14} className="text-stone-400" />
                     )}
@@ -330,8 +360,11 @@ function ColorDataCard({
         </tr>
     );
 
+    // Generate brand colors from hex for card backgrounds
+    const colors = generateDeepColor(hex);
+
     return (
-        <div className="rounded-xl border border-stone-200 overflow-hidden bg-white">
+        <div className="rounded-xl border border-white/10 overflow-hidden" style={{ backgroundColor: colors.deep }}>
             {/* Color Swatch */}
             <div
                 className="h-24"
@@ -339,8 +372,8 @@ function ColorDataCard({
             />
 
             {/* Label */}
-            <div className="px-4 py-3 border-b border-stone-200 bg-stone-50">
-                <h4 className="font-semibold text-stone-900">{label}</h4>
+            <div className="px-4 py-3 border-b border-white/10" style={{ backgroundColor: colors.deeper }}>
+                <h4 className="font-semibold text-white">{label}</h4>
             </div>
 
             {/* Data Table */}
@@ -362,16 +395,27 @@ function ColorDataCard({
 
 function TypographySection({ brand, onUpdateFont }: { brand: BrandIdentity; onUpdateFont?: (font: FontConfig) => void }) {
     const [isFontSelectorOpen, setIsFontSelectorOpen] = useState(false);
+    const headingFontName = brand.font.headingName || brand.font.name || 'Inter';
+    const bodyFontName = brand.font.bodyName || brand.font.name || 'Inter';
+    const fontClassName = brand.font.heading || '';
 
-    const typeScale = [
-        { role: 'H1', size: '48px', rem: '3rem', lineHeight: '1.1', letterSpacing: '-0.03em', weight: '700' },
-        { role: 'H2', size: '36px', rem: '2.25rem', lineHeight: '1.15', letterSpacing: '-0.025em', weight: '700' },
-        { role: 'H3', size: '30px', rem: '1.875rem', lineHeight: '1.2', letterSpacing: '-0.02em', weight: '600' },
-        { role: 'H4', size: '24px', rem: '1.5rem', lineHeight: '1.25', letterSpacing: '-0.015em', weight: '600' },
-        { role: 'H5', size: '20px', rem: '1.25rem', lineHeight: '1.3', letterSpacing: '-0.01em', weight: '600' },
-        { role: 'H6', size: '18px', rem: '1.125rem', lineHeight: '1.35', letterSpacing: '0em', weight: '600' },
-        { role: 'Body', size: '16px', rem: '1rem', lineHeight: '1.6', letterSpacing: '0em', weight: '400' },
-        { role: 'Small', size: '14px', rem: '0.875rem', lineHeight: '1.5', letterSpacing: '0.01em', weight: '400' },
+    // Generate brand colors for backgrounds
+    const primary = brand.theme.tokens.light.primary;
+    const colors = generateDeepColor(primary);
+
+    // Generate intelligent typography description
+    const typoInfo = useMemo(() =>
+        generateTypographyDescription(brand.name, headingFontName, bodyFontName),
+        [brand.name, headingFontName, bodyFontName]
+    );
+
+    // Weight scale
+    const weightScale = [
+        { label: 'Thin', weight: 100, className: 'font-thin' },
+        { label: 'Light', weight: 300, className: 'font-light' },
+        { label: 'Regular', weight: 400, className: 'font-normal' },
+        { label: 'Semi Bold', weight: 600, className: 'font-semibold' },
+        { label: 'Bold', weight: 700, className: 'font-bold' },
     ];
 
     return (
@@ -386,68 +430,341 @@ function TypographySection({ brand, onUpdateFont }: { brand: BrandIdentity; onUp
                 }}
             />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Font Preview Cards */}
-                <div className="space-y-4">
-                    {/* Heading Font */}
-                    <div className="rounded-xl border border-stone-200 bg-white p-6">
-                        <p className="text-xs font-mono text-stone-400 uppercase tracking-widest mb-2">Heading</p>
-                        <h3 className={cn("text-3xl font-bold text-stone-900 mb-2", brand.font.heading)}>
-                            {brand.font.headingName || brand.font.name}
-                        </h3>
-                        <p className={cn("text-4xl font-bold text-stone-300", brand.font.heading)}>Aa</p>
-                    </div>
+            {/* THE BLUEPRINT VIEW - Matching Reference Image */}
+            <div className="w-full rounded-xl overflow-hidden border border-stone-200">
 
-                    {/* Body Font */}
-                    <div className="rounded-xl border border-stone-200 bg-white p-6">
-                        <p className="text-xs font-mono text-stone-400 uppercase tracking-widest mb-2">Body</p>
-                        <h3 className={cn("text-2xl font-medium text-stone-900 mb-2", brand.font.body)}>
-                            {brand.font.bodyName || 'Inter'}
-                        </h3>
-                        <p className={cn("text-3xl text-stone-300", brand.font.body)}>Aa</p>
-                    </div>
-
-                    <button
-                        onClick={() => setIsFontSelectorOpen(true)}
-                        className="w-full py-3 px-4 text-sm font-bold rounded-lg transition-colors hover:scale-105 transition-all"
-                        style={{ backgroundColor: GLYPH_ACCENT, color: "#FFFFFF" }}
+                {/* ====== TOP SECTION: Gradient Header ====== */}
+                <div
+                    className="relative p-8 md:p-12"
+                    style={{
+                        background: `linear-gradient(180deg, ${colors.deep} 0%, ${colors.deeper} 100%)`,
+                    }}
+                >
+                    {/* Font Name - Large */}
+                    <h2
+                        className={cn(
+                            "text-5xl md:text-6xl lg:text-7xl tracking-tight text-white mb-8",
+                            fontClassName
+                        )}
+                        style={{
+                            fontFamily: `"${headingFontName}", system-ui, sans-serif`,
+                            fontWeight: 400,
+                        }}
                     >
-                        Change Font Pairing
-                    </button>
+                        {headingFontName}
+                    </h2>
+
+                    {/* Description Grid - Smart Content */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                        {/* Left Column - Font Role Label */}
+                        <div>
+                            <span className="text-sm font-medium text-stone-300 uppercase tracking-widest">
+                                {typoInfo.isPairing ? 'Display' : 'Primary'}
+                            </span>
+                            <p className="text-lg font-medium text-white mt-1">Typeface</p>
+                            {/* Font Classification Badge */}
+                            <span
+                                className="inline-block mt-2 px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-white/10 text-stone-200"
+                            >
+                                {typoInfo.headingMeta.classification.replace('-', ' ')}
+                            </span>
+                        </div>
+
+                        {/* Middle Column - Primary Description */}
+                        <div>
+                            <p className="text-sm text-stone-200 leading-relaxed">
+                                {typoInfo.headingDescription}
+                            </p>
+                        </div>
+
+                        {/* Right Column - Secondary Description / Traits */}
+                        <div>
+                            <p className="text-sm text-stone-200 leading-relaxed">
+                                {typoInfo.headingMeta.shortDescription}. Best suited for {typoInfo.headingMeta.bestFor.slice(0, 3).join(', ')}.
+                            </p>
+                            {/* Personality Tags */}
+                            <div className="flex flex-wrap gap-1.5 mt-3">
+                                {typoInfo.headingMeta.personality.slice(0, 4).map(trait => (
+                                    <span
+                                        key={trait}
+                                        className="px-2 py-0.5 text-[10px] rounded-full bg-white/10 text-stone-300"
+                                    >
+                                        {trait}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Type Scale Table */}
-                <div className="lg:col-span-2 rounded-xl border border-stone-200 bg-white overflow-hidden">
-                    <div className="px-6 py-4 border-b border-stone-200 bg-stone-50">
-                        <h4 className="font-semibold text-stone-900">Type Scale</h4>
+                {/* ====== PAIRING SECTION (if different fonts) ====== */}
+                {typoInfo.isPairing && (
+                    <div className="bg-stone-50 border-t border-b border-stone-200 p-6 md:p-8">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Body Font Info */}
+                            <div>
+                                <span className="text-sm font-medium text-stone-600/80 uppercase tracking-widest">
+                                    Body
+                                </span>
+                                <p className="text-lg font-medium text-stone-700 mt-1">{bodyFontName}</p>
+                                <span
+                                    className="inline-block mt-2 px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-stone-800/10 text-stone-700"
+                                >
+                                    {typoInfo.bodyMeta.classification.replace('-', ' ')}
+                                </span>
+                            </div>
+
+                            {/* Body Description */}
+                            <div>
+                                <p className="text-sm text-stone-600 leading-relaxed">
+                                    {typoInfo.bodyDescription}
+                                </p>
+                            </div>
+
+                            {/* Pairing Rationale */}
+                            <div className="bg-white rounded-lg p-4 border border-stone-200">
+                                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">
+                                    Why This Pairing Works
+                                </p>
+                                <p className="text-sm text-stone-600 leading-relaxed">
+                                    {typoInfo.pairingRationale}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="border-b border-stone-200 bg-stone-50/50">
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">Role</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">Size (px)</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">Size (rem)</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">Line Height</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">Letter Spacing</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-stone-100">
-                                {typeScale.map((row) => (
-                                    <tr key={row.role} className="hover:bg-stone-50 transition-colors">
-                                        <td className="px-6 py-3 font-semibold text-stone-900">{row.role}</td>
-                                        <td className="px-6 py-3 font-mono text-stone-600">{row.size}</td>
-                                        <td className="px-6 py-3 font-mono text-stone-600">{row.rem}</td>
-                                        <td className="px-6 py-3 font-mono text-stone-600">{row.lineHeight}</td>
-                                        <td className="px-6 py-3 font-mono text-stone-600">{row.letterSpacing}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                )}
+
+                {/* ====== BOTTOM SECTION: Weight Scale ====== */}
+                <div className="relative bg-white p-8 md:p-12 overflow-hidden">
+
+                    {/* Background "AaBb" Watermark */}
+                    <div
+                        className={cn(
+                            "absolute right-0 top-1/2 -translate-y-1/2 text-[180px] md:text-[250px] lg:text-[320px] leading-none tracking-tighter pointer-events-none select-none",
+                            fontClassName
+                        )}
+                        style={{
+                            fontFamily: `"${headingFontName}", system-ui, sans-serif`,
+                            fontWeight: 400,
+                            color: 'rgba(0,0,0,0.06)',
+                            right: '-20px',
+                        }}
+                    >
+                        AaBb
+                    </div>
+
+                    {/* Weight List - Left Side */}
+                    <div className="relative z-10 space-y-3 md:space-y-4 max-w-xs">
+                        {weightScale.map((item) => (
+                            <div
+                                key={item.label}
+                                className={cn(
+                                    "text-2xl md:text-3xl text-stone-700 transition-all hover:text-stone-900",
+                                    fontClassName
+                                )}
+                                style={{
+                                    fontFamily: `"${headingFontName}", system-ui, sans-serif`,
+                                    fontWeight: item.weight,
+                                }}
+                            >
+                                {item.label}
+                            </div>
+                        ))}
+                    </div>
+
+                </div>
+
+                {/* ====== ACTION BAR ====== */}
+                <div className="bg-stone-50 border-t border-stone-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <div
+                            className="w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center text-lg font-bold"
+                            style={{ fontFamily: `"${headingFontName}", system-ui, sans-serif` }}
+                        >
+                            Aa
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-stone-900">
+                                {typoInfo.isPairing ? `${headingFontName} + ${bodyFontName}` : headingFontName}
+                            </p>
+                            <p className="text-xs text-stone-500">
+                                {typoInfo.isPairing ? 'Font pairing' : '5 weights available'}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setIsFontSelectorOpen(true)}
+                            className="px-4 py-2 text-sm font-medium text-stone-600 bg-white border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
+                        >
+                            Change Font
+                        </button>
+                        <a
+                            href={`https://fonts.google.com/specimen/${headingFontName.replace(/\s+/g, '+')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 text-sm font-bold rounded-lg transition-all hover:scale-105 flex items-center justify-center"
+                            style={{ backgroundColor: GLYPH_ACCENT, color: "#FFFFFF" }}
+                        >
+                            Download Font Family
+                        </a>
                     </div>
                 </div>
             </div>
+
+            {/* TYPE SCALE TABLE */}
+            <div className="mt-10 rounded-xl border border-stone-200 bg-white overflow-hidden">
+                <div className="px-6 py-4 border-b border-stone-200 bg-stone-50">
+                    <h4 className="font-semibold text-stone-900">Type Scale</h4>
+                    <p className="text-sm text-stone-500 mt-1">Golden ratio proportions for consistent hierarchy</p>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                        <thead>
+                            <tr className="border-b border-stone-200 bg-stone-50/50">
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">Role</th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">Size (px)</th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">Size (rem)</th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">Line Height</th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">Letter Spacing</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-stone-100">
+                            {[
+                                { role: 'H1', size: '48px', rem: '3rem', lineHeight: '1.1', letterSpacing: '-0.03em', weight: '700' },
+                                { role: 'H2', size: '36px', rem: '2.25rem', lineHeight: '1.15', letterSpacing: '-0.025em', weight: '700' },
+                                { role: 'H3', size: '30px', rem: '1.875rem', lineHeight: '1.2', letterSpacing: '-0.02em', weight: '600' },
+                                { role: 'H4', size: '24px', rem: '1.5rem', lineHeight: '1.25', letterSpacing: '-0.015em', weight: '600' },
+                                { role: 'H5', size: '20px', rem: '1.25rem', lineHeight: '1.3', letterSpacing: '-0.01em', weight: '600' },
+                                { role: 'H6', size: '18px', rem: '1.125rem', lineHeight: '1.35', letterSpacing: '0em', weight: '600' },
+                                { role: 'Body', size: '16px', rem: '1rem', lineHeight: '1.6', letterSpacing: '0em', weight: '400' },
+                                { role: 'Small', size: '14px', rem: '0.875rem', lineHeight: '1.5', letterSpacing: '0.01em', weight: '400' },
+                            ].map((row) => (
+                                <tr key={row.role} className="hover:bg-stone-50 transition-colors">
+                                    <td className="px-6 py-3 font-semibold text-stone-900">{row.role}</td>
+                                    <td className="px-6 py-3 font-mono text-stone-600">{row.size}</td>
+                                    <td className="px-6 py-3 font-mono text-stone-600">{row.rem}</td>
+                                    <td className="px-6 py-3 font-mono text-stone-600">{row.lineHeight}</td>
+                                    <td className="px-6 py-3 font-mono text-stone-600">{row.letterSpacing}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </>
+    );
+}
+
+// ============================================
+// ICONOGRAPHY SECTION
+// ============================================
+
+function IconographySection({ brand }: { brand: BrandIdentity }) {
+    const primary = brand.theme.tokens.light.primary;
+
+    const IconCard = ({ icon: Icon, label }: { icon: any, label: string }) => {
+        const isActionable = label === 'Copy' || label === 'Download';
+        const handleAction = () => {
+            if (isActionable) {
+                navigator.clipboard.writeText('npm install lucide-react');
+                // Simple alert as requested for immediate feedback
+                alert('Copied specific command: npm install lucide-react');
+            }
+        };
+
+        return (
+            <div
+                onClick={handleAction}
+                className={cn(
+                    "flex flex-col items-center gap-3 p-4 rounded-xl border border-stone-100 bg-stone-50 hover:bg-white hover:shadow-md transition-all group",
+                    isActionable && "cursor-pointer active:scale-95 ring-2 ring-offset-2 ring-transparent hover:ring-stone-200"
+                )}
+            >
+                <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white border border-stone-200 text-stone-600 group-hover:border-transparent group-hover:text-white transition-colors"
+                    style={{ '--tw-bg-opacity': 1, '--icon-hover': primary } as React.CSSProperties}
+                >
+                    {/* We use inline style for hover color via CSS variable or direct style if possible. Framer motion is better but keeping it simple. */}
+                    <Icon
+                        size={20}
+                        className="transition-colors duration-300 group-hover:text-[var(--icon-color)]"
+                        style={{ '--icon-color': primary } as React.CSSProperties}
+                    />
+                </div>
+                <span className="text-xs font-medium text-stone-500 group-hover:text-stone-900 flex items-center gap-1">
+                    {label}
+                    {isActionable && <span className="text-[10px] opacity-0 group-hover:opacity-50">↵</span>}
+                </span>
+            </div>
+        );
+    };
+
+    const categories = [
+        {
+            title: "Navigation",
+            icons: [
+                { icon: Home, label: "Home" },
+                { icon: Menu, label: "Menu" },
+                { icon: ChevronDown, label: "Dropdown" },
+                { icon: ArrowRight, label: "Arrow" },
+                { icon: MoreHorizontal, label: "More" }, // Need to import MoreHorizontal or just use dots
+                { icon: X, label: "Close" },
+            ]
+        },
+        {
+            title: "Actions",
+            icons: [
+                { icon: Search, label: "Search" },
+                { icon: Plus, label: "Add" },
+                { icon: Settings, label: "Settings" },
+                { icon: Share2, label: "Share" },
+                { icon: Download, label: "Download" },
+                { icon: Copy, label: "Copy" },
+            ]
+        },
+        {
+            title: "Communication",
+            icons: [
+                { icon: User, label: "Profile" },
+                { icon: Mail, label: "Email" },
+                { icon: Bell, label: "Notify" },
+                { icon: Heart, label: "Like" },
+                { icon: Star, label: "Favorite" },
+                { icon: MapPin, label: "Location" },
+            ]
+        }
+    ];
+
+    return (
+        <div className="space-y-12">
+            {categories.map((cat, i) => (
+                <div key={i}>
+                    <h4 className="text-sm font-bold text-stone-400 uppercase tracking-widest mb-6">{cat.title}</h4>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
+                        {cat.icons.map((item, j) => (
+                            <IconCard key={j} icon={item.icon} label={item.label} />
+                        ))}
+                    </div>
+                </div>
+            ))}
+
+            {/* Usage Example */}
+            <div className="mt-8 p-6 bg-stone-50 rounded-xl border border-stone-200">
+                <div className="flex gap-4 items-center">
+                    <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center">
+                        <Info size={20} className="text-stone-500" />
+                    </div>
+                    <div>
+                        <h5 className="font-bold text-stone-900 text-sm">Icon Usage</h5>
+                        <p className="text-xs text-stone-500 mt-1 max-w-lg">
+                            Icons should be used to enhance comprehension, not decoration.
+                            Use the 24px grid for primary actions and 16px for secondary indicators.
+                            Stroke width should be consistent (2px recommended).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
 
@@ -461,14 +778,87 @@ interface BrandGuidelinesDocsProps {
     onSelectColor?: (color: { light: string; dark: string }) => void;
 }
 
+// ============================================
+// BRAND OVERVIEW SECTION (Cover Story)
+// ============================================
+
+function getBrandStory(brand: BrandIdentity) {
+    const name = brand.name;
+    const vibe = brand.vibe || 'Efficiency';
+    const industry = 'Digital'; // Generic fallback if not available
+
+    const missions = [
+        `${name} is a next-generation protocol designed to serve as the central hub of its ecosystem. Built with minimal, tech-driven precision, ${name} represents the foundation where projects are launched and innovation takes root.`,
+        `${name} redefines the landscape of ${vibe}, merging aesthetic purity with functional depth. It stands as a beacon for those who demand clarity in a chaotic world.`,
+        `At the intersection of design and utility lies ${name}. A platform for the future, engineered to facilitate seamless connection and growth across the entire network.`,
+    ];
+
+    const origins = [
+        `The name ${name} originates from the concept of being at the core — the central point around which the ecosystem is built.`,
+        `${name} draws its identity from the principles of reduction and synthesis. It symbolizes the point where complexity resolves into simplicity.`,
+        `Rooted in the idea of perpetual motion, ${name} embodies the drive to constantly evolve and adapt. It is a living system.`,
+    ];
+
+    // Stable selection based on name length
+    const hash = name.length;
+    return {
+        mission: missions[hash % missions.length],
+        origin: origins[hash % origins.length]
+    };
+}
+
+function BrandOverviewSection({ brand }: { brand: BrandIdentity }) {
+    const story = useMemo(() => getBrandStory(brand), [brand]);
+    const primary = brand.theme.tokens.light.primary;
+    const colors = generateDeepColor(primary);
+
+    return (
+        <div className="relative w-full rounded-3xl overflow-hidden mb-16 text-white shadow-2xl" style={{ backgroundColor: colors.deep }}>
+            {/* Background Gradient */}
+            <div
+                className="absolute inset-0"
+                style={{ background: `linear-gradient(135deg, ${colors.deeper} 0%, ${colors.deep} 50%, ${colors.accent} 100%)` }}
+            />
+            {/* Noise Texture */}
+            <div className="absolute inset-0 opacity-20 bg-stone-900 mix-blend-overlay pointer-events-none" />
+
+            {/* Content */}
+            <div className="relative z-10 w-full h-full flex flex-col md:flex-row items-center p-12 md:p-20 gap-12">
+                <div className="flex-1 space-y-10">
+                    <div>
+                        <span className="text-xs font-mono uppercase tracking-widest text-white/50 mb-4 block">{brand.name} Brand Guidelines</span>
+                        <h2 className={cn("text-5xl md:text-6xl font-bold uppercase tracking-tight leading-[0.9]", brand.font.heading)}>Brand Overview</h2>
+                    </div>
+
+                    <div className="space-y-8 max-w-2xl">
+                        <p className={cn("text-xl md:text-2xl leading-relaxed font-medium", brand.font.body)}>{story.mission}</p>
+                        <p className={cn("text-sm md:text-base opacity-70 border-l-2 border-white/30 pl-6 py-2 leading-relaxed max-w-xl", brand.font.body)}>
+                            {story.origin} <br />
+                            With its ecosystem anchored in deep {colors.deep} tones that symbolize stability, {brand.name} positions itself as the trusted center point.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Logo Overlay */}
+                <div className="relative w-64 h-64 md:w-96 md:h-96 flex-shrink-0 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-white/10 blur-[80px] rounded-full" />
+                    <LogoComposition brand={brand} className="w-full h-full text-white drop-shadow-2xl" />
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export function BrandGuidelinesDocs({ brand, onUpdateFont, onSelectColor }: BrandGuidelinesDocsProps) {
     const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
     const t = brand.theme.tokens[colorMode];
+    const primary = brand.theme.tokens.light.primary;
+    const colors = generateDeepColor(primary);
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen" style={{ background: `linear-gradient(180deg, ${colors.deeper} 0%, ${colors.deep} 100%)` }}>
             {/* Clean Header */}
-            <header className="border-b border-stone-200 bg-white sticky top-0 z-50">
+            <header className="border-b border-white/10 sticky top-0 z-50" style={{ backgroundColor: colors.deeper }}>
                 <div className="max-w-6xl mx-auto px-8 py-6">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
@@ -476,13 +866,13 @@ export function BrandGuidelinesDocs({ brand, onUpdateFont, onSelectColor }: Bran
                                 <LogoComposition brand={brand} layout="generative" />
                             </div>
                             <div>
-                                <h1 className={cn("text-xl font-bold text-stone-900", brand.font.heading)}>
+                                <h1 className={cn("text-xl font-bold text-white", brand.font.heading)}>
                                     {brand.name}
                                 </h1>
-                                <p className="text-sm text-stone-500">Brand Guidelines</p>
+                                <p className="text-sm text-stone-300">Brand Guidelines</p>
                             </div>
                         </div>
-                        <p className="text-xs font-mono text-stone-400 uppercase tracking-widest">
+                        <p className="text-xs font-mono text-stone-300 uppercase tracking-widest">
                             v1.0 • {new Date().getFullYear()}
                         </p>
                     </div>
@@ -490,7 +880,10 @@ export function BrandGuidelinesDocs({ brand, onUpdateFont, onSelectColor }: Bran
             </header>
 
             {/* Content */}
-            <main className="max-w-6xl mx-auto px-8">
+            <main className="max-w-7xl mx-auto px-8 py-12">
+
+                {/* BRAND OVERVIEW (Cover) */}
+                <BrandOverviewSection brand={brand} />
 
                 {/* LOGO SYSTEM */}
                 <DocSection
@@ -578,22 +971,22 @@ export function BrandGuidelinesDocs({ brand, onUpdateFont, onSelectColor }: Bran
                     {/* Clear Space & Usage */}
                     <div className="mt-16 space-y-16">
                         <div>
-                            <h4 className="font-bold text-stone-900 mb-6 flex items-center gap-2">
-                                <span className="w-1.5 h-6 bg-stone-900 rounded-full" />
+                            <h4 className="font-bold text-white mb-6 flex items-center gap-2">
+                                <span className="w-1.5 h-6 bg-white rounded-full" />
                                 Clear Space Construction
                             </h4>
-                            <p className="text-sm text-stone-600 mb-6 max-w-2xl">
+                            <p className="text-sm text-stone-200 mb-6 max-w-2xl">
                                 To ensure legibility, always keep a minimum clear space around the logo. This space isolates the mark from competing graphic elements like other logos, copy, or photography.
                             </p>
                             <ClearSpaceDiagram brand={brand} />
                         </div>
 
                         <div>
-                            <h4 className="font-bold text-stone-900 mb-6 flex items-center gap-2">
+                            <h4 className="font-bold text-white mb-6 flex items-center gap-2">
                                 <span className="w-1.5 h-6 bg-red-500 rounded-full" />
                                 Unacceptable Usage
                             </h4>
-                            <p className="text-sm text-stone-600 mb-6 max-w-2xl">
+                            <p className="text-sm text-stone-200 mb-6 max-w-2xl">
                                 Consistently using the logo is crucial for brand recognition. Avoid these common mistakes when using the brand marks.
                             </p>
                             <LogoMisuseGrid brand={brand} />
@@ -646,6 +1039,15 @@ export function BrandGuidelinesDocs({ brand, onUpdateFont, onSelectColor }: Bran
                     subtitle="Font families and type scale specifications."
                 >
                     <TypographySection brand={brand} onUpdateFont={onUpdateFont} />
+                </DocSection>
+
+                {/* ICONOGRAPHY */}
+                <DocSection
+                    id="iconography"
+                    title="Iconography"
+                    subtitle="System icons and usage guidelines."
+                >
+                    <IconographySection brand={brand} />
                 </DocSection>
 
                 {/* EXPORT */}

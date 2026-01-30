@@ -3,68 +3,20 @@
 import React, { useMemo } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { BrandIdentity } from '@/lib/data';
-import { cn } from '@/lib/utils';
+import { cn, generateDeepColor } from '@/lib/utils';
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 import { BrandMockups } from '@/components/preview/BrandMockups';
 import { Mockup3DCard } from '@/components/preview/Mockup3DCard';
 import { BrandGraphicsSystem } from '@/components/preview/BrandGraphicsSystem';
 import { SocialMediaKit } from '@/components/preview/SocialMediaKit';
+import { TypographyTeaser } from '@/components/preview/TypographySpecimen';
+import { AppIconMacro } from '@/components/preview/AppIconMacro';
+import { BrandVisionMacro } from '@/components/preview/BrandVisionMacro';
+import { ProceduralPosterGrid } from '@/components/preview/ProceduralPoster';
+import { WebFaviconMacro } from '@/components/preview/WebFaviconMacro';
 
 
-
-
-function hexToHSL(hex: string): { h: number; s: number; l: number } {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    if (!result) return { h: 0, s: 0, l: 0 };
-
-    const r = parseInt(result[1], 16) / 255;
-    const g = parseInt(result[2], 16) / 255;
-    const b = parseInt(result[3], 16) / 255;
-
-    const max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h = 0, s = 0;
-    const l = (max + min) / 2;
-
-    if (max !== min) {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-            case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-            case g: h = ((b - r) / d + 2) / 6; break;
-            case b: h = ((r - g) / d + 4) / 6; break;
-        }
-    }
-
-    return { h: h * 360, s: s * 100, l: l * 100 };
-}
-
-function HSLToHex(h: number, s: number, l: number): string {
-    s /= 100;
-    l /= 100;
-    const a = s * Math.min(l, 1 - l);
-    const f = (n: number) => {
-        const k = (n + h / 30) % 12;
-        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-        return Math.round(255 * color).toString(16).padStart(2, '0');
-    };
-    return `#${f(0)}${f(8)}${f(4)}`;
-}
-
-function hexToRGB(hex: string): string {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    if (!result) return '0, 0, 0';
-    return `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`;
-}
-
-// Generate deep/rich variant of primary color for backgrounds
-function generateDeepColor(hex: string): { deep: string; deeper: string; accent: string } {
-    const hsl = hexToHSL(hex);
-    return {
-        deep: HSLToHex(hsl.h, Math.min(hsl.s + 10, 100), Math.max(hsl.l - 35, 8)),
-        deeper: HSLToHex(hsl.h, Math.min(hsl.s + 15, 100), Math.max(hsl.l - 45, 5)),
-        accent: HSLToHex((hsl.h + 30) % 360, hsl.s, Math.min(hsl.l + 20, 90))
-    };
-}
+// ============================================
 
 // ============================================
 // SECTION 1: SUPER-GRAPHIC HERO
@@ -420,262 +372,33 @@ function BrandNarrativeGrid({ brand }: { brand: BrandIdentity }) {
         <div className="w-full flex flex-col gap-0">
 
             {/* ============================================ */}
-            {/* CARD A: THE "VISION" PORTRAIT - Accelra Style */}
+            {/* CARD A: BRAND VISION MACRO (New Quote Engine + Identity Card) */}
             {/* ============================================ */}
-            <motion.section
-                className="relative min-h-[500px] md:min-h-[600px] overflow-hidden"
-                style={{ backgroundColor: colors.deeper }}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-            >
-                <div className="max-w-7xl mx-auto h-full">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[500px] md:min-h-[600px]">
-
-                        {/* Left: Text */}
-                        <div className="flex flex-col justify-center p-8 md:p-16 lg:p-20 relative z-10">
-                            <motion.div
-                                initial={{ opacity: 0, x: -30 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.7, delay: 0.2 }}
-                            >
-                                <p className="text-xs font-mono uppercase tracking-widest mb-4" style={{ color: primary }}>
-                                    Brand Vision
-                                </p>
-                                <h2
-                                    className={cn(
-                                        "text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-tight",
-                                        brand.font.heading
-                                    )}
-                                >
-                                    {selectedQuote.headline}
-                                    <br />
-                                    <span style={{ color: primary }}>{selectedQuote.accent}.</span>
-                                </h2>
-                                <p className="mt-6 text-white/60 text-lg max-w-md leading-relaxed">
-                                    {brand.strategy?.vision || `A future where ${brand.name} defines the standard for ${brand.vibe || 'minimalist'} innovation.`}
-                                </p>
-                            </motion.div>
-                        </div>
-
-                        {/* Right: Abstract Geometric Background */}
-                        <div className="relative overflow-hidden min-h-[300px] lg:min-h-full">
-                            {/* Gradient Base */}
-                            <div
-                                className="absolute inset-0"
-                                style={{
-                                    background: `linear-gradient(135deg, ${colors.deeper} 0%, ${primary} 100%)`
-                                }}
-                            />
-
-                            {/* Animated Geometric Shapes */}
-                            <svg
-                                className="absolute inset-0 w-full h-full"
-                                viewBox="0 0 400 500"
-                                preserveAspectRatio="xMidYMid slice"
-                            >
-                                {/* Large Triangle */}
-                                <motion.polygon
-                                    points="200,50 400,450 0,450"
-                                    fill={colors.deeper}
-                                    opacity={0.4}
-                                    initial={{ scale: 0.8, opacity: 0 }}
-                                    whileInView={{ scale: 1, opacity: 0.4 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 1, delay: 0.3 }}
-                                />
-
-                                {/* Medium Triangle */}
-                                <motion.polygon
-                                    points="250,150 380,400 120,400"
-                                    fill="none"
-                                    stroke="#FFFFFF"
-                                    strokeWidth="1"
-                                    opacity={0.3}
-                                    initial={{ pathLength: 0 }}
-                                    whileInView={{ pathLength: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 1.5, delay: 0.5 }}
-                                />
-
-                                {/* Small Triangle */}
-                                <motion.polygon
-                                    points="200,200 300,350 100,350"
-                                    fill={primary}
-                                    opacity={0.6}
-                                    initial={{ y: 50, opacity: 0 }}
-                                    whileInView={{ y: 0, opacity: 0.6 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 0.8, delay: 0.7 }}
-                                />
-
-                                {/* Decorative Lines */}
-                                <motion.line
-                                    x1="50" y1="100" x2="350" y2="100"
-                                    stroke="#FFFFFF"
-                                    strokeWidth="0.5"
-                                    opacity={0.2}
-                                    initial={{ pathLength: 0 }}
-                                    whileInView={{ pathLength: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 1, delay: 0.4 }}
-                                />
-                                <motion.line
-                                    x1="350" y1="100" x2="350" y2="400"
-                                    stroke="#FFFFFF"
-                                    strokeWidth="0.5"
-                                    opacity={0.2}
-                                    initial={{ pathLength: 0 }}
-                                    whileInView={{ pathLength: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 1, delay: 0.6 }}
-                                />
-
-                                {/* Circle Accent */}
-                                <motion.circle
-                                    cx="320"
-                                    cy="120"
-                                    r="30"
-                                    fill="none"
-                                    stroke={primary}
-                                    strokeWidth="2"
-                                    initial={{ scale: 0 }}
-                                    whileInView={{ scale: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 0.5, delay: 0.8 }}
-                                />
-                            </svg>
-
-                            {/* Noise Texture Overlay */}
-                            <div
-                                className="absolute inset-0 opacity-20 pointer-events-none"
-                                style={{
-                                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`
-                                }}
-                            />
-
-                            {/* Floating Brand Badge */}
-                            <motion.div
-                                className="absolute bottom-8 right-8 flex items-center gap-3 px-4 py-2 rounded-full backdrop-blur-md"
-                                style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: 0.9 }}
-                            >
-                                <div className="w-6 h-6">
-                                    <LogoComposition brand={brand} overrideColors={{ primary: '#FFFFFF' }} />
-                                </div>
-                                <span className="text-white text-sm font-medium">{brand.name}</span>
-                            </motion.div>
-                        </div>
-                    </div>
-                </div>
-            </motion.section>
+            <BrandVisionMacro brand={brand} />
 
             {/* ============================================ */}
             {/* CARD B: THE "VALUE PROP" BENTO */}
             {/* ============================================ */}
             {/* ============================================ */}
-            {/* CARD B: GENERATIVE TRIPTYCH (Replaces Bento) */}
+            {/* CARD B: PROCEDURAL POSTER GRID (Infinite Variety) */}
             {/* ============================================ */}
-            <GenerativeTriptych brand={brand} />
+            <section className="w-full py-12 px-6 md:px-12 bg-stone-950">
+                <div className="max-w-7xl mx-auto">
+                    <ProceduralPosterGrid brand={brand} />
+                </div>
+            </section>
 
             {/* ============================================ */}
             {/* CARD C: THE "PRODUCT MOMENT" (App Icon Macro) */}
             {/* ============================================ */}
-            <motion.section
-                className="relative min-h-[400px] md:min-h-[500px] overflow-hidden flex items-center justify-center"
-                style={{
-                    background: `radial-gradient(ellipse at center, ${colors.deep} 0%, ${colors.deeper} 60%, #0a0a0a 100%)`
-                }}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-            >
-                {/* Blurred Background Glow */}
-                <div
-                    className="absolute inset-0 opacity-40"
-                    style={{
-                        background: `radial-gradient(circle at 50% 50%, ${primary}50 0%, transparent 50%)`
-                    }}
-                />
+            <AppIconMacro brand={brand} />
 
-                {/* Glassmorphic Notification Card */}
-                <motion.div
-                    className="relative z-10"
-                    initial={{ opacity: 0, scale: 0.9, y: 40 }}
-                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                >
-                    {/* iOS-style Notification */}
-                    <div
-                        className="rounded-3xl p-6 backdrop-blur-2xl shadow-2xl border border-white/10 max-w-md mx-4"
-                        style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
-                    >
-                        <div className="flex items-start gap-4">
-                            {/* App Icon */}
-                            <div
-                                className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 shadow-lg"
-                                style={{
-                                    backgroundColor: primary,
-                                    boxShadow: `0 8px 32px ${primary}60`
-                                }}
-                            >
-                                <div className="w-10 h-10">
-                                    <LogoComposition brand={brand} overrideColors={{ primary: '#FFFFFF' }} />
-                                </div>
-                            </div>
+            {/* ============================================ */}
+            {/* CARD D: WEB IDENTITY (Favicon) */}
+            {/* ============================================ */}
+            <WebFaviconMacro brand={brand} />
 
-                            {/* Notification Content */}
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between mb-1">
-                                    <span className="text-white font-semibold text-sm">{brand.name}</span>
-                                    <span className="text-white/40 text-xs">now</span>
-                                </div>
-                                <p className="text-white/80 text-sm leading-relaxed">
-                                    Your brand identity is ready. Tap to explore your complete design system.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Floating App Icons (Home Screen Vibe) */}
-                    <div className="flex justify-center gap-4 mt-8">
-                        {[0.6, 1, 0.6].map((opacity, i) => (
-                            <motion.div
-                                key={i}
-                                className="w-14 h-14 rounded-2xl flex items-center justify-center"
-                                style={{
-                                    backgroundColor: i === 1 ? primary : 'rgba(255,255,255,0.1)',
-                                    opacity
-                                }}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: 0.4 + i * 0.1 }}
-                            >
-                                <div className="w-8 h-8">
-                                    <LogoComposition
-                                        brand={brand}
-                                        overrideColors={{ primary: i === 1 ? '#FFFFFF' : primary }}
-                                    />
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </motion.div>
-
-                {/* Bottom Text */}
-                <div className="absolute bottom-8 left-0 right-0 text-center">
-                    <p className="text-white/30 text-xs font-mono uppercase tracking-widest">
-                        Premium App Icon • iOS Ready
-                    </p>
-                </div>
-            </motion.section>
-        </div>
+        </div >
     );
 }
 
@@ -694,6 +417,15 @@ function BrandNarrativeGrid({ brand }: { brand: BrandIdentity }) {
 function MockupsGallery({ brand }: { brand: BrandIdentity }) {
     const primary = brand.theme.tokens.light.primary;
     const colors = generateDeepColor(primary);
+    const [selectedCategory, setSelectedCategory] = React.useState<'essentials' | 'digital' | 'social' | 'outdoor' | 'merch'>('essentials');
+
+    const MOCKUP_CATEGORIES = {
+        essentials: 'Essentials',
+        digital: 'Digital',
+        social: 'Social',
+        outdoor: 'Outdoor',
+        merch: 'Merch',
+    };
 
     return (
         <section className="w-full relative bg-stone-950 overflow-hidden py-12">
@@ -716,10 +448,33 @@ function MockupsGallery({ brand }: { brand: BrandIdentity }) {
                 }}
             />
 
+            {/* External Category Tabs */}
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30 flex gap-3 pt-2">
+                {(Object.entries(MOCKUP_CATEGORIES) as [typeof selectedCategory, string][]).map(([key, label]) => (
+                    <button
+                        key={key}
+                        onClick={() => setSelectedCategory(key)}
+                        className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 relative ${selectedCategory === key
+                            ? 'text-white shadow-lg scale-105'
+                            : 'text-zinc-400 hover:text-white bg-black/30 hover:bg-black/40 backdrop-blur-sm'
+                            }`}
+                        style={selectedCategory === key ? {
+                            background: `linear-gradient(135deg, ${primary}, ${primary}dd)`,
+                            boxShadow: `0 4px 20px ${primary}40`
+                        } : {}}
+                    >
+                        {label}
+                    </button>
+                ))}
+            </div>
+
             <div className="w-full relative z-10">
                 <BrandMockups
                     brand={brand}
                     showCarousel={true}
+                    showTabsInside={false}
+                    externalCategory={selectedCategory}
+                    onCategoryChange={setSelectedCategory}
                     className="w-full !max-w-none !bg-transparent !shadow-none !p-0 !rounded-none border-none"
                 />
             </div>
@@ -758,6 +513,51 @@ function BrandSystemSection({ brand }: { brand: BrandIdentity }) {
                 </motion.div>
 
                 <BrandGraphicsSystem brand={brand} />
+            </div>
+        </section>
+    );
+}
+
+// ============================================
+// SECTION 7: TYPOGRAPHY POSTER (Teaser)
+// ============================================
+
+function TypographyPoster({ brand, onNavigateToGuidelines }: { brand: BrandIdentity; onNavigateToGuidelines?: () => void }) {
+    const primary = brand.theme.tokens.light.primary;
+    const colors = generateDeepColor(primary);
+
+    return (
+        <section className="w-full py-20 bg-stone-950">
+            <div className="max-w-6xl mx-auto px-6 md:px-12">
+                <motion.div
+                    className="mb-10"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                >
+                    <p className="text-xs font-mono uppercase tracking-widest mb-2" style={{ color: primary }}>
+                        Typography
+                    </p>
+                    <h2 className={cn("text-4xl font-bold text-white tracking-tight", brand.font.heading)}>
+                        The Typeface
+                    </h2>
+                    <p className="text-stone-400 mt-2 max-w-lg">
+                        A carefully selected font pairing that defines the voice of your brand.
+                    </p>
+                </motion.div>
+
+                {/* Typography Teaser Card */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 }}
+                >
+                    <TypographyTeaser
+                        brand={brand}
+                        onClick={onNavigateToGuidelines}
+                    />
+                </motion.div>
             </div>
         </section>
     );
@@ -803,11 +603,17 @@ export function BrandManifesto({ brand, onViewModeChange, onUpdateBrand }: Brand
             {/* Section 4: Brand Graphics System (Asset Grid) */}
             <BrandSystemSection brand={brand} />
 
+            {/* Section 5: Typography Poster (Teaser) */}
+            <TypographyPoster
+                brand={brand}
+                onNavigateToGuidelines={() => onViewModeChange?.('presentation')}
+            />
+
             {/* CTA: View Full Guidelines */}
             <section
                 className="py-20"
                 style={{
-                    background: `linear-gradient(180deg, #ffffff 0%, ${primary}15 100%)`
+                    background: `linear-gradient(180deg, ${colors.deeper} 0%, ${colors.deep} 100%)`
                 }}
             >
                 <div className="max-w-4xl mx-auto text-center px-6">
@@ -819,10 +625,10 @@ export function BrandManifesto({ brand, onViewModeChange, onUpdateBrand }: Brand
                         <div className="w-16 h-16 mx-auto mb-6">
                             <LogoComposition brand={brand} />
                         </div>
-                        <h2 className={cn("text-4xl md:text-5xl font-bold tracking-tight mb-4", brand.font.heading)}>
+                        <h2 className={cn("text-4xl md:text-5xl font-bold tracking-tight mb-4 text-white", brand.font.heading)}>
                             Ready to launch
                         </h2>
-                        <p className="text-stone-500 text-lg mb-8 max-w-lg mx-auto">
+                        <p className="text-stone-300 text-lg mb-8 max-w-lg mx-auto">
                             Your complete brand identity system is ready. View the full guidelines or export your assets.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
