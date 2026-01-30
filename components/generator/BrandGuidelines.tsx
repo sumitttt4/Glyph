@@ -107,7 +107,7 @@ function DocSection({
     action?: React.ReactNode;
 }) {
     return (
-        <section id={id} className="py-16 border-b border-white/10 last:border-0">
+        <section id={id} className="py-16 border-b border-white/10 last:border-0 last:pb-6">
             <div className="mb-8 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                 <div>
                     <h2 className="text-2xl font-bold text-white tracking-tight">{title}</h2>
