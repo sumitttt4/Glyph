@@ -445,7 +445,8 @@ function generateTypographySuggestions(algorithm: LogoAlgorithm, profile?: Brand
             minimal: 'minimal',
             innovative: 'modern-tech',
         };
-        style = personalityStyles[profile.personality] || styleMap[algorithm] || 'default';
+        const primaryPersonality = Array.isArray(profile.personality) ? profile.personality[0] : profile.personality;
+        style = personalityStyles[primaryPersonality] || styleMap[algorithm] || 'default';
     } else {
         style = styleMap[algorithm] || 'default';
     }
@@ -594,7 +595,7 @@ export function generateBrandGuidelines(
     return {
         version: '1.0',
         generatedAt: new Date().toISOString(),
-        brandName: logo.seed,
+        brandName: logo.meta?.seed || logo.meta?.brandName || 'Brand',
 
         logoDescription: generateLogoDescription(algorithm),
         algorithmUsed: algorithm,

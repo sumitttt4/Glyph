@@ -10,7 +10,7 @@
  */
 
 import { createSeededRandom } from './parametric-engine';
-import { hexToRgb, rgbToHsl, getContrastRatio } from './color-utils';
+import { hexToRgb, rgbToHsl, contrastRatio } from './color-utils';
 
 // ============================================================================
 // TYPES
@@ -405,7 +405,7 @@ export function validateAccessibility(
     foregroundColor: string,
     backgroundColor: string
 ): AccessibilityResult {
-    const contrast = getContrastRatio(foregroundColor, backgroundColor);
+    const contrast = contrastRatio(foregroundColor, backgroundColor);
 
     let wcagLevel: 'AAA' | 'AA' | 'A' | 'fail';
     if (contrast >= 7) {
