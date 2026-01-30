@@ -567,7 +567,7 @@ function TypographySection({ brand, onUpdateFont }: { brand: BrandIdentity; onUp
                             fontFamily: `"${headingFontName}", system-ui, sans-serif`,
                             fontWeight: 400,
                             color: 'rgba(0,0,0,0.06)',
-                            right: '-20px',
+                            right: '2%', // Moved left to be fully visible
                         }}
                     >
                         AaBb
