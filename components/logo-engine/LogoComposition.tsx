@@ -90,10 +90,30 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
         const selectedLogo = brand.generatedLogos[selectedIndex];
 
         if (selectedLogo?.svg) {
+            let svgContent = selectedLogo.svg;
+
+            // Apply overrideColors if provided - replace black fills/strokes with override color
+            if (overrideColors?.primary) {
+                const overrideColor = overrideColors.primary;
+
+                // Replace common black color values with override color
+                // This handles: fill="#000", fill="black", fill="currentColor", stroke equivalents
+                svgContent = svgContent
+                    .replace(/fill="(#000000|#000|black|currentColor)"/gi, `fill="${overrideColor}"`)
+                    .replace(/stroke="(#000000|#000|black|currentColor)"/gi, `stroke="${overrideColor}"`)
+                    .replace(/fill='(#000000|#000|black|currentColor)'/gi, `fill='${overrideColor}'`)
+                    .replace(/stroke='(#000000|#000|black|currentColor)'/gi, `stroke='${overrideColor}'`);
+
+                // Also handle SVGs that use fill:color in style attributes
+                svgContent = svgContent
+                    .replace(/fill:\s*(#000000|#000|black|currentColor)/gi, `fill:${overrideColor}`)
+                    .replace(/stroke:\s*(#000000|#000|black|currentColor)/gi, `stroke:${overrideColor}`);
+            }
+
             return (
                 <div
                     className={className}
-                    dangerouslySetInnerHTML={{ __html: selectedLogo.svg }}
+                    dangerouslySetInnerHTML={{ __html: svgContent }}
                     style={{
                         width: '100%',
                         height: '100%',

@@ -31,6 +31,14 @@ export function useHistory() {
                     // Load local history for guest mode
                     try {
                         const localHistory = JSON.parse(localStorage.getItem('glyph_guest_history') || '[]');
+
+                        // Debug: Log whether logos have SVG data
+                        console.log('[History] Loaded guest history:', localHistory.length);
+                        localHistory.forEach((b: any, i: number) => {
+                            const hasLogo = !!b.identity?.generatedLogos?.[0]?.svg;
+                            console.log(`[History] Guest Brand ${i}: "${b.identity?.name}" - Logo SVG: ${hasLogo ? 'YES ✓' : 'NO (legacy)'}`);
+                        });
+
                         setBrands(localHistory);
                     } catch (e) {
                         console.error('Failed to load guest history', e);
@@ -67,6 +75,13 @@ export function useHistory() {
                     identity: d.identity as BrandIdentity,
                     created_at: d.created_at
                 }));
+
+                // Debug: Log whether logos have SVG data
+                console.log('[History] Fetched brands:', mappedBrands.length);
+                mappedBrands.forEach((b, i) => {
+                    const hasLogo = !!b.identity.generatedLogos?.[0]?.svg;
+                    console.log(`[History] Brand ${i}: "${b.identity.name}" - Logo SVG: ${hasLogo ? 'YES ✓' : 'NO (legacy)'}`);
+                });
 
                 if (proStatus) {
                     setBrands(mappedBrands);

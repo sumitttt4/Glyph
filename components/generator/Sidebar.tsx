@@ -14,7 +14,7 @@ export interface GenerationOptions {
     prompt: string;
     vibe: string;
     name: string;
-    archetype: 'symbol' | 'wordmark';
+    archetype: 'symbol' | 'wordmark' | 'both';
     color?: string;
     shape?: string;
     gradient?: { colors: string[]; angle: number } | null;
@@ -87,7 +87,7 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
     const [customVibe, setCustomVibe] = useState('');
     const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
     const [selectedShape, setSelectedShape] = useState<string | null>(null);
-    const [selectedArchetype, setSelectedArchetype] = useState<'symbol' | 'wordmark'>('symbol');
+    const [selectedArchetype, setSelectedArchetype] = useState<'symbol' | 'wordmark' | 'both'>('both');
     const [isShapesOpen, setIsShapesOpen] = useState(false);
     const [isAiLoading, setIsAiLoading] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(INDUSTRIES[0]);

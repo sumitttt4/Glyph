@@ -273,10 +273,16 @@ export function useBrandGenerator() {
             // 1. Generate via Infinite Engine (SHA-256 Neural Uniqueness)
             // Use Category for context if available, otherwise vibe
             const contextSeed = options.category || vibe.toLowerCase();
+            const archetype = options.archetype || 'both';
+
+            console.log(`[BrandGenerator] Generating with archetype: ${archetype}, vibe: ${vibe}`);
+
             const infiniteResults = await InfiniteLogoEngine.generateBatch(
                 name.trim() || 'Brand',
                 contextSeed,
-                1
+                1,
+                archetype,  // Pass archetype to filter algorithms
+                vibe        // Pass vibe to filter by aesthetic direction
             );
 
             if (infiniteResults.length > 0) {
@@ -427,14 +433,16 @@ export function useBrandGenerator() {
                         try {
                             const localHistory = JSON.parse(localStorage.getItem('glyph_guest_history') || '[]');
 
-                            // Create a lightweight version of the brand (strip heavy logo SVG data)
+                            // Keep SVG data for proper logo display in history
+                            // Only strip variations to save space, but keep the main SVG
                             const lightweightBrand = {
                                 ...newBrand,
-                                // Keep only first generated logo reference, strip SVG content
+                                // Keep the first generated logo WITH its SVG for history display
                                 generatedLogos: newBrand.generatedLogos?.slice(0, 1).map(logo => ({
                                     ...logo,
-                                    svg: '', // Strip SVG to save space
-                                    variations: undefined, // Strip variations
+                                    // KEEP the SVG - it's essential for displaying the actual logo
+                                    // Only strip variations which can be regenerated
+                                    variations: undefined,
                                 })) || [],
                             };
 

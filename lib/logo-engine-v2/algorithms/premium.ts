@@ -12,54 +12,48 @@ const getHash = (str: string) => {
     return Math.abs(hash);
 };
 
-// 1. CONSTRUCTION / ARCHITECTURAL STYLE (The "K" example)
-export const generateConstruction = (params: InfiniteLogoParams, brandName: string) => {
-    const seed = getHash(brandName);
-    const initial = brandName[0].toUpperCase();
-    const isCircle = seed % 2 === 0;
+// Helper to get abstract geometric shapes (No letters)
+const getAbstractShape = (seed: number, size: number = 60) => {
+    const type = seed % 6;
+    const center = 100;
+    const offset = size;
 
-    // Construction Lines (Guides)
-    const guides = `
-        <g stroke="currentColor" stroke-width="0.5" opacity="0.4" stroke-dasharray="2 2" fill="none">
-            <circle cx="100" cy="100" r="80" />
-            <line x1="100" y1="20" x2="100" y2="180" />
-            <line x1="20" y1="100" x2="180" y2="100" />
-            <line x1="20" y1="20" x2="180" y2="180" />
-            <line x1="180" y1="20" x2="20" y2="180" />
-        </g>
-    `;
+    // 0: Star
+    if (type === 0) return `<polygon points="${center},${center - offset} ${center + offset * 0.2},${center - offset * 0.2} ${center + offset},${center - offset * 0.2} ${center + offset * 0.4},${center + offset * 0.2} ${center + offset * 0.6},${center + offset} ${center},${center + offset * 0.5} ${center - offset * 0.6},${center + offset} ${center - offset * 0.4},${center + offset * 0.2} ${center - offset},${center - offset * 0.2} ${center - offset * 0.2},${center - offset * 0.2}" fill="white" />`;
 
-    // Main Shape
-    let mainShape = '';
-    if (isCircle) {
-        mainShape = `<path d="M100 20 L 100 100 L 180 100 A 80 80 0 0 0 100 20" fill="currentColor" opacity="0.9" />`;
-    } else {
-        // Geometric Letter
-        mainShape = `<text x="100" y="140" font-family="monospace" font-weight="bold" font-size="100" text-anchor="middle" fill="currentColor">${initial}</text>`;
-    }
+    // 1: Diamond
+    if (type === 1) return `<polygon points="${center},${center - offset} ${center + offset * 0.8},${center} ${center},${center + offset} ${center - offset * 0.8},${center}" fill="white" />`;
 
-    // Accents (Nodes)
-    const nodes = `
-        <g fill="currentColor">
-            <circle cx="100" cy="20" r="2" />
-            <circle cx="180" cy="100" r="2" />
-            <circle cx="100" cy="180" r="2" />
-            <circle cx="20" cy="100" r="2" />
-            <circle cx="100" cy="100" r="3" />
-        </g>
-    `;
+    // 2: Bolt
+    if (type === 2) return `<polygon points="${center + 10},${center - offset} ${center + 30},${center - 10} ${center + 80},${center - 10} ${center},${center + offset} ${center + 10},${center + 20} ${center - 60},${center + 20}" fill="white" />`;
 
-    return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${guides}${mainShape}${nodes}</svg>`;
+    // 3: Inverted Triangle
+    if (type === 3) return `<polygon points="${center - offset},${center - offset * 0.5} ${center + offset},${center - offset * 0.5} ${center},${center + offset}" fill="white" />`;
+
+    // 4: Hexagon
+    if (type === 4) return `<polygon points="${center - offset * 0.5},${center - offset} ${center + offset * 0.5},${center - offset} ${center + offset},${center} ${center + offset * 0.5},${center + offset} ${center - offset * 0.5},${center + offset} ${center - offset},${center}" fill="white" />`;
+
+    // 5: Cross/Plus
+    return `<path d="M${center - 20},${center - offset} L${center + 20},${center - offset} L${center + 20},${center - 20} L${center + offset},${center - 20} L${center + offset},${center + 20} L${center + 20},${center + 20} L${center + 20},${center + offset} L${center - 20},${center + offset} L${center - 20},${center + 20} L${center - offset},${center + 20} L${center - offset},${center - 20} L${center - 20},${center - 20} Z" fill="white" />`;
 };
 
-// 2. NEO GRADIENT / ORB (The "HaloAI" example)
+// 1. CONSTRUCTION / ARCHITECTURAL STYLE
+// (Simplified to a clean geometric shape, dashed lines removed)
+export const generateConstruction = (params: InfiniteLogoParams, brandName: string) => {
+    // Just a clean geometric placeholder since the "Blueprint" style was purged
+    // This allows existing references to not crash but renders something safe.
+    return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="50" y="50" width="100" height="100" fill="none" stroke="currentColor" stroke-width="2" opacity="0.5" />
+        <circle cx="100" cy="100" r="30" fill="currentColor" />
+    </svg>`;
+};
+
+// 2. NEO GRADIENT / ORB (Abstract only)
 export const generateNeoGradient = (params: InfiniteLogoParams, brandName: string) => {
     const seed = getHash(brandName);
     const id = `grad-${seed}`;
     const blurId = `blur-${seed}`;
 
-    // Gradient Definition
-    // We use 'white' and 'currentColor' placeholders which will be replaced by the injector
     const defs = `
         <defs>
             <linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -72,21 +66,22 @@ export const generateNeoGradient = (params: InfiniteLogoParams, brandName: strin
         </defs>
     `;
 
-    // Orb Shape
     const orb = `
-        <circle cx="100" cy="100" r="60" fill="url(#${id})" />
-        <circle cx="70" cy="70" r="20" fill="white" opacity="0.3" filter="url(#${blurId})" />
+        <circle cx="100" cy="100" r="80" fill="url(#${id})" />
+        <circle cx="70" cy="70" r="30" fill="white" opacity="0.3" filter="url(#${blurId})" />
     `;
 
-    // Text Overlay (Minimal)
-    const text = `
-        <text x="100" y="105" font-family="sans-serif" font-weight="bold" font-size="60" text-anchor="middle" fill="white" fill-opacity="0.9">${brandName[0]}</text>
+    // Replaced text with geometric shape
+    const centerShape = `
+        <g opacity="0.9" transform="scale(0.6) translate(66, 66)">
+            ${getAbstractShape(seed, 60)}
+        </g>
     `;
 
-    return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${defs}${orb}${text}</svg>`;
+    return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${defs}${orb}${centerShape}</svg>`;
 };
 
-// 3. NEGATIVE SPACE / CUTOUT (The "Artifact" example)
+// 3. NEGATIVE SPACE / CUTOUT (Abstract only)
 export const generateNegativeSpace = (params: InfiniteLogoParams, brandName: string) => {
     const seed = getHash(brandName);
     const maskId = `mask-${seed}`;
@@ -96,14 +91,15 @@ export const generateNegativeSpace = (params: InfiniteLogoParams, brandName: str
     let path = '';
     // 0: Squircle, 1: Circle, 2: Hexagon
     if (containerType === 0) path = `<rect x="20" y="20" width="160" height="160" rx="40" fill="currentColor" mask="url(#${maskId})" />`;
-    else if (containerType === 1) path = `<circle cx="100" cy="100" r="80" fill="currentColor" mask="url(#${maskId})" />`;
+    else if (containerType === 1) path = `<circle cx="100" cy="100" r="90" fill="currentColor" mask="url(#${maskId})" />`;
     else path = `<path d="M50 20 L150 20 L190 100 L150 180 L50 180 L10 100 Z" fill="currentColor" mask="url(#${maskId})" />`;
 
     const defs = `
         <defs>
             <mask id="${maskId}">
                 <rect x="0" y="0" width="200" height="200" fill="white" />
-                <text x="100" y="135" font-family="sans-serif" font-weight="900" font-size="100" text-anchor="middle" fill="black">${brandName[0]}</text>
+                <!-- Center Cutout (Replaced text with shape) -->
+                ${getAbstractShape(seed, 50).replace(/fill="white"/, 'fill="black"')} 
                 <!-- Optional Slash -->
                 ${seed % 2 === 0 ? '<path d="M0 200 L200 0" stroke="black" stroke-width="20" />' : ''}
             </mask>
@@ -113,25 +109,35 @@ export const generateNegativeSpace = (params: InfiniteLogoParams, brandName: str
     return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${defs}${path}</svg>`;
 };
 
-// 4. SWISS MINIMAL (The "Atome" example)
+// 4. SWISS MINIMAL (Abstract Geometry)
 export const generateSwissMinimal = (params: InfiniteLogoParams, brandName: string) => {
     const seed = getHash(brandName);
-    const initial = brandName[0];
 
-    // Bold geometric abstract shape
-    // Example: Triangle with circle
-    const shapes = `
-        <path d="M100 20 L180 180 L20 180 Z" fill="currentColor" />
-        <circle cx="100" cy="120" r="30" fill="white" /> 
-    `;
+    // purely abstract geometric compositions
+    const compositionType = seed % 3;
+    let shapes = '';
 
-    // Or A-shape
-    const aShape = `
-        <path d="M50 180 L50 140 L100 40 L150 140 L150 180 L120 180 L100 140 L80 180 Z" fill="currentColor" />
-        <path d="M20 140 A 40 40 0 0 1 100 100 A 40 40 0 0 1 180 140" fill="none" stroke="currentColor" stroke-width="20" stroke-linecap="round" />
-    `;
+    if (compositionType === 0) {
+        // Circle + Line
+        shapes = `
+            <circle cx="100" cy="80" r="40" fill="currentColor" />
+            <rect x="80" y="140" width="40" height="20" fill="currentColor" />
+        `;
+    } else if (compositionType === 1) {
+        // Triangle + Circle
+        shapes = `
+            <path d="M100 40 L160 160 L40 160 Z" fill="currentColor" />
+            <circle cx="100" cy="110" r="20" fill="white" /> 
+        `;
+    } else {
+        // Grid Blocks
+        shapes = `
+            <rect x="50" y="50" width="45" height="45" fill="currentColor" />
+            <rect x="105" y="50" width="45" height="45" fill="currentColor" />
+            <rect x="50" y="105" width="45" height="45" fill="currentColor" />
+            <circle cx="127.5" cy="127.5" r="22.5" fill="currentColor" />
+        `;
+    }
 
-    const selectedShape = seed % 2 === 0 ? shapes : aShape;
-
-    return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${selectedShape}</svg>`;
+    return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${shapes}</svg>`;
 };

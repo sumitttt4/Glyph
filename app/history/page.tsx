@@ -107,10 +107,24 @@ export default function HistoryPage() {
                                         />
 
                                         <div className="relative z-10 transform group-hover:scale-105 transition-transform duration-500">
-                                            <LogoComposition
-                                                brand={item.identity}
-                                                className="w-32 h-32"
-                                            />
+                                            {/* Check if we have actual SVG data in generatedLogos */}
+                                            {item.identity.generatedLogos?.[0]?.svg ? (
+                                                <LogoComposition
+                                                    brand={item.identity}
+                                                    className="w-32 h-32"
+                                                />
+                                            ) : (
+                                                <div className="w-32 h-32 flex flex-col items-center justify-center">
+                                                    {/* Try to render with legacy fallback */}
+                                                    <LogoComposition
+                                                        brand={item.identity}
+                                                        className="w-24 h-24 opacity-60"
+                                                    />
+                                                    <span className="text-[8px] font-mono text-stone-600 mt-2 uppercase tracking-wider">
+                                                        Legacy
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* Action Overlay */}

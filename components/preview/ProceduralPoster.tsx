@@ -613,15 +613,31 @@ export function ProceduralPoster({
     // Select layout mode
     const mode = forceMode || selectLayoutMode(brand.category, rng);
 
-    // Select content
+    // Select content - PRIORITIZE user's actual mission/strategy over defaults
     const catKey = getCategoryKey(brand.category);
     const headlines = [...HEADLINES[catKey], ...HEADLINES.default];
     const taglines = [...TAGLINES[catKey], ...TAGLINES.default];
     const bodies = [...BODY_TEXT[catKey], ...BODY_TEXT.default];
 
-    const headline = customHeadline || headlines[Math.floor(rng() * headlines.length)];
-    const tagline = taglines[Math.floor(rng() * taglines.length)];
-    const bodyText = customBody || bodies[Math.floor(rng() * bodies.length)];
+    // Use user's actual content if available (from brand.strategy)
+    const userTagline = brand.strategy?.tagline;
+    const userMission = brand.strategy?.mission;
+    const userHeadline = brand.strategy?.marketing?.headline;
+    const userAbout = brand.strategy?.marketing?.about;
+
+    // Priority: Custom props > User strategy > Random from pool
+    const headline = customHeadline
+        || userHeadline
+        || headlines[Math.floor(rng() * headlines.length)];
+
+    const tagline = userTagline
+        || taglines[Math.floor(rng() * taglines.length)];
+
+    // For body text, use mission or about - these are the "description"
+    const bodyText = customBody
+        || userMission
+        || userAbout
+        || bodies[Math.floor(rng() * bodies.length)];
 
     return (
         <motion.div
