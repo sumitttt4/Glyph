@@ -15,19 +15,6 @@ import {
     generateWithTechnique,
 } from './skeleton-techniques';
 
-// Import premium lettermark algorithms (distinctive first-letter logos)
-import {
-    generateGeometricDeconstruction,
-    generateNegativeSpaceLetter,
-    generateLayeredDimensional,
-    generateAbstractIntegration,
-    generateArchitecturalLetter,
-    generateDynamicAsymmetric,
-    generateMonogramFusion,
-    scoreLettermarkQuality,
-    PREMIUM_LETTERMARK_ALGORITHMS,
-} from './premium-lettermarks';
-
 // Re-export skeleton techniques for external use
 export {
     SKELETON_TECHNIQUES,
@@ -41,19 +28,6 @@ export {
     generateMonoline,
     generateShadowLetter,
     generateDottedSkeleton,
-};
-
-// Re-export premium lettermark algorithms
-export {
-    generateGeometricDeconstruction,
-    generateNegativeSpaceLetter,
-    generateLayeredDimensional,
-    generateAbstractIntegration,
-    generateArchitecturalLetter,
-    generateDynamicAsymmetric,
-    generateMonogramFusion,
-    scoreLettermarkQuality,
-    PREMIUM_LETTERMARK_ALGORITHMS,
 };
 
 import { InfiniteLogoParams } from '../types';
