@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { SignIn } from '@clerk/nextjs';
+import { SignIn, ClerkLoading, ClerkLoaded } from '@clerk/nextjs';
 
 export default function LoginPage() {
     return (
@@ -32,22 +32,47 @@ export default function LoginPage() {
                 </Link>
 
                 <div className="w-full flex justify-center">
-                    <SignIn
-                        appearance={{
-                            elements: {
-                                rootBox: "mx-auto",
-                                card: "shadow-none border-none p-0",
-                                headerTitle: "text-2xl font-bold text-stone-900",
-                                headerSubtitle: "text-stone-500",
-                                socialButtonsBlockButton: "rounded-xl border-stone-200 hover:bg-stone-50 text-stone-600 font-medium",
-                                formButtonPrimary: "bg-stone-900 hover:bg-stone-800 text-white rounded-xl shadow-lg",
-                                footerActionLink: "text-stone-900 hover:text-stone-700 font-bold",
-                                formFieldInput: "rounded-lg border-stone-200 focus:ring-stone-900 focus:border-stone-900",
-                            }
-                        }}
-                        forceRedirectUrl="/generator"
-                        signUpUrl="/signup"
-                    />
+                    <ClerkLoading>
+                        <div className="w-full max-w-[400px] space-y-8 animate-pulse">
+                            <div className="space-y-2 text-center">
+                                <div className="h-8 w-48 bg-stone-100 rounded-lg mx-auto" />
+                                <div className="h-4 w-64 bg-stone-100 rounded-lg mx-auto" />
+                            </div>
+                            <div className="space-y-3">
+                                <div className="h-12 w-full bg-stone-100 rounded-xl" />
+                                <div className="h-12 w-full bg-stone-100 rounded-xl" />
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div className="h-px flex-1 bg-stone-100" />
+                                <div className="h-4 w-8 bg-stone-100 rounded" />
+                                <div className="h-px flex-1 bg-stone-100" />
+                            </div>
+                            <div className="space-y-4">
+                                <div className="h-10 w-full bg-stone-100 rounded-lg" />
+                                <div className="h-10 w-full bg-stone-100 rounded-lg" />
+                                <div className="h-12 w-full bg-stone-200 rounded-xl" />
+                            </div>
+                        </div>
+                    </ClerkLoading>
+
+                    <ClerkLoaded>
+                        <SignIn
+                            appearance={{
+                                elements: {
+                                    rootBox: "mx-auto w-full",
+                                    card: "shadow-none border-none p-0 w-full",
+                                    headerTitle: "text-2xl font-bold text-stone-900",
+                                    headerSubtitle: "text-stone-500",
+                                    socialButtonsBlockButton: "rounded-xl border-stone-200 hover:bg-stone-50 text-stone-600 font-medium h-12",
+                                    formButtonPrimary: "bg-stone-900 hover:bg-stone-800 text-white rounded-xl shadow-lg h-12",
+                                    footerActionLink: "text-stone-900 hover:text-stone-700 font-bold",
+                                    formFieldInput: "rounded-lg border-stone-200 focus:ring-stone-900 focus:border-stone-900 h-10",
+                                }
+                            }}
+                            forceRedirectUrl="/generator"
+                            signUpUrl="/signup"
+                        />
+                    </ClerkLoaded>
                 </div>
             </div>
         </div>
