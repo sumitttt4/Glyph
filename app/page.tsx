@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect, Suspense } from 'react';
-import { Check, Sparkles, Play } from 'lucide-react';
+import { Check, Sparkles, Play, ArrowRight } from 'lucide-react';
 
 // Components
 import { Navbar } from '@/components/layout/Navbar';
@@ -12,15 +12,15 @@ import { AuthRescue } from '@/components/auth/AuthRescue';
 import HeroAnimation from '@/components/landing/HeroAnimation'; // Original was default
 import { LiveCounter } from '@/components/landing/LiveCounter';
 import Pricing from '@/components/landing/Pricing'; // Original was default
-import { FAQ } from '@/components/landing/FAQ';
 
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 
 // New Components
 import { ProcessPipeline } from '@/components/landing/ProcessPipeline';
-import { TokenEngine } from '@/components/landing/TokenEngine';
+// import { TokenEngine } from '@/components/landing/TokenEngine';
 import { AssetPayload } from '@/components/landing/AssetPayload';
 import { ComparisonTable } from '@/components/landing/ComparisonTable';
+import { UrgencyBanner } from '@/components/ui/UrgencyBanner';
 
 // Data
 import { THEMES } from '@/lib/themes';
@@ -53,6 +53,7 @@ export default function LandingPage() {
             <Suspense fallback={null}>
                 <AuthRescue />
             </Suspense>
+            <UrgencyBanner spotsLeft={47} />
             <Navbar />
 
             {/* ==================== 1. HERO SECTION ==================== */}
@@ -81,10 +82,10 @@ export default function LandingPage() {
                             <div className="flex flex-wrap gap-4 justify-center lg:justify-start mt-8">
                                 <Link
                                     href="/generator"
-                                    className="flex items-center gap-2 h-12 px-6 rounded-full bg-[#f97316] hover:bg-[#ea580c] text-white font-semibold transition-all shadow-lg active:scale-95 hover:shadow-orange-500/25"
+                                    className="flex items-center gap-2 h-12 px-6 rounded-full bg-[#f97316] hover:bg-[#ea580c] text-white font-semibold transition-all shadow-lg active:scale-95 hover:shadow-orange-500/25 group"
                                 >
-                                    <Sparkles className="w-4 h-4 fill-white animate-pulse" />
                                     <span>Create My Brand Now</span>
+                                    <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-0.5 transition-transform" />
                                 </Link>
 
                                 <a
@@ -108,16 +109,13 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* ==================== 2. HOW IT WORKS (The Logic) ==================== */}
-            <div id="how-it-works">
-                <ProcessPipeline />
-            </div>
+            {/* ==================== 2. HOW IT WORKS (3 Steps) ==================== */}
+            <ProcessPipeline />
 
-            {/* ==================== 3. THE TOKEN ENGINE (The Technical Flex) ==================== */}
-            <TokenEngine />
+
 
             {/* ==================== 4. SHOWCASE SECTION (The Vibe) ==================== */}
-            <section className="py-24 bg-white overflow-hidden">
+            <section id="how-it-works" className="py-24 bg-white overflow-hidden">
                 <div className="max-w-[95%] xl:max-w-7xl mx-auto">
                     {/* Dark Container - The Bridge */}
                     <div className="bg-stone-950 text-white rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-16 overflow-hidden relative">
@@ -239,9 +237,6 @@ export default function LandingPage() {
 
             {/* ==================== 8. PRICING SECTION ==================== */}
             <Pricing />
-
-            {/* ==================== 9. FAQ SECTION (The Defense) ==================== */}
-            <FAQ />
 
             <Footer />
         </div>

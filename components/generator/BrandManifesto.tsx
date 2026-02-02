@@ -31,7 +31,7 @@ function SuperGraphicHero({ brand }: { brand: BrandIdentity }) {
 
     return (
         <motion.section
-            className="relative h-[90vh] min-h-[600px] w-full overflow-hidden flex items-center justify-center"
+            className="relative h-[80vh] min-h-[500px] w-full overflow-hidden flex items-center justify-center"
             style={{
                 background: `linear-gradient(145deg, ${colors.deep} 0%, ${colors.deeper} 50%, ${primary}15 100%)`
             }}
@@ -102,7 +102,7 @@ function SuperGraphicHero({ brand }: { brand: BrandIdentity }) {
                 {/* Brand Name - MASSIVE */}
                 <h1
                     className={cn(
-                        "text-7xl sm:text-8xl md:text-9xl font-bold tracking-tighter text-white mb-6 leading-[0.9]",
+                        "text-5xl sm:text-7xl md:text-9xl font-bold tracking-tighter text-white mb-6 leading-[0.9]",
                         brand.font.heading
                     )}
                     style={{
@@ -449,23 +449,25 @@ function MockupsGallery({ brand }: { brand: BrandIdentity }) {
             />
 
             {/* External Category Tabs */}
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30 flex gap-3 pt-2">
-                {(Object.entries(MOCKUP_CATEGORIES) as [typeof selectedCategory, string][]).map(([key, label]) => (
-                    <button
-                        key={key}
-                        onClick={() => setSelectedCategory(key)}
-                        className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 relative ${selectedCategory === key
-                            ? 'text-white shadow-lg scale-105'
-                            : 'text-zinc-400 hover:text-white bg-black/30 hover:bg-black/40 backdrop-blur-sm'
-                            }`}
-                        style={selectedCategory === key ? {
-                            background: `linear-gradient(135deg, ${primary}, ${primary}dd)`,
-                            boxShadow: `0 4px 20px ${primary}40`
-                        } : {}}
-                    >
-                        {label}
-                    </button>
-                ))}
+            <div className="absolute top-0 left-0 right-0 z-30 pt-4 overflow-x-auto scrollbar-hide">
+                <div className="flex gap-3 px-4 min-w-max justify-center md:mx-auto">
+                    {(Object.entries(MOCKUP_CATEGORIES) as [typeof selectedCategory, string][]).map(([key, label]) => (
+                        <button
+                            key={key}
+                            onClick={() => setSelectedCategory(key)}
+                            className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 relative ${selectedCategory === key
+                                ? 'text-white shadow-lg scale-105'
+                                : 'text-zinc-400 hover:text-white bg-black/30 hover:bg-black/40 backdrop-blur-sm'
+                                }`}
+                            style={selectedCategory === key ? {
+                                background: `linear-gradient(135deg, ${primary}, ${primary}dd)`,
+                                boxShadow: `0 4px 20px ${primary}40`
+                            } : {}}
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             <div className="w-full relative z-10">
