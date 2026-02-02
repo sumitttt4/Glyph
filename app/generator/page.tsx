@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Sidebar, GenerationOptions } from '@/components/generator/Sidebar';
 import { Toolbar } from '@/components/generator/Toolbar';
@@ -21,7 +21,7 @@ import { SoftGateVariations } from '@/components/generator/SoftGateVariations';
 import { StyleGuidePreview } from '@/components/preview/StyleGuidePreview';
 
 
-export default function GeneratorPage() {
+function GeneratorContent() {
   const searchParams = useSearchParams();
   const brandGenerators = useBrandGenerator();
   // ... rest of component
@@ -508,6 +508,14 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
         </div>
       </main>
     </div>
+  );
+}
+
+export default function GeneratorPage() {
+  return (
+    <Suspense fallback={<LoadingState isLoading={true} />}>
+      <GeneratorContent />
+    </Suspense>
   );
 }
 
