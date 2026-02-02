@@ -4,21 +4,34 @@ import { manrope, instrumentSerif } from "@/lib/brand-fonts";
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://glyph.software'),
-  title: "Glyph | Design Engineer",
-  description: "Generate premium brand identity systems for your startup in seconds.",
+  title: "Glyph | AI Brand Design Engineer for Startups",
+  description: "Instantly generate premium brand identity systems for your startup. Glyph uses AI to act as your personal Design Engineer, creating logos, color palettes, and brand guidelines in seconds.",
+  keywords: ["logo generator", "brand identity", "AI design", "startup branding", "design engineer", "brand guidelines"],
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: "Glyph | Design Engineer",
-    description: "Generate premium brand identity systems for your startup in seconds.",
+    title: "Glyph | AI Brand Design Engineer for Startups",
+    description: "Instantly generate premium brand identity systems for your startup. Glyph uses AI to act as your personal Design Engineer.",
     url: 'https://glyph.software',
     siteName: 'Glyph',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: 'https://glyph.software/opengraph-image?v=2',
+        width: 1200,
+        height: 630,
+        alt: 'Glyph - AI Brand Design Engineer',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Glyph | Design Engineer",
-    description: "Generate premium brand identity systems for your startup in seconds.",
-    creator: '@glyph_app', // Placeholder
+    title: "Glyph | AI Brand Design Engineer for Startups",
+    description: "Instantly generate premium brand identity systems for your startup.",
+    creator: '@glyph_app',
+    images: ['https://glyph.software/opengraph-image?v=2'],
   },
   icons: {
     icon: '/logo.svg',
@@ -32,9 +45,34 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Glyph",
+    "image": "https://glyph.software/opengraph-image",
+    "description": "Instantly generate premium brand identity systems for your startup. Glyph uses AI to act as your personal Design Engineer.",
+    "applicationCategory": "DesignApplication",
+    "operatingSystem": "Web Browser",
+    "url": "https://glyph.software",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "Glyph",
+      "url": "https://glyph.software"
+    }
+  };
+
   return (
     <html lang="en" suppressHydrationWarning className={`${manrope.variable} ${instrumentSerif.variable}`}>
       <body className="antialiased min-h-screen bg-stone-50 font-sans">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {children}
         <Analytics />
       </body>
