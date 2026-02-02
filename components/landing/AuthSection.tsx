@@ -4,23 +4,10 @@ import { SignInButton } from "@clerk/nextjs";
 
 export function AuthSection() {
     return (
-        <section className="flex flex-col lg:flex-row h-auto lg:h-[600px] border-y border-stone-200 bg-white">
-            {/* 1. Visual Side (Half) */}
-            <div className="w-full lg:w-1/2 relative bg-stone-900 overflow-hidden min-h-[300px] lg:min-h-0">
-                <Image
-                    src="/auth-visual.jpg"
-                    alt="Design Engineer Aesthetic"
-                    fill
-                    className="object-cover"
-                    priority
-                />
-                <div className="absolute inset-0 bg-black/10" />
-            </div>
-
-            {/* 2. Auth Form Side (Half) */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-20">
-                <div className="w-full max-w-md space-y-10">
-                    <div className="text-center lg:text-left">
+        <section className="flex flex-col items-center justify-center py-20 lg:py-32 border-y border-stone-200 bg-white">
+            <div className="w-full max-w-md px-6">
+                <div className="space-y-10">
+                    <div className="text-center">
                         <h2 className="text-3xl font-bold tracking-tight text-stone-900">
                             Join the <span className="text-[#FF4500]">Design Engineer</span> Club.
                         </h2>
