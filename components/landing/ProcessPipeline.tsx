@@ -40,7 +40,7 @@ export function ProcessPipeline() {
             id: "construct",
             icon: Grid3x3,
             title: "Generate the System",
-            desc: "The AI constructs logos, palettes, and typography rules on a mathematical grid.",
+            desc: "The engine constructs logos, palettes, and typography rules on a mathematical grid.",
             visual: (isActive: boolean) => (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     {isActive && (
@@ -76,7 +76,7 @@ export function ProcessPipeline() {
     ];
 
     return (
-        <section className="py-24 bg-white border-b border-stone-200 overflow-hidden">
+        <section id="how-it-works" className="py-24 bg-white border-b border-stone-200 overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
                 <div className="mb-16 md:text-center max-w-2xl mx-auto">
                     <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-stone-950 mb-4">

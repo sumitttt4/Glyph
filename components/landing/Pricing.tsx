@@ -132,7 +132,7 @@ export default function Pricing() {
                             <div className="p-6 md:p-8 flex-1 flex flex-col">
                                 <ul className="space-y-3.5 mb-8 flex-1" role="list" aria-label="Explorer plan features">
                                     {/* INCLUDED */}
-                                    <FeatureItem included>3 AI Generations</FeatureItem>
+                                    <FeatureItem included>3 Free Generations</FeatureItem>
                                     <FeatureItem included>Live Preview & Mockups</FeatureItem>
                                     <FeatureItem included>Low-Res PNG Export (500×500px)</FeatureItem>
 

@@ -3,8 +3,23 @@ import "@/styles/globals.css";
 import { manrope, instrumentSerif } from "@/lib/brand-fonts";
 
 export const metadata: Metadata = {
-  title: "Glyph | AI Design Engineer",
+  metadataBase: new URL('https://glyph.software'),
+  title: "Glyph | Design Engineer",
   description: "Generate premium brand identity systems for your startup in seconds.",
+  openGraph: {
+    title: "Glyph | Design Engineer",
+    description: "Generate premium brand identity systems for your startup in seconds.",
+    url: 'https://glyph.software',
+    siteName: 'Glyph',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Glyph | Design Engineer",
+    description: "Generate premium brand identity systems for your startup in seconds.",
+    creator: '@glyph_app', // Placeholder
+  },
   icons: {
     icon: '/logo.svg',
   },
