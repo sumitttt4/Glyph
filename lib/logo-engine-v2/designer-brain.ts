@@ -16,6 +16,7 @@ import { InfiniteLogoParams } from './types';
 import { LOGO_LIBRARY } from './algorithms/library';
 import { CATEGORY_COMPOSITIONS, generateAbstractIcon } from './abstract-icons';
 import { getSkeleton, hasCurvedElements, hasDiagonalElements } from './letter-skeletons';
+import { PREMIUM_LETTERMARK_ALGORITHMS, getRecommendedLettermarkAlgorithm } from './lettermark-quality';
 
 // ============================================
 // TYPES
@@ -748,13 +749,51 @@ function runSketching(
     let conceptId = 0;
 
     // 1. Letter-based concepts (if brand prefers or by default)
+    // Now prioritizes PREMIUM lettermark algorithms for distinctive logos
     if (input.preferLettermark !== false) {
         const letter = input.name.charAt(0).toUpperCase();
         const skeleton = getSkeleton(letter);
+        const hasCurves = hasCurvedElements(letter);
+        const hasDiagonals = hasDiagonalElements(letter);
 
-        // Lettermark variations
-        const letterAlgos = ['Monoline Clean', 'Stencil Bold', 'Blueprint Letter', 'Calligraphic Stroke', 'Shadow Depth', 'Multi-Outline Glow'];
-        letterAlgos.forEach((algo, i) => {
+        // PREMIUM Lettermark algorithms (distinctive, non-generic)
+        // These create geometrically constructed letters, not plain text in shapes
+        const premiumLetterAlgos = [
+            'Geometric Deconstruction',
+            'Negative Space Letter',
+            'Layered Dimensional',
+            'Architectural Letter',
+            'Dynamic Asymmetric',
+            'Monogram Fusion',
+        ];
+
+        // Get recommended algorithm based on letter anatomy
+        const recommendedAlgo = getRecommendedLettermarkAlgorithm(letter);
+
+        // Add premium lettermark concepts with high priority
+        premiumLetterAlgos.forEach((algo, i) => {
+            if (LOGO_LIBRARY.find(v => v.name === algo)) {
+                const isRecommended = algo === recommendedAlgo;
+                concepts.push({
+                    id: `concept-${conceptId++}`,
+                    name: `${letter} ${algo.split(' ')[0]}`,
+                    approach: `Premium lettermark: "${letter}" with ${algo.toLowerCase()} treatment - geometrically constructed, not generic`,
+                    algorithm: algo,
+                    params: {
+                        strokeWidth: 4 + (seed % 2),
+                        cornerRadius: discovery.visualDirection === 'organic' ? 15 : 8,
+                        rotation: discovery.visualDirection === 'bold' ? 3 : 0,
+                    },
+                    // Premium lettermarks get higher base score (85+)
+                    score: 85 + (isRecommended ? 10 : 0) + (i < 3 ? 5 : 0),
+                    tags: ['lettermark', 'premium', letter.toLowerCase(), ...discovery.personality],
+                });
+            }
+        });
+
+        // Also include some classic lettermark techniques with lower priority
+        const classicLetterAlgos = ['Monoline Clean', 'Stencil Bold', 'Blueprint Letter', 'Calligraphic Stroke'];
+        classicLetterAlgos.forEach((algo, i) => {
             if (LOGO_LIBRARY.find(v => v.name === algo)) {
                 concepts.push({
                     id: `concept-${conceptId++}`,
@@ -766,8 +805,9 @@ function runSketching(
                         cornerRadius: discovery.visualDirection === 'organic' ? 20 : 5,
                         rotation: 0,
                     },
-                    score: 70 + (i < 3 ? 10 : 0),
-                    tags: ['lettermark', letter.toLowerCase(), ...discovery.personality],
+                    // Classic algorithms get lower score to prefer premium
+                    score: 70 + (i < 2 ? 5 : 0),
+                    tags: ['lettermark', 'classic', letter.toLowerCase(), ...discovery.personality],
                 });
             }
         });
@@ -923,6 +963,25 @@ function runRefinement(
         // Boost for lettermarks if brand name is short
         if (input.name.length <= 6 && concept.tags.includes('lettermark')) score += 8;
 
+        // PREMIUM LETTERMARK BOOST: Prefer distinctive lettermarks over generic ones
+        if (concept.tags.includes('premium') && concept.tags.includes('lettermark')) {
+            score += 15; // Strong boost for premium lettermarks
+        }
+
+        // Boost for specific premium lettermark algorithms
+        const premiumLetterAlgos = [
+            'Geometric Deconstruction', 'Negative Space Letter', 'Layered Dimensional',
+            'Architectural Letter', 'Dynamic Asymmetric', 'Monogram Fusion'
+        ];
+        if (premiumLetterAlgos.some(algo => concept.algorithm.includes(algo))) {
+            score += 10; // Additional boost for premium algorithms
+        }
+
+        // Penalize potentially generic lettermark approaches
+        if (concept.tags.includes('lettermark') && concept.tags.includes('classic')) {
+            score -= 5; // Slight penalty for classic (potentially generic) approaches
+        }
+
         // Boost for icons if brand prefers abstract
         if (input.preferAbstract && concept.tags.includes('abstract')) score += 12;
 
@@ -1002,14 +1061,53 @@ function runQualityCheck(
     relevance += matchingTags * 8;
     relevance = Math.max(50, Math.min(100, relevance));
 
-    // Uniqueness: Distinctive
+    // Uniqueness: Distinctive (ENHANCED for lettermarks)
     let uniqueness = 70;
+
+    // Premium lettermark algorithms are highly unique
+    const premiumLetterAlgos = [
+        'Geometric Deconstruction', 'Negative Space Letter', 'Layered Dimensional',
+        'Architectural Letter', 'Dynamic Asymmetric', 'Monogram Fusion',
+        'Prism Deconstruct', 'Fragment Assembly', 'Void Form', 'Inverse Mark',
+        'Depth Stack', 'Shadow Planes', 'Geometric Blend', 'Compositional Mark',
+        'Blueprint Mark', 'Construction Plan', 'Offset Energy', 'Tilt Mark',
+        'Mark Integration', 'Signature Blend'
+    ];
+    if (premiumLetterAlgos.some(algo => concept.algorithm.includes(algo))) {
+        uniqueness += 15; // Significant boost for premium lettermarks
+    }
+
     // More complex algorithms tend to be more unique
     if (concept.algorithm.includes('Interlock') || concept.algorithm.includes('Fusion')) uniqueness += 10;
     if (concept.algorithm.includes('Architectural') || concept.algorithm.includes('Neo')) uniqueness += 12;
+
+    // PENALIZE generic lettermark patterns
+    const isLettermark = concept.tags.includes('lettermark');
+    if (isLettermark) {
+        // Check for signs of generic lettermark
+        const hasSimpleTextOnly = svg.includes('<text') && !svg.includes('<polygon') && !svg.includes('<path');
+        const hasBasicContainer = svg.includes('r="45"') || svg.includes('r="40"') || svg.includes('r="42"');
+        const hasCenteredOnlyText = svg.includes('text-anchor="middle"') && !svg.includes('transform=');
+
+        if (hasSimpleTextOnly && hasBasicContainer && hasCenteredOnlyText) {
+            uniqueness -= 20; // Heavy penalty for "letter in circle" pattern
+            simplicity -= 10; // Also penalize simplicity (it's boring, not elegant)
+        }
+
+        // Boost for geometric complexity in lettermarks
+        const hasMultiplePaths = (svg.match(/<path/g) || []).length > 1;
+        const hasPolygons = svg.includes('<polygon');
+        const hasMasks = svg.includes('<mask');
+        const hasTransforms = svg.includes('transform=');
+
+        if (hasMultiplePaths || hasPolygons) uniqueness += 8;
+        if (hasMasks) uniqueness += 10;
+        if (hasTransforms && (hasPolygons || hasMultiplePaths)) uniqueness += 5;
+    }
+
     // Basic shapes are less unique
     if (concept.algorithm.includes('Minimal') || concept.algorithm.includes('Dots')) uniqueness -= 5;
-    uniqueness = Math.max(50, Math.min(100, uniqueness));
+    uniqueness = Math.max(40, Math.min(100, uniqueness));
 
     // Versatility: Works in different contexts
     let versatility = 75;
@@ -1022,9 +1120,9 @@ function runQualityCheck(
     // Overall weighted score
     const overall = Math.round(
         scalability * 0.20 +
-        simplicity * 0.25 +
-        relevance * 0.25 +
-        uniqueness * 0.15 +
+        simplicity * 0.20 +
+        relevance * 0.20 +
+        uniqueness * 0.25 + // Increased weight on uniqueness
         versatility * 0.15
     );
 
