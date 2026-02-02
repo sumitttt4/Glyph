@@ -34,7 +34,7 @@ export function ComparisonTable() {
     ];
 
     return (
-        <section className="py-24 bg-white">
+        <section id="why-glyph" className="py-24 bg-white scroll-mt-20">
             <div className="max-w-4xl mx-auto px-6 lg:px-8">
                 <div className="mb-16 text-center">
                     <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-stone-950">

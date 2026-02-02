@@ -538,7 +538,7 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
               />
             </div>
           ) : (
-            <RobotEmptyState />
+            <RobotEmptyState initialBrandName={new URLSearchParams(window.location.search).get('name') || ''} />
           )}
         </div>
       </main>

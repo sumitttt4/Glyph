@@ -111,6 +111,13 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                 console.error("Failed to restore draft", e);
             }
         }
+
+        // Listener for pre-fill event from RobotEmptyState
+        const handlePrefill = (e: any) => {
+            if (e.detail?.name) setBrandName(e.detail.name);
+        };
+        window.addEventListener('glyph-prefill-brand', handlePrefill);
+        return () => window.removeEventListener('glyph-prefill-brand', handlePrefill);
     }, []);
 
     // Generation Limit State

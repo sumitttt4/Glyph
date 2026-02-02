@@ -16,6 +16,7 @@ import Pricing from '@/components/landing/Pricing'; // Original was default
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
 
 // New Components
+import { HeroCentered } from '@/components/hero-centered';
 import { ProcessPipeline } from '@/components/landing/ProcessPipeline';
 // import { TokenEngine } from '@/components/landing/TokenEngine';
 import { AssetPayload } from '@/components/landing/AssetPayload';
@@ -57,57 +58,8 @@ export default function LandingPage() {
             <Navbar />
 
             {/* ==================== 1. HERO SECTION ==================== */}
-            <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
-                {/* Background Grid */}
-                <div
-                    className="absolute inset-0 opacity-40"
-                    style={{ backgroundImage: 'radial-gradient(#A8A29E 1px, transparent 1px)', backgroundSize: '24px 24px' }}
-                ></div>
-
-                <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
-                    <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-                        {/* Left: Content */}
-                        <div className="text-center lg:text-left">
-                            <div className="hidden lg:block w-full"></div>
-
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
-                                Launch Your Startup's Brand <br className="hidden sm:block" />
-                                in <span className="font-editorial text-stone-400">60 Seconds</span>.
-                            </h1>
-
-                            <p className="text-lg md:text-xl text-stone-600 max-w-xl mx-auto lg:mx-0 leading-relaxed mb-10">
-                                Stop wasting hours on generic templates. Generate a unique, engineering-grade brand identity system with logos, typography, and colors ready for production.
-                            </p>
-
-                            <div className="flex flex-wrap gap-4 justify-center lg:justify-start mt-8">
-                                <Link
-                                    href="/generator"
-                                    className="flex items-center gap-2 h-12 px-6 rounded-full bg-[#f97316] hover:bg-[#ea580c] text-white font-semibold transition-all shadow-lg active:scale-95 hover:shadow-orange-500/25 group"
-                                >
-                                    <span>Create My Brand Now</span>
-                                    <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-0.5 transition-transform" />
-                                </Link>
-
-                                <a
-                                    href="#how-it-works"
-                                    className="flex items-center gap-2 h-12 px-6 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-900 font-medium transition-all"
-                                >
-                                    <Play className="w-4 h-4 fill-current" />
-                                    <span>Watch Demo</span>
-                                </a>
-                            </div>
-
-                        </div>
-
-                        {/* Right: The Living Hero Animation */}
-                        <div className="flex justify-center items-center mt-8 lg:mt-0">
-                            {/* Note: HeroAnimation was default export in original file */}
-                            {/* @ts-ignore - Assuming HeroAnimation follows correct export from previous file check */}
-                            <HeroAnimation />
-                        </div>
-                    </div>
-                </div>
-            </section>
+            {/* ==================== 1. HERO SECTION ==================== */}
+            <HeroCentered />
 
             {/* ==================== 2. HOW IT WORKS (3 Steps) ==================== */}
             <ProcessPipeline />

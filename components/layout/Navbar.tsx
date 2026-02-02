@@ -9,8 +9,10 @@ import { GlyphLogo } from '@/components/logo-engine/LogoGlyph';
 // ... (existing imports)
 
 const NAV_LINKS = [
+    { href: '#why-glyph', label: 'Why Glyph' },
     { href: '#how-it-works', label: 'How It Works' },
     { href: '#pricing', label: 'Pricing' },
+    { href: '#faq', label: 'FAQ' },
 ];
 
 export function Navbar() {
@@ -60,7 +62,7 @@ export function Navbar() {
                             href="/generator"
                             className="inline-flex items-center h-9 px-4 rounded-full bg-stone-950 text-white text-sm font-medium hover:bg-stone-800 transition-all shadow-lg hover:shadow-xl active:scale-95"
                         >
-                            Launch Generator
+                            Generate Free
                         </Link>
                     </div>
 
@@ -93,7 +95,7 @@ export function Navbar() {
                             className="block w-full text-center px-5 py-3 rounded-full bg-stone-950 text-white text-sm font-medium"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
-                            Launch Generator
+                            Generate Free
                         </Link>
                     </div>
                 </div>

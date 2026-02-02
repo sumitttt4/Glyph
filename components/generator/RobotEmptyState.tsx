@@ -2,10 +2,27 @@
 
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { InstructionCards } from '@/components/generator/InstructionCards';
 
-export function RobotEmptyState() {
+interface RobotEmptyStateProps {
+    initialBrandName?: string;
+}
+
+export function RobotEmptyState({ initialBrandName }: RobotEmptyStateProps) {
+
+    // Dispatch event to pre-fill Sidebar input if name is present
+    React.useEffect(() => {
+        if (initialBrandName) {
+            // We use a custom event or a direct DOM manipulation since Sidebar state is lifted up
+            // A cleaner way would be to pass setBrandName down, but Sidebar is a sibling.
+            // Dispatching a custom event that Sidebar listens to is a decent decoupled pattern.
+            const event = new CustomEvent('glyph-prefill-brand', { detail: { name: initialBrandName } });
+            window.dispatchEvent(event);
+        }
+    }, [initialBrandName]);
+
     return (
-        <div className="h-[60vh] flex flex-col items-center justify-center p-8 animate-in fade-in zoom-in duration-500">
+        <div className="h-full min-h-[500px] flex flex-col items-center justify-center p-8 animate-in fade-in zoom-in duration-500">
             {/* Robot Container */}
             <div className="relative group">
                 {/* Robot Body Construction - Geometric & Techy */}
@@ -73,20 +90,21 @@ export function RobotEmptyState() {
             </div>
 
             {/* Content Text */}
-            <div className="mt-6 text-center space-y-2 max-w-sm">
-                <h3 className="font-bold text-lg text-stone-800 tracking-tight">
-                    Ready to Design?
-                </h3>
-                <p className="text-sm text-stone-500 font-medium leading-relaxed">
-                    Configure your brand DNA in the sidebar<br />
-                    to generate your unique identity system.
-                </p>
-            </div>
+            {/* Content Text - Instructional Guide */}
+            <div className="mt-8 text-center space-y-6 max-w-md">
 
-            {/* Desktop Helper Arrow */}
-            <div className="hidden md:flex items-center gap-2 mt-8 px-4 py-2 bg-stone-50 rounded-full border border-stone-100 text-stone-400 opacity-0 animate-in fade-in slide-in-from-right-4 delay-500 fill-mode-forwards">
-                <ArrowLeft className="w-4 h-4 animate-bounce-x text-orange-500" />
-                <span className="text-xs font-semibold tracking-wide text-stone-500">Start Here</span>
+                <h3 className="font-bold text-2xl text-stone-900 tracking-tight font-editorial">
+                    Let's Build Your Brand.
+                </h3>
+
+                {/* Micro-Instruction Cards */}
+                <InstructionCards />
+
+                {/* Call to Action Helper */}
+                <div className="flex items-center justify-center gap-2 pt-2 opacity-0 animate-in fade-in slide-in-from-right-4 delay-700 fill-mode-forwards">
+                    <ArrowLeft className="w-4 h-4 animate-bounce-x text-orange-500" />
+                    <span className="text-xs font-bold tracking-wide text-stone-400 uppercase">Fill Sidebar to Start</span>
+                </div>
             </div>
         </div>
     );
