@@ -16,7 +16,14 @@ export function AssetPayload() {
                 </div>
 
                 {/* High Fidelity Brand Guidelines Grid - Infinite Canvas Feel */}
-                <div className="relative w-full bg-[#222] rounded-3xl p-8 md:p-12 border border-stone-800 shadow-2xl overflow-hidden min-h-[800px] flex flex-col">
+                <div className="relative w-full bg-[#050505] rounded-3xl p-8 md:p-12 border border-stone-800 shadow-2xl overflow-hidden min-h-[800px] flex flex-col">
+                    {/* Grid Pattern Overlay */}
+                    <div className="absolute inset-0 pointer-events-none"
+                        style={{
+                            backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
+                            backgroundSize: '40px 40px'
+                        }}
+                    />
 
                     {/* Header mockup */}
                     <div className="flex items-center justify-between mb-8 opacity-60 px-2">
@@ -31,7 +38,7 @@ export function AssetPayload() {
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 overflow-y-auto pr-2 custom-scrollbar" style={{ maxHeight: '800px' }}>
 
                         {/* 1. COVER */}
-                        <Slide className="bg-[#FF5E57] text-[#1a1a1a]">
+                        <Slide className="bg-[#FF4500] text-[#1a1a1a]">
                             <div className="h-full flex flex-col justify-between relative overflow-hidden">
                                 <div className="absolute top-0 right-0 p-2">
                                     <DotGrid className="text-[#1a1a1a] opacity-20" />
@@ -62,8 +69,8 @@ export function AssetPayload() {
                         {/* 3. LOGO COVER */}
                         <Slide className="bg-[#F5F2EF] text-[#1a1a1a]">
                             <div className="h-full flex flex-col justify-center">
-                                <h4 className="text-lg font-serif text-[#FF5E57] mb-1 flex items-center gap-1">
-                                    <div className="w-1 h-1 bg-[#FF5E57] rounded-full"></div>
+                                <h4 className="text-lg font-serif text-[#FF4500] mb-1 flex items-center gap-1">
+                                    <div className="w-1 h-1 bg-[#FF4500] rounded-full"></div>
                                     Logo
                                 </h4>
                                 <div className="space-y-0.5 text-[#1a1a1a]/20 text-lg font-serif leading-none">
@@ -89,7 +96,7 @@ export function AssetPayload() {
                         <Slide className="bg-[#F5F2EF] text-[#1a1a1a]">
                             <div className="h-full flex items-center justify-center relative">
                                 <div className="absolute top-2 left-2 text-[5px] uppercase opacity-40">Logo Clearspace</div>
-                                <div className="border border-dashed border-[#FF5E57]/50 p-3 flex items-center gap-1.5">
+                                <div className="border border-dashed border-[#FF4500]/50 p-3 flex items-center gap-1.5">
                                     <GlyphLogo className="w-4 h-4 fill-[#1a1a1a]" />
                                     <span className="text-xs font-bold tracking-tight">Glyph</span>
                                 </div>
@@ -107,7 +114,7 @@ export function AssetPayload() {
                                             <div key={i} className="border-[0.5px] border-[#1a1a1a]/5"></div>
                                         ))}
                                     </div>
-                                    <GlyphLogo className="w-8 h-8 fill-none stroke-[#FF5E57] stroke-[0.5]" />
+                                    <GlyphLogo className="w-8 h-8 fill-none stroke-[#FF4500] stroke-[0.5]" />
                                 </div>
 
                                 <p className="text-[5px] leading-relaxed opacity-60">
@@ -117,7 +124,7 @@ export function AssetPayload() {
                         </Slide>
 
                         {/* 7. ICON DESIGN VISUAL */}
-                        <Slide className="bg-[#FF5E57] text-white">
+                        <Slide className="bg-[#FF4500] text-white">
                             <div className="h-full flex items-center justify-center">
                                 <GlyphLogo className="w-16 h-16 fill-white" />
                             </div>
@@ -139,8 +146,8 @@ export function AssetPayload() {
                         <Slide className="bg-[#F5F2EF] text-[#1a1a1a]">
                             <div className="h-full flex flex-col justify-center">
                                 <div className="text-[#1a1a1a]/20 text-lg font-serif leading-none mb-1">Logo</div>
-                                <h4 className="text-lg font-serif text-[#FF5E57] mb-1 flex items-center gap-1">
-                                    <div className="w-1 h-1 bg-[#FF5E57] rounded-full"></div>
+                                <h4 className="text-lg font-serif text-[#FF4500] mb-1 flex items-center gap-1">
+                                    <div className="w-1 h-1 bg-[#FF4500] rounded-full"></div>
                                     Typography
                                 </h4>
                                 <div className="space-y-0.5 text-[#1a1a1a]/20 text-lg font-serif leading-none">
@@ -158,7 +165,7 @@ export function AssetPayload() {
                                 <div className="font-serif text-xl leading-[0.9] mb-4">
                                     Supporting the<br />world's best<br />entrepreneurs.
                                 </div>
-                                <div className="w-8 h-2 bg-[#FF5E57] rounded-full"></div>
+                                <div className="w-8 h-2 bg-[#FF4500] rounded-full"></div>
                             </div>
                         </Slide>
 
@@ -191,8 +198,8 @@ export function AssetPayload() {
                             <div className="h-full flex flex-col justify-center">
                                 <div className="text-[#1a1a1a]/20 text-lg font-serif leading-none mb-1">Logo</div>
                                 <div className="text-[#1a1a1a]/20 text-lg font-serif leading-none mb-1">Typography</div>
-                                <h4 className="text-lg font-serif text-[#FF5E57] mb-1 flex items-center gap-1">
-                                    <div className="w-1 h-1 bg-[#FF5E57] rounded-full"></div>
+                                <h4 className="text-lg font-serif text-[#FF4500] mb-1 flex items-center gap-1">
+                                    <div className="w-1 h-1 bg-[#FF4500] rounded-full"></div>
                                     Color Palette
                                 </h4>
                                 <div className="space-y-0.5 text-[#1a1a1a]/20 text-lg font-serif leading-none">
@@ -206,7 +213,7 @@ export function AssetPayload() {
                         <Slide className="bg-[#F5F2EF] text-[#1a1a1a]">
                             <div className="h-full grid grid-cols-3 grid-rows-2">
                                 <div className="bg-[#2D2A26] p-1 flex items-end"><span className="text-[4px] text-white">Brown</span></div>
-                                <div className="bg-[#FF5E57] col-span-2 row-span-2 p-1 flex items-start"><span className="text-[4px] text-white">Red - Primary</span></div>
+                                <div className="bg-[#FF4500] col-span-2 row-span-2 p-1 flex items-start"><span className="text-[4px] text-white">Red - Primary</span></div>
                                 <div className="bg-[#C8B098] p-1 flex items-end"><span className="text-[4px] text-[#2D2A26]">Tan</span></div>
                             </div>
                         </Slide>
@@ -216,10 +223,10 @@ export function AssetPayload() {
                             <div className="h-full flex items-center justify-center">
                                 <div className="grid grid-cols-3 gap-1 p-2">
                                     <div className="w-4 h-4 bg-[#F5F2EF] flex items-center justify-center"><div className="w-1.5 h-1.5 bg-[#1a1a1a]"></div></div>
-                                    <div className="w-4 h-4 bg-[#F5F2EF] flex items-center justify-center"><div className="w-1.5 h-1.5 bg-[#FF5E57]"></div></div>
+                                    <div className="w-4 h-4 bg-[#F5F2EF] flex items-center justify-center"><div className="w-1.5 h-1.5 bg-[#FF4500]"></div></div>
                                     <div className="w-4 h-4 bg-[#C8B098] flex items-center justify-center"><div className="w-1.5 h-1.5 bg-[#1a1a1a]"></div></div>
-                                    <div className="w-4 h-4 bg-[#FF5E57] flex items-center justify-center"><div className="w-1.5 h-1.5 bg-[#F5F2EF]"></div></div>
-                                    <div className="w-4 h-4 bg-[#FF5E57] flex items-center justify-center"><div className="w-1.5 h-1.5 bg-[#1a1a1a]"></div></div>
+                                    <div className="w-4 h-4 bg-[#FF4500] flex items-center justify-center"><div className="w-1.5 h-1.5 bg-[#F5F2EF]"></div></div>
+                                    <div className="w-4 h-4 bg-[#FF4500] flex items-center justify-center"><div className="w-1.5 h-1.5 bg-[#1a1a1a]"></div></div>
                                     <div className="w-4 h-4 bg-[#2D2A26] flex items-center justify-center"><div className="w-1.5 h-1.5 bg-[#F5F2EF]"></div></div>
                                 </div>
                             </div>
@@ -262,7 +269,7 @@ export function AssetPayload() {
                         <Slide className="bg-[#2D2A26] text-white">
                             <div className="h-full flex items-center justify-center">
                                 <div className="w-10 h-16 bg-[#F5F2EF] rounded p-1.5 flex flex-col items-center">
-                                    <div className="w-full aspect-square bg-[#FF5E57] mb-1.5 rounded-sm flex items-center justify-center">
+                                    <div className="w-full aspect-square bg-[#FF4500] mb-1.5 rounded-sm flex items-center justify-center">
                                         <GlyphLogo className="w-3 h-3 fill-white" />
                                     </div>
                                     <div className="w-full h-0.5 bg-[#2D2A26]/10 mb-0.5 rounded-full"></div>
