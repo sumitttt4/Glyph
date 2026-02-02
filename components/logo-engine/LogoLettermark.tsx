@@ -18,7 +18,14 @@ type LettermarkVariant =
     | 'outline'
     | 'split'
     | 'badge'
-    | 'monoline';
+    | 'monoline'
+    // Premium distinctive variants
+    | 'deconstructed'
+    | 'negative-space'
+    | 'dimensional'
+    | 'architectural'
+    | 'asymmetric'
+    | 'fusion';
 
 interface LettermarkProps {
     brand: BrandIdentity;
@@ -296,6 +303,215 @@ export const Lettermark = ({ brand, className = '', variant = 'geometric', color
         );
     }
 
+    // ==================== PREMIUM VARIANTS ====================
+    // These create distinctive, non-generic first-letter logos
+
+    // ==================== VARIANT: DECONSTRUCTED ====================
+    // Letter broken into geometric primitives and reassembled
+    if (variant === 'deconstructed') {
+        const offsetX = seededRandom(seed + 'dx') * 4 - 2;
+        const offsetY = seededRandom(seed + 'dy') * 4 - 2;
+        return (
+            <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id={`dec-grad-${uniqueId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor={colors.primary} />
+                        <stop offset="100%" stopColor={colors.accent || colors.primary} />
+                    </linearGradient>
+                </defs>
+                {/* Geometric fragments creating the letter shape */}
+                <rect x="20" y="15" width="12" height="55" rx="2" fill={colors.primary} transform={`rotate(${-8 + offsetX}, 26, 42)`} />
+                <rect x="68" y="15" width="12" height="55" rx="2" fill={colors.primary} transform={`rotate(${8 + offsetX}, 74, 42)`} />
+                <polygon points="50,8 35,35 65,35" fill={colors.accent || colors.primary} />
+                <rect x="28" y="52" width="44" height="10" rx="2" fill={colors.accent || colors.primary} opacity="0.85" />
+                {/* Letter overlay for recognition */}
+                <text x="50" y="70" fontSize="45" fontWeight="900" textAnchor="middle" fill={colors.primary} opacity="0.2" fontFamily={fontFamily}>
+                    {initial}
+                </text>
+                {/* Accent dot */}
+                <circle cx="85" cy="15" r="5" fill={colors.accent || colors.primary} opacity="0.7" />
+            </svg>
+        );
+    }
+
+    // ==================== VARIANT: NEGATIVE-SPACE ====================
+    // Letter created through absence - cut from solid shape
+    if (variant === 'negative-space') {
+        const containerRadius = 45;
+        return (
+            <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <mask id={`neg-mask-${uniqueId}`}>
+                        <rect width="100" height="100" fill="white" />
+                        <text x="50" y="70" fontSize="58" fontWeight="900" textAnchor="middle" fill="black" fontFamily={fontFamily}>
+                            {initial}
+                        </text>
+                        {/* Strategic cut-outs for visual interest */}
+                        <circle cx="82" cy="18" r="12" fill="black" />
+                    </mask>
+                </defs>
+                {/* Main container with letter cut out */}
+                <circle cx="50" cy="50" r={containerRadius} fill={colors.primary} mask={`url(#neg-mask-${uniqueId})`} />
+                {/* Subtle accent ring */}
+                <circle cx="50" cy="50" r={containerRadius + 3} fill="none" stroke={colors.accent || colors.primary} strokeWidth="1.5" opacity="0.3" />
+            </svg>
+        );
+    }
+
+    // ==================== VARIANT: DIMENSIONAL ====================
+    // Multi-layered depth effect with offset planes
+    if (variant === 'dimensional') {
+        const layers = [
+            { offset: 6, opacity: 0.25, color: colors.accent || colors.primary },
+            { offset: 3, opacity: 0.5, color: colors.accent || colors.primary },
+            { offset: 0, opacity: 1, color: colors.primary },
+        ];
+        return (
+            <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                {layers.map((layer, idx) => (
+                    <g key={idx} transform={`translate(${layer.offset}, ${layer.offset})`} opacity={layer.opacity}>
+                        <text
+                            x="50" y="68"
+                            fontSize="60" fontWeight="900"
+                            textAnchor="middle"
+                            fill={layer.color}
+                            fontFamily={fontFamily}
+                            style={{ letterSpacing: '-0.02em' }}
+                        >
+                            {initial}
+                        </text>
+                    </g>
+                ))}
+                {/* Dimensional accent block */}
+                <rect x="78" y="78" width="16" height="16" rx="3" fill={colors.accent || colors.primary} opacity="0.5" />
+            </svg>
+        );
+    }
+
+    // ==================== VARIANT: ARCHITECTURAL ====================
+    // Grid-based construction with visible guides
+    if (variant === 'architectural') {
+        return (
+            <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                {/* Construction grid */}
+                {[0, 25, 50, 75, 100].map(pos => (
+                    <g key={pos}>
+                        <line x1={pos} y1="0" x2={pos} y2="100" stroke={colors.accent || colors.primary} strokeWidth="0.5" opacity="0.15" />
+                        <line x1="0" y1={pos} x2="100" y2={pos} stroke={colors.accent || colors.primary} strokeWidth="0.5" opacity="0.15" />
+                    </g>
+                ))}
+                {/* Center construction lines */}
+                <line x1="50" y1="0" x2="50" y2="100" stroke={colors.accent || colors.primary} strokeWidth="0.5" opacity="0.3" />
+                <line x1="0" y1="50" x2="100" y2="50" stroke={colors.accent || colors.primary} strokeWidth="0.5" opacity="0.3" />
+                {/* The letter - constructed style */}
+                <text
+                    x="50" y="68"
+                    fontSize="58" fontWeight="700"
+                    textAnchor="middle"
+                    fill={colors.primary}
+                    fontFamily="monospace"
+                    style={{ letterSpacing: '0' }}
+                >
+                    {initial}
+                </text>
+                {/* Dimension markers */}
+                <line x1="5" y1="12" x2="5" y2="88" stroke={colors.accent || colors.primary} strokeWidth="0.75" opacity="0.4" />
+                <line x1="3" y1="12" x2="7" y2="12" stroke={colors.accent || colors.primary} strokeWidth="0.75" opacity="0.4" />
+                <line x1="3" y1="88" x2="7" y2="88" stroke={colors.accent || colors.primary} strokeWidth="0.75" opacity="0.4" />
+                {/* Anchor points */}
+                <circle cx="50" cy="12" r="2" fill="none" stroke={colors.accent || colors.primary} strokeWidth="0.75" />
+                <circle cx="50" cy="88" r="2" fill="none" stroke={colors.accent || colors.primary} strokeWidth="0.75" />
+            </svg>
+        );
+    }
+
+    // ==================== VARIANT: ASYMMETRIC ====================
+    // Off-center, dynamic composition with energy
+    if (variant === 'asymmetric') {
+        const offsetX = 8 + seededRandom(seed + 'ax') * 6;
+        const offsetY = -5 + seededRandom(seed + 'ay') * 4;
+        const tiltAngle = (seededRandom(seed + 'tilt') - 0.5) * 10;
+        return (
+            <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                {/* Dynamic background shape */}
+                <rect
+                    x="60" y="8"
+                    width="35" height="35"
+                    rx="5"
+                    fill={colors.accent || colors.primary}
+                    opacity="0.12"
+                    transform={`rotate(${tiltAngle * 1.5}, 77, 25)`}
+                />
+                {/* Off-center letter */}
+                <text
+                    x={50 + offsetX} y={68 + offsetY}
+                    fontSize="62" fontWeight="900"
+                    textAnchor="middle"
+                    fill={colors.primary}
+                    fontFamily={fontFamily}
+                    style={{ letterSpacing: '-0.03em' }}
+                    transform={`rotate(${tiltAngle}, ${50 + offsetX}, ${50 + offsetY})`}
+                >
+                    {initial}
+                </text>
+                {/* Dynamic accents */}
+                <circle cx={18 - offsetX/2} cy={82} r="6" fill={colors.accent || colors.primary} opacity="0.75" />
+                <line
+                    x1={75 + offsetX/2} y1="78"
+                    x2={92 + offsetX/2} y2="62"
+                    stroke={colors.accent || colors.primary}
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                />
+            </svg>
+        );
+    }
+
+    // ==================== VARIANT: FUSION ====================
+    // Letter integrated with unique geometric mark
+    if (variant === 'fusion') {
+        const hasRoundChar = ['C', 'G', 'O', 'Q', 'S'].includes(initial);
+        const hasDiagonalChar = ['A', 'K', 'M', 'N', 'V', 'W', 'X', 'Y', 'Z'].includes(initial);
+        return (
+            <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id={`fus-grad-${uniqueId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor={colors.accent || colors.primary} stopOpacity="0.6" />
+                        <stop offset="100%" stopColor={colors.primary} stopOpacity="0.2" />
+                    </linearGradient>
+                </defs>
+                {/* Fusion shape based on letter characteristics */}
+                {hasDiagonalChar ? (
+                    <>
+                        <polygon points="50,8 88,78 12,78" fill="none" stroke={colors.accent || colors.primary} strokeWidth="2" opacity="0.35" />
+                        <circle cx="50" cy="55" r="28" fill={`url(#fus-grad-${uniqueId})`} />
+                    </>
+                ) : hasRoundChar ? (
+                    <>
+                        <circle cx="50" cy="50" r="42" fill="none" stroke={colors.accent || colors.primary} strokeWidth="2" opacity="0.35" />
+                        <circle cx="50" cy="50" r="32" fill={`url(#fus-grad-${uniqueId})`} />
+                    </>
+                ) : (
+                    <>
+                        <rect x="12" y="12" width="76" height="76" rx="10" fill="none" stroke={colors.accent || colors.primary} strokeWidth="2" opacity="0.35" />
+                        <rect x="22" y="22" width="56" height="56" rx="6" fill={`url(#fus-grad-${uniqueId})`} />
+                    </>
+                )}
+                {/* The letter */}
+                <text
+                    x="50" y="68"
+                    fontSize="52" fontWeight="800"
+                    textAnchor="middle"
+                    fill={colors.primary}
+                    fontFamily={fontFamily}
+                    style={{ letterSpacing: '-0.02em' }}
+                >
+                    {initial}
+                </text>
+            </svg>
+        );
+    }
+
     // Default fallback
     return (
         <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
@@ -309,21 +525,35 @@ export const Lettermark = ({ brand, className = '', variant = 'geometric', color
 
 /**
  * Auto-select variant based on vibe with more variety
+ * Now prioritizes premium distinctive variants for better quality
  */
 export const AutoLettermark = ({ brand, className, colors }: { brand: BrandIdentity; className?: string; colors?: { primary: string; accent?: string; bg?: string } }) => {
     const seed = brand.id + (brand.generationSeed || 0);
     const variantRoll = seededRandom(seed + 'variant');
+    const premiumRoll = seededRandom(seed + 'premium');
 
-    // Vibe-based variant pools
+    // Premium variants (distinctive, non-generic) - prioritized 60% of time
+    const premiumVariants: LettermarkVariant[] = [
+        'deconstructed', 'negative-space', 'dimensional',
+        'architectural', 'asymmetric', 'fusion'
+    ];
+
+    // Vibe-based variant pools - now include premium options
     const vibeVariants: Record<string, LettermarkVariant[]> = {
-        minimalist: ['minimal', 'outline', 'monoline'],
-        tech: ['tech', 'gradient', 'modern'],
-        bold: ['bold', 'split', 'gradient'],
-        nature: ['geometric', 'badge', 'outline'],
-        modern: ['modern', 'gradient', 'split'],
+        minimalist: ['minimal', 'outline', 'monoline', 'architectural', 'negative-space'],
+        tech: ['tech', 'gradient', 'modern', 'deconstructed', 'architectural'],
+        bold: ['bold', 'split', 'gradient', 'dimensional', 'asymmetric'],
+        nature: ['geometric', 'badge', 'outline', 'fusion', 'dimensional'],
+        modern: ['modern', 'gradient', 'split', 'deconstructed', 'asymmetric'],
     };
 
-    const pool = vibeVariants[brand.vibe] || ['geometric', 'modern', 'bold'];
+    // 60% chance to use a premium variant for better quality
+    if (premiumRoll > 0.4) {
+        const premiumVariant = premiumVariants[Math.floor(variantRoll * premiumVariants.length)];
+        return <Lettermark brand={brand} className={className} variant={premiumVariant} colors={colors} />;
+    }
+
+    const pool = vibeVariants[brand.vibe] || ['geometric', 'modern', 'bold', 'fusion'];
     const variant = pool[Math.floor(variantRoll * pool.length)];
 
     return <Lettermark brand={brand} className={className} variant={variant} colors={colors} />;

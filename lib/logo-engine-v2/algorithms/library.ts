@@ -4,6 +4,17 @@ import { generateInterlocking } from './interlocking';
 import { generateLetterFusion } from './letter-fusion';
 import { generateConstruction, generateNeoGradient, generateNegativeSpace, generateSwissMinimal } from './premium';
 
+// Import premium lettermark generators (distinctive first-letter logos)
+import {
+    generateGeometricDeconstruction,
+    generateNegativeSpaceLetter,
+    generateLayeredDimensional,
+    generateAbstractIntegration,
+    generateArchitecturalLetter,
+    generateDynamicAsymmetric,
+    generateMonogramFusion,
+} from './premium-lettermarks';
+
 // Import skeleton-based techniques (proper typography anatomy)
 import {
     generateModular,
@@ -64,6 +75,46 @@ export const LOGO_LIBRARY: LogoVariant[] = [
     { name: 'Techno Construct', description: 'Blueprint style', fn: withPreset(generateConstruction, { strokeWidth: 1 }) },
     { name: 'Glass Orb', description: 'Soft gradient sphere', fn: withPreset(generateNeoGradient, { fillOpacity: 0.9 }) },
     { name: 'Iconic Cut', description: 'App icon style', fn: withPreset(generateNegativeSpace, { cornerRadius: 50 }) },
+
+    // =============================================
+    // PREMIUM LETTERMARK SERIES (Distinctive First-Letter Logos)
+    // NOT generic letter-in-shape - geometrically constructed
+    // =============================================
+
+    // --- GEOMETRIC DECONSTRUCTION SERIES (Letter broken into primitives) ---
+    { name: 'Geometric Deconstruction', description: 'Letter deconstructed into geometric primitives', fn: generateGeometricDeconstruction },
+    { name: 'Prism Deconstruct', description: 'Faceted geometric letter breakdown', fn: withPreset(generateGeometricDeconstruction, { strokeWidth: 4 }) },
+    { name: 'Fragment Assembly', description: 'Reassembled letter fragments', fn: withPreset(generateGeometricDeconstruction, { rotation: 5 }) },
+
+    // --- NEGATIVE SPACE SERIES (Letter through absence) ---
+    { name: 'Negative Space Letter', description: 'Letter created through strategic cutouts', fn: generateNegativeSpaceLetter },
+    { name: 'Void Form', description: 'Shape defined by empty space', fn: withPreset(generateNegativeSpaceLetter, { strokeWidth: 5 }) },
+    { name: 'Inverse Mark', description: 'Inverted letter presence', fn: withPreset(generateNegativeSpaceLetter, { cornerRadius: 20 }) },
+
+    // --- DIMENSIONAL SERIES (Layered depth) ---
+    { name: 'Layered Dimensional', description: 'Multi-plane depth lettermark', fn: generateLayeredDimensional },
+    { name: 'Depth Stack', description: 'Stacked layer depth effect', fn: withPreset(generateLayeredDimensional, { interlockDepth: 80 }) },
+    { name: 'Shadow Planes', description: 'Overlapping shadow layers', fn: withPreset(generateLayeredDimensional, { fillOpacity: 0.8 }) },
+
+    // --- ABSTRACT INTEGRATION SERIES (Letter + abstract composition) ---
+    { name: 'Abstract Integration', description: 'Letter integrated with abstract elements', fn: generateAbstractIntegration },
+    { name: 'Geometric Blend', description: 'Letter fused with geometric shapes', fn: withPreset(generateAbstractIntegration, { strokeWidth: 4 }) },
+    { name: 'Compositional Mark', description: 'Letter as part of composition', fn: withPreset(generateAbstractIntegration, { rotation: -3 }) },
+
+    // --- ARCHITECTURAL SERIES (Grid-based construction) ---
+    { name: 'Architectural Letter', description: 'Grid-based constructed lettermark', fn: generateArchitecturalLetter },
+    { name: 'Blueprint Mark', description: 'Technical drawing style letter', fn: withPreset(generateArchitecturalLetter, { strokeWidth: 2 }) },
+    { name: 'Construction Plan', description: 'Visible construction guides', fn: withPreset(generateArchitecturalLetter, { fillOpacity: 0.4 }) },
+
+    // --- DYNAMIC ASYMMETRIC SERIES (Off-center energy) ---
+    { name: 'Dynamic Asymmetric', description: 'Off-center energetic composition', fn: generateDynamicAsymmetric },
+    { name: 'Offset Energy', description: 'Dynamic displaced lettermark', fn: withPreset(generateDynamicAsymmetric, { rotation: 8 }) },
+    { name: 'Tilt Mark', description: 'Asymmetric angled letter', fn: withPreset(generateDynamicAsymmetric, { strokeWidth: 5 }) },
+
+    // --- MONOGRAM FUSION SERIES (Letter + unique mark) ---
+    { name: 'Monogram Fusion', description: 'Letter fused with geometric mark', fn: generateMonogramFusion },
+    { name: 'Mark Integration', description: 'Letter integrated with symbol', fn: withPreset(generateMonogramFusion, { strokeWidth: 4 }) },
+    { name: 'Signature Blend', description: 'Signature-style fused mark', fn: withPreset(generateMonogramFusion, { cornerRadius: 15 }) },
 
     // =============================================
     // SKELETON-BASED LETTER TECHNIQUES (NEW)
