@@ -12,8 +12,8 @@ const FOOTER_LINKS = {
         { label: 'Generator', href: '/generator' },
     ],
     legal: [
-        { label: 'Privacy Policy', href: '/legal/privacy' },
-        { label: 'Terms of Service', href: '/legal/terms' },
+        { label: 'Privacy Policy', href: '/privacy' },
+        { label: 'Terms of Service', href: '/terms' },
     ],
 };
 

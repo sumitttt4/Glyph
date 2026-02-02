@@ -247,7 +247,7 @@ export function BrandVisionMacro({ brand }: { brand: BrandIdentity }) {
             </div>
 
             {/* LEFT: STATIC VISION */}
-            <div className="w-full md:w-1/2 p-12 md:p-20 relative z-10 flex flex-col justify-center">
+            <div className="w-full md:w-1/2 p-8 md:p-20 relative z-10 flex flex-col justify-center">
                 <div className="mb-12">
                     <span className="text-xs font-mono uppercase tracking-widest text-white/40 flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />

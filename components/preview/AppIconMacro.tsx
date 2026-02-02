@@ -188,7 +188,7 @@ export function AppIconMacro({ brand }: { brand: BrandIdentity }) {
     const colors = generateDeepColor(primary);
 
     return (
-        <section className="relative w-full overflow-hidden bg-[#000000] py-24">
+        <section className="relative w-full overflow-hidden bg-[#000000] py-12 md:py-24">
             {/* Background Ambience */}
             <div className="absolute inset-0 opacity-30 pointer-events-none">
                 <div

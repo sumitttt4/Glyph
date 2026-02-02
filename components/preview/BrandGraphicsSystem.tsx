@@ -269,8 +269,8 @@ export function BrandGraphicsSystem({ brand, className = '' }: BrandGraphicsSyst
                             </div>
 
                             {/* Modal Grid */}
-                            <div className="flex-1 overflow-y-auto p-8 bg-stone-950">
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                            <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-stone-950">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                                     {modalAssets.map((asset, i) => (
                                         <div key={i} className="group flex flex-col gap-3">
                                             <div className="aspect-video bg-white rounded-lg overflow-hidden border border-stone-800 relative shadow-md group-hover:shadow-xl transition-all">

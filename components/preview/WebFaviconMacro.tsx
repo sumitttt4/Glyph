@@ -128,7 +128,7 @@ export function WebFaviconMacro({ brand }: { brand: BrandIdentity }) {
 
     return (
         <section
-            className="relative w-full overflow-hidden py-24 border-t border-white/5"
+            className="relative w-full overflow-hidden py-12 md:py-24 border-t border-white/5"
             style={{
                 background: `linear-gradient(180deg, ${colors.deeper} 0%, ${colors.deep} 100%)`
             }}
