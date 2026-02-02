@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { GlyphLogo } from '@/components/logo-engine/LogoGlyph';
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 // ... (existing imports)
 
@@ -58,12 +59,22 @@ export function Navbar() {
 
                     {/* Desktop CTA */}
                     <div className="hidden md:flex items-center gap-4">
+                        <SignedOut>
+                            <Link href="/login" className="text-sm font-medium text-stone-600 hover:text-stone-950 transition-colors">
+                                Log in
+                            </Link>
+                        </SignedOut>
+
                         <Link
                             href="/generator"
                             className="inline-flex items-center h-9 px-4 rounded-full bg-stone-950 text-white text-sm font-medium hover:bg-stone-800 transition-all shadow-lg hover:shadow-xl active:scale-95"
                         >
                             Generate Free
                         </Link>
+
+                        <SignedIn>
+                            <UserButton afterSignOutUrl="/" />
+                        </SignedIn>
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -90,13 +101,31 @@ export function Navbar() {
                                 {link.label}
                             </a>
                         ))}
-                        <Link
-                            href="/generator"
-                            className="block w-full text-center px-5 py-3 rounded-full bg-stone-950 text-white text-sm font-medium"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            Generate Free
-                        </Link>
+                        <div className="pt-4 border-t border-stone-100 flex flex-col gap-3">
+                            <SignedOut>
+                                <Link
+                                    href="/login"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="block w-full text-center px-5 py-3 rounded-lg border border-stone-200 text-stone-600 text-sm font-medium hover:bg-stone-50"
+                                >
+                                    Log in
+                                </Link>
+                            </SignedOut>
+
+                            <Link
+                                href="/generator"
+                                className="block w-full text-center px-5 py-3 rounded-full bg-stone-950 text-white text-sm font-medium"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                Generate Free
+                            </Link>
+
+                            <SignedIn>
+                                <div className="flex justify-center py-2">
+                                    <UserButton afterSignOutUrl="/" />
+                                </div>
+                            </SignedIn>
+                        </div>
                     </div>
                 </div>
             )}

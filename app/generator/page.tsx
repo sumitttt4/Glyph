@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Sidebar, GenerationOptions } from '@/components/generator/Sidebar';
 import { Toolbar } from '@/components/generator/Toolbar';
 import { LoadingState } from '@/components/generator/LoadingState';
@@ -9,6 +10,7 @@ import { ProGateModal } from '@/components/generator/ProGateModal';
 import { useBrandGenerator } from '@/hooks/use-brand-generator';
 import { useSubscription } from '@/hooks/use-subscription';
 import { createClient } from '@/lib/supabase/client';
+import { useUser, useClerk } from '@clerk/nextjs';
 import { exportBrandPackage } from '@/components/export/ExportPackage';
 import { generateSocialMediaKit, downloadSocialAsset } from '@/components/export/ExportSocial';
 import { downloadBrandBookPDF } from '@/components/export/ExportPDF';
@@ -20,6 +22,7 @@ import { StyleGuidePreview } from '@/components/preview/StyleGuidePreview';
 
 
 export default function GeneratorPage() {
+  const searchParams = useSearchParams();
   const brandGenerators = useBrandGenerator();
   // ... rest of component
 
@@ -33,11 +36,13 @@ export default function GeneratorPage() {
   const subscription = useSubscription();
 
   // Update isPro when subscription loads
+  // Update isPro when subscription loads
   useEffect(() => {
     if (!subscription.isLoading) {
       setIsPro(subscription.isPro);
     }
   }, [subscription.isPro, subscription.isLoading]);
+
   // Compare State
   const [compareList, setCompareList] = useState<BrandIdentity[]>([]);
   const [isCompareOpen, setIsCompareOpen] = useState(false);
@@ -75,38 +80,6 @@ export default function GeneratorPage() {
     }
   }, [isGenerating, brand]);
 
-  useEffect(() => {
-    const checkAccess = async () => {
-      // ADMIN BYPASS: Check cookie
-      // ADMIN BYPASS: Check cookie
-      const hasAdminBypass = /admin-bypass=true/.test(document.cookie);
-      if (hasAdminBypass) {
-        setIsPro(true);
-        return;
-      }
-
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user?.email) return;
-
-      // Check if user is Pro from Supabase profiles table (Dodo Payments integration)
-      const { fetchProStatusFromDB, ADMIN_EMAILS } = await import('@/lib/subscription');
-
-      // Admin emails always get Pro
-      if (ADMIN_EMAILS.includes(user.email)) {
-        setIsPro(true);
-        return;
-      }
-
-      // Check database for Pro status (set by Dodo webhook)
-      const isProFromDB = await fetchProStatusFromDB(supabase, user.email);
-      setIsPro(isProFromDB);
-    };
-
-    checkAccess();
-  }, []);
-
   // RESTORE STATE: Check for pending projects (History Edit or Login Redirect)
   useEffect(() => {
     const pendingJSON = localStorage.getItem('glyph_pending_project');
@@ -137,27 +110,19 @@ export default function GeneratorPage() {
   }, [generateBrand, setBrand]);
 
   // PLG: Check Authed Session Helper (Gate)
+  const { user } = useUser();
+  const { openSignIn } = useClerk();
+
   const checkAuth = async (): Promise<boolean> => {
-    // 1. Check cookies for bypass first (fastest)
-    const hasAdminBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
-    if (hasAdminBypass) return true;
-
-    // 2. Check Supabase session
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
     if (user) return true;
 
-    // 3. Not logged in -> Save State & Redirect
+    // Not logged in -> Save State & Redirect
     if (brand) {
       const pendingProject = {
         name: brand.name,
-        prompt: "Draft Concept", // We don't have original prompt here easily, but brand object has data
+        prompt: "Draft Concept",
         vibe: brand.vibe,
         color: brand.theme.tokens.light.primary,
-        // We should ideally persist the full brand object or re-generate. 
-        // For now, let's just save the inputs we have or the brand object itself if possible.
-        // Better: Saving the inputs allows re-generation.
         timestamp: Date.now()
       };
       localStorage.setItem('glyph_pending_project', JSON.stringify(pendingProject));
@@ -538,7 +503,7 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
               />
             </div>
           ) : (
-            <RobotEmptyState initialBrandName={new URLSearchParams(window.location.search).get('name') || ''} />
+            <RobotEmptyState initialBrandName={searchParams.get('name') || ''} />
           )}
         </div>
       </main>

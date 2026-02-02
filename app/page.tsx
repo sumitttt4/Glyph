@@ -9,6 +9,7 @@ import { Check, Sparkles, Play, ArrowRight } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { AuthRescue } from '@/components/auth/AuthRescue';
+import { AuthSection } from "@/components/landing/AuthSection";
 import HeroAnimation from '@/components/landing/HeroAnimation'; // Original was default
 import { LiveCounter } from '@/components/landing/LiveCounter';
 import Pricing from '@/components/landing/Pricing'; // Original was default
@@ -188,7 +189,10 @@ export default function LandingPage() {
 
 
             {/* ==================== 8. PRICING SECTION ==================== */}
+            {/* ==================== 8. PRICING SECTION ==================== */}
             <Pricing />
+
+            <AuthSection />
 
             <Footer />
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useUser } from '@clerk/nextjs';
+import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { ADMIN_EMAILS } from '@/lib/subscription';
 
@@ -13,9 +14,10 @@ interface SubscriptionState {
 
 /**
  * Client-side hook to check Pro subscription status
- * Fetches from Supabase profiles table
+ * Uses Clerk for auth and Supabase for profile data
  */
-export function useSubscription(): SubscriptionState & { checkProStatus: () => Promise<void> } {
+export function useSubscription(): SubscriptionState {
+    const { user, isLoaded } = useUser();
     const [state, setState] = useState<SubscriptionState>({
         isPro: false,
         isAdmin: false,
@@ -23,73 +25,58 @@ export function useSubscription(): SubscriptionState & { checkProStatus: () => P
         email: null,
     });
 
-    const checkProStatus = useCallback(async () => {
-        // ADMIN BYPASS: Check cookie first
-        if (typeof document !== 'undefined' && /admin-bypass=true/.test(document.cookie)) {
+    useEffect(() => {
+        if (!isLoaded) return;
+
+        if (!user) {
             setState({
-                isPro: true,
-                isAdmin: true,
+                isPro: false,
+                isAdmin: false,
                 isLoading: false,
-                email: 'sumitsharma9128@gmail.com',
+                email: null,
             });
             return;
         }
 
-        const supabase = createClient();
+        const email = user.primaryEmailAddress?.emailAddress || '';
 
-        try {
-            // Get current user
-            const { data: { user } } = await supabase.auth.getUser();
+        // 1. Admin Bypass (Clerk Email)
+        if (ADMIN_EMAILS.includes(email) || email === 'sumitsharma9128@gmail.com') {
+            setState({
+                isPro: true,
+                isAdmin: true,
+                isLoading: false,
+                email,
+            });
+            return;
+        }
 
-            if (!user?.email) {
+        // 2. Check Pro status via API (Bypasses RLS)
+        const checkProStatus = async () => {
+            try {
+                const res = await fetch(`/api/subscription/status?email=${encodeURIComponent(email)}`);
+                const data = await res.json();
+
+                setState({
+                    isPro: data.isPro,
+                    isAdmin: data.isAdmin || false,
+                    isLoading: false,
+                    email,
+                });
+            } catch (err) {
+                console.error('Subscription check failed:', err);
                 setState({
                     isPro: false,
                     isAdmin: false,
                     isLoading: false,
-                    email: null,
-                });
-                return;
-            }
-
-            const email = user.email;
-
-            // Check if admin (instant Pro)
-            if (ADMIN_EMAILS.includes(email)) {
-                setState({
-                    isPro: true,
-                    isAdmin: true,
-                    isLoading: false,
                     email,
                 });
-                return;
             }
+        };
 
-            // Check Supabase profile for is_pro flag
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('is_pro')
-                .eq('email', email)
-                .single();
-
-            if (error) {
-                console.log('[useSubscription] Profile not found or error:', error.message);
-            }
-
-            setState({
-                isPro: data?.is_pro === true,
-                isAdmin: false,
-                isLoading: false,
-                email,
-            });
-        } catch (e) {
-            console.error('[useSubscription] Error:', e);
-            setState(prev => ({ ...prev, isLoading: false }));
-        }
-    }, []);
-
-    useEffect(() => {
         checkProStatus();
-    }, [checkProStatus]);
 
-    return { ...state, checkProStatus };
+    }, [user, isLoaded]);
+
+    return state;
 }

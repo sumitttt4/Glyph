@@ -1,349 +1,225 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
-import { createClient } from '@/lib/supabase/client';
-import { User } from '@supabase/supabase-js';
-import { getSubscriptionStatus, getPlanDisplayInfo } from '@/lib/subscription';
-
-// Generate a consistent DiceBear avatar URL based on user identifier
-function getAvatarUrl(seed: string): string {
-    // Using 'notionists' style for professional, stylized avatars
-    return `https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(seed)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
-}
+import { useUser, useClerk, SignInButton, SignedOut, SignedIn } from '@clerk/nextjs';
+import { useSubscription } from '@/hooks/use-subscription';
+import { ArrowRight, LogOut, LayoutDashboard, Sparkles, History, Settings, Lock, CheckCircle2, Star } from 'lucide-react';
 
 export default function UserProfile() {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+    const { user } = useUser();
+    const { signOut } = useClerk();
+    const { isPro, isAdmin } = useSubscription();
     const [isOpen, setIsOpen] = useState(false);
-    const [isAdminBypass, setIsAdminBypass] = useState(false);
 
-    // Get subscription status
-    const subscriptionStatus = useMemo(() => {
-        // If admin bypass cookie is set, treat as admin
-        if (isAdminBypass) {
-            return {
-                plan: 'admin' as const,
-                isPro: true,
-                isAdmin: true,
-                generationsUsed: 0,
-                generationsRemaining: Infinity,
-                canGenerate: true,
-            };
-        }
-        return getSubscriptionStatus(user?.email);
-    }, [user?.email, isAdminBypass]);
+    // Custom Avatar (using Clerk's image or fallback)
+    const avatarUrl = user?.imageUrl;
+    const fullName = user?.fullName || 'User';
+    const email = user?.primaryEmailAddress?.emailAddress || '';
 
-    const { isAdmin, isPro, plan } = subscriptionStatus;
-    const planInfo = getPlanDisplayInfo(plan);
+    // Determine Plan Display
+    let planName = 'Free Plan';
+    let planColor = 'bg-stone-400';
+    let planTextColor = 'text-stone-500';
+    let headerGradient = 'from-stone-50 to-stone-100';
 
-    // Generate avatar URL based on user email (consistent per user)
-    const avatarUrl = useMemo(() => {
-        if (isAdminBypass) return getAvatarUrl('sumitsharma9128@gmail.com');
-        if (!user?.email) return getAvatarUrl('guest');
-        return getAvatarUrl(user.email);
-    }, [user?.email, isAdminBypass]);
-
-    useEffect(() => {
-        const getUser = async () => {
-            try {
-                // Check for admin bypass cookie first
-                // Check for admin bypass cookie first
-                const hasAdminBypass = /admin-bypass=true/.test(document.cookie);
-                if (hasAdminBypass) {
-                    setIsAdminBypass(true);
-                    // Create a pseudo-user for display purposes
-                    setUser({
-                        id: 'admin-bypass',
-                        email: 'sumitsharma9128@gmail.com',
-                        user_metadata: { full_name: 'Sumit Sharma' },
-                        app_metadata: {},
-                        aud: 'authenticated',
-                        created_at: new Date().toISOString(),
-                    } as unknown as User);
-                    setLoading(false);
-                    return;
-                }
-
-                const supabase = createClient();
-                const { data: { user } } = await supabase.auth.getUser();
-                setUser(user);
-            } catch (e) {
-                console.error('Auth Error', e);
-            } finally {
-                setLoading(false);
-            }
-        };
-        getUser();
-
-        const supabase = createClient();
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            // CRITICAL FIX: Don't let Supabase overwrite Admin Bypass
-            // If the cookie exists, ignore 'null' sessions from Supabase
-            if (/admin-bypass=true/.test(document.cookie)) return;
-
-            setUser(session?.user ?? null);
-        });
-        return () => subscription.unsubscribe();
-    }, []);
-
-    const handleSignOut = async () => {
-        // Clear admin bypass cookie
-        document.cookie = 'admin-bypass=; path=/; max-age=0';
-        const supabase = createClient();
-        await supabase.auth.signOut();
-        window.location.reload();
-    };
-
-    const handleLogin = () => {
-        window.location.href = '/login';
-    };
-
-    // Loading skeleton
-    if (loading) {
-        return (
-            <div className="animate-pulse w-10 h-10 rounded-full bg-gradient-to-br from-stone-200 to-stone-300" />
-        );
+    if (isAdmin) {
+        planName = 'Admin';
+        planColor = 'bg-amber-500';
+        planTextColor = 'text-amber-600';
+        headerGradient = 'from-amber-50 to-orange-50';
+    } else if (isPro) {
+        planName = 'Pro Plan';
+        planColor = 'bg-green-500';
+        planTextColor = 'text-green-600';
+        headerGradient = 'from-emerald-50 to-teal-50';
     }
 
-    // Not logged in - show login button with guest avatar
-    if (!user) {
-        return (
-            <button
-                onClick={handleLogin}
-                className="flex items-center gap-2 px-3 py-2 h-10 border border-stone-200 rounded-full bg-white shadow-sm text-sm font-medium text-stone-700 hover:border-stone-400 transition-all"
-            >
-                <div className="w-6 h-6 rounded-full overflow-hidden ring-2 ring-stone-100">
-                    <Image
-                        src={getAvatarUrl('guest')}
-                        alt="Guest"
-                        width={24}
-                        height={24}
-                        className="w-full h-full"
-                    />
-                </div>
-                <span className="hidden md:inline">Sign In</span>
-            </button>
-        );
-    }
-
-    // Get first name from full name or email
-    const getFirstName = () => {
-        if (user.user_metadata?.full_name) {
-            return user.user_metadata.full_name.split(' ')[0];
-        }
-        if (user.email) {
-            return user.email.split('@')[0];
-        }
-        return 'User';
-    };
-
-    // Logged in - show profile with avatar dropdown
     return (
         <div className="relative">
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-2 py-1.5 hover:bg-stone-100 rounded-full transition-colors border border-transparent hover:border-stone-200 group"
-            >
-                {/* Cool DiceBear Avatar */}
-                <div className="relative">
-                    <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-stone-200 group-hover:ring-stone-300 transition-all shadow-sm">
+            {/* Signed Out State */}
+            <SignedOut>
+                <button
+                    onClick={() => window.location.href = '/login'}
+                    className="flex items-center gap-3 pl-1.5 pr-4 py-1.5 bg-white border border-stone-200 rounded-full shadow-sm hover:shadow-md hover:border-stone-300 transition-all group"
+                >
+                    {/* Guest Avatar */}
+                    <div className="w-8 h-8 rounded-full overflow-hidden ring-1 ring-stone-100 bg-stone-50">
                         <Image
-                            src={avatarUrl}
-                            alt={user.user_metadata?.full_name || 'User'}
-                            width={36}
-                            height={36}
-                            className="w-full h-full object-cover"
+                            src="https://api.dicebear.com/7.x/notionists/svg?seed=guest&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf"
+                            alt="Guest"
+                            width={32}
+                            height={32}
+                            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                         />
                     </div>
-                    {/* Admin badge */}
-                    {isAdmin && (
-                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center ring-2 ring-white">
-                            <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                        </div>
-                    )}
-                </div>
+                    <span className="text-sm font-medium text-stone-600 group-hover:text-stone-900">Sign In</span>
+                </button>
+            </SignedOut>
 
-                {/* User's first name - hidden on mobile */}
-                <span className="hidden md:inline text-sm font-medium text-stone-700 max-w-[100px] truncate">
-                    {getFirstName()}
-                </span>
-
-                {/* Dropdown indicator */}
-                <svg
-                    className={`w-3 h-3 text-stone-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
+            {/* Signed In State */}
+            <SignedIn>
+                <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="flex items-center gap-2 pl-1 pr-3 py-1 hover:bg-stone-100 rounded-full transition-colors border border-transparent hover:border-stone-200 group"
                 >
-                    <path d="M6 9l6 6 6-6" />
-                </svg>
-            </button>
+                    <div className="relative">
+                        <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-stone-200 group-hover:ring-stone-300 transition-all shadow-sm">
+                            {avatarUrl && (
+                                <Image
+                                    src={avatarUrl}
+                                    alt={fullName}
+                                    width={36}
+                                    height={36}
+                                    className="w-full h-full object-cover"
+                                />
+                            )}
+                        </div>
+                        {isAdmin && (
+                            <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center ring-2 ring-white">
+                                <Sparkles className="w-2.5 h-2.5 text-white" />
+                            </div>
+                        )}
+                    </div>
+                    <span className="text-sm font-medium text-stone-700 max-w-[100px] truncate hidden md:block">
+                        {user?.firstName || 'User'}
+                    </span>
+                    <div className={`w-2 h-2 rounded-full ${planColor} ml-1 md:hidden`} />
+                </button>
 
-            {/* Dropdown Menu */}
-            {isOpen && (
-                <>
-                    {/* Backdrop */}
-                    <div
-                        className="fixed inset-0 z-40"
-                        onClick={() => setIsOpen(false)}
-                    />
+                {/* Dropdown Menu */}
+                {isOpen && (
+                    <>
+                        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+                        <div className="absolute top-full right-0 mt-3 w-72 bg-white border border-stone-200 rounded-2xl shadow-xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
 
-                    {/* Menu */}
-                    <div className="absolute top-full right-0 mt-2 w-72 bg-white border border-stone-200 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
-                        {/* User Header */}
-                        <div className={`p-4 border-b border-stone-200 ${isAdmin ? 'bg-gradient-to-br from-amber-50 to-orange-50' : 'bg-gradient-to-br from-stone-50 to-stone-100'}`}>
-                            <div className="flex items-center gap-3">
-                                <div className="relative">
-                                    <div className="w-14 h-14 rounded-full overflow-hidden ring-2 ring-white shadow-lg">
-                                        <Image
-                                            src={avatarUrl}
-                                            alt={user.user_metadata?.full_name || 'User'}
-                                            width={56}
-                                            height={56}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-                                    {isAdmin && (
-                                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center ring-2 ring-white">
-                                            <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                            </svg>
+                            {/* Header */}
+                            <div className={`p-5 border-b border-stone-100 bg-gradient-to-br ${headerGradient}`}>
+                                <div className="flex items-center gap-4">
+                                    <div className="relative">
+                                        <div className="w-14 h-14 rounded-full overflow-hidden ring-4 ring-white shadow-md">
+                                            {avatarUrl && (
+                                                <Image
+                                                    src={avatarUrl}
+                                                    alt={fullName}
+                                                    width={56}
+                                                    height={56}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            )}
                                         </div>
-                                    )}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="font-bold text-stone-900 truncate">
-                                        {user.user_metadata?.full_name || 'User'}
-                                    </div>
-                                    <div className="text-xs text-stone-500 truncate">
-                                        {user.email}
-                                    </div>
-                                    <div className="flex items-center gap-1.5 mt-1">
-                                        {plan === 'admin' ? (
-                                            <>
-                                                <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                                                <span className="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Admin</span>
-                                            </>
-                                        ) : plan === 'pro' ? (
-                                            <>
-                                                <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                                                <span className="text-[10px] text-green-600 font-semibold uppercase tracking-wider">Pro Plan</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <div className="w-1.5 h-1.5 rounded-full bg-stone-400" />
-                                                <span className="text-[10px] text-stone-500 font-semibold uppercase tracking-wider">Free Plan</span>
-                                            </>
+                                        {isAdmin && (
+                                            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center ring-2 ring-white shadow-sm">
+                                                <Sparkles className="w-3.5 h-3.5 text-white" />
+                                            </div>
                                         )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-bold text-lg text-stone-900 truncate leading-tight mb-0.5">
+                                            {fullName}
+                                        </div>
+                                        <div className="text-xs text-stone-500 truncate mb-2 font-medium">
+                                            {email}
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <div className={`w-2 h-2 rounded-full ${planColor}`} />
+                                            <span className={`text-[10px] uppercase tracking-wider font-bold ${planTextColor}`}>
+                                                {planName}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Menu Items */}
-                        <div className="p-2">
-                            <button
-                                onClick={() => window.location.href = '/history'}
-                                className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 rounded-xl flex items-center gap-3 transition-colors"
-                            >
-                                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
-                                    <svg className="w-4 h-4 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <div className="font-medium">Generation History</div>
-                                    <div className="text-[10px] text-stone-400">View past brands</div>
-                                </div>
-                            </button>
-
-                            <button
-                                className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 rounded-xl flex items-center gap-3 transition-colors"
-                            >
-                                <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
-                                    <svg className="w-4 h-4 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                        <circle cx="12" cy="7" r="4" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <div className="font-medium">Profile Settings</div>
-                                    <div className="text-[10px] text-stone-400">Manage account</div>
-                                </div>
-                            </button>
-
-                            {/* Admin-only options */}
-                            {isAdmin && (
-                                <button
-                                    className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 rounded-xl flex items-center gap-3 transition-colors"
-                                >
-                                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center">
-                                        <svg className="w-4 h-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                        </svg>
+                            {/* Menu Items */}
+                            <div className="p-2 space-y-0.5">
+                                <button className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 rounded-xl flex items-center gap-3 transition-colors group">
+                                    <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                                        <History className="w-4.5 h-4.5" />
                                     </div>
                                     <div>
-                                        <div className="font-medium">Admin Dashboard</div>
-                                        <div className="text-[10px] text-stone-400">Manage users & system</div>
+                                        <div className="font-semibold text-stone-800">Generation History</div>
+                                        <div className="text-[11px] text-stone-400 font-medium">View past brands</div>
                                     </div>
                                 </button>
-                            )}
 
-                            {plan === 'free' ? (
                                 <button
-                                    onClick={() => window.location.href = '/pricing'}
-                                    className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-amber-50 hover:text-stone-900 rounded-xl flex items-center gap-3 transition-colors"
+                                    onClick={() => window.location.href = '/settings'}
+                                    className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 rounded-xl flex items-center gap-3 transition-colors group"
                                 >
-                                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-                                        <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                        </svg>
+                                    <div className="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                                        <Settings className="w-4.5 h-4.5" />
                                     </div>
                                     <div>
-                                        <div className="font-medium text-amber-700">Upgrade to Pro</div>
-                                        <div className="text-[10px] text-amber-600">Unlimited brands & exports</div>
+                                        <div className="font-semibold text-stone-800">Profile Settings</div>
+                                        <div className="text-[11px] text-stone-400 font-medium">Manage account</div>
                                     </div>
                                 </button>
-                            ) : (
-                                <button
-                                    className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 rounded-xl flex items-center gap-3 transition-colors"
-                                >
-                                    <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
-                                        <svg className="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M5 13l4 4L19 7" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <div className="font-medium">{isAdmin ? 'All Features Unlocked' : 'Pro Active'}</div>
-                                        <div className="text-[10px] text-stone-400">{isAdmin ? 'Full admin access' : 'Unlimited brands & exports'}</div>
-                                    </div>
-                                </button>
-                            )}
-                        </div>
 
-                        {/* Sign Out */}
-                        <div className="p-2 pt-0 border-t border-stone-100 mt-1">
-                            <button
-                                onClick={handleSignOut}
-                                className="w-full text-left px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl flex items-center gap-3 transition-colors mt-1"
-                            >
-                                <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
-                                    <svg className="w-4 h-4 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                                        <polyline points="16 17 21 12 16 7" />
-                                        <line x1="21" y1="12" x2="9" y2="12" />
-                                    </svg>
-                                </div>
-                                <div className="font-medium">Sign Out</div>
-                            </button>
+                                {isAdmin ? (
+                                    <>
+                                        <button className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-amber-50 hover:text-amber-900 rounded-xl flex items-center gap-3 transition-colors group">
+                                            <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                                                <Lock className="w-4.5 h-4.5" />
+                                            </div>
+                                            <div>
+                                                <div className="font-semibold text-stone-800">Admin Dashboard</div>
+                                                <div className="text-[11px] text-stone-400 font-medium">Manage users & system</div>
+                                            </div>
+                                        </button>
+                                        <div className="px-3 py-2.5 flex items-center gap-3">
+                                            <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                                <CheckCircle2 className="w-4.5 h-4.5" />
+                                            </div>
+                                            <div>
+                                                <div className="font-semibold text-stone-800">All Features Unlocked</div>
+                                                <div className="text-[11px] text-stone-400 font-medium">Full admin access</div>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : isPro ? (
+                                    <button className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 rounded-xl flex items-center gap-3 transition-colors group">
+                                        <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                                            <Sparkles className="w-4.5 h-4.5" />
+                                        </div>
+                                        <div>
+                                            <div className="font-semibold text-stone-800">Pro Active</div>
+                                            <div className="text-[11px] text-stone-400 font-medium">Unlimited brands & exports</div>
+                                        </div>
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => window.location.href = '/pricing'}
+                                        className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-orange-50 hover:text-orange-900 rounded-xl flex items-center gap-3 transition-colors group"
+                                    >
+                                        <div className="w-9 h-9 rounded-lg bg-orange-500 text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">
+                                            <Star className="w-4.5 h-4.5 fill-current" />
+                                        </div>
+                                        <div>
+                                            <div className="font-semibold text-stone-800 group-hover:text-orange-700">Upgrade to Pro</div>
+                                            <div className="text-[11px] text-stone-400 font-medium group-hover:text-orange-600/80">Unlimited brands & exports</div>
+                                        </div>
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Footer */}
+                            <div className="p-2 border-t border-stone-100 mt-1 bg-stone-50/50">
+                                <button
+                                    onClick={() => signOut()}
+                                    className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-3 transition-colors group"
+                                >
+                                    <div className="w-8 h-8 rounded-md bg-white border border-stone-200 text-red-500 flex items-center justify-center group-hover:border-red-200 transition-colors shadow-sm">
+                                        <LogOut className="w-4 h-4" />
+                                    </div>
+                                    <span className="font-semibold">Sign Out</span>
+                                </button>
+                            </div>
+
                         </div>
-                    </div>
-                </>
-            )}
+                    </>
+                )}
+            </SignedIn>
         </div>
     );
 }

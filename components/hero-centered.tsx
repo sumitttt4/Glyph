@@ -57,19 +57,7 @@ export function HeroCentered() {
             <div className="relative z-10 w-full max-w-4xl px-4 md:px-6 flex flex-col items-center text-center">
 
                 {/* Announcement Pill - Clickable */}
-                <div
-                    onClick={() => router.push('/generator')}
-                    className="mb-6 flex items-center gap-3 pl-1.5 pr-4 py-1.5 bg-white border border-stone-200 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] transition-all cursor-pointer group"
-                >
-                    <span className="flex items-center gap-1.5 px-3 py-1 bg-orange-500 rounded-full text-[11px] font-bold text-white shadow-sm uppercase tracking-wide">
-                        <GlyphMark className="w-3 h-3" color="white" />
-                        <span>New</span>
-                    </span>
-                    <span className="flex items-center gap-1 text-sm font-medium text-stone-600">
-                        Marketing Assets & Social Kits
-                        <ArrowRight className="w-3.5 h-3.5 text-stone-400 group-hover:text-orange-500 group-hover:translate-x-0.5 transition-all" />
-                    </span>
-                </div>
+
 
                 {/* H1 Headline */}
                 <h1 className="mb-8 text-4xl md:text-8xl font-bold tracking-tighter text-stone-900 leading-[0.95] flex flex-col items-center">

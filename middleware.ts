@@ -1,65 +1,12 @@
-import { createServerClient } from '@supabase/ssr';
-import { NextResponse, type NextRequest } from 'next/server';
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-const SUPABASE_URL = 'https://fvvzawoqzgeymcickvtn.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_ULULffspaJObTYOmXo0N-Q_j1h9Mk7V';
-
-export async function middleware(request: NextRequest) {
-    let response = NextResponse.next({
-        request: {
-            headers: request.headers,
-        },
-    });
-
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL || SUPABASE_URL,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY,
-        {
-            cookies: {
-                getAll() {
-                    return request.cookies.getAll();
-                },
-                setAll(cookiesToSet) {
-                    cookiesToSet.forEach(({ name, value, options }) =>
-                        request.cookies.set(name, value)
-                    );
-                    response = NextResponse.next({
-                        request,
-                    });
-                    cookiesToSet.forEach(({ name, value, options }) =>
-                        response.cookies.set(name, value, options)
-                    );
-                },
-            },
-        }
-    );
-
-    // Get user session
-    const { data: { user } } = await supabase.auth.getUser();
-
-    // Protected routes - require authentication
-    const protectedPaths = ['/dashboard'];
-    const isProtectedPath = protectedPaths.some(path =>
-        request.nextUrl.pathname.startsWith(path)
-    );
-
-    // ADMIN BYPASS: Check for special cookie
-    const hasAdminBypass = request.cookies.get('admin-bypass')?.value === 'true';
-
-    if (isProtectedPath && !user && !hasAdminBypass) {
-        // Redirect to home page with login prompt
-        const redirectUrl = new URL('/', request.url);
-        redirectUrl.searchParams.set('login', 'required');
-        redirectUrl.searchParams.set('redirect', request.nextUrl.pathname);
-        return NextResponse.redirect(redirectUrl);
-    }
-
-    return response;
-}
+export default clerkMiddleware();
 
 export const config = {
     matcher: [
-        // Match all paths except static files, api routes, and auth routes
-        '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$|api|auth).*)',
+        // Skip Next.js internals and all static files, unless found in search params
+        "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+        // Always run for API routes
+        "/(api|trpc)(.*)",
     ],
 };
