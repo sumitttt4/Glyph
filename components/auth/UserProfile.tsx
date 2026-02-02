@@ -8,7 +8,7 @@ import { ArrowRight, LogOut, LayoutDashboard, Sparkles, History, Settings, Lock,
 
 export default function UserProfile() {
     const { user } = useUser();
-    const { signOut } = useClerk();
+    const { signOut, openUserProfile } = useClerk();
     const { isPro, isAdmin } = useSubscription();
     const [isOpen, setIsOpen] = useState(false);
 
@@ -133,7 +133,10 @@ export default function UserProfile() {
 
                             {/* Menu Items */}
                             <div className="p-2 space-y-0.5">
-                                <button className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 rounded-xl flex items-center gap-3 transition-colors group">
+                                <button
+                                    onClick={() => window.location.href = '/history'}
+                                    className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 rounded-xl flex items-center gap-3 transition-colors group"
+                                >
                                     <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                                         <History className="w-4.5 h-4.5" />
                                     </div>
@@ -144,7 +147,7 @@ export default function UserProfile() {
                                 </button>
 
                                 <button
-                                    onClick={() => window.location.href = '/settings'}
+                                    onClick={() => openUserProfile()}
                                     className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 rounded-xl flex items-center gap-3 transition-colors group"
                                 >
                                     <div className="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-105 transition-transform">
@@ -189,7 +192,7 @@ export default function UserProfile() {
                                     </button>
                                 ) : (
                                     <button
-                                        onClick={() => window.location.href = '/pricing'}
+                                        onClick={() => window.location.href = '/#pricing'}
                                         className="w-full text-left px-3 py-2.5 text-sm text-stone-600 hover:bg-orange-50 hover:text-orange-900 rounded-xl flex items-center gap-3 transition-colors group"
                                     >
                                         <div className="w-9 h-9 rounded-lg bg-orange-500 text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">

@@ -17,21 +17,12 @@ export const metadata: Metadata = {
     siteName: 'Glyph',
     locale: 'en_US',
     type: 'website',
-    images: [
-      {
-        url: 'https://glyph.software/opengraph-image?v=2',
-        width: 1200,
-        height: 630,
-        alt: 'Glyph - AI Brand Design Engineer',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: "Glyph | AI Brand Design Engineer for Startups",
     description: "Instantly generate premium brand identity systems for your startup.",
     creator: '@glyph_app',
-    images: ['https://glyph.software/opengraph-image?v=2'],
   },
   icons: {
     icon: '/logo.svg',
