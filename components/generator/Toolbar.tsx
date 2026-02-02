@@ -133,7 +133,7 @@ export function Toolbar({ brand, onExport, viewMode, setViewMode, canUndo, canRe
                     <button
                         onClick={onVariations}
                         disabled={!onVariations || isGenerating}
-                        className="hidden md:flex items-center gap-2 px-3 py-2 h-9 md:h-10 border border-stone-200 rounded-full bg-white shadow-sm text-xs font-semibold hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50 transition-all disabled:opacity-50"
+                        className="flex items-center gap-2 px-2.5 md:px-3 py-2 h-9 md:h-10 border border-stone-200 rounded-full bg-white shadow-sm text-xs font-semibold hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50 transition-all disabled:opacity-50"
                         title="Generate Variations"
                     >
                         {isGenerating ? (
@@ -141,7 +141,7 @@ export function Toolbar({ brand, onExport, viewMode, setViewMode, canUndo, canRe
                         ) : (
                             <Shuffle className="w-3.5 h-3.5" />
                         )}
-                        <span>{isGenerating ? 'Thinking...' : 'Variations'}</span>
+                        <span className="hidden md:inline">{isGenerating ? 'Thinking...' : 'Variations'}</span>
                     </button>
                 </div>
             )}

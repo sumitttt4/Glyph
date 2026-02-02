@@ -248,7 +248,6 @@ export function ${brand.name.replace(/\s+/g, '')}Logo({ className = "w-8 h-8", c
       // const { downloadSocialMediaKitZip } = await import('@/components/export/ExportSocial');
       // await downloadSocialMediaKitZip(brand);
       alert('Please use the Social Media Kit section in the workbench to download assets.');
-      alert('Social Media Kit downloaded!');
     } else if (type === 'brandbook') {
       try {
         await downloadBrandBookPDF(brand);
