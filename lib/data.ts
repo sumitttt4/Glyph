@@ -70,6 +70,10 @@ export interface BrandIdentity {
 
   canvasStyle?: 'solid' | 'gradient' | 'mesh';  // Background style
 
+  // AI-generated icon (Cloudflare Workers AI)
+  aiIcon?: string;          // base64 PNG data URI from AI generation
+  aiIconStyle?: string;     // Style used for AI generation (minimal, geometric, etc.)
+
   // Logo Engine v5 - Premium Generated Logos
   generatedLogos?: GeneratedLogo[];  // Array of premium bezier-based logos
   selectedLogoIndex?: number;        // Currently selected logo index

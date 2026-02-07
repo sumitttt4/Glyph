@@ -22,6 +22,7 @@ import {
     generateAllLogoVariations,
 } from '@/components/logo-engine';
 import { InfiniteLogoEngine } from '@/lib/logo-engine-v2/master';
+import { generateAIBrandAssets, type AIGenerateResponse } from '@/lib/ai-generate-client';
 
 // Map vibe to LogoCategory for logo engine
 const vibeToCategory: Record<string, LogoCategory> = {
@@ -95,6 +96,19 @@ export function useBrandGenerator() {
         let aiColor: string | undefined;
         let aiFont: string | undefined;
 
+        // AI Icon Generation Pipeline (Cloudflare Workers AI)
+        // Fires in parallel — result is merged later if successful
+        const aiIconPromise: Promise<AIGenerateResponse | null> = generateAIBrandAssets({
+            brandName: name.trim() || 'Brand',
+            industry: options.category || vibe,
+            style: 'minimal', // Primary style
+            colorHint: options.color,
+            variations: 1, // Just the primary icon for now
+        }).catch((e) => {
+            console.error('[AI Pipeline] Failed:', e);
+            return null;
+        });
+
         // Get AI suggestions if procedural generation is applicable
         // We do this for "surprise me" or if a prompt exists
         if (options.prompt || options.surpriseMe) {
@@ -114,6 +128,30 @@ export function useBrandGenerator() {
             } catch (e) {
                 console.error("AI Icon Gen Error", e);
             }
+        }
+
+        // Await AI icon result (non-blocking — already running in parallel)
+        let aiIconData: string | undefined;
+        let aiIconStyle: string | undefined;
+        try {
+            const aiResult = await aiIconPromise;
+            if (aiResult?.variations?.[0]?.icon) {
+                aiIconData = aiResult.variations[0].icon;
+                aiIconStyle = aiResult.variations[0].style;
+
+                // Use AI palette color if no user-specified color
+                if (!options.color && !aiColor) {
+                    aiColor = aiResult.variations[0].palette.primary;
+                }
+                // Use AI font suggestion if no user-specified font
+                if (!aiFont && aiResult.variations[0].typography.displayFont) {
+                    aiFont = aiResult.variations[0].typography.displayFont;
+                }
+
+                console.log('[AI Pipeline] Icon generated successfully, style:', aiIconStyle);
+            }
+        } catch (e) {
+            console.error('[AI Pipeline] Result processing failed:', e);
         }
 
         // CONTEXT ENGINE: Apply Aesthetic Rules
@@ -376,6 +414,9 @@ export function useBrandGenerator() {
             logoContainer,
             logoAssemblerLayout,
             canvasStyle: options.gradient ? 'gradient' : 'solid', // Added canvasStyle
+            // AI-generated icon (Cloudflare Workers AI)
+            aiIcon: aiIconData,
+            aiIconStyle,
             // Logo Engine v5 - Premium Generated Logos
             generatedLogos: generatedLogos.length > 0 ? generatedLogos : undefined,
             selectedLogoIndex: generatedLogos.length > 0 ? 0 : undefined,

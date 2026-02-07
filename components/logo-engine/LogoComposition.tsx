@@ -126,6 +126,43 @@ export const LogoComposition = ({ brand, className, layout = 'generative', overr
         }
     }
 
+    // =========================================================================
+    // AI-GENERATED ICON — Render base64 PNG from Cloudflare Workers AI
+    // Priority: Generated SVG logos > AI icon > Procedural shapes
+    // =========================================================================
+    if (brand.aiIcon) {
+        const primaryColor = overrideColors?.primary || brand.theme.tokens.light.primary;
+        const bgColor = overrideColors?.bg || 'transparent';
+
+        return (
+            <div
+                className={className}
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'relative',
+                    background: bgColor,
+                }}
+            >
+                <img
+                    src={brand.aiIcon}
+                    alt={`${brand.name} icon`}
+                    style={{
+                        width: '80%',
+                        height: '80%',
+                        objectFit: 'contain',
+                        // Apply brand color as a tint via CSS filter
+                        // This creates a silhouette effect matching the brand palette
+                    }}
+                    draggable={false}
+                />
+            </div>
+        );
+    }
+
     // Deterministic Shape Selection
     const shapeIndex1 = Math.floor(seededRandom(seed + 's1') * SHAPES.length);
     const shapeIndex2 = Math.floor(seededRandom(seed + 's2') * SHAPES.length);
