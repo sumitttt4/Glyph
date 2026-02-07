@@ -19,6 +19,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateAIPalette, type AIPalette } from '@/lib/ai-palette';
 import { selectTypographyPairing, type AITypographyResult } from '@/lib/ai-typography';
+import { generateGeometricLogos, type GeometricLogoResult } from '@/lib/geometric-logo-engine';
 
 // ============================================================
 // TYPES
@@ -45,13 +46,21 @@ interface GenerateVariation {
     };
 }
 
+interface GeometricLogoVariation {
+    svg: string;
+    method: string;
+    seed: string;
+}
+
 interface GenerateResponse {
     brandName: string;
     industry: string;
     variations: GenerateVariation[];
+    geometricLogos: GeometricLogoVariation[];
     meta: {
         aiIconGenerated: boolean;
         fallbackUsed: boolean;
+        geometricLogosGenerated: number;
         generatedAt: number;
     };
 }
@@ -162,15 +171,25 @@ export async function POST(req: NextRequest) {
 
         const variations = await Promise.all(variationPromises);
 
+        // Geometric SVG logo generation (always works — algorithmic)
+        const geometricResults = generateGeometricLogos(brandName, variationCount);
+        const geometricLogos: GeometricLogoVariation[] = geometricResults.map((r) => ({
+            svg: r.svg,
+            method: r.method,
+            seed: r.seed,
+        }));
+
         const anyIconGenerated = variations.some((v) => v.icon !== null);
 
         const response: GenerateResponse = {
             brandName,
             industry,
             variations,
+            geometricLogos,
             meta: {
                 aiIconGenerated: anyIconGenerated,
                 fallbackUsed: !anyIconGenerated,
+                geometricLogosGenerated: geometricLogos.length,
                 generatedAt: Date.now(),
             },
         };
