@@ -281,6 +281,10 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
                                 setSelectedCategory(industry);
                                 // AUTO-SELECT LOGIC based on Industry DNA
                                 setSelectedVibe(industry.vibe);
+                                // Auto-select industry-recommended color
+                                if (industry.color) {
+                                    setSelectedColor(industry.color);
+                                }
                                 if (industry.archetype === 'app-icon') {
                                     setSelectedArchetype('symbol');
                                 } else if (industry.archetype === 'wordmark') {

@@ -3,21 +3,22 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronsUpDown, Check, Building2, Smartphone, Briefcase, ShoppingBag, Zap, Gavel, User, Globe, Home } from "lucide-react";
 
 // 1. THE 20+ INDUSTRY PRESETS
-// Each maps to a specific "Archetype" and "Default Vibe"
+// Each maps to a specific "Archetype", "Default Vibe", and recommended color
+// Colors are based on industry psychology and trust signals
 export const INDUSTRIES = [
-    { id: "saas", label: "SaaS / B2B Startup", icon: Building2, archetype: "geometric", vibe: "tech" },
-    { id: "app", label: "Mobile App (Consumer)", icon: Smartphone, archetype: "app-icon", vibe: "bold" },
-    { id: "agency", label: "Design Agency / Studio", icon: Briefcase, archetype: "abstract", vibe: "minimalist" },
-    { id: "fintech", label: "Fintech & Banking", icon: Building2, archetype: "trust", vibe: "tech" },
-    { id: "crypto", label: "Web3 / Crypto Protocol", icon: Zap, archetype: "futuristic", vibe: "tech" },
-    { id: "ai", label: "AI / LLM Tool", icon: Zap, archetype: "sparkle", vibe: "tech" },
-    { id: "dev", label: "Developer Tool / API", icon: Zap, archetype: "terminal", vibe: "tech" },
-    { id: "d2c", label: "E-Commerce / D2C", icon: ShoppingBag, archetype: "organic", vibe: "bold" },
-    { id: "health", label: "Health & Wellness", icon: ShoppingBag, archetype: "organic", vibe: "nature" },
-    { id: "legal", label: "Legal & Corporate", icon: Gavel, archetype: "serif", vibe: "minimalist" },
-    { id: "creator", label: "Creator / Personal Brand", icon: User, archetype: "signature", vibe: "bold" },
-    { id: "social", label: "Social Network", icon: Globe, archetype: "bubble", vibe: "bold" },
-    { id: "realestate", label: "Real Estate / Proptech", icon: Home, archetype: "structure", vibe: "luxury" },
+    { id: "realestate", label: "Real Estate / Proptech", icon: Home, archetype: "structure", vibe: "luxury", color: "#1e3a8a" }, // Deep blue - trust & stability
+    { id: "saas", label: "SaaS / B2B Startup", icon: Building2, archetype: "geometric", vibe: "tech", color: "#3b82f6" }, // Blue - professional & reliable
+    { id: "app", label: "Mobile App (Consumer)", icon: Smartphone, archetype: "app-icon", vibe: "bold", color: "#8b5cf6" }, // Purple - creative & modern
+    { id: "agency", label: "Design Agency / Studio", icon: Briefcase, archetype: "abstract", vibe: "minimalist", color: "#171717" }, // Black - sophisticated & premium
+    { id: "fintech", label: "Fintech & Banking", icon: Building2, archetype: "trust", vibe: "tech", color: "#1d4ed8" }, // Strong blue - financial trust
+    { id: "crypto", label: "Web3 / Crypto Protocol", icon: Zap, archetype: "futuristic", vibe: "tech", color: "#22c55e" }, // Green - trust & growth
+    { id: "ai", label: "AI / LLM Tool", icon: Zap, archetype: "sparkle", vibe: "tech", color: "#6366f1" }, // Indigo - intelligence & innovation
+    { id: "dev", label: "Developer Tool / API", icon: Zap, archetype: "terminal", vibe: "tech", color: "#10b981" }, // Emerald - code/terminal aesthetic
+    { id: "d2c", label: "E-Commerce / D2C", icon: ShoppingBag, archetype: "organic", vibe: "bold", color: "#f97316" }, // Orange - energetic & action
+    { id: "health", label: "Health & Wellness", icon: ShoppingBag, archetype: "organic", vibe: "nature", color: "#14b8a6" }, // Teal - calm & wellness
+    { id: "legal", label: "Legal & Corporate", icon: Gavel, archetype: "serif", vibe: "minimalist", color: "#1c1917" }, // Dark stone - authority & trust
+    { id: "creator", label: "Creator / Personal Brand", icon: User, archetype: "signature", vibe: "bold", color: "#ec4899" }, // Pink - personality & creativity
+    { id: "social", label: "Social Network", icon: Globe, archetype: "bubble", vibe: "bold", color: "#0ea5e9" }, // Sky blue - friendly & open
 ];
 
 export interface BrandContextSelectorProps {
