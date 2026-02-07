@@ -9,6 +9,7 @@ import { LegalEntityType, LEGAL_ENTITIES } from '@/lib/data';
 
 import { ArchetypeSelector } from './ArchetypeSelector';
 import { BrandContextSelector, INDUSTRIES } from './BrandContextSelector';
+import { useSubscription } from '@/hooks/use-subscription';
 
 export interface GenerationOptions {
     prompt: string;
@@ -80,6 +81,7 @@ const GRADIENT_PRESETS = [
 ];
 
 export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVibe, hasGenerated, isCollapsed, onToggle }: SidebarProps) {
+    const { isPro, isAdmin, isLoading: isSubscriptionLoading } = useSubscription();
     const [prompt, setPrompt] = useState('');
     const [brandName, setBrandName] = useState('');
     const [selectedColor, setSelectedColor] = useState('#f97316');
@@ -131,19 +133,19 @@ export function Sidebar({ onGenerate, isGenerating, selectedVibe, setSelectedVib
     const handleGenerate = async () => {
         if (!isValid) return;
 
-        // CHECK LIMIT
-        const hasAdminBypass = document.cookie.split(';').some(c => c.trim().startsWith('admin-bypass=true'));
+        // CHECK LIMIT - Admin and Pro users bypass the limit
+        const hasUnlimitedAccess = isAdmin || isPro;
 
-        if (!hasAdminBypass && generationCount >= 3) {
-            // Block action
-            if (confirm("Free preview limit reached. Unlock the Founder Pass to continue generating unlimited brands.\\n\\nClick OK to upgrade now.")) {
+        if (!hasUnlimitedAccess && generationCount >= 3) {
+            // Block action for free users
+            if (confirm("Free preview limit reached. Unlock the Founder Pass to continue generating unlimited brands.\n\nClick OK to upgrade now.")) {
                 window.location.href = "/#pricing"; // Redirect to pricing section
             }
             return;
         }
 
-        // Increment count
-        if (!hasAdminBypass) {
+        // Increment count only for free users
+        if (!hasUnlimitedAccess) {
             const newCount = generationCount + 1;
             setGenerationCount(newCount);
             localStorage.setItem('glyph_generation_count', newCount.toString());
