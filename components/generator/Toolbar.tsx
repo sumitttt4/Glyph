@@ -49,12 +49,53 @@ export function Toolbar({ brand, onExport, viewMode, setViewMode, canUndo, canRe
         { id: 'all', label: 'Full Package', icon: Package, desc: 'ZIP with all assets' },
     ];
 
-    const handleShare = () => {
-        // Generate a share link (in production this would save to DB)
-        const shareUrl = `${window.location.origin}/share/${Date.now().toString(36)}`;
-        navigator.clipboard.writeText(shareUrl);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+    const [isSharing, setIsSharing] = useState(false);
+
+    const handleShare = async () => {
+        if (!brand || isSharing) return;
+        setIsSharing(true);
+
+        try {
+            const res = await fetch('/api/share', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    brandId: (brand as any).id,
+                    identity: brand,
+                    userEmail: email || null,
+                }),
+            });
+
+            const data = await res.json();
+            const shareUrl = `${window.location.origin}${data.shareUrl || `/share/${data.shareId}`}`;
+
+            // Save to localStorage as fallback for share page retrieval
+            try {
+                const shares = JSON.parse(localStorage.getItem('glyph_shares') || '{}');
+                shares[data.shareId] = brand;
+                localStorage.setItem('glyph_shares', JSON.stringify(shares));
+            } catch { /* quota exceeded */ }
+
+            await navigator.clipboard.writeText(shareUrl);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 3000);
+        } catch (err) {
+            console.error('[Share] Failed:', err);
+            // Fallback: generate a local share link using brand ID
+            const fallbackId = (brand as any).id || Date.now().toString(36);
+            try {
+                const shares = JSON.parse(localStorage.getItem('glyph_shares') || '{}');
+                shares[fallbackId] = brand;
+                localStorage.setItem('glyph_shares', JSON.stringify(shares));
+            } catch { /* ignore */ }
+
+            const shareUrl = `${window.location.origin}/share/${fallbackId}`;
+            await navigator.clipboard.writeText(shareUrl);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 3000);
+        } finally {
+            setIsSharing(false);
+        }
     };
 
     return (
@@ -118,10 +159,11 @@ export function Toolbar({ brand, onExport, viewMode, setViewMode, canUndo, canRe
                         <p className="text-xs text-stone-500 mb-3">Generate a public link to share your brand with clients.</p>
                         <button
                             onClick={handleShare}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-stone-900 text-white rounded-lg text-sm font-medium hover:bg-stone-800 transition-colors"
+                            disabled={isSharing}
+                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-stone-900 text-white rounded-lg text-sm font-medium hover:bg-stone-800 transition-colors disabled:opacity-60"
                         >
-                            {copied ? <Check className="w-4 h-4" /> : <Link className="w-4 h-4" />}
-                            {copied ? 'Link Copied!' : 'Copy Share Link'}
+                            {copied ? <Check className="w-4 h-4" /> : isSharing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link className="w-4 h-4" />}
+                            {copied ? 'Link Copied!' : isSharing ? 'Creating...' : 'Copy Share Link'}
                         </button>
                     </div>
                 )}

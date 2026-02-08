@@ -5,10 +5,33 @@ import Link from 'next/link';
 import { useHistory } from '@/hooks/use-history';
 import { PaywallOverlay } from '@/components/history/PaywallOverlay';
 import { LogoComposition } from '@/components/logo-engine/LogoComposition';
-import { ArrowLeft, Clock, Search, Grid, LayoutGrid } from 'lucide-react';
+import { ArrowLeft, Clock, Search, Grid, LayoutGrid, Star, Trash2, X } from 'lucide-react';
 
 export default function HistoryPage() {
-    const { brands, loading, isPro, blockedCount } = useHistory();
+    const {
+        brands,
+        loading,
+        isPro,
+        blockedCount,
+        totalCount,
+        searchQuery,
+        setSearchQuery,
+        showFavoritesOnly,
+        setShowFavoritesOnly,
+        toggleFavorite,
+        isFavorited,
+        deleteBrand,
+        freeLimit,
+    } = useHistory();
+
+    const [deletingId, setDeletingId] = React.useState<string | null>(null);
+
+    const handleDelete = async (brandId: string) => {
+        if (deletingId) return;
+        setDeletingId(brandId);
+        await deleteBrand(brandId);
+        setDeletingId(null);
+    };
 
     // Loading State
     if (loading) {
@@ -23,7 +46,6 @@ export default function HistoryPage() {
     }
 
     // Number of dummy cards to show for the blurred/locked section
-    // If blockedCount is 0, we show 0. If > 0, we show at least 4-8 to look nice.
     const dummyCardsCount = blockedCount > 0 ? Math.min(Math.max(blockedCount, 4), 8) : 0;
     const dummyCards = Array(dummyCardsCount).fill(null);
 
@@ -54,36 +76,116 @@ export default function HistoryPage() {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4 text-xs font-mono text-stone-500">
+                    <div className="flex items-center gap-3 text-xs font-mono text-stone-500">
+                        {/* Free user counter */}
+                        {!isPro && (
+                            <div className="px-3 py-1.5 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                                <span className="text-orange-400 font-bold">{Math.min(totalCount, freeLimit)}</span>
+                                <span className="text-orange-400/60">/{freeLimit}</span>
+                                <span className="text-orange-400/60 ml-1.5">saved</span>
+                            </div>
+                        )}
                         <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-900 border border-stone-800">
                             <Clock className="w-3 h-3" />
                             <span>{new Date().toLocaleDateString()}</span>
                         </div>
                         <div className="px-3 py-1.5 rounded-lg bg-stone-900 border border-stone-800">
-                            <span className="text-stone-300 font-bold">{brands.length + blockedCount}</span> RECORDS
+                            <span className="text-stone-300 font-bold">{totalCount}</span> RECORDS
                         </div>
                     </div>
                 </div>
             </header>
+
+            {/* Search & Filter Bar */}
+            {(totalCount > 0 || searchQuery) && (
+                <div className="sticky top-16 z-20 bg-stone-950/80 backdrop-blur-md border-b border-stone-800/50">
+                    <div className="max-w-7xl mx-auto px-6 h-12 flex items-center gap-3">
+                        {/* Search */}
+                        <div className="relative flex-1 max-w-sm">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-500" />
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Search brands..."
+                                className="w-full pl-9 pr-8 py-1.5 bg-stone-900 border border-stone-800 rounded-lg text-xs text-white placeholder:text-stone-600 focus:outline-none focus:border-stone-600 focus:ring-1 focus:ring-stone-600 font-mono transition-colors"
+                            />
+                            {searchQuery && (
+                                <button
+                                    onClick={() => setSearchQuery('')}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300 transition-colors"
+                                >
+                                    <X className="w-3.5 h-3.5" />
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Favorites Filter */}
+                        <button
+                            onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-mono transition-all ${
+                                showFavoritesOnly
+                                    ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                                    : 'bg-stone-900 border-stone-800 text-stone-500 hover:text-stone-300 hover:border-stone-700'
+                            }`}
+                        >
+                            <Star className={`w-3 h-3 ${showFavoritesOnly ? 'fill-amber-400' : ''}`} />
+                            <span className="hidden sm:inline">Favorites</span>
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <main className="max-w-7xl mx-auto px-6 py-8">
                 {brands.length === 0 && blockedCount === 0 ? (
                     // Empty State
                     <div className="flex flex-col items-center justify-center py-32 animate-in fade-in duration-500">
                         <div className="w-24 h-24 bg-stone-900 border border-stone-800 rounded-2xl flex items-center justify-center mb-6 shadow-2xl">
-                            <Grid className="w-10 h-10 text-stone-700" />
+                            {searchQuery || showFavoritesOnly ? (
+                                <Search className="w-10 h-10 text-stone-700" />
+                            ) : (
+                                <Grid className="w-10 h-10 text-stone-700" />
+                            )}
                         </div>
-                        <h3 className="text-xl font-bold text-white mb-2">No Generations Found</h3>
+                        <h3 className="text-xl font-bold text-white mb-2">
+                            {searchQuery
+                                ? 'No Results Found'
+                                : showFavoritesOnly
+                                    ? 'No Favorites Yet'
+                                    : 'No Generations Found'}
+                        </h3>
                         <p className="text-stone-500 mb-8 max-w-sm text-center text-sm">
-                            Your conceptual archive is empty. Initialize the generator to begin creating.
+                            {searchQuery
+                                ? `No brands match "${searchQuery}". Try a different search.`
+                                : showFavoritesOnly
+                                    ? 'Star your favorite generations to find them here.'
+                                    : 'Your conceptual archive is empty. Initialize the generator to begin creating.'}
                         </p>
-                        <Link
-                            href="/generator"
-                            className="px-6 py-3 bg-white text-black font-bold rounded-xl hover:bg-stone-200 transition-all inline-flex items-center gap-2 text-sm"
-                        >
-                            <LayoutGrid className="w-4 h-4" />
-                            <span>Initialize Generator</span>
-                        </Link>
+                        {searchQuery ? (
+                            <button
+                                onClick={() => setSearchQuery('')}
+                                className="px-6 py-3 bg-white text-black font-bold rounded-xl hover:bg-stone-200 transition-all inline-flex items-center gap-2 text-sm"
+                            >
+                                <X className="w-4 h-4" />
+                                <span>Clear Search</span>
+                            </button>
+                        ) : showFavoritesOnly ? (
+                            <button
+                                onClick={() => setShowFavoritesOnly(false)}
+                                className="px-6 py-3 bg-white text-black font-bold rounded-xl hover:bg-stone-200 transition-all inline-flex items-center gap-2 text-sm"
+                            >
+                                <Grid className="w-4 h-4" />
+                                <span>Show All</span>
+                            </button>
+                        ) : (
+                            <Link
+                                href="/generator"
+                                className="px-6 py-3 bg-white text-black font-bold rounded-xl hover:bg-stone-200 transition-all inline-flex items-center gap-2 text-sm"
+                            >
+                                <LayoutGrid className="w-4 h-4" />
+                                <span>Initialize Generator</span>
+                            </Link>
+                        )}
                     </div>
                 ) : (
                     <div className="space-y-8">
@@ -105,6 +207,45 @@ export default function HistoryPage() {
                                             className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-700"
                                             style={{ background: `radial-gradient(circle at center, ${item.identity.theme?.tokens.light.primary || '#fff'}, transparent 70%)` }}
                                         />
+
+                                        {/* Card action buttons (top-right) */}
+                                        <div className="absolute top-2 right-2 z-20 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                            {/* Favorite */}
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    toggleFavorite(item.id);
+                                                }}
+                                                className={`p-1.5 rounded-lg backdrop-blur-sm transition-all ${
+                                                    isFavorited(item.id)
+                                                        ? 'bg-amber-500/20 text-amber-400'
+                                                        : 'bg-black/40 text-stone-400 hover:text-amber-400 hover:bg-amber-500/10'
+                                                }`}
+                                                title={isFavorited(item.id) ? 'Remove from favorites' : 'Add to favorites'}
+                                            >
+                                                <Star className={`w-3.5 h-3.5 ${isFavorited(item.id) ? 'fill-amber-400' : ''}`} />
+                                            </button>
+
+                                            {/* Delete */}
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDelete(item.id);
+                                                }}
+                                                disabled={deletingId === item.id}
+                                                className="p-1.5 rounded-lg bg-black/40 backdrop-blur-sm text-stone-400 hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-50"
+                                                title="Delete generation"
+                                            >
+                                                <Trash2 className={`w-3.5 h-3.5 ${deletingId === item.id ? 'animate-pulse' : ''}`} />
+                                            </button>
+                                        </div>
+
+                                        {/* Favorited indicator (always visible when favorited) */}
+                                        {isFavorited(item.id) && (
+                                            <div className="absolute top-2 left-2 z-20 group-hover:opacity-0 transition-opacity">
+                                                <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                                            </div>
+                                        )}
 
                                         <div className="relative z-10 transform group-hover:scale-105 transition-transform duration-500">
                                             {/* Check if we have actual SVG data in generatedLogos */}
@@ -153,15 +294,15 @@ export default function HistoryPage() {
                                                 {item.identity.name}
                                             </h3>
                                             <div
-                                                className="w-2 h-2 rounded-full ring-2 ring-stone-900"
+                                                className="w-2 h-2 rounded-full ring-2 ring-stone-900 flex-shrink-0"
                                                 style={{ backgroundColor: item.identity.theme?.tokens.light.primary || '#fff' }}
                                             />
                                         </div>
                                         <div className="flex items-center justify-between text-[10px] text-stone-500 font-mono">
-                                            <span className="uppercase tracking-wider">
+                                            <span className="uppercase tracking-wider truncate">
                                                 {item.identity.vibe}
                                             </span>
-                                            <span>{new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                                            <span className="flex-shrink-0">{new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
                                         </div>
                                     </div>
                                 </div>

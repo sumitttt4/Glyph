@@ -19,36 +19,48 @@ interface GenerateRequest {
 	colorHint?: string;
 }
 
-// Style-specific prompt fragments
+// ============================================================
+// AESTHETIC-SPECIFIC PROMPTS
+//
+// Each aesthetic fundamentally changes the visual output, not just
+// color. These are tuned for logo-quality abstract marks.
+// ============================================================
+
 const STYLE_PROMPTS: Record<string, string> = {
 	minimal:
-		'minimalist flat icon, single clean shape, simple geometry, negative space, single color on white background',
+		'ultra minimal logo symbol, single geometric shape with clever negative space, scandinavian design, white on black, logo design annual winner, no text',
 	geometric:
-		'geometric abstract icon, precise shapes, mathematical harmony, clean intersecting forms, flat design',
+		'geometric tech logo mark, angular precision, circuit-inspired abstract symbol, sharp edges, white on black, silicon valley startup logo, no text no letters',
 	abstract:
-		'abstract symbol icon, flowing organic shape, modern art inspired, sophisticated simplicity, flat design',
-	bold: 'bold graphic icon, strong silhouette, high contrast, impactful shape, solid fill, flat design',
+		'abstract brand symbol, flowing organic form merged with geometry, award-winning logo design, white on black, behance logo design, no text',
+	bold:
+		'bold geometric logo mark, strong symmetric symbol, thick lines, powerful abstract icon, white on black, international logo competition winner, no text',
 	organic:
-		'organic natural icon, smooth curves, nature-inspired shape, flowing lines, botanical feel, flat design',
+		'minimalist single-line botanical symbol, one continuous stroke forming a leaf spiral, white on black, vector logo style, behance logo design award winner, no text',
 };
 
-// Industry-specific visual cues
+// ============================================================
+// INDUSTRY-SPECIFIC ABSTRACT VISUAL CUES
+//
+// These describe abstract visual qualities, NOT literal objects.
+// ============================================================
+
 const INDUSTRY_PROMPTS: Record<string, string> = {
-	technology: 'circuit nodes, data flow, digital connectivity, innovation',
-	finance: 'stability, growth arrows, shield protection, trust',
-	health: 'wellness leaf, heart rhythm, vitality, care',
-	food: 'culinary utensils, steam wisps, fresh ingredients, warmth',
-	education: 'open book, lightbulb knowledge, growth, discovery',
-	creative: 'paintbrush stroke, color splash, artistic expression',
-	ecommerce: 'shopping bag, delivery box, marketplace, retail',
-	nature: 'leaf veins, mountain peaks, water drop, earth',
-	luxury: 'crown jewel, diamond facet, premium crest, elegance',
-	startup: 'rocket launch, upward momentum, spark, acceleration',
-	legal: 'balance scales, column pillar, justice, authority',
-	music: 'sound wave, musical note, rhythm pulse, harmony',
-	sports: 'dynamic motion, athletic form, energy, competition',
-	travel: 'compass rose, globe, horizon line, journey',
-	real_estate: 'rooftop line, doorway arch, building silhouette, home',
+	technology: 'angular intersections, precise geometric nodes, data-flow abstraction, digital connectivity pattern, mathematical precision',
+	finance: 'stable geometric foundation, ascending angular form, shield-like structure, vault pattern abstraction, trust and solidity',
+	health: 'organic cellular pattern, growth spiral, heartbeat rhythm abstraction, vitality and wellness curves',
+	food: 'flame-inspired curves, organic warmth, circular steam abstraction, nourishing organic form',
+	education: 'open beacon shape, ascending steps pattern, light and knowledge abstraction, growth formation',
+	creative: 'dynamic brush-stroke abstraction, spiral energy, color-wheel-inspired geometry, artistic expression',
+	ecommerce: 'forward momentum arrows, connection nodes, marketplace exchange pattern, dynamic flow',
+	nature: 'leaf-vein geometry, water-ripple circles, mountain-peak angles, seed-growth spiral, sun-ray radiation',
+	luxury: 'refined geometric crest, faceted crystal abstraction, premium symmetric form, elegant angular mark',
+	startup: 'upward momentum mark, spark-like radial form, acceleration angles, dynamic energy burst',
+	legal: 'balanced symmetric form, column-inspired vertical structure, stable angular foundation',
+	music: 'sound-wave abstraction, rhythmic pulse pattern, harmonic circular form, frequency visualization',
+	sports: 'dynamic motion curves, athletic energy form, kinetic angular symbol, power and speed',
+	travel: 'compass-inspired radial mark, horizon-line abstraction, globe-section geometry, journey path curves',
+	real_estate: 'architectural angle, doorway-arch abstraction, structural framework, shelter geometry',
 };
 
 function buildPrompt(req: GenerateRequest): string {
@@ -56,38 +68,55 @@ function buildPrompt(req: GenerateRequest): string {
 	const stylePrompt = STYLE_PROMPTS[style];
 
 	const industryKey = req.industry?.toLowerCase().replace(/[^a-z_]/g, '') || '';
-	const industryPrompt = INDUSTRY_PROMPTS[industryKey] || 'modern professional business';
+	const industryPrompt = INDUSTRY_PROMPTS[industryKey] || 'modern professional abstract symbol';
 
 	const colorHint = req.colorHint
-		? `${req.colorHint} color tones`
-		: 'monochrome black on white background';
+		? `${req.colorHint} monochrome tones`
+		: 'pure white on solid black background';
 
 	return [
-		`Professional brand icon symbol for "${req.brandName}",`,
+		`Professional abstract logo symbol mark,`,
 		stylePrompt + ',',
 		industryPrompt + ',',
 		colorHint + ',',
-		'single centered icon, logo design, vector style,',
-		'clean white background, professional quality,',
-		'high resolution, crisp edges, scalable design',
+		'single centered abstract mark, premium brand identity,',
+		'vector logo style, clean flat design, scalable symbol,',
+		'high resolution, crisp clean edges, professional quality,',
+		'behance featured, dribbble popular, brand identity design',
 	].join(' ');
 }
+
+// ============================================================
+// NEGATIVE PROMPTS
+//
+// Aggressively exclude anything that would make it look like
+// clip art or generic stock imagery.
+// ============================================================
 
 const NEGATIVE_PROMPT = [
 	'text',
 	'letters',
+	'alphabet',
 	'words',
 	'typography',
 	'font',
 	'writing',
 	'watermark',
 	'signature',
+	'realistic',
+	'3d',
+	'3d render',
+	'gradient',
+	'multiple objects',
+	'busy',
+	'complex',
+	'clipart',
+	'clip art',
+	'cartoon',
+	'photograph',
+	'photo',
 	'busy background',
 	'complex scene',
-	'photograph',
-	'realistic',
-	'3d render',
-	'multiple objects',
 	'frame',
 	'border',
 	'blurry',
@@ -100,6 +129,17 @@ const NEGATIVE_PROMPT = [
 	'duplicate',
 	'morbid',
 	'mutilated',
+	'disfigured',
+	'bad anatomy',
+	'extra limbs',
+	'face',
+	'human',
+	'person',
+	'animal',
+	'literal object',
+	'icon set',
+	'emoji',
+	'sticker',
 ].join(', ');
 
 // CORS headers
